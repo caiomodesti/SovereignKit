@@ -4,7 +4,7 @@ Solana can remain healthy while a user's path to Solana fails.
 
 SovereignKit is an open-source transaction accessibility observatory and resilient routing SDK for Solana. It measures route-level transaction accessibility, compares matched transaction classes, detects asymmetric route behavior, and helps applications route around paths that fail.
 
-> **Status:** v0.1, Sprint 1.5 Live Validator Integration Proof complete. No classifier, hostile proxy, dashboard, or public Observatory infrastructure exists yet.
+> **Status:** v0.1, Sprint 2 Probe Engine complete. No reactive router, classifier, hostile proxy, dashboard, or public Observatory infrastructure exists yet.
 
 ## What it measures
 
@@ -81,6 +81,14 @@ See the [Telemetry Core design](docs/telemetry-core.md), [produced timelines](do
 The Telemetry Core has been exercised against a real local Agave 4.0.0 validator. A real legacy System Program transfer was RPC-acknowledged, independently polled by three logical readers, confirmed, finalized, and verified by finalized recipient balance. The readers share one local process, so this proves logical quorum semantics rather than infrastructure independence.
 
 See the [Sprint 1.5 acceptance and hostile audit](docs/sprint-1.5-acceptance.md), [reproduction procedure](docs/sprint-1.5-reproduction.md), and committed [healthy fixture](fixtures/integration/agave-4.0.0/healthy/).
+
+## Sprint 2 Probe Engine
+
+`@sovereignkit/probes` declares the primary statistical units, creates reproducibly randomized execution plans, builds unique signed Solana transactions for `MATCHED_CONTROL` and `PROGRAM_X`, rejects structural mismatches, signs canonical `ProbeResult` payloads with dedicated Ed25519 observer identities, and models allowlisted idempotent ingestion.
+
+The builder keeps each route/probe pair's fixed-width nonce equal across classes, changes the one-byte class discriminator, and guarantees that every comparative unit has distinct wire bytes and a distinct transaction signature. Randomization keeps every `probe_index` group contiguous and records pairing-window breaches.
+
+See the [Sprint 2 acceptance audit](docs/sprint-2-acceptance.md) and [Probe Engine contract](docs/probe-engine.md). The project-owned on-chain program and live hostile scenarios remain later work; Sprint 2 does not claim execution against that undeployed program.
 
 ## First experiment reproduction contract
 
