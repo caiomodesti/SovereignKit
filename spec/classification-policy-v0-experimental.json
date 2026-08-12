@@ -1,0 +1,37 @@
+{
+  "policy_id": "ClassificationPolicyV0Experimental@0.1.0",
+  "environment_scope": "controlled_local_validator",
+  "success_state": "CONFIRMED_EXECUTION_SUCCESS",
+  "minimum_complete_units_per_required_cell": 30,
+  "maximum_inconclusive_rate_per_required_cell": 0.1,
+  "precedence": ["INSUFFICIENT_DATA", "DATA_QUALITY_GUARD_TO_UNKNOWN", "DEGRADED", "ASYMMETRIC", "HEALTHY", "UNKNOWN"],
+  "thresholds": {
+    "healthy": {
+      "minimum_control_success_rate": 0.9,
+      "minimum_test_success_rate": 0.9,
+      "maximum_absolute_class_gap": 0.1
+    },
+    "degraded": {
+      "maximum_control_success_rate": 0.4,
+      "maximum_test_success_rate": 0.4,
+      "maximum_absolute_class_gap": 0.2
+    },
+    "asymmetric": {
+      "minimum_control_success_rate": 0.9,
+      "maximum_route_test_success_rate": 0.2,
+      "minimum_peer_test_success_rate": 0.9,
+      "minimum_control_test_gap": 0.6,
+      "minimum_peer_test_gap": 0.6
+    }
+  },
+  "peer_baseline": {
+    "method": "pooled_leave_one_route_out",
+    "require_individual_peer_metrics": true
+  },
+  "evidence_strength": {
+    "insufficient": "classification is INSUFFICIENT_DATA",
+    "limited": "threshold passes and any required cell has fewer than 60 complete units",
+    "strong_controlled": "threshold passes and all required cells have at least 60 complete units"
+  },
+  "disclaimer": "Experimental thresholds for a deterministic controlled intervention; not calibrated for public networks or causal attribution."
+}

@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SovereignKit Sprint 1 Code Review</title>
+  <style>
+    body { font: 16px/1.5 system-ui, sans-serif; max-width: 980px; margin: 40px auto; padding: 0 24px; color: #172033; }
+    h1, h2 { line-height: 1.15; }
+    table { width: 100%; border-collapse: collapse; margin: 16px 0 28px; }
+    th, td { border: 1px solid #c9d1df; padding: 10px; text-align: left; vertical-align: top; }
+    th { background: #eef2f8; }
+    .high { color: #a12626; font-weight: 700; }
+    .medium { color: #8a5900; font-weight: 700; }
+    .fixed { color: #176b3a; font-weight: 700; }
+    code { background: #eef2f8; padding: 2px 5px; }
+  </style>
+</head>
+<body>
+  <h1>SovereignKit Sprint 1 — Structured Code Review</h1>
+  <p>Review date: 2026-08-11. Scope: Telemetry Core only. Overall grade: <strong>B+</strong>. Mainnet ready: <strong>No</strong>.</p>
+  <h2>Scores</h2>
+  <table><thead><tr><th>Dimension</th><th>Grade</th><th>Summary</th></tr></thead><tbody>
+    <tr><td>Security</td><td>B</td><td>No secrets/raw transactions, bounded readers; remote signing is deferred.</td></tr>
+    <tr><td>Correctness</td><td>A-</td><td>Required paths pass; live validator evidence is missing.</td></tr>
+    <tr><td>Error handling</td><td>B+</td><td>Conservative forwarding ambiguity; coarse taxonomy remains.</td></tr>
+    <tr><td>Testing</td><td>A-</td><td>10 tests plus reconstruction, idempotency, outage, and timeout cases.</td></tr>
+    <tr><td>Organization</td><td>A</td><td>Facts, storage, quorum, derivation, coordination, and RPC adapters are separated.</td></tr>
+    <tr><td>Documentation</td><td>A</td><td>Architecture, examples, limitations, and acceptance are explicit.</td></tr>
+  </tbody></table>
+  <h2>Fixed findings</h2>
+  <table><thead><tr><th>Status</th><th>Finding</th><th>Fix</th></tr></thead><tbody>
+    <tr><td class="fixed">Fixed</td><td>Hanging reader blocked polling.</td><td>Per-reader timeout, AbortSignal, and regression test.</td></tr>
+    <tr><td class="fixed">Fixed</td><td>JSONL trusted parsed input.</td><td>Fail-closed runtime envelope validation.</td></tr>
+    <tr><td class="fixed">Fixed</td><td>Conflicting duplicate could affect quorum.</td><td>Quarantine conflicts and expose anomaly.</td></tr>
+    <tr><td class="fixed">Fixed</td><td>Returned signature mismatch was silent.</td><td>Timeline anomaly tied to raw response fact.</td></tr>
+  </tbody></table>
+  <h2>Open findings</h2>
+  <table><thead><tr><th>Severity</th><th>Finding</th><th>Specific fix</th></tr></thead><tbody>
+    <tr><td class="high">High</td><td>No live Agave adapter execution on this host.</td><td>Install pinned Rust/Agave, run one healthy and one failed transaction, retain JSONL fixture.</td></tr>
+    <tr><td class="medium">Medium</td><td>JSONL is single-writer and lacks crash durability.</td><td>Add file locking/fsync recovery or durable database store before public ingestion.</td></tr>
+    <tr><td class="medium">Medium</td><td>Sequence continuity is process-local.</td><td>Assign durable ingestion order or resume sequence from the store.</td></tr>
+    <tr><td class="medium">Medium</td><td>Error normalization uses conservative heuristics.</td><td>Add versioned coded-error mapping and fixtures from current Agave responses.</td></tr>
+    <tr><td>Low</td><td>Raw events carry identity references but are not signed.</td><td>Sign canonical ProbeResults before remote collector ingestion.</td></tr>
+  </tbody></table>
+</body>
+</html>

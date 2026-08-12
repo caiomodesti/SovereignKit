@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sovereignkit.org/spec/intelligence-snapshot.schema.json",
+  "title": "SovereignKit Intelligence Snapshot v0.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "version", "generated_at", "expires_at", "policy_id", "route_intelligence", "input_hash", "generator_version"],
+  "properties": {
+    "schema_version": { "const": "0.1.0" },
+    "version": { "type": "integer", "minimum": 1 },
+    "generated_at": { "type": "string", "format": "date-time" },
+    "expires_at": { "type": "string", "format": "date-time" },
+    "policy_id": { "const": "ClassificationPolicyV0Experimental@0.1.0" },
+    "input_hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "generator_version": { "type": "string", "minLength": 1 },
+    "route_intelligence": {
+      "type": "array",
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["route_id", "transaction_class", "classification", "evidence_strength", "window_id", "sample_count", "observed_at"],
+        "properties": {
+          "route_id": { "type": "string" },
+          "transaction_class": { "enum": ["MATCHED_CONTROL", "PROGRAM_X"] },
+          "classification": { "enum": ["HEALTHY", "DEGRADED", "ASYMMETRIC", "INSUFFICIENT_DATA", "UNKNOWN"] },
+          "evidence_strength": { "enum": ["INSUFFICIENT", "LIMITED", "STRONG_CONTROLLED"] },
+          "window_id": { "type": "string" },
+          "sample_count": { "type": "integer", "minimum": 0 },
+          "observed_at": { "type": "string", "format": "date-time" },
+          "avoid_after_consecutive_snapshots": { "type": "integer", "minimum": 1, "default": 2 },
+          "restore_after_consecutive_snapshots": { "type": "integer", "minimum": 1, "default": 3 }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "name": "sovereignkit",
+  "version": "0.1.0",
+  "private": true,
+  "license": "Apache-2.0",
+  "packageManager": "pnpm@11.16.0",
+  "engines": {
+    "node": ">=22.17.0 <25",
+    "pnpm": "11.16.0"
+  },
+  "volta": {
+    "node": "22.17.0",
+    "pnpm": "11.16.0"
+  },
+  "scripts": {
+    "build": "node node_modules/typescript/bin/tsc -p packages/telemetry/tsconfig.json",
+    "check": "node node_modules/typescript/bin/tsc -p packages/telemetry/tsconfig.json --noEmit",
+    "test": "node node_modules/vitest/vitest.mjs run packages/telemetry/src",
+    "test:coverage": "node node_modules/vitest/vitest.mjs run --coverage packages/telemetry/src",
+    "check:integration": "node node_modules/typescript/bin/tsc -p packages/telemetry/tsconfig.integration.json --noEmit",
+    "test:live": "node node_modules/vitest/vitest.mjs run packages/telemetry/integration/live-validator.integration.test.ts --testTimeout=120000",
+    "env:doctor": "node scripts/env-doctor.mjs",
+    "env:doctor:core": "node scripts/env-doctor.mjs --core",
+    "examples:timelines": "node node_modules/typescript/bin/tsc -p packages/telemetry/tsconfig.json && node scripts/print-timeline-examples.mjs"
+  },
+  "devDependencies": {
+    "@types/node": "22.20.1",
+    "@vitest/coverage-v8": "4.1.10",
+    "typescript": "7.0.2",
+    "vitest": "4.1.10"
+  }
+}

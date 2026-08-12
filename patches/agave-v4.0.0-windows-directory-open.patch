@@ -1,0 +1,38 @@
+diff --git a/snapshots/src/hardened_unpack.rs b/snapshots/src/hardened_unpack.rs
+--- a/snapshots/src/hardened_unpack.rs
++++ b/snapshots/src/hardened_unpack.rs
+@@
+ const MAX_GENESIS_ARCHIVE_UNPACKED_COUNT: u64 = 100;
++
++#[cfg(windows)]
++fn open_directory(path: &Path) -> io::Result<File> {
++    use std::os::windows::fs::OpenOptionsExt;
++
++    const FILE_FLAG_BACKUP_SEMANTICS: u32 = 0x0200_0000;
++    fs::OpenOptions::new()
++        .read(true)
++        .custom_flags(FILE_FLAG_BACKUP_SEMANTICS)
++        .open(path)
++}
++
++#[cfg(not(windows))]
++fn open_directory(path: &Path) -> io::Result<File> {
++    File::open(path)
++}
+@@
+-            let opened_dir = Arc::new(File::open(parent)?);
++            let opened_dir = Arc::new(open_directory(parent)?);
+
+diff --git a/validator/src/bin/solana-test-validator.rs b/validator/src/bin/solana-test-validator.rs
+--- a/validator/src/bin/solana-test-validator.rs
++++ b/validator/src/bin/solana-test-validator.rs
+@@
+-    let faucet_addr = SocketAddr::new(IpAddr::V4(Ipv4Addr::UNSPECIFIED), faucet_port);
++    let faucet_addr = SocketAddr::new(IpAddr::V4(Ipv4Addr::UNSPECIFIED), faucet_port);
++    #[cfg(windows)]
++    let rpc_faucet_addr = SocketAddr::new(IpAddr::V4(Ipv4Addr::LOCALHOST), faucet_port);
++    #[cfg(not(windows))]
++    let rpc_faucet_addr = faucet_addr;
+@@
+-        faucet_addr: Some(faucet_addr),
++        faucet_addr: Some(rpc_faucet_addr),

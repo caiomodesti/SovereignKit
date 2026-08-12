@@ -1,0 +1,17 @@
+node_modules/
+dist/
+coverage/
+*.log
+.DS_Store
+.env
+.env.*
+!.env.example
+.secrets/
+artifacts/
+tmp/
+.tools/
+.codex-remote-attachments/
+.superstack/
+*-keypair.json
+ledger/
+ledgers/

@@ -1,0 +1,113 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sovereignkit.org/spec/experiment-definition.schema.json",
+  "title": "SovereignKit ExperimentDefinition v0.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "experiment_id", "experiment_version", "environment",
+    "phases", "routes", "readers", "transaction_classes", "probe_indices",
+    "randomization_seed", "pairing_window_ms", "rpc_profile",
+    "observation_quorum", "classification_policy_id"
+  ],
+  "properties": {
+    "schema_version": { "const": "0.1.0" },
+    "experiment_id": { "type": "string", "minLength": 1 },
+    "experiment_version": { "type": "string", "minLength": 1 },
+    "environment": { "enum": ["local_validator", "devnet_integration"] },
+    "phases": {
+      "type": "array", "minItems": 1, "uniqueItems": true,
+      "items": { "enum": ["healthy", "degraded", "asymmetric", "insufficient_data"] }
+    },
+    "routes": {
+      "type": "array", "minItems": 3,
+      "items": { "$ref": "#/$defs/route" }
+    },
+    "readers": {
+      "type": "array", "minItems": 3, "maxItems": 3,
+      "items": { "$ref": "#/$defs/reader" }
+    },
+    "transaction_classes": {
+      "type": "array", "minItems": 2,
+      "contains": { "const": "MATCHED_CONTROL" },
+      "items": { "enum": ["MATCHED_CONTROL", "PROGRAM_X"] }
+    },
+    "probe_indices": {
+      "type": "object", "additionalProperties": false,
+      "required": ["start", "count_by_phase"],
+      "properties": {
+        "start": { "type": "integer", "minimum": 0 },
+        "count_by_phase": {
+          "type": "object", "additionalProperties": false,
+          "required": ["healthy", "degraded", "asymmetric", "insufficient_data"],
+          "properties": {
+            "healthy": { "type": "integer", "minimum": 30 },
+            "degraded": { "type": "integer", "minimum": 30 },
+            "asymmetric": { "type": "integer", "minimum": 30 },
+            "insufficient_data": { "type": "integer", "minimum": 1, "maximum": 29 }
+          }
+        }
+      }
+    },
+    "randomization_seed": { "type": "string", "minLength": 16 },
+    "pairing_window_ms": { "type": "integer", "minimum": 1 },
+    "rpc_profile": { "$ref": "#/$defs/rpcProfile" },
+    "observation_quorum": {
+      "type": "object", "additionalProperties": false,
+      "required": ["reader_count", "required", "poll_interval_ms", "deadline_ms"],
+      "properties": {
+        "reader_count": { "const": 3 },
+        "required": { "const": 2 },
+        "poll_interval_ms": { "type": "integer", "minimum": 50 },
+        "deadline_ms": { "type": "integer", "minimum": 1000 }
+      }
+    },
+    "classification_policy_id": { "const": "ClassificationPolicyV0Experimental@0.1.0" },
+    "component_versions": {
+      "type": "object",
+      "additionalProperties": { "type": "string", "minLength": 1 }
+    }
+  },
+  "$defs": {
+    "route": {
+      "type": "object", "additionalProperties": false,
+      "required": ["route_id", "logical_endpoint", "transport", "observer_region", "configuration_profile"],
+      "properties": {
+        "route_id": { "type": "string", "minLength": 1 },
+        "logical_endpoint": { "type": "string", "format": "uri" },
+        "transport": { "enum": ["http_json_rpc", "https_json_rpc"] },
+        "observer_region": { "type": "string", "minLength": 1 },
+        "configuration_profile": { "type": "string", "minLength": 1 },
+        "provider_label": { "type": "string" }
+      }
+    },
+    "reader": {
+      "type": "object", "additionalProperties": false,
+      "required": ["reader_id", "logical_endpoint"],
+      "properties": {
+        "reader_id": { "type": "string", "minLength": 1 },
+        "logical_endpoint": { "type": "string", "format": "uri" },
+        "independence_note": { "type": "string" }
+      }
+    },
+    "rpcProfile": {
+      "type": "object", "additionalProperties": false,
+      "required": [
+        "blockhash_commitment", "preflight_commitment", "skip_preflight",
+        "max_retries", "min_context_slot_source", "encoding",
+        "confirmation_target", "finalization_target", "expiration_commitment"
+      ],
+      "properties": {
+        "blockhash_commitment": { "const": "confirmed" },
+        "preflight_commitment": { "const": "confirmed" },
+        "skip_preflight": { "const": false },
+        "max_retries": { "const": 0 },
+        "min_context_slot_source": { "const": "blockhash_response_context_slot" },
+        "encoding": { "const": "base64" },
+        "confirmation_target": { "const": "confirmed" },
+        "finalization_target": { "const": "finalized" },
+        "expiration_commitment": { "const": "confirmed" }
+      }
+    }
+  }
+}

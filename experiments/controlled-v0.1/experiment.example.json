@@ -1,0 +1,63 @@
+{
+  "schema_version": "0.1.0",
+  "experiment_id": "controlled-matched-accessibility-v0.1",
+  "experiment_version": "0.1.0",
+  "environment": "local_validator",
+  "phases": ["healthy", "degraded", "asymmetric", "insufficient_data"],
+  "routes": [
+    {
+      "route_id": "route-a",
+      "logical_endpoint": "http://127.0.0.1:8891",
+      "transport": "http_json_rpc",
+      "observer_region": "local-lab",
+      "configuration_profile": "controlled-single-attempt-v0.1",
+      "provider_label": "Controlled Route A"
+    },
+    {
+      "route_id": "route-b",
+      "logical_endpoint": "http://127.0.0.1:8892",
+      "transport": "http_json_rpc",
+      "observer_region": "local-lab",
+      "configuration_profile": "controlled-single-attempt-v0.1",
+      "provider_label": "Controlled Route B"
+    },
+    {
+      "route_id": "route-c",
+      "logical_endpoint": "http://127.0.0.1:8893",
+      "transport": "http_json_rpc",
+      "observer_region": "local-lab",
+      "configuration_profile": "controlled-single-attempt-v0.1",
+      "provider_label": "Controlled Route C"
+    }
+  ],
+  "readers": [
+    { "reader_id": "reader-1", "logical_endpoint": "http://127.0.0.1:8901", "independence_note": "Logical reader; shares the controlled validator." },
+    { "reader_id": "reader-2", "logical_endpoint": "http://127.0.0.1:8902", "independence_note": "Logical reader; shares the controlled validator." },
+    { "reader_id": "reader-3", "logical_endpoint": "http://127.0.0.1:8903", "independence_note": "Logical reader; shares the controlled validator." }
+  ],
+  "transaction_classes": ["MATCHED_CONTROL", "PROGRAM_X"],
+  "probe_indices": {
+    "start": 0,
+    "count_by_phase": { "healthy": 30, "degraded": 30, "asymmetric": 30, "insufficient_data": 10 }
+  },
+  "randomization_seed": "replace-with-committed-256-bit-seed",
+  "pairing_window_ms": 2000,
+  "rpc_profile": {
+    "blockhash_commitment": "confirmed",
+    "preflight_commitment": "confirmed",
+    "skip_preflight": false,
+    "max_retries": 0,
+    "min_context_slot_source": "blockhash_response_context_slot",
+    "encoding": "base64",
+    "confirmation_target": "confirmed",
+    "finalization_target": "finalized",
+    "expiration_commitment": "confirmed"
+  },
+  "observation_quorum": {
+    "reader_count": 3,
+    "required": 2,
+    "poll_interval_ms": 200,
+    "deadline_ms": 120000
+  },
+  "classification_policy_id": "ClassificationPolicyV0Experimental@0.1.0"
+}

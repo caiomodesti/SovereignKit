@@ -1,0 +1,96 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sovereignkit.org/spec/probe-result.schema.json",
+  "title": "SovereignKit ProbeResult v0.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "result_id", "idempotency_key", "observer_id",
+    "observer_sequence", "unit", "experiment_definition_hash", "signature",
+    "submission", "reader_claims", "quorum_decisions", "terminal_state",
+    "observer_wall_time", "payload_hash", "observer_signature"
+  ],
+  "properties": {
+    "schema_version": { "const": "0.1.0" },
+    "result_id": { "type": "string", "format": "uuid" },
+    "idempotency_key": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "observer_id": { "type": "string", "minLength": 1 },
+    "observer_sequence": { "type": "integer", "minimum": 0 },
+    "unit": { "$ref": "#/$defs/unit" },
+    "experiment_definition_hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "signature": { "type": "string", "minLength": 80, "maxLength": 90 },
+    "submission": { "$ref": "#/$defs/submission" },
+    "reader_claims": { "type": "array", "items": { "$ref": "#/$defs/claim" } },
+    "quorum_decisions": { "type": "array", "items": { "$ref": "#/$defs/decision" } },
+    "terminal_state": {
+      "enum": [
+        "OBSERVED_EXECUTION_FAILED", "CONFIRMED", "FINALIZED", "EXPIRED",
+        "OBSERVATION_INCONCLUSIVE"
+      ]
+    },
+    "observer_wall_time": { "type": "string", "format": "date-time" },
+    "payload_hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "observer_signature": { "type": "string", "minLength": 1 }
+  },
+  "$defs": {
+    "unit": {
+      "type": "object", "additionalProperties": false,
+      "required": ["experiment_id", "experiment_version", "phase", "observer_id", "route_id", "transaction_class", "probe_index", "unit_id"],
+      "properties": {
+        "experiment_id": { "type": "string" },
+        "experiment_version": { "type": "string" },
+        "phase": { "enum": ["healthy", "degraded", "asymmetric", "insufficient_data"] },
+        "observer_id": { "type": "string" },
+        "route_id": { "type": "string" },
+        "transaction_class": { "enum": ["MATCHED_CONTROL", "PROGRAM_X"] },
+        "probe_index": { "type": "integer", "minimum": 0 },
+        "unit_id": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+      }
+    },
+    "submission": {
+      "type": "object", "additionalProperties": false,
+      "required": ["attempt_id", "attempt_number", "outcome", "blockhash", "blockhash_context_slot", "last_valid_block_height", "serialized_size_bytes", "created_at", "submitted_at"],
+      "properties": {
+        "attempt_id": { "type": "string", "format": "uuid" },
+        "attempt_number": { "const": 1 },
+        "outcome": { "enum": ["RPC_ACKNOWLEDGED", "RPC_REJECTED"] },
+        "blockhash": { "type": "string" },
+        "blockhash_context_slot": { "type": "integer", "minimum": 0 },
+        "last_valid_block_height": { "type": "integer", "minimum": 0 },
+        "serialized_size_bytes": { "type": "integer", "minimum": 1 },
+        "created_at": { "type": "string", "format": "date-time" },
+        "submitted_at": { "type": "string", "format": "date-time" },
+        "response_at": { "type": "string", "format": "date-time" },
+        "rpc_error_code": { "type": ["integer", "string"] },
+        "rpc_error_category": { "type": "string" }
+      }
+    },
+    "claim": {
+      "type": "object", "additionalProperties": false,
+      "required": ["claim_id", "reader_id", "observed_at", "signature_status"],
+      "properties": {
+        "claim_id": { "type": "string", "format": "uuid" },
+        "reader_id": { "type": "string" },
+        "observed_at": { "type": "string", "format": "date-time" },
+        "signature_status": { "type": ["string", "null"], "enum": [null, "processed", "confirmed", "finalized"] },
+        "rpc_context_slot": { "type": "integer", "minimum": 0 },
+        "transaction_slot": { "type": "integer", "minimum": 0 },
+        "execution_error": {},
+        "observed_block_height": { "type": "integer", "minimum": 0 },
+        "reader_error": { "type": "string" }
+      }
+    },
+    "decision": {
+      "type": "object", "additionalProperties": false,
+      "required": ["decision_id", "decision_type", "supporting_claim_ids", "decided_at", "quorum_rule_version"],
+      "properties": {
+        "decision_id": { "type": "string", "format": "uuid" },
+        "decision_type": { "enum": ["OBSERVED_EXECUTION_SUCCESS", "OBSERVED_EXECUTION_FAILED", "CONFIRMED", "FINALIZED", "EXPIRED", "OBSERVATION_INCONCLUSIVE"] },
+        "supporting_claim_ids": { "type": "array", "minItems": 2, "items": { "type": "string", "format": "uuid" } },
+        "dissenting_claim_ids": { "type": "array", "items": { "type": "string", "format": "uuid" } },
+        "decided_at": { "type": "string", "format": "date-time" },
+        "quorum_rule_version": { "const": "ObservationQuorum@0.1.0" }
+      }
+    }
+  }
+}
