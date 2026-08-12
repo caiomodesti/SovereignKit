@@ -20,7 +20,8 @@ Node 22 is an LTS line and is the runtime that executes project scripts in the c
 
 ```text
 pnpm env:doctor:core  # Node, pnpm, manifest pins
-pnpm env:doctor       # also Rust and Agave/Solana CLI
+. scripts/use-pinned-toolchain.ps1
+pnpm env:doctor       # also Rust and Agave/Solana CLI after local activation
 ```
 
 The full doctor intentionally fails if Rust or Agave is absent or mismatched. Sprint 1 unit tests do not require them; the first live local-validator experiment will.

@@ -10,6 +10,8 @@ Sprint 1.5 requires a real local Agave validator while preserving Rust `1.97.1` 
 
 The official Agave `4.0.0` Windows binary starts `solana-test-validator` but fails while reopening the generated genesis archive. In the official `v4.0.0` source, `snapshots/src/hardened_unpack.rs` creates and validates the destination directory and then calls `File::open(parent)`. Windows does not open a directory through the ordinary file semantics used by `File::open`; a directory handle requires `FILE_FLAG_BACKUP_SEMANTICS`.
 
+After that incompatibility was corrected, `requestAirdrop` still failed with RPC error `-32603`. Raw logging proved that the embedded faucet listened successfully on `0.0.0.0:9900`, while the RPC client attempted to use `0.0.0.0:9900` as a destination and Windows returned `WSAEADDRNOTAVAIL` (`10049`). A direct probe connected to `127.0.0.1:9900` and rejected `0.0.0.0:9900`, isolating the second incompatibility.
+
 The unmodified source file used for diagnosis has SHA-256:
 
 ```text
@@ -20,10 +22,11 @@ The Linux fallback was also exhausted without changing Agave: WSL `2.7.11.0`, a 
 
 ## Decision
 
-Build only the required Agave `v4.0.0` Windows binaries from the official release source using Rust `1.97.1`, with one OS-gated compatibility patch:
+Build only the required Agave `v4.0.0` Windows binary from the official release source using Rust `1.97.1`, with two OS-gated compatibility changes in one standalone patch:
 
 - on Windows, open the already-created and canonicalized parent directory with `std::os::windows::fs::OpenOptionsExt` and `FILE_FLAG_BACKUP_SEMANTICS`;
 - on non-Windows targets, retain `File::open(parent)` unchanged;
+- keep the faucet listener on `0.0.0.0`, but on Windows give the in-process RPC faucet client the connectable loopback destination `127.0.0.1`;
 - do not change archive path validation, permissions, entry limits, genesis contents, validator behavior, version metadata, or any dependency version.
 
 This is a source-build provenance exception, not an Agave version upgrade. Resulting binaries must continue to report `4.0.0` and must never be represented as byte-identical to Anza's official Windows artifact.
@@ -40,6 +43,16 @@ Before the patched binary may be used for Sprint 1.5:
 6. verify every used CLI reports Agave/Solana `4.0.0`;
 7. prove an unmodified archive is unpacked inside the intended destination and traversal protections still pass;
 8. run the real-validator Sprint 1.5 proof and preserve raw evidence separately from build evidence.
+
+The accepted local build has these hashes:
+
+```text
+upstream source archive  1BD1B7B4EB412D95926ED9490DFBDAC787F75A63DF13317AF7DDEC37BE0EB6A1
+patched hardened_unpack  6E02100F035E0167EC47CE13307FF0C383B97782207DE07EC4B98E52A6E8B144
+patched validator main   54E74039BAE14E690A3798DE26971A328A7ECBCF7ECCDDC52AC54B8FBCD549F6
+standalone patch          8520358E29CF522BECE88112DDD224EF273FA54BC190AFD12611113AC2487ED4
+validator executable      9E9FD1C10BE90585039C1637F36FFCA360ADD8A6E7B1F64324E75B7E4708B406
+```
 
 If any condition fails, this ADR is not satisfied and the experiment remains blocked.
 

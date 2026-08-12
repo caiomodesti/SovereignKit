@@ -1,0 +1,72 @@
+{
+  "evidenceVersion": "sprint-1.5-live-validator-proof-v1",
+  "generatedAt": "2026-08-12T10:56:13.232Z",
+  "endpoint": "http://127.0.0.1:8899",
+  "agaveVersion": "4.0.0",
+  "transactionVersion": "legacy",
+  "sendConfiguration": {
+    "encoding": "base64",
+    "maxRetries": 5,
+    "minContextSlot": "6",
+    "preflightCommitment": "confirmed",
+    "skipPreflight": false
+  },
+  "observationConfiguration": {
+    "readerCount": 3,
+    "requiredQuorum": 2,
+    "pollIntervalMs": 100,
+    "observationDeadlineMs": 60000,
+    "readerRequestTimeoutMs": 2000,
+    "infrastructureIndependence": false
+  },
+  "transactionSignature": "3zi6NJHw5nDGhyMXxiGJBkZp63ewE9Ts4meQt2WsFw2kCu93AjExnER7URiNcTfcr9AdDu15Uc6f4GZaEEPt3YfM",
+  "airdropSignature": "2Usk8EropAWWBah7AhMRY1hZZhp2huEok1VmEjYPW5TahH3wzaGoM5KD8k9NNiBBEoAv5bzsLoogYvdnPEaRUQd6",
+  "blockhash": "fxhC5rwRkZcARdaG6aZ3yrJcvkiJzkdkgfWrPi9Gr9q",
+  "blockhashContextSlot": "6",
+  "lastValidBlockHeight": "156",
+  "recipient": "7Z3Mh4ZokcgxA8aQ26fxQWUrwD5k3BSF1V2fLE4E4XM6",
+  "recipientFinalizedBalanceLamports": "1000000",
+  "finalRpcStatus": {
+    "confirmationStatus": "finalized",
+    "confirmations": null,
+    "err": null,
+    "slot": "7",
+    "status": {
+      "Ok": null
+    }
+  },
+  "logicalObservationOnly": true,
+  "rawEventCount": 1372,
+  "lifecycle": [
+    "CREATED",
+    "SUBMISSION_ATTEMPTED",
+    "RPC_ACKNOWLEDGED",
+    "OBSERVATION_PENDING",
+    "OBSERVED_EXECUTION_SUCCESS",
+    "CONFIRMED",
+    "FINALIZED"
+  ],
+  "quorum": {
+    "version": "logical-observation-quorum-v0.1",
+    "required": 2,
+    "observedSuccessReaderIds": [
+      "logical-reader-1",
+      "logical-reader-2",
+      "logical-reader-3"
+    ],
+    "observedFailureReaderIds": [],
+    "confirmedReaderIds": [
+      "logical-reader-1",
+      "logical-reader-2",
+      "logical-reader-3"
+    ],
+    "finalizedReaderIds": [
+      "logical-reader-1",
+      "logical-reader-2",
+      "logical-reader-3"
+    ],
+    "expiredHeightReaderIds": [],
+    "hasAnyLedgerObservation": true,
+    "inconsistentExecutionClaims": false
+  }
+}

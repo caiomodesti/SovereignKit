@@ -1,0 +1,110 @@
+{
+  "transactionId": "live-3zi6NJHw5nDGhyMXxiGJBkZp63ewE9Ts4meQt2WsFw2kCu93AjExnER7URiNcTfcr9AdDu15Uc6f4GZaEEPt3YfM",
+  "attemptId": "live-attempt-3zi6NJHw5nDGhyMXxiGJBkZp63ewE9Ts4meQt2WsFw2kCu93AjExnER7URiNcTfcr9AdDu15Uc6f4GZaEEPt3YfM",
+  "experimentId": "sprint-1.5-live-validator-proof",
+  "probeId": "healthy-0",
+  "routeId": "local-agave-4.0.0",
+  "signature": "3zi6NJHw5nDGhyMXxiGJBkZp63ewE9Ts4meQt2WsFw2kCu93AjExnER7URiNcTfcr9AdDu15Uc6f4GZaEEPt3YfM",
+  "validity": {
+    "blockhash": "fxhC5rwRkZcARdaG6aZ3yrJcvkiJzkdkgfWrPi9Gr9q",
+    "contextSlot": "6",
+    "lastValidBlockHeight": "156",
+    "fetchedAt": "2026-08-12T10:55:43.568Z",
+    "blockhashCommitment": "confirmed"
+  },
+  "lifecycle": [
+    {
+      "state": "CREATED",
+      "sourceEventIds": [
+        "ac8d1cea-5646-4205-859f-460d6b35b0a0"
+      ],
+      "wallClock": "2026-08-12T10:55:43.570Z",
+      "monotonicNs": "1850317523500"
+    },
+    {
+      "state": "SUBMISSION_ATTEMPTED",
+      "sourceEventIds": [
+        "6f8dde74-1f0e-439b-9f14-4c9aadcd19ca"
+      ],
+      "wallClock": "2026-08-12T10:55:43.572Z",
+      "monotonicNs": "1850319604600"
+    },
+    {
+      "state": "RPC_ACKNOWLEDGED",
+      "sourceEventIds": [
+        "cd47a476-ee25-492d-9c07-49912197b9d9"
+      ],
+      "wallClock": "2026-08-12T10:55:43.575Z",
+      "monotonicNs": "1850322511500"
+    },
+    {
+      "state": "OBSERVATION_PENDING",
+      "sourceEventIds": [
+        "3b6ca7dd-baa2-427b-9744-7e88c0efa896"
+      ],
+      "wallClock": "2026-08-12T10:55:43.576Z",
+      "monotonicNs": "1850323536800"
+    },
+    {
+      "state": "OBSERVED_EXECUTION_SUCCESS",
+      "sourceEventIds": [
+        "a496c7d4-960f-4220-b0b4-e2fb4546cedf",
+        "e097d33f-54bc-4b00-bb4c-e44842d901d6"
+      ],
+      "wallClock": "2026-08-12T10:55:44.423Z",
+      "monotonicNs": "1851170484900"
+    },
+    {
+      "state": "CONFIRMED",
+      "sourceEventIds": [
+        "a496c7d4-960f-4220-b0b4-e2fb4546cedf",
+        "e097d33f-54bc-4b00-bb4c-e44842d901d6"
+      ],
+      "wallClock": "2026-08-12T10:55:44.423Z",
+      "monotonicNs": "1851170484900"
+    },
+    {
+      "state": "FINALIZED",
+      "sourceEventIds": [
+        "77ca4cf9-8e1e-4cb6-a2e7-92ee15b212c6",
+        "d1059b1a-c8cb-443c-a82f-931cdaf8f879"
+      ],
+      "wallClock": "2026-08-12T10:56:13.172Z",
+      "monotonicNs": "1879919055000"
+    }
+  ],
+  "derivedState": "FINALIZED",
+  "executionOutcome": "success",
+  "quorum": {
+    "version": "logical-observation-quorum-v0.1",
+    "required": 2,
+    "observedSuccessReaderIds": [
+      "logical-reader-1",
+      "logical-reader-2",
+      "logical-reader-3"
+    ],
+    "observedFailureReaderIds": [],
+    "confirmedReaderIds": [
+      "logical-reader-1",
+      "logical-reader-2",
+      "logical-reader-3"
+    ],
+    "finalizedReaderIds": [
+      "logical-reader-1",
+      "logical-reader-2",
+      "logical-reader-3"
+    ],
+    "expiredHeightReaderIds": [],
+    "hasAnyLedgerObservation": true,
+    "inconsistentExecutionClaims": false
+  },
+  "durations": {
+    "rpcResponseMs": 2.9069,
+    "observedMs": 852.9614,
+    "confirmedMs": 852.9614,
+    "finalizedMs": 29601.5315
+  },
+  "rawEventCount": 1372,
+  "effectiveObservationCount": 1368,
+  "anomalies": []
+}

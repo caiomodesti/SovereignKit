@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SovereignKit Sprint 1.5 Hostile Audit</title>
+  <style>
+    body{font:16px/1.55 system-ui,sans-serif;max-width:980px;margin:40px auto;padding:0 24px;color:#18212b;background:#f7f8fa}h1,h2{line-height:1.2}table{width:100%;border-collapse:collapse;background:white}th,td{padding:10px 12px;border:1px solid #d8dee6;text-align:left;vertical-align:top}.pass{color:#08783e}.risk{color:#a04b00}.card{background:white;border:1px solid #d8dee6;border-radius:10px;padding:18px;margin:16px 0}code{background:#eef1f4;padding:2px 5px;border-radius:4px}small{color:#586574}
+  </style>
+</head>
+<body>
+  <h1>SovereignKit Sprint 1.5 Hostile Audit</h1>
+  <p><strong class="pass">Scoped verdict: PASS.</strong> Telemetry Core is validated against a real local Agave 4.0.0 validator. This is not a mainnet-readiness or decentralization claim.</p>
+  <div class="card"><strong>Scores</strong><p>Security: B · Correctness: A- · Error handling: B+ · Testing: A- · Organization: A- · Documentation: A · Overall quality: A- · Ready for mainnet: No</p></div>
+  <h2>Evidence</h2>
+  <table><tr><th>Control</th><th>Result</th></tr>
+    <tr><td>Real transaction</td><td class="pass">Finalized legacy System Program transfer; finalized balance 1,000,000 lamports</td></tr>
+    <tr><td>Raw truth</td><td class="pass">Append-only JSONL, 1,372 unique event IDs in one attempt</td></tr>
+    <tr><td>Lifecycle</td><td class="pass">CREATED → SUBMISSION_ATTEMPTED → RPC_ACKNOWLEDGED → OBSERVATION_PENDING → OBSERVED_EXECUTION_SUCCESS → CONFIRMED → FINALIZED</td></tr>
+    <tr><td>Quorum</td><td class="pass">Required 2/3; observed 3/3 logical readers</td></tr>
+    <tr><td>Falsification</td><td class="pass">Non-landed v0 runs remained OBSERVATION_INCONCLUSIVE</td></tr>
+  </table>
+  <h2>Findings</h2>
+  <table><tr><th>Severity</th><th>Finding</th><th>Specific treatment</th></tr>
+    <tr><td class="risk">High (claim scope)</td><td>Readers share one validator and failure domain.</td><td>Use separately operated endpoints before any infrastructure-independence claim.</td></tr>
+    <tr><td class="risk">Medium</td><td>Local ProbeResult is not signed.</td><td>Add canonical Ed25519 signing, allowlist validation, result ID and idempotency checks before collector ingestion.</td></tr>
+    <tr><td class="risk">Medium</td><td>JSONL has no fsync, multi-writer lock, or crash recovery guarantee.</td><td>Keep JSONL semantics but introduce durable collector storage before public ingestion.</td></tr>
+    <tr><td class="risk">Medium</td><td>Agave Windows executable is a locally patched source build.</td><td>Preserve hashes/focused tests; prefer an upstream fix when available.</td></tr>
+    <tr><td class="risk">Medium</td><td>v0 transactions did not land in repeated local runs.</td><td>Keep Sprint 1.5 profile explicitly legacy and investigate v0 separately before claiming support.</td></tr>
+    <tr><td>Low</td><td>100 ms polling creates a large raw fixture.</td><td>Set an explicit later sampling/storage budget without rewriting historical raw facts.</td></tr>
+  </table>
+  <h2>Security rubric applicability</h2>
+  <p>No project-owned on-chain program exists in Sprint 1.5, so signer/PDA/account-owner/CPI/rent-drain checks are not applicable yet. No secret or private key is committed. Runtime keypairs, ledgers, toolchains and artifacts are ignored. Persisted measurement payloads are validated before append.</p>
+  <h2>Verification</h2>
+  <p>Unit 11/11 · Live integration 1/1 · Statements 94.78% · Branches 85.75% · Functions 97.52% · Lines 95.34% · Typecheck/build/examples PASS.</p>
+  <p><small>Generated 2026-08-12. Sprint 2 intentionally not started.</small></p>
+</body>
+</html>
