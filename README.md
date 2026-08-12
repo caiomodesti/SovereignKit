@@ -4,7 +4,7 @@ Solana can remain healthy while a user's path to Solana fails.
 
 SovereignKit is an open-source transaction accessibility observatory and resilient routing SDK for Solana. It measures route-level transaction accessibility, compares matched transaction classes, detects asymmetric route behavior, and helps applications route around paths that fail.
 
-> **Status:** v0.1, Sprint 2 Probe Engine complete. No reactive router, classifier, hostile proxy, dashboard, or public Observatory infrastructure exists yet.
+> **Status:** v0.1, Sprint 3 Reactive Router complete. No classifier, hostile proxy, dashboard, or public Observatory infrastructure exists yet.
 
 ## What it measures
 
@@ -89,6 +89,14 @@ See the [Sprint 1.5 acceptance and hostile audit](docs/sprint-1.5-acceptance.md)
 The builder keeps each route/probe pair's fixed-width nonce equal across classes, changes the one-byte class discriminator, and guarantees that every comparative unit has distinct wire bytes and a distinct transaction signature. Randomization keeps every `probe_index` group contiguous and records pairing-window breaches.
 
 See the [Sprint 2 acceptance audit](docs/sprint-2-acceptance.md) and [Probe Engine contract](docs/probe-engine.md). The project-owned on-chain program and live hostile scenarios remain later work; Sprint 2 does not claim execution against that undeployed program.
+
+## Sprint 3 Reactive Router
+
+`@sovereignkit/sdk` implements bounded local primary/fallback routing. Every configured route has a distinct submission-client identity, each route is visited at most once, all submission/observation/telemetry operations are time-bounded, and a global deadline caps the routing operation. An RPC acknowledgment is recorded with `landing: false`; only a valid 2/3 decision from three distinct observation clients can produce `CONFIRMED` or `FINALIZED`.
+
+The committed Agave fixture proves a controlled primary rejection followed by one real fallback submission, three-client logical observation quorum, a real transaction signature, and finalized recipient balance. All readers share the same local validator, and the primary failure is injected at the adapter boundary; Sprint 4 will replace that failure with a controlled network proxy.
+
+See the [Reactive Router contract](docs/reactive-router.md), [Sprint 3 acceptance audit](docs/sprint-3-acceptance.md), and [reproduction procedure](docs/sprint-3-reproduction.md).
 
 ## First experiment reproduction contract
 

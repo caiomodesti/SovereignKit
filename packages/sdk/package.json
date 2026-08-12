@@ -1,0 +1,24 @@
+{
+  "name": "@sovereignkit/sdk",
+  "version": "0.1.0",
+  "description": "Bounded reactive primary/fallback routing for Solana transactions",
+  "type": "module",
+  "license": "Apache-2.0",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "node ../../node_modules/typescript/bin/tsc -p tsconfig.json",
+    "check": "node ../../node_modules/typescript/bin/tsc -p tsconfig.json --noEmit",
+    "test": "node ../../node_modules/vitest/vitest.mjs run src",
+    "test:coverage": "node ../../node_modules/vitest/vitest.mjs run --coverage src"
+  },
+  "devDependencies": {
+    "@solana/kit": "7.0.0"
+  }
+}

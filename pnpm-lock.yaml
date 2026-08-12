@@ -27,6 +27,12 @@ importers:
         specifier: 7.0.0
         version: 7.0.0(typescript@7.0.2)
 
+  packages/sdk:
+    devDependencies:
+      '@solana/kit':
+        specifier: 7.0.0
+        version: 7.0.0(typescript@7.0.2)
+
   packages/telemetry:
     dependencies:
       '@solana/kit':

@@ -1,0 +1,179 @@
+{
+  "evidenceVersion": "sprint-3-live-router-proof@0.1.0",
+  "generatedAt": "2026-08-12T15:10:12.121Z",
+  "agaveVersion": "4.0.0",
+  "endpoint": "http://127.0.0.1:8899",
+  "transactionSignature": "GsRe6qnYgvPYL9r5YZHwT95h9GUjKmXinA1BmUuuQw7AyHwESzzcwPmYsXzQDtzPGVmMSe1SPrc8ixQEMoyKcj9",
+  "airdropSignature": "5Mzetpxmaa59nNzdqdH1ovDQQPbnvN7aQymzowdT99oo7878JRTuf9aSSCzU4kfMZvCyibBFPU1ksqHQFmDGEtsN",
+  "recipient": "BawkS5rPfFjfYpjGEght7sNCuaRbxLJmhgVZEscyQbud",
+  "recipientFinalizedBalanceLamports": "1000000",
+  "primaryFailureMode": "controlled adapter rejection; Sprint 4 will replace this with a network proxy",
+  "observationIndependence": "three distinct RPC client instances sharing one local validator",
+  "result": {
+    "routerVersion": "ReactiveRouter@0.1.0",
+    "finalState": "CONFIRMED",
+    "confirmationObservedAfterRouteId": "local-agave-fallback",
+    "attempts": [
+      {
+        "attemptNumber": 1,
+        "routeId": "controlled-reject-primary",
+        "submissionOutcome": "RPC_REJECTED"
+      },
+      {
+        "attemptNumber": 2,
+        "routeId": "local-agave-fallback",
+        "submissionOutcome": "RPC_ACKNOWLEDGED",
+        "observationState": "CONFIRMED"
+      }
+    ],
+    "visitedRouteIds": [
+      "controlled-reject-primary",
+      "local-agave-fallback"
+    ],
+    "events": [
+      {
+        "routerVersion": "ReactiveRouter@0.1.0",
+        "eventId": "867ffba7-e56f-4d72-9e46-d0b70b8639fd",
+        "sequence": 0,
+        "eventType": "ROUTING_STARTED",
+        "transactionId": "sprint-3-GsRe6qnYgvPYL9r5YZHwT95h9GUjKmXinA1BmUuuQw7AyHwESzzcwPmYsXzQDtzPGVmMSe1SPrc8ixQEMoyKcj9",
+        "signature": "GsRe6qnYgvPYL9r5YZHwT95h9GUjKmXinA1BmUuuQw7AyHwESzzcwPmYsXzQDtzPGVmMSe1SPrc8ixQEMoyKcj9",
+        "wallClock": "2026-08-12T15:09:42.760Z",
+        "monotonicOffsetMs": 1.0830999999998312,
+        "data": {
+          "maxRoutes": 2,
+          "overallDeadlineMs": 75000
+        }
+      },
+      {
+        "routerVersion": "ReactiveRouter@0.1.0",
+        "eventId": "6ebd6792-1b62-422c-a16c-79a18ffdbc6b",
+        "sequence": 1,
+        "eventType": "ROUTE_ATTEMPT_STARTED",
+        "transactionId": "sprint-3-GsRe6qnYgvPYL9r5YZHwT95h9GUjKmXinA1BmUuuQw7AyHwESzzcwPmYsXzQDtzPGVmMSe1SPrc8ixQEMoyKcj9",
+        "signature": "GsRe6qnYgvPYL9r5YZHwT95h9GUjKmXinA1BmUuuQw7AyHwESzzcwPmYsXzQDtzPGVmMSe1SPrc8ixQEMoyKcj9",
+        "wallClock": "2026-08-12T15:09:42.761Z",
+        "monotonicOffsetMs": 1.146600000000035,
+        "routeId": "controlled-reject-primary",
+        "attemptNumber": 1,
+        "data": {}
+      },
+      {
+        "routerVersion": "ReactiveRouter@0.1.0",
+        "eventId": "f09a9671-41b9-4c1a-9aae-1fbf9ef76523",
+        "sequence": 2,
+        "eventType": "ROUTE_RPC_REJECTED",
+        "transactionId": "sprint-3-GsRe6qnYgvPYL9r5YZHwT95h9GUjKmXinA1BmUuuQw7AyHwESzzcwPmYsXzQDtzPGVmMSe1SPrc8ixQEMoyKcj9",
+        "signature": "GsRe6qnYgvPYL9r5YZHwT95h9GUjKmXinA1BmUuuQw7AyHwESzzcwPmYsXzQDtzPGVmMSe1SPrc8ixQEMoyKcj9",
+        "wallClock": "2026-08-12T15:09:42.761Z",
+        "monotonicOffsetMs": 1.4243999999998778,
+        "routeId": "controlled-reject-primary",
+        "attemptNumber": 1,
+        "data": {
+          "errorCategory": "RPC",
+          "errorCode": "CONTROLLED_SPRINT_3_REJECTION"
+        }
+      },
+      {
+        "routerVersion": "ReactiveRouter@0.1.0",
+        "eventId": "555cd821-01ed-40d8-8494-927eab30fdf0",
+        "sequence": 3,
+        "eventType": "FALLBACK_SELECTED",
+        "transactionId": "sprint-3-GsRe6qnYgvPYL9r5YZHwT95h9GUjKmXinA1BmUuuQw7AyHwESzzcwPmYsXzQDtzPGVmMSe1SPrc8ixQEMoyKcj9",
+        "signature": "GsRe6qnYgvPYL9r5YZHwT95h9GUjKmXinA1BmUuuQw7AyHwESzzcwPmYsXzQDtzPGVmMSe1SPrc8ixQEMoyKcj9",
+        "wallClock": "2026-08-12T15:09:42.761Z",
+        "monotonicOffsetMs": 1.4444999999998345,
+        "routeId": "local-agave-fallback",
+        "attemptNumber": 2,
+        "data": {
+          "fromRouteId": "controlled-reject-primary",
+          "toRouteId": "local-agave-fallback"
+        }
+      },
+      {
+        "routerVersion": "ReactiveRouter@0.1.0",
+        "eventId": "be942d80-07f7-4455-b24e-17fe01ad86ea",
+        "sequence": 4,
+        "eventType": "ROUTE_ATTEMPT_STARTED",
+        "transactionId": "sprint-3-GsRe6qnYgvPYL9r5YZHwT95h9GUjKmXinA1BmUuuQw7AyHwESzzcwPmYsXzQDtzPGVmMSe1SPrc8ixQEMoyKcj9",
+        "signature": "GsRe6qnYgvPYL9r5YZHwT95h9GUjKmXinA1BmUuuQw7AyHwESzzcwPmYsXzQDtzPGVmMSe1SPrc8ixQEMoyKcj9",
+        "wallClock": "2026-08-12T15:09:42.761Z",
+        "monotonicOffsetMs": 1.461999999999989,
+        "routeId": "local-agave-fallback",
+        "attemptNumber": 2,
+        "data": {}
+      },
+      {
+        "routerVersion": "ReactiveRouter@0.1.0",
+        "eventId": "5c38dcda-3ee9-4a93-a634-373eb8f69ce0",
+        "sequence": 5,
+        "eventType": "ROUTE_RPC_ACKNOWLEDGED",
+        "transactionId": "sprint-3-GsRe6qnYgvPYL9r5YZHwT95h9GUjKmXinA1BmUuuQw7AyHwESzzcwPmYsXzQDtzPGVmMSe1SPrc8ixQEMoyKcj9",
+        "signature": "GsRe6qnYgvPYL9r5YZHwT95h9GUjKmXinA1BmUuuQw7AyHwESzzcwPmYsXzQDtzPGVmMSe1SPrc8ixQEMoyKcj9",
+        "wallClock": "2026-08-12T15:09:42.763Z",
+        "monotonicOffsetMs": 3.179499999999962,
+        "routeId": "local-agave-fallback",
+        "attemptNumber": 2,
+        "data": {
+          "landing": false
+        }
+      },
+      {
+        "routerVersion": "ReactiveRouter@0.1.0",
+        "eventId": "3545a2f4-a0b6-48f3-bd9f-b54ad6981bc0",
+        "sequence": 6,
+        "eventType": "INDEPENDENT_OBSERVATION_STARTED",
+        "transactionId": "sprint-3-GsRe6qnYgvPYL9r5YZHwT95h9GUjKmXinA1BmUuuQw7AyHwESzzcwPmYsXzQDtzPGVmMSe1SPrc8ixQEMoyKcj9",
+        "signature": "GsRe6qnYgvPYL9r5YZHwT95h9GUjKmXinA1BmUuuQw7AyHwESzzcwPmYsXzQDtzPGVmMSe1SPrc8ixQEMoyKcj9",
+        "wallClock": "2026-08-12T15:09:42.763Z",
+        "monotonicOffsetMs": 3.21569999999997,
+        "routeId": "local-agave-fallback",
+        "attemptNumber": 2,
+        "data": {
+          "readerIds": [
+            "logical-reader-1",
+            "logical-reader-2",
+            "logical-reader-3"
+          ]
+        }
+      },
+      {
+        "routerVersion": "ReactiveRouter@0.1.0",
+        "eventId": "3be2bd82-dc42-4f22-be39-91571e22f32f",
+        "sequence": 7,
+        "eventType": "INDEPENDENT_OBSERVATION_RECORDED",
+        "transactionId": "sprint-3-GsRe6qnYgvPYL9r5YZHwT95h9GUjKmXinA1BmUuuQw7AyHwESzzcwPmYsXzQDtzPGVmMSe1SPrc8ixQEMoyKcj9",
+        "signature": "GsRe6qnYgvPYL9r5YZHwT95h9GUjKmXinA1BmUuuQw7AyHwESzzcwPmYsXzQDtzPGVmMSe1SPrc8ixQEMoyKcj9",
+        "wallClock": "2026-08-12T15:09:43.748Z",
+        "monotonicOffsetMs": 987.6177999999998,
+        "routeId": "local-agave-fallback",
+        "attemptNumber": 2,
+        "data": {
+          "state": "CONFIRMED",
+          "supportingReaderIds": [
+            "logical-reader-1",
+            "logical-reader-2",
+            "logical-reader-3"
+          ]
+        }
+      },
+      {
+        "routerVersion": "ReactiveRouter@0.1.0",
+        "eventId": "c288454a-f3fb-450d-ab9d-718a754b798d",
+        "sequence": 8,
+        "eventType": "ROUTING_CONFIRMED",
+        "transactionId": "sprint-3-GsRe6qnYgvPYL9r5YZHwT95h9GUjKmXinA1BmUuuQw7AyHwESzzcwPmYsXzQDtzPGVmMSe1SPrc8ixQEMoyKcj9",
+        "signature": "GsRe6qnYgvPYL9r5YZHwT95h9GUjKmXinA1BmUuuQw7AyHwESzzcwPmYsXzQDtzPGVmMSe1SPrc8ixQEMoyKcj9",
+        "wallClock": "2026-08-12T15:09:43.748Z",
+        "monotonicOffsetMs": 987.7059000000002,
+        "routeId": "local-agave-fallback",
+        "attemptNumber": 2,
+        "data": {
+          "state": "CONFIRMED",
+          "rpcAcknowledgementWasLandingEvidence": false
+        }
+      }
+    ],
+    "telemetryHookErrors": []
+  }
+}
