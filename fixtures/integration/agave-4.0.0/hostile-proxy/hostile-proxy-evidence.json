@@ -1,0 +1,234 @@
+{
+  "evidenceVersion": "sprint-4-live-hostile-proxy-proof@0.1.0",
+  "generatedAt": "2026-08-12T15:28:44.899Z",
+  "agaveVersion": "4.0.0",
+  "endpoint": "http://127.0.0.1:8899",
+  "executableFixtureProgram": "MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr",
+  "fixtureProgramLimitation": "Memo is used only for network-path proof; the statistical experiment still requires the project-owned matched program",
+  "airdropSignature": "4fR83QbmjcwEnSniQoZxWFwnMhn2GftxqC8GKX8nsva592wfjMH3ANHd7KfKEjswYqgmG5z7ihPUwmuquPjqKoNy",
+  "controlSignature": "5smBiFZGJdwo93ez8kMDuDj8FFNgSVzeet2cGZet59UWDnQ2xyxigCSSA9DyQFhX1vxy3yWzLJVGX1oYvMBTGUiv",
+  "programXSignature": "3UjrM5EGVs63ARJD2o79A93E3RseumcuDsAPNooChzfqT5C8iUY5GWRtqXyxA5BhPZS1CUXRWYBQEYGDQrEkKeww",
+  "selectiveProxyAudit": [
+    {
+      "proxyVersion": "ControlledHostileProxy@0.1.0",
+      "eventId": "48ffad02-49ec-4df5-8226-50c174169189",
+      "sequence": 0,
+      "receivedAt": "2026-08-12T15:28:42.920Z",
+      "modeType": "REJECT_CLASS",
+      "scheduleId": "sprint-4-selective-program-x-v1",
+      "requestMethod": "sendTransaction",
+      "decision": "PASS_THROUGH",
+      "classification": "MATCHED_CONTROL",
+      "pairNonceHash": "fc190f261540dce7f21a8d6a387b482f7e04e4e2ccdc8294e7be4cb225777c31",
+      "reason": "mode permits controlled transaction"
+    },
+    {
+      "proxyVersion": "ControlledHostileProxy@0.1.0",
+      "eventId": "cd7cc778-d876-4d08-bd0e-72ce3e051809",
+      "sequence": 1,
+      "receivedAt": "2026-08-12T15:28:43.904Z",
+      "modeType": "REJECT_CLASS",
+      "scheduleId": "sprint-4-selective-program-x-v1",
+      "requestMethod": "sendTransaction",
+      "decision": "REJECTED",
+      "classification": "PROGRAM_X",
+      "pairNonceHash": "fc190f261540dce7f21a8d6a387b482f7e04e4e2ccdc8294e7be4cb225777c31",
+      "reason": "precommitted schedule sprint-4-selective-program-x-v1"
+    }
+  ],
+  "generalProxyAudit": [
+    {
+      "proxyVersion": "ControlledHostileProxy@0.1.0",
+      "eventId": "79f5f1a6-c591-41bc-8c8f-2e087546ec73",
+      "sequence": 0,
+      "receivedAt": "2026-08-12T15:28:44.897Z",
+      "modeType": "GENERAL_DEGRADATION",
+      "scheduleId": "sprint-4-general-index-1-v1",
+      "requestMethod": "sendTransaction",
+      "decision": "REJECTED",
+      "classification": "MATCHED_CONTROL",
+      "pairNonceHash": "a54868a00967a403de15d5dc169a4693e307cf0e4d390580a2aff731d30c7a69",
+      "reason": "precommitted schedule sprint-4-general-index-1-v1"
+    },
+    {
+      "proxyVersion": "ControlledHostileProxy@0.1.0",
+      "eventId": "07551c6a-4db6-4f36-8f52-53f73b4f9581",
+      "sequence": 1,
+      "receivedAt": "2026-08-12T15:28:44.898Z",
+      "modeType": "GENERAL_DEGRADATION",
+      "scheduleId": "sprint-4-general-index-1-v1",
+      "requestMethod": "sendTransaction",
+      "decision": "REJECTED",
+      "classification": "PROGRAM_X",
+      "pairNonceHash": "a54868a00967a403de15d5dc169a4693e307cf0e4d390580a2aff731d30c7a69",
+      "reason": "precommitted schedule sprint-4-general-index-1-v1"
+    }
+  ],
+  "routingResult": {
+    "routerVersion": "ReactiveRouter@0.1.0",
+    "finalState": "CONFIRMED",
+    "confirmationObservedAfterRouteId": "direct-agave-fallback",
+    "attempts": [
+      {
+        "attemptNumber": 1,
+        "routeId": "selective-proxy-primary",
+        "submissionOutcome": "RPC_REJECTED"
+      },
+      {
+        "attemptNumber": 2,
+        "routeId": "direct-agave-fallback",
+        "submissionOutcome": "RPC_ACKNOWLEDGED",
+        "observationState": "CONFIRMED"
+      }
+    ],
+    "visitedRouteIds": [
+      "selective-proxy-primary",
+      "direct-agave-fallback"
+    ],
+    "events": [
+      {
+        "routerVersion": "ReactiveRouter@0.1.0",
+        "eventId": "e228b400-d3b5-4828-bec0-82cf26e14f63",
+        "sequence": 0,
+        "eventType": "ROUTING_STARTED",
+        "transactionId": "445cfee8f89be6f1e7d4af79808f322d52573d283ff9d5a58e7d5887b945b80e",
+        "signature": "3UjrM5EGVs63ARJD2o79A93E3RseumcuDsAPNooChzfqT5C8iUY5GWRtqXyxA5BhPZS1CUXRWYBQEYGDQrEkKeww",
+        "wallClock": "2026-08-12T15:28:43.902Z",
+        "monotonicOffsetMs": 0.1433999999999287,
+        "data": {
+          "maxRoutes": 2,
+          "overallDeadlineMs": 75000
+        }
+      },
+      {
+        "routerVersion": "ReactiveRouter@0.1.0",
+        "eventId": "c14bd623-9dd5-4086-800a-4f6a78fed476",
+        "sequence": 1,
+        "eventType": "ROUTE_ATTEMPT_STARTED",
+        "transactionId": "445cfee8f89be6f1e7d4af79808f322d52573d283ff9d5a58e7d5887b945b80e",
+        "signature": "3UjrM5EGVs63ARJD2o79A93E3RseumcuDsAPNooChzfqT5C8iUY5GWRtqXyxA5BhPZS1CUXRWYBQEYGDQrEkKeww",
+        "wallClock": "2026-08-12T15:28:43.902Z",
+        "monotonicOffsetMs": 0.22460000000000946,
+        "routeId": "selective-proxy-primary",
+        "attemptNumber": 1,
+        "data": {}
+      },
+      {
+        "routerVersion": "ReactiveRouter@0.1.0",
+        "eventId": "416f92d3-150d-4c91-9e84-a9ce4c00e9b2",
+        "sequence": 2,
+        "eventType": "ROUTE_RPC_REJECTED",
+        "transactionId": "445cfee8f89be6f1e7d4af79808f322d52573d283ff9d5a58e7d5887b945b80e",
+        "signature": "3UjrM5EGVs63ARJD2o79A93E3RseumcuDsAPNooChzfqT5C8iUY5GWRtqXyxA5BhPZS1CUXRWYBQEYGDQrEkKeww",
+        "wallClock": "2026-08-12T15:28:43.906Z",
+        "monotonicOffsetMs": 3.5208999999999833,
+        "routeId": "selective-proxy-primary",
+        "attemptNumber": 1,
+        "data": {
+          "errorCategory": "RPC",
+          "errorCode": "CONTROLLED_PROXY_OR_RPC_REJECTION"
+        }
+      },
+      {
+        "routerVersion": "ReactiveRouter@0.1.0",
+        "eventId": "5419a3b0-4567-4b69-b574-5548b7fe87a0",
+        "sequence": 3,
+        "eventType": "FALLBACK_SELECTED",
+        "transactionId": "445cfee8f89be6f1e7d4af79808f322d52573d283ff9d5a58e7d5887b945b80e",
+        "signature": "3UjrM5EGVs63ARJD2o79A93E3RseumcuDsAPNooChzfqT5C8iUY5GWRtqXyxA5BhPZS1CUXRWYBQEYGDQrEkKeww",
+        "wallClock": "2026-08-12T15:28:43.906Z",
+        "monotonicOffsetMs": 3.54320000000007,
+        "routeId": "direct-agave-fallback",
+        "attemptNumber": 2,
+        "data": {
+          "fromRouteId": "selective-proxy-primary",
+          "toRouteId": "direct-agave-fallback"
+        }
+      },
+      {
+        "routerVersion": "ReactiveRouter@0.1.0",
+        "eventId": "9ff28023-5506-4f1d-8d36-39d5273bebbc",
+        "sequence": 4,
+        "eventType": "ROUTE_ATTEMPT_STARTED",
+        "transactionId": "445cfee8f89be6f1e7d4af79808f322d52573d283ff9d5a58e7d5887b945b80e",
+        "signature": "3UjrM5EGVs63ARJD2o79A93E3RseumcuDsAPNooChzfqT5C8iUY5GWRtqXyxA5BhPZS1CUXRWYBQEYGDQrEkKeww",
+        "wallClock": "2026-08-12T15:28:43.906Z",
+        "monotonicOffsetMs": 3.5620000000001255,
+        "routeId": "direct-agave-fallback",
+        "attemptNumber": 2,
+        "data": {}
+      },
+      {
+        "routerVersion": "ReactiveRouter@0.1.0",
+        "eventId": "450ea0a5-1cd4-42af-84e5-67c2ddee53df",
+        "sequence": 5,
+        "eventType": "ROUTE_RPC_ACKNOWLEDGED",
+        "transactionId": "445cfee8f89be6f1e7d4af79808f322d52573d283ff9d5a58e7d5887b945b80e",
+        "signature": "3UjrM5EGVs63ARJD2o79A93E3RseumcuDsAPNooChzfqT5C8iUY5GWRtqXyxA5BhPZS1CUXRWYBQEYGDQrEkKeww",
+        "wallClock": "2026-08-12T15:28:43.907Z",
+        "monotonicOffsetMs": 5.037000000000035,
+        "routeId": "direct-agave-fallback",
+        "attemptNumber": 2,
+        "data": {
+          "landing": false
+        }
+      },
+      {
+        "routerVersion": "ReactiveRouter@0.1.0",
+        "eventId": "5ddbfcc6-1258-4704-a62e-62f8d8ecff41",
+        "sequence": 6,
+        "eventType": "INDEPENDENT_OBSERVATION_STARTED",
+        "transactionId": "445cfee8f89be6f1e7d4af79808f322d52573d283ff9d5a58e7d5887b945b80e",
+        "signature": "3UjrM5EGVs63ARJD2o79A93E3RseumcuDsAPNooChzfqT5C8iUY5GWRtqXyxA5BhPZS1CUXRWYBQEYGDQrEkKeww",
+        "wallClock": "2026-08-12T15:28:43.907Z",
+        "monotonicOffsetMs": 5.098999999999933,
+        "routeId": "direct-agave-fallback",
+        "attemptNumber": 2,
+        "data": {
+          "readerIds": [
+            "logical-reader-1",
+            "logical-reader-2",
+            "logical-reader-3"
+          ]
+        }
+      },
+      {
+        "routerVersion": "ReactiveRouter@0.1.0",
+        "eventId": "fd9f1853-85a1-4e96-a929-709f53d27b32",
+        "sequence": 7,
+        "eventType": "INDEPENDENT_OBSERVATION_RECORDED",
+        "transactionId": "445cfee8f89be6f1e7d4af79808f322d52573d283ff9d5a58e7d5887b945b80e",
+        "signature": "3UjrM5EGVs63ARJD2o79A93E3RseumcuDsAPNooChzfqT5C8iUY5GWRtqXyxA5BhPZS1CUXRWYBQEYGDQrEkKeww",
+        "wallClock": "2026-08-12T15:28:44.890Z",
+        "monotonicOffsetMs": 988.2238,
+        "routeId": "direct-agave-fallback",
+        "attemptNumber": 2,
+        "data": {
+          "state": "CONFIRMED",
+          "supportingReaderIds": [
+            "logical-reader-1",
+            "logical-reader-2",
+            "logical-reader-3"
+          ]
+        }
+      },
+      {
+        "routerVersion": "ReactiveRouter@0.1.0",
+        "eventId": "2ad26f09-dad1-49c1-a917-acb4d0f94e29",
+        "sequence": 8,
+        "eventType": "ROUTING_CONFIRMED",
+        "transactionId": "445cfee8f89be6f1e7d4af79808f322d52573d283ff9d5a58e7d5887b945b80e",
+        "signature": "3UjrM5EGVs63ARJD2o79A93E3RseumcuDsAPNooChzfqT5C8iUY5GWRtqXyxA5BhPZS1CUXRWYBQEYGDQrEkKeww",
+        "wallClock": "2026-08-12T15:28:44.890Z",
+        "monotonicOffsetMs": 988.2439000000002,
+        "routeId": "direct-agave-fallback",
+        "attemptNumber": 2,
+        "data": {
+          "state": "CONFIRMED",
+          "rpcAcknowledgementWasLandingEvidence": false
+        }
+      }
+    ],
+    "telemetryHookErrors": []
+  }
+}

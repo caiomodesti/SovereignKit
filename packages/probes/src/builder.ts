@@ -22,7 +22,7 @@ const COMPUTE_BUDGET_PROGRAM = address("ComputeBudget111111111111111111111111111
 function unitPairNonce(unit: ProbeUnit): Uint8Array {
   const pairKey = [unit.experimentId, unit.experimentVersion, unit.phase, unit.observerId,
     unit.routeId, unit.probeIndex.toString()].join("\u001f");
-  return Uint8Array.from(Buffer.from(sha256Hex(pairKey).slice(0, 32), "hex"));
+  return Uint8Array.from(Buffer.from(sha256Hex(pairKey).slice(0, 16), "ascii"));
 }
 
 function computeLimitInstruction(limit: number): Instruction {

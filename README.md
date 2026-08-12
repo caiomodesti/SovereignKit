@@ -4,7 +4,7 @@ Solana can remain healthy while a user's path to Solana fails.
 
 SovereignKit is an open-source transaction accessibility observatory and resilient routing SDK for Solana. It measures route-level transaction accessibility, compares matched transaction classes, detects asymmetric route behavior, and helps applications route around paths that fail.
 
-> **Status:** v0.1, Sprint 3 Reactive Router complete. No classifier, hostile proxy, dashboard, or public Observatory infrastructure exists yet.
+> **Status:** v0.1, Sprint 4 Controlled Hostile Proxy complete. No asymmetry classifier, dashboard, or public Observatory infrastructure exists yet.
 
 ## What it measures
 
@@ -97,6 +97,14 @@ See the [Sprint 2 acceptance audit](docs/sprint-2-acceptance.md) and [Probe Engi
 The committed Agave fixture proves a controlled primary rejection followed by one real fallback submission, three-client logical observation quorum, a real transaction signature, and finalized recipient balance. All readers share the same local validator, and the primary failure is injected at the adapter boundary; Sprint 4 will replace that failure with a controlled network proxy.
 
 See the [Reactive Router contract](docs/reactive-router.md), [Sprint 3 acceptance audit](docs/sprint-3-acceptance.md), and [reproduction procedure](docs/sprint-3-reproduction.md).
+
+## Sprint 4 Controlled Hostile Proxy
+
+`@sovereignkit/hostile-proxy` is a loopback-only JSON-RPC service for controlled local interventions. It supports immutable `PASS_THROUGH`, `REJECT_CLASS(PROGRAM_X)`, and precommitted `GENERAL_DEGRADATION` schedules. It recognizes only the exact legacy transaction shape emitted by the Probe Builder; unknown or malformed class payloads pass through and are recorded as unknown.
+
+The live Agave proof demonstrates a matched control passing through the proxy, selective `PROGRAM_X` rejection at the network route, bounded router fallback and independent confirmation. A second precommitted schedule rejects both classes of the same pair. Memo is used only as an executable transport fixture; the statistical experiment still requires the project-owned program and measured compute equivalence.
+
+See the [proxy security contract](docs/controlled-hostile-proxy.md), [Sprint 4 acceptance audit](docs/sprint-4-acceptance.md), and [reproduction procedure](docs/sprint-4-reproduction.md).
 
 ## First experiment reproduction contract
 

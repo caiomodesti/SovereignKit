@@ -22,7 +22,7 @@ The builder creates a signed legacy Solana transaction with:
 2. an identical compute-unit-price instruction;
 3. one instruction to the declared controlled-program address containing a one-byte class discriminator and a 16-byte pair nonce.
 
-Within a route Ã— probe-index pair, both classes use the same nonce and differ in the discriminator. Different routes use different nonces. Consequently every route Ã— class Ã— probe-index unit has different signed bytes and signature, while program, accounts, signer roles, instruction order, data lengths, serialized size, compute budget, fee-payer policy, blockhash configuration, and expected result stay matched.
+Within a route Ã— probe-index pair, both classes use the same nonce and differ in the discriminator. Different routes use different nonces. The nonce is 16 lowercase hexadecimal characters encoded as 16 ASCII bytes; this preserves fixed width and entropy while remaining valid UTF-8 for the Sprint 4 executable Memo transport fixture. Consequently every route Ã— class Ã— probe-index unit has different signed bytes and signature, while program, accounts, signer roles, instruction order, data lengths, serialized size, compute budget, fee-payer policy, blockhash configuration, and expected result stay matched.
 
 Expected compute consumption is an explicit `ProbeDefinition` input, not a fabricated measurement. The structural validator enforces the v0.1 tolerance of 1% or 100 CU. The values must later come from profiling the project-owned program; Sprint 2 tests use equal declared values to validate mechanics only.
 
