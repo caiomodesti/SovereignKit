@@ -1,0 +1,32 @@
+diff --git a/test-validator/src/lib.rs b/test-validator/src/lib.rs
+index 0000000000..0000000000 100644
+--- a/test-validator/src/lib.rs
++++ b/test-validator/src/lib.rs
+@@ -76,7 +76,7 @@
+         io::Read,
+         net::{IpAddr, Ipv4Addr, SocketAddr},
+-        num::{NonZero, NonZeroU64},
++        num::NonZero,
+         path::{Path, PathBuf},
+         str::FromStr,
+         sync::{Arc, RwLock},
+@@ -1208,9 +1208,7 @@
+             ],
+             run_verification: false, // Skip PoH verification of ledger on startup for speed
+             snapshot_config: SnapshotConfig {
+-                full_snapshot_archive_interval: SnapshotInterval::Slots(
+-                    NonZeroU64::new(100).unwrap(),
+-                ),
++                full_snapshot_archive_interval: SnapshotInterval::Disabled,
+                 incremental_snapshot_archive_interval: SnapshotInterval::Disabled,
+                 bank_snapshots_dir: ledger_path.join(BANK_SNAPSHOTS_DIR),
+                 full_snapshot_archives_dir: ledger_path.to_path_buf(),
+@@ -1218,7 +1216,7 @@
+                 bank_snapshots_dir: ledger_path.join(BANK_SNAPSHOTS_DIR),
+                 full_snapshot_archives_dir: ledger_path.to_path_buf(),
+                 incremental_snapshot_archives_dir: ledger_path.to_path_buf(),
+-                ..SnapshotConfig::default()
++                ..SnapshotConfig::new_disabled()
+             },
+             warp_slot: config.warp_slot,
+             validator_exit: config.validator_exit.clone(),

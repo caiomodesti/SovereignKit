@@ -1,0 +1,100 @@
+{
+  "evidenceVersion": "sprint-5-live-controlled-experiment@0.1.0",
+  "generatedAt": "2026-08-12T16:50:55.099Z",
+  "agaveVersion": "4.0.0",
+  "programAddress": "4Ywfurzjdhh83CUhTp1A3yaJuos4bSeYBtAZiJUnvq8h",
+  "observationLimitation": "three logical readers share one local validator; this is logical redundancy, not infrastructure independence",
+  "observerAllowlist": [
+    {
+      "observerId": "observer-local",
+      "keyId": "observer-local-key-v1",
+      "publicKeySpkiBase64": "MCowBQYDK2VwAyEAMYEBLU0/Is3xzpLn7LOND8wF+UC3ldkJTnjUbUXi7IU="
+    }
+  ],
+  "scenarios": {
+    "healthy": {
+      "expected": [
+        "HEALTHY",
+        "HEALTHY",
+        "HEALTHY"
+      ],
+      "actual": [
+        "HEALTHY",
+        "HEALTHY",
+        "HEALTHY"
+      ],
+      "inputHash": "1bb56037ed7652f2704a633d6f265266a0b870b8deb88ba16d4b4a96abfe9726",
+      "signedResultCount": 180,
+      "acknowledgedCount": 180,
+      "rejectedCount": 0,
+      "proxyAuditCounts": {
+        "route-a": 60,
+        "route-b": 60,
+        "route-c": 60
+      }
+    },
+    "degraded": {
+      "expected": [
+        "DEGRADED",
+        "HEALTHY",
+        "HEALTHY"
+      ],
+      "actual": [
+        "DEGRADED",
+        "HEALTHY",
+        "HEALTHY"
+      ],
+      "inputHash": "5f55ee67616fba5411c66b26553309ed2eefe8a77e32d827894789694eb62f83",
+      "signedResultCount": 180,
+      "acknowledgedCount": 132,
+      "rejectedCount": 48,
+      "proxyAuditCounts": {
+        "route-a": 60,
+        "route-b": 60,
+        "route-c": 60
+      }
+    },
+    "asymmetric": {
+      "expected": [
+        "ASYMMETRIC",
+        "HEALTHY",
+        "HEALTHY"
+      ],
+      "actual": [
+        "ASYMMETRIC",
+        "HEALTHY",
+        "HEALTHY"
+      ],
+      "inputHash": "ff82b977498c033ff7ea730e9a5b2eb7f98bfd5004bad2c5d691adfd52952377",
+      "signedResultCount": 180,
+      "acknowledgedCount": 150,
+      "rejectedCount": 30,
+      "proxyAuditCounts": {
+        "route-a": 60,
+        "route-b": 60,
+        "route-c": 60
+      }
+    },
+    "insufficient_data": {
+      "expected": [
+        "INSUFFICIENT_DATA",
+        "INSUFFICIENT_DATA",
+        "INSUFFICIENT_DATA"
+      ],
+      "actual": [
+        "INSUFFICIENT_DATA",
+        "INSUFFICIENT_DATA",
+        "INSUFFICIENT_DATA"
+      ],
+      "inputHash": "0b53085647fe6c524365cc1f7528fbccf95d8283e3f664721d1049af2359230e",
+      "signedResultCount": 60,
+      "acknowledgedCount": 60,
+      "rejectedCount": 0,
+      "proxyAuditCounts": {
+        "route-a": 20,
+        "route-b": 20,
+        "route-c": 20
+      }
+    }
+  }
+}

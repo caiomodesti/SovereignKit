@@ -1,0 +1,255 @@
+{
+  "evidenceVersion": "sprint-5-live-matched-program-proof@0.1.0",
+  "generatedAt": "2026-08-12T15:46:12.192Z",
+  "agaveVersion": "4.0.0",
+  "endpoint": "http://127.0.0.1:8899",
+  "programAddress": "4Ywfurzjdhh83CUhTp1A3yaJuos4bSeYBtAZiJUnvq8h",
+  "programDeployment": "validator --bpf-program; no program private key exists",
+  "airdropSignature": "pzv9uMtUritXDAp4JVgkWdXh7ywYcmJJr9tFaxUNhoR9o4Z4HKLsd6uMLGcx3RNvCju5TdvyBVo3THsPozhgNs5",
+  "definition": {
+    "experimentId": "sprint-5-live-matched-program",
+    "experimentVersion": "1",
+    "phase": "healthy",
+    "observerId": "observer-local",
+    "routeIds": [
+      "direct-agave"
+    ],
+    "transactionClasses": [
+      "MATCHED_CONTROL",
+      "PROGRAM_X"
+    ],
+    "probeIndices": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+    ],
+    "randomizationSeed": "sprint-5-matched-program-seed-v1",
+    "pairingWindowMs": 5000,
+    "programAddress": "4Ywfurzjdhh83CUhTp1A3yaJuos4bSeYBtAZiJUnvq8h",
+    "computeUnitLimit": 20000,
+    "computeUnitPriceMicroLamports": "0",
+    "expectedComputeUnits": {
+      "MATCHED_CONTROL": 0,
+      "PROGRAM_X": 0
+    },
+    "feePayerPolicy": "one-funded-payer-live-program-proof",
+    "blockhashCommitment": "confirmed",
+    "preflightCommitment": "confirmed",
+    "skipPreflight": false,
+    "maxRetries": 0
+  },
+  "pairCount": 10,
+  "uniqueSignatureCount": 20,
+  "measuredComputeUnits": [
+    510
+  ],
+  "measurements": [
+    {
+      "unitId": "58345476bcdb962b2a5f864de026fb8798a3b440e8a2d986fdd2c7c8b4f3a39c",
+      "probeIndex": 0,
+      "transactionClass": "MATCHED_CONTROL",
+      "signature": "4nHKopj3iusozGT4Jt9HNPp6S7TifBdjtjgE2QCyHwmaCBgPhmU9PdYDtRGawbyVNKaKjaJj8RWoN9GuhgKFnLR1",
+      "pairNonceHex": "36316337393933363734373733383332",
+      "serializedSizeBytes": 238,
+      "computeUnitsConsumed": 510,
+      "slot": 4
+    },
+    {
+      "unitId": "0be1bb6d4c4b82a677e4e625a5bccfe5d564b46f88e72d4a15573dded9581e3f",
+      "probeIndex": 0,
+      "transactionClass": "PROGRAM_X",
+      "signature": "zi16Ntt8hWPk75JGaU462aFvy2iekipKedKjd1m4FaDZJ5QXduKtULcqXY6TQgvryptcExQUwEkLJnZCpX4gQVe",
+      "pairNonceHex": "36316337393933363734373733383332",
+      "serializedSizeBytes": 238,
+      "computeUnitsConsumed": 510,
+      "slot": 5
+    },
+    {
+      "unitId": "60c53ca1b1bcffe7aa4fe136569348c446d9f04146c8b362052d7d2eb021870e",
+      "probeIndex": 1,
+      "transactionClass": "MATCHED_CONTROL",
+      "signature": "4wHsFMxZiYKcDhPBBsJtGEbPxjFj9XdLKzjfrfvsRXReYzY4qd3ZtgorSNJwjc2ugcJ5XfKvASmP9Yj64T4v9EMv",
+      "pairNonceHex": "61366438613165626537323237376537",
+      "serializedSizeBytes": 238,
+      "computeUnitsConsumed": 510,
+      "slot": 6
+    },
+    {
+      "unitId": "34769226700d374e0e9f4f981f1c9e770592c1cbb084ec0a71eb2021285e56ff",
+      "probeIndex": 1,
+      "transactionClass": "PROGRAM_X",
+      "signature": "25tMWyVLa4trFJG8eKi1nUWqtwEf6JYpNa4KzpTadgdUPMNaeR2BLvhGgwknHvhhcuduLvCFU6ovr5j9W6Jr2k73",
+      "pairNonceHex": "61366438613165626537323237376537",
+      "serializedSizeBytes": 238,
+      "computeUnitsConsumed": 510,
+      "slot": 7
+    },
+    {
+      "unitId": "6d48f50b64c58a16bb1d13b6dd5ca7d44ebbcea1f36987cd3cca1b7e8c66cac0",
+      "probeIndex": 2,
+      "transactionClass": "MATCHED_CONTROL",
+      "signature": "7e3gUvS6bbfoPKuEgju3SaEYqN2dcKJZfcCs6t8R52XPrC4fHd9zdHCGbrxHAwQxqKhT2W5Lq8nxGRDDXRaMYzF",
+      "pairNonceHex": "39376265383730376536323530646466",
+      "serializedSizeBytes": 238,
+      "computeUnitsConsumed": 510,
+      "slot": 8
+    },
+    {
+      "unitId": "549b7fbc8958ce01763990da363918fcfa5b39a502567e705ae861a1536bf6dd",
+      "probeIndex": 2,
+      "transactionClass": "PROGRAM_X",
+      "signature": "3oG5cy5JAAWorFjTkNDfvAsXcDM1qQt3Rd1RJqQN7HEKPnNWy4TfaHnhAwBCxGRFXFqBMP5yPzxC9m2BEhxakjRF",
+      "pairNonceHex": "39376265383730376536323530646466",
+      "serializedSizeBytes": 238,
+      "computeUnitsConsumed": 510,
+      "slot": 9
+    },
+    {
+      "unitId": "b6c0ac16061524320d15a6001eb1403685fbc036a29dafa9c1c69f6ea71015fe",
+      "probeIndex": 3,
+      "transactionClass": "MATCHED_CONTROL",
+      "signature": "5WJrykCU8oLuTSBZNiyKonK73zWbHiA2gJvFhMGv1KLAiDorbBR1Y7QDrQvU6uG2UeHX9AWAQCnYEWBF3sreX1Dh",
+      "pairNonceHex": "39643231346233656362363334626165",
+      "serializedSizeBytes": 238,
+      "computeUnitsConsumed": 510,
+      "slot": 10
+    },
+    {
+      "unitId": "cc1dd72309b1f1f980b521ba0bce18ad42b620eba2038e1bb7c876e5750e15b1",
+      "probeIndex": 3,
+      "transactionClass": "PROGRAM_X",
+      "signature": "4nNono6R9s6woyu222YFCkBiBR45PjnhKeHxrgaYSR84LpyZVSx4zv2KCicxo5t5F9gYuZSA8Axp9Zn53DA5sy32",
+      "pairNonceHex": "39643231346233656362363334626165",
+      "serializedSizeBytes": 238,
+      "computeUnitsConsumed": 510,
+      "slot": 11
+    },
+    {
+      "unitId": "324cc03ccf57069118fe010c78e2247e8ee5ad9ab0e2bb8d3e59a3040cd74ffc",
+      "probeIndex": 4,
+      "transactionClass": "MATCHED_CONTROL",
+      "signature": "5twuD9A4MLdBd8FcxsFuaGVKoFU2WjRcKatQr482ocoaeyezZ5Bxhsr9jKKXhPwEm3AXLvmMY4EGyLKA71BGpjCX",
+      "pairNonceHex": "65376231343137303535343730656138",
+      "serializedSizeBytes": 238,
+      "computeUnitsConsumed": 510,
+      "slot": 12
+    },
+    {
+      "unitId": "5f0765dabfe72534618a2303a8e47cf138f96f89e7f62c847859ccb5fb2a3240",
+      "probeIndex": 4,
+      "transactionClass": "PROGRAM_X",
+      "signature": "5RwePY8d24MaNoYG5T2KFX1ea2Gu6Qy2K9K7ozWptDtkQUjP6Boii584M8X2BBzibJyCkwwkFq9VTq46SLf7axWk",
+      "pairNonceHex": "65376231343137303535343730656138",
+      "serializedSizeBytes": 238,
+      "computeUnitsConsumed": 510,
+      "slot": 13
+    },
+    {
+      "unitId": "fc344810c856a6e1e1443219568d6577acd2383a69b1d9b5d8b5ce5d22667d99",
+      "probeIndex": 5,
+      "transactionClass": "MATCHED_CONTROL",
+      "signature": "21BjLhC5guJvb8krkxTzxmtdgBwhCsoomJDwvM7aniVmrR5b8ZLiEgvF8Nd9qpbFh5yune294MUAsQpPZG27W7qC",
+      "pairNonceHex": "63333532353737323766363834343130",
+      "serializedSizeBytes": 238,
+      "computeUnitsConsumed": 510,
+      "slot": 14
+    },
+    {
+      "unitId": "4dc3a94a95a98bf90a06579744164ac0c31eb93a5a6b42871abe21dd4e07d44f",
+      "probeIndex": 5,
+      "transactionClass": "PROGRAM_X",
+      "signature": "3re8LFYr4DUgxKK6U52TDd1k4RPmCxPMJpAiwfXzimNwqzTVdvHe4ikydeozPANiWubCEbnQnhkAMxFUbvPPGTMc",
+      "pairNonceHex": "63333532353737323766363834343130",
+      "serializedSizeBytes": 238,
+      "computeUnitsConsumed": 510,
+      "slot": 15
+    },
+    {
+      "unitId": "c8dd90f4be489077c6150f16aecb4e63f779b8c6d333def7cb6227e986e5c412",
+      "probeIndex": 6,
+      "transactionClass": "MATCHED_CONTROL",
+      "signature": "3Rf75ecVTXGHXo7QXD7a9CWHuThCw2ufp17qDNxkvGekpUgfBoXie7QcjzVJgiNdpSDjWssuL5pZppXdnmJmLPPM",
+      "pairNonceHex": "63623434386136353937666362313530",
+      "serializedSizeBytes": 238,
+      "computeUnitsConsumed": 510,
+      "slot": 16
+    },
+    {
+      "unitId": "2d63c14e0c04c9c21aa9349415d9cdc824e7ecb2821746be00c31b8b2aeb0d7c",
+      "probeIndex": 6,
+      "transactionClass": "PROGRAM_X",
+      "signature": "4X6eAWxsUApnDHDhDqyz2rrEBoUez1XnTb66zsaFXbAg5GcuVCfh3QAa1B1kiB5gVBRWzt46Z4etLLNrjoWS5ZWa",
+      "pairNonceHex": "63623434386136353937666362313530",
+      "serializedSizeBytes": 238,
+      "computeUnitsConsumed": 510,
+      "slot": 17
+    },
+    {
+      "unitId": "46624c4d13619b7753994d8d8335739accc62da6dfd416964cb22b4a0b300e19",
+      "probeIndex": 7,
+      "transactionClass": "MATCHED_CONTROL",
+      "signature": "56cvzR9xBgNdevSweKCKsdDK5Tg4pAatHUiDNWaaHL53i5EJTzNwrgDuRRrt78wXCkEmEF4X5CLti4rBDPrrgS6W",
+      "pairNonceHex": "35323366653061633565626235363936",
+      "serializedSizeBytes": 238,
+      "computeUnitsConsumed": 510,
+      "slot": 18
+    },
+    {
+      "unitId": "e1dd9654cbd0ebd02b3111b4187237057a6dddac79a81911ed00ca67d35a6adf",
+      "probeIndex": 7,
+      "transactionClass": "PROGRAM_X",
+      "signature": "pE9PrDMn6G2ZekizGVMXzswg7zZ12ya7mX1zn5jW3D3igK8Yu3PwFf9jMqFPPHptP7NpaJ4WQ3NUdJhpfPhd8ms",
+      "pairNonceHex": "35323366653061633565626235363936",
+      "serializedSizeBytes": 238,
+      "computeUnitsConsumed": 510,
+      "slot": 19
+    },
+    {
+      "unitId": "8b1dd00c0963781acba43386c4a8a505522eff42720131456ceee457d228b5bc",
+      "probeIndex": 8,
+      "transactionClass": "MATCHED_CONTROL",
+      "signature": "3G9FPArcKrGSXQcWsXj8t5wtWeBeqwKfgUDKAUHujbEiBKwDxYVncKEjRPMuc1ixwZJo32EuZgx2S5oSyBZ972E2",
+      "pairNonceHex": "62363436323538613764383532666564",
+      "serializedSizeBytes": 238,
+      "computeUnitsConsumed": 510,
+      "slot": 20
+    },
+    {
+      "unitId": "4b576a0263594e4f3d032edc1999ab94872b661a1b1a7dc5341e88b88597cb8d",
+      "probeIndex": 8,
+      "transactionClass": "PROGRAM_X",
+      "signature": "3LV1y6Q1R1aPmu9tzW34cwvT1UkZDnWaHcHXG9KpMiqVYoMYQnN1ZxFj2H9QphYaAUmukS12H8byK2pSCHnX1Lpr",
+      "pairNonceHex": "62363436323538613764383532666564",
+      "serializedSizeBytes": 238,
+      "computeUnitsConsumed": 510,
+      "slot": 21
+    },
+    {
+      "unitId": "cd6d91e1c8e4b704b0092f7fc0ce0eca10180eb64dd88945ce259c772f10955b",
+      "probeIndex": 9,
+      "transactionClass": "MATCHED_CONTROL",
+      "signature": "2RWzHTd5iR7V32b8RYH6R7rwk6ofq2dHa5Uubg1zHQLoz9N5o9cDpwPouRC9W7Qe5H3Fozcf8gspFVW9Ks7Ku9Fu",
+      "pairNonceHex": "38646337333834623861626139666337",
+      "serializedSizeBytes": 238,
+      "computeUnitsConsumed": 510,
+      "slot": 22
+    },
+    {
+      "unitId": "f0250a77bcf2022e7e8f1baeeab66c54bc3c8d594c3f935484dfce6c1a0c0288",
+      "probeIndex": 9,
+      "transactionClass": "PROGRAM_X",
+      "signature": "58LQgwsQ8RhkHGJax5KidEgKDsGPnmSBhdqb1mEmbEGmMeGyJHYdeMPXwoLgkcDdHU17RdtfZDo92He51XwXQg95",
+      "pairNonceHex": "38646337333834623861626139666337",
+      "serializedSizeBytes": 238,
+      "computeUnitsConsumed": 510,
+      "slot": 23
+    }
+  ]
+}

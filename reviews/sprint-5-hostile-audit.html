@@ -1,0 +1,13 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SovereignKit Sprint 5 Hostile Audit</title>
+<style>body{font:16px/1.55 system-ui;margin:0;background:#0b1020;color:#e8edf7}main{max-width:960px;margin:auto;padding:48px 24px}h1{font-size:42px}h2{margin-top:36px;color:#9dd7ff}.card{background:#141c31;border:1px solid #293653;border-radius:14px;padding:20px;margin:16px 0}.closed{border-left:5px solid #56d364}.risk{border-left:5px solid #f2cc60}code{color:#9dd7ff}strong{color:#fff}</style></head>
+<body><main><h1>Sprint 5 hostile audit</h1><p>Controlled evidence review · accepted run <code>20260812T164539Z</code></p>
+<div class="card closed"><strong>Closed blocker:</strong> the first live program exposed a 500/502 CU class skew. The accepted SBF measures 510/510 across 10 pairs.</div>
+<div class="card closed"><strong>Closed blocker:</strong> the initial scenario run lacked seeded initiation order. All 600 units were rerun with stored HMAC-SHA-256 execution ordinals and zero pairing breaches.</div>
+<div class="card risk"><strong>Residual high risk:</strong> 2/3 readers share one validator and host. This is logical redundancy, not infrastructure independence.</div>
+<div class="card risk"><strong>Residual high risk:</strong> ClassificationPolicyV0Experimental is intentionally uncalibrated; n=30 evidence is LIMITED, never confidence.</div>
+<h2>Verified outcomes</h2><p>HEALTHY → all routes healthy. DEGRADED → route A degraded, peers healthy. ASYMMETRIC → route A asymmetric, peers healthy. INSUFFICIENT_DATA → all routes undersampled.</p>
+<h2>Reproducibility</h2><p>600 observer signatures verify. Markdown, canonical JSON, and CSV regenerate byte-for-byte from persisted definitions and measurements without proxy configuration.</p>
+<h2>Verdict</h2><p>No critical open finding remains for the narrow controlled claim. Broader public-network or provider claims remain prohibited.</p></main></body></html>
+

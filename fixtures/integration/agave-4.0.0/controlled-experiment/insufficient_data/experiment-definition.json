@@ -1,0 +1,26 @@
+{
+  "experimentId": "sprint-5-live-controlled",
+  "experimentVersion": "1",
+  "configurationHash": "270db1db42b4cbfbf804bab31267e0cc88bd0c17bfe9b1689cc7cb59999c0352",
+  "windowId": "sprint-5-live-controlled:insufficient_data:observer-local",
+  "windowVersion": "1",
+  "phase": "insufficient_data",
+  "observerId": "observer-local",
+  "routeIds": [
+    "route-a",
+    "route-b",
+    "route-c"
+  ],
+  "probeIndices": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+  ]
+}

@@ -1,0 +1,4 @@
+window_id,route_id,classification,evidence_strength,control_success_rate,test_success_rate,absolute_class_gap,peer_test_success_rate,input_hash
+sprint-5-live-controlled:insufficient_data:observer-local,route-a,INSUFFICIENT_DATA,INSUFFICIENT,1.000000,1.000000,0.000000,,0b53085647fe6c524365cc1f7528fbccf95d8283e3f664721d1049af2359230e
+sprint-5-live-controlled:insufficient_data:observer-local,route-b,INSUFFICIENT_DATA,INSUFFICIENT,1.000000,1.000000,0.000000,,0b53085647fe6c524365cc1f7528fbccf95d8283e3f664721d1049af2359230e
+sprint-5-live-controlled:insufficient_data:observer-local,route-c,INSUFFICIENT_DATA,INSUFFICIENT,1.000000,1.000000,0.000000,,0b53085647fe6c524365cc1f7528fbccf95d8283e3f664721d1049af2359230e
