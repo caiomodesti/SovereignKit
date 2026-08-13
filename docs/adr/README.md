@@ -20,3 +20,4 @@ Status values are `Accepted`, `Superseded`, or `Deprecated`. Accepted ADRs are n
 | [014](ADR-014-reproducible-toolchain.md) | Pinned reproducible toolchain |
 | [015](ADR-015-append-only-measurement-events.md) | Append-only facts as source of truth |
 | [016](ADR-016-windows-agave-source-build-exception.md) | Windows source-build exception for Agave 4.0.0 |
+| [017](ADR-017-windows-test-validator-snapshot-disable.md) | Disable test-validator snapshots in the Windows local proof build |

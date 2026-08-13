@@ -1,0 +1,241 @@
+{
+  "cells": [
+    {
+      "completeCaseSuccessRate": 1,
+      "completeCount": 10,
+      "expectedCount": 10,
+      "inconclusiveCount": 0,
+      "inconclusiveRate": 0,
+      "invalidExclusionCount": 0,
+      "missingCount": 0,
+      "pairingBreachCount": 0,
+      "routeId": "route-a",
+      "successCount": 10,
+      "successRate": 1,
+      "transactionClass": "MATCHED_CONTROL",
+      "wilson95": {
+        "high": 1,
+        "low": 0.722467
+      }
+    },
+    {
+      "completeCaseSuccessRate": 1,
+      "completeCount": 10,
+      "expectedCount": 10,
+      "inconclusiveCount": 0,
+      "inconclusiveRate": 0,
+      "invalidExclusionCount": 0,
+      "missingCount": 0,
+      "pairingBreachCount": 0,
+      "routeId": "route-a",
+      "successCount": 10,
+      "successRate": 1,
+      "transactionClass": "PROGRAM_X",
+      "wilson95": {
+        "high": 1,
+        "low": 0.722467
+      }
+    },
+    {
+      "completeCaseSuccessRate": 1,
+      "completeCount": 10,
+      "expectedCount": 10,
+      "inconclusiveCount": 0,
+      "inconclusiveRate": 0,
+      "invalidExclusionCount": 0,
+      "missingCount": 0,
+      "pairingBreachCount": 0,
+      "routeId": "route-b",
+      "successCount": 10,
+      "successRate": 1,
+      "transactionClass": "MATCHED_CONTROL",
+      "wilson95": {
+        "high": 1,
+        "low": 0.722467
+      }
+    },
+    {
+      "completeCaseSuccessRate": 1,
+      "completeCount": 10,
+      "expectedCount": 10,
+      "inconclusiveCount": 0,
+      "inconclusiveRate": 0,
+      "invalidExclusionCount": 0,
+      "missingCount": 0,
+      "pairingBreachCount": 0,
+      "routeId": "route-b",
+      "successCount": 10,
+      "successRate": 1,
+      "transactionClass": "PROGRAM_X",
+      "wilson95": {
+        "high": 1,
+        "low": 0.722467
+      }
+    },
+    {
+      "completeCaseSuccessRate": 1,
+      "completeCount": 10,
+      "expectedCount": 10,
+      "inconclusiveCount": 0,
+      "inconclusiveRate": 0,
+      "invalidExclusionCount": 0,
+      "missingCount": 0,
+      "pairingBreachCount": 0,
+      "routeId": "route-c",
+      "successCount": 10,
+      "successRate": 1,
+      "transactionClass": "MATCHED_CONTROL",
+      "wilson95": {
+        "high": 1,
+        "low": 0.722467
+      }
+    },
+    {
+      "completeCaseSuccessRate": 1,
+      "completeCount": 10,
+      "expectedCount": 10,
+      "inconclusiveCount": 0,
+      "inconclusiveRate": 0,
+      "invalidExclusionCount": 0,
+      "missingCount": 0,
+      "pairingBreachCount": 0,
+      "routeId": "route-c",
+      "successCount": 10,
+      "successRate": 1,
+      "transactionClass": "PROGRAM_X",
+      "wilson95": {
+        "high": 1,
+        "low": 0.722467
+      }
+    }
+  ],
+  "classifications": [
+    {
+      "absoluteClassGap": 0,
+      "classification": "INSUFFICIENT_DATA",
+      "controlSuccessRate": 1,
+      "evidenceStrength": "INSUFFICIENT",
+      "peerTestBaseline": {
+        "completeCount": 0,
+        "eligibleRouteIds": [],
+        "excludedRouteId": "route-a",
+        "routes": [
+          {
+            "completeCount": 10,
+            "inconclusiveRate": 0,
+            "routeId": "route-b",
+            "successRate": 1
+          },
+          {
+            "completeCount": 10,
+            "inconclusiveRate": 0,
+            "routeId": "route-c",
+            "successRate": 1
+          }
+        ],
+        "successCount": 0,
+        "successRate": null
+      },
+      "reasons": [
+        "minimum 30 complete units required per route/class"
+      ],
+      "routeId": "route-a",
+      "testSuccessRate": 1
+    },
+    {
+      "absoluteClassGap": 0,
+      "classification": "INSUFFICIENT_DATA",
+      "controlSuccessRate": 1,
+      "evidenceStrength": "INSUFFICIENT",
+      "peerTestBaseline": {
+        "completeCount": 0,
+        "eligibleRouteIds": [],
+        "excludedRouteId": "route-b",
+        "routes": [
+          {
+            "completeCount": 10,
+            "inconclusiveRate": 0,
+            "routeId": "route-a",
+            "successRate": 1
+          },
+          {
+            "completeCount": 10,
+            "inconclusiveRate": 0,
+            "routeId": "route-c",
+            "successRate": 1
+          }
+        ],
+        "successCount": 0,
+        "successRate": null
+      },
+      "reasons": [
+        "minimum 30 complete units required per route/class"
+      ],
+      "routeId": "route-b",
+      "testSuccessRate": 1
+    },
+    {
+      "absoluteClassGap": 0,
+      "classification": "INSUFFICIENT_DATA",
+      "controlSuccessRate": 1,
+      "evidenceStrength": "INSUFFICIENT",
+      "peerTestBaseline": {
+        "completeCount": 0,
+        "eligibleRouteIds": [],
+        "excludedRouteId": "route-c",
+        "routes": [
+          {
+            "completeCount": 10,
+            "inconclusiveRate": 0,
+            "routeId": "route-a",
+            "successRate": 1
+          },
+          {
+            "completeCount": 10,
+            "inconclusiveRate": 0,
+            "routeId": "route-b",
+            "successRate": 1
+          }
+        ],
+        "successCount": 0,
+        "successRate": null
+      },
+      "reasons": [
+        "minimum 30 complete units required per route/class"
+      ],
+      "routeId": "route-c",
+      "testSuccessRate": 1
+    }
+  ],
+  "definition": {
+    "configurationHash": "270db1db42b4cbfbf804bab31267e0cc88bd0c17bfe9b1689cc7cb59999c0352",
+    "experimentId": "sprint-5-live-controlled",
+    "experimentVersion": "1",
+    "observerId": "observer-local",
+    "phase": "insufficient_data",
+    "probeIndices": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+    ],
+    "routeIds": [
+      "route-a",
+      "route-b",
+      "route-c"
+    ],
+    "windowId": "sprint-5-live-controlled:insufficient_data:observer-local",
+    "windowVersion": "1"
+  },
+  "duplicateSignatures": [],
+  "inputHash": "0b53085647fe6c524365cc1f7528fbccf95d8283e3f664721d1049af2359230e",
+  "invalidUnitIds": [],
+  "policyVersion": "ClassificationPolicyV0Experimental",
+  "schemaVersion": "AsymmetryAnalysis@0.1.0"
+}

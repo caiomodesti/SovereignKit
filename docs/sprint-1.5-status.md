@@ -1,6 +1,6 @@
 # Sprint 1.5 status
 
-Status as of 2026-08-12: **in progress; not accepted**.
+Status as of 2026-08-12: **accepted after a real Agave 4.0.0 local-validator proof**.
 
 ## Proven
 
@@ -12,10 +12,10 @@ Status as of 2026-08-12: **in progress; not accepted**.
 - The Telemetry Core emits `CREATED`, `SUBMISSION_ATTEMPTED`, `RPC_ACKNOWLEDGED`, and `OBSERVATION_PENDING` from raw events, while correctly refusing to interpret RPC acknowledgement as landing.
 - Production and integration typechecks pass; the unit suite passes 11/11.
 
-## Still failing
+## Resolved integration boundary
 
-The experimental transfer receives an RPC acknowledgement with the expected signature, but three logical readers continue to return a null signature status until the 60-second observation deadline. The derived result is therefore `OBSERVATION_INCONCLUSIVE`, as required by the evidence model.
+Repeated v0 experimental transfers received an RPC acknowledgement with the expected signature, but three logical readers returned a null signature status until the observation deadline. Those runs correctly derived `OBSERVATION_INCONCLUSIVE`.
 
-Increasing the explicit send profile from `maxRetries: 0` to `maxRetries: 5` did not resolve landing. The next investigation must examine the Windows local-validator transaction forwarding/TPU path. No Sprint 1.5 acceptance claim has been made, and Sprint 2 has not started.
+A separate real legacy transfer submitted with Solana CLI `4.0.0` confirmed and credited the expected balance. Fixing the Sprint 1.5 harness profile to a legacy transaction then produced the full finalized lifecycle through quorum. v0 remains a documented compatibility limitation and is not included in the Sprint 1.5 proof. Sprint 2 has not started.
 
 Raw runtime artifacts, ledgers, keypairs, local toolchains, and logs are intentionally excluded from Git.

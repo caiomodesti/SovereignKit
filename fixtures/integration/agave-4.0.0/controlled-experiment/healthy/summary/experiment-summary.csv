@@ -1,0 +1,4 @@
+window_id,route_id,classification,evidence_strength,control_success_rate,test_success_rate,absolute_class_gap,peer_test_success_rate,input_hash
+sprint-5-live-controlled:healthy:observer-local,route-a,HEALTHY,LIMITED,1.000000,1.000000,0.000000,1.000000,1bb56037ed7652f2704a633d6f265266a0b870b8deb88ba16d4b4a96abfe9726
+sprint-5-live-controlled:healthy:observer-local,route-b,HEALTHY,LIMITED,1.000000,1.000000,0.000000,1.000000,1bb56037ed7652f2704a633d6f265266a0b870b8deb88ba16d4b4a96abfe9726
+sprint-5-live-controlled:healthy:observer-local,route-c,HEALTHY,LIMITED,1.000000,1.000000,0.000000,1.000000,1bb56037ed7652f2704a633d6f265266a0b870b8deb88ba16d4b4a96abfe9726

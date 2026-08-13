@@ -1,0 +1,12 @@
+{
+  "fixture_version": "sprint-2-ingestion-cases@0.1.0",
+  "description": "Expected collector behavior. Tests generate ephemeral Ed25519 keys; no private key is committed.",
+  "cases": [
+    { "name": "first valid result", "mutation": "none", "expected": "ACCEPTED", "stored_count": 1 },
+    { "name": "exact transport replay", "mutation": "repeat_exact_payload", "expected": "DUPLICATE", "stored_count": 1 },
+    { "name": "same idempotency key with different result", "mutation": "replace_result_id_and_resign", "expected": "REJECTED", "stored_count": 1 },
+    { "name": "payload tampering", "mutation": "change_terminal_state_without_resigning", "expected": "REJECTED", "stored_count": 0 },
+    { "name": "unknown observer key", "mutation": "remove_allowlist_entry", "expected": "REJECTED", "stored_count": 0 },
+    { "name": "false quorum", "mutation": "one_supporting_claim_and_resign", "expected": "REJECTED", "stored_count": 0 }
+  ]
+}

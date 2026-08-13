@@ -1,0 +1,270 @@
+{
+  "schemaVersion": "AsymmetryAnalysis@0.1.0",
+  "policyVersion": "ClassificationPolicyV0Experimental",
+  "inputHash": "5f55ee67616fba5411c66b26553309ed2eefe8a77e32d827894789694eb62f83",
+  "definition": {
+    "experimentId": "sprint-5-live-controlled",
+    "experimentVersion": "1",
+    "configurationHash": "6e4fa407adbbb6feb2d6af136e580baf5c1fd1918547dc4e868e86f2c02a1067",
+    "windowId": "sprint-5-live-controlled:degraded:observer-local",
+    "windowVersion": "1",
+    "phase": "degraded",
+    "observerId": "observer-local",
+    "routeIds": [
+      "route-a",
+      "route-b",
+      "route-c"
+    ],
+    "probeIndices": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29
+    ]
+  },
+  "cells": [
+    {
+      "routeId": "route-a",
+      "transactionClass": "MATCHED_CONTROL",
+      "expectedCount": 30,
+      "completeCount": 30,
+      "missingCount": 0,
+      "invalidExclusionCount": 0,
+      "successCount": 6,
+      "inconclusiveCount": 0,
+      "pairingBreachCount": 0,
+      "successRate": 0.2,
+      "completeCaseSuccessRate": 0.2,
+      "inconclusiveRate": 0,
+      "wilson95": {
+        "low": 0.095051,
+        "high": 0.373057
+      }
+    },
+    {
+      "routeId": "route-a",
+      "transactionClass": "PROGRAM_X",
+      "expectedCount": 30,
+      "completeCount": 30,
+      "missingCount": 0,
+      "invalidExclusionCount": 0,
+      "successCount": 6,
+      "inconclusiveCount": 0,
+      "pairingBreachCount": 0,
+      "successRate": 0.2,
+      "completeCaseSuccessRate": 0.2,
+      "inconclusiveRate": 0,
+      "wilson95": {
+        "low": 0.095051,
+        "high": 0.373057
+      }
+    },
+    {
+      "routeId": "route-b",
+      "transactionClass": "MATCHED_CONTROL",
+      "expectedCount": 30,
+      "completeCount": 30,
+      "missingCount": 0,
+      "invalidExclusionCount": 0,
+      "successCount": 30,
+      "inconclusiveCount": 0,
+      "pairingBreachCount": 0,
+      "successRate": 1,
+      "completeCaseSuccessRate": 1,
+      "inconclusiveRate": 0,
+      "wilson95": {
+        "low": 0.886487,
+        "high": 1
+      }
+    },
+    {
+      "routeId": "route-b",
+      "transactionClass": "PROGRAM_X",
+      "expectedCount": 30,
+      "completeCount": 30,
+      "missingCount": 0,
+      "invalidExclusionCount": 0,
+      "successCount": 30,
+      "inconclusiveCount": 0,
+      "pairingBreachCount": 0,
+      "successRate": 1,
+      "completeCaseSuccessRate": 1,
+      "inconclusiveRate": 0,
+      "wilson95": {
+        "low": 0.886487,
+        "high": 1
+      }
+    },
+    {
+      "routeId": "route-c",
+      "transactionClass": "MATCHED_CONTROL",
+      "expectedCount": 30,
+      "completeCount": 30,
+      "missingCount": 0,
+      "invalidExclusionCount": 0,
+      "successCount": 30,
+      "inconclusiveCount": 0,
+      "pairingBreachCount": 0,
+      "successRate": 1,
+      "completeCaseSuccessRate": 1,
+      "inconclusiveRate": 0,
+      "wilson95": {
+        "low": 0.886487,
+        "high": 1
+      }
+    },
+    {
+      "routeId": "route-c",
+      "transactionClass": "PROGRAM_X",
+      "expectedCount": 30,
+      "completeCount": 30,
+      "missingCount": 0,
+      "invalidExclusionCount": 0,
+      "successCount": 30,
+      "inconclusiveCount": 0,
+      "pairingBreachCount": 0,
+      "successRate": 1,
+      "completeCaseSuccessRate": 1,
+      "inconclusiveRate": 0,
+      "wilson95": {
+        "low": 0.886487,
+        "high": 1
+      }
+    }
+  ],
+  "classifications": [
+    {
+      "routeId": "route-a",
+      "classification": "DEGRADED",
+      "evidenceStrength": "LIMITED",
+      "reasons": [
+        "both matched classes are broadly degraded"
+      ],
+      "controlSuccessRate": 0.2,
+      "testSuccessRate": 0.2,
+      "absoluteClassGap": 0,
+      "peerTestBaseline": {
+        "excludedRouteId": "route-a",
+        "eligibleRouteIds": [
+          "route-b",
+          "route-c"
+        ],
+        "completeCount": 60,
+        "successCount": 60,
+        "successRate": 1,
+        "routes": [
+          {
+            "routeId": "route-b",
+            "completeCount": 30,
+            "successRate": 1,
+            "inconclusiveRate": 0
+          },
+          {
+            "routeId": "route-c",
+            "completeCount": 30,
+            "successRate": 1,
+            "inconclusiveRate": 0
+          }
+        ]
+      }
+    },
+    {
+      "routeId": "route-b",
+      "classification": "HEALTHY",
+      "evidenceStrength": "LIMITED",
+      "reasons": [
+        "both matched classes satisfy healthy thresholds"
+      ],
+      "controlSuccessRate": 1,
+      "testSuccessRate": 1,
+      "absoluteClassGap": 0,
+      "peerTestBaseline": {
+        "excludedRouteId": "route-b",
+        "eligibleRouteIds": [
+          "route-a",
+          "route-c"
+        ],
+        "completeCount": 60,
+        "successCount": 36,
+        "successRate": 0.6,
+        "routes": [
+          {
+            "routeId": "route-a",
+            "completeCount": 30,
+            "successRate": 0.2,
+            "inconclusiveRate": 0
+          },
+          {
+            "routeId": "route-c",
+            "completeCount": 30,
+            "successRate": 1,
+            "inconclusiveRate": 0
+          }
+        ]
+      }
+    },
+    {
+      "routeId": "route-c",
+      "classification": "HEALTHY",
+      "evidenceStrength": "LIMITED",
+      "reasons": [
+        "both matched classes satisfy healthy thresholds"
+      ],
+      "controlSuccessRate": 1,
+      "testSuccessRate": 1,
+      "absoluteClassGap": 0,
+      "peerTestBaseline": {
+        "excludedRouteId": "route-c",
+        "eligibleRouteIds": [
+          "route-a",
+          "route-b"
+        ],
+        "completeCount": 60,
+        "successCount": 36,
+        "successRate": 0.6,
+        "routes": [
+          {
+            "routeId": "route-a",
+            "completeCount": 30,
+            "successRate": 0.2,
+            "inconclusiveRate": 0
+          },
+          {
+            "routeId": "route-b",
+            "completeCount": 30,
+            "successRate": 1,
+            "inconclusiveRate": 0
+          }
+        ]
+      }
+    }
+  ],
+  "invalidUnitIds": [],
+  "duplicateSignatures": []
+}

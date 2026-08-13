@@ -72,7 +72,7 @@ describe("Sprint 1.5 real Agave local-validator proof", () => {
     transferView.setBigUint64(4, 1_000_000n, true);
 
     const transactionMessage = pipe(
-      createTransactionMessage({ version: 0 }),
+      createTransactionMessage({ version: "legacy" }),
       message => setTransactionMessageFeePayerSigner(feePayer, message),
       message => setTransactionMessageLifetimeUsingBlockhash(validity, message),
       message => appendTransactionMessageInstruction({
@@ -176,6 +176,22 @@ describe("Sprint 1.5 real Agave local-validator proof", () => {
       generatedAt: new Date().toISOString(),
       endpoint,
       agaveVersion: "4.0.0",
+      transactionVersion: "legacy",
+      sendConfiguration: {
+        encoding: "base64",
+        maxRetries: 5,
+        minContextSlot: latestBlockhashResponse.context.slot,
+        preflightCommitment: "confirmed",
+        skipPreflight: false,
+      },
+      observationConfiguration: {
+        readerCount: 3,
+        requiredQuorum: 2,
+        pollIntervalMs: 100,
+        observationDeadlineMs: 60_000,
+        readerRequestTimeoutMs: 2_000,
+        infrastructureIndependence: false,
+      },
       transactionSignature: signature,
       airdropSignature,
       blockhash: validity.blockhash,

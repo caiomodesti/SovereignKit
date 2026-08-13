@@ -5,7 +5,7 @@
   "type": "object",
   "additionalProperties": false,
   "required": [
-    "schema_version", "result_id", "idempotency_key", "observer_id",
+    "schema_version", "result_id", "idempotency_key", "observer_id", "observer_key_id",
     "observer_sequence", "unit", "experiment_definition_hash", "signature",
     "submission", "reader_claims", "quorum_decisions", "terminal_state",
     "observer_wall_time", "payload_hash", "observer_signature"
@@ -15,6 +15,7 @@
     "result_id": { "type": "string", "format": "uuid" },
     "idempotency_key": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
     "observer_id": { "type": "string", "minLength": 1 },
+    "observer_key_id": { "type": "string", "minLength": 1 },
     "observer_sequence": { "type": "integer", "minimum": 0 },
     "unit": { "$ref": "#/$defs/unit" },
     "experiment_definition_hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },

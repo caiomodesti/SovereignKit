@@ -14,12 +14,19 @@ if ($temporaryRoot -eq [System.IO.Path]::GetPathRoot($temporaryRoot)) {
     throw "Refusing unsafe temporary ledger root: $temporaryRoot"
 }
 $ledger = Join-Path $temporaryRoot "agave-4.0.0-ledger"
-$validator = Join-Path $workspace ".tools\agave\4.0.0\solana-release\bin\solana-test-validator.exe"
+$validator = Join-Path $workspace ".tools\agave\4.0.0-patched\bin\solana-test-validator.exe"
 $stdoutLog = Join-Path $artifactRoot "validator.stdout.log"
 $stderrLog = Join-Path $artifactRoot "validator.stderr.log"
 
 New-Item -ItemType Directory -Force -Path $artifactRoot | Out-Null
 New-Item -ItemType Directory -Force -Path $temporaryRoot | Out-Null
+
+if (-not (Test-Path -LiteralPath $validator)) {
+    throw "Patched Agave 4.0.0 validator is missing: $validator. Follow docs/sprint-1.5-reproduction.md."
+}
+if ((& $validator --version) -notmatch 'solana-test-validator 4\.0\.0') {
+    throw "Patched validator version mismatch"
+}
 
 $arguments = @(
     "--ledger", $ledger,
@@ -27,7 +34,8 @@ $arguments = @(
     "--bind-address", "127.0.0.1",
     "--rpc-port", "8899",
     "--faucet-port", "9900",
-    "--limit-ledger-size", "10000"
+    "--limit-ledger-size", "10000",
+    "--log"
 )
 
 if (-not $Background) {
@@ -35,8 +43,19 @@ if (-not $Background) {
     exit $LASTEXITCODE
 }
 
-$process = Start-Process -FilePath $validator -ArgumentList $arguments -RedirectStandardOutput $stdoutLog -RedirectStandardError $stderrLog -WindowStyle Hidden -PassThru
-Set-Content -LiteralPath (Join-Path $artifactRoot "validator.pid") -Value $process.Id -Encoding ascii
+$quotedArguments = $arguments | ForEach-Object {
+    if ($_ -match '[\s"]') { '"' + ($_ -replace '"', '\"') + '"' } else { $_ }
+}
+$command = '"' + $validator + '" ' + ($quotedArguments -join ' ') +
+    ' 1>"' + $stdoutLog + '" 2>"' + $stderrLog + '"'
+$startInfo = [System.Diagnostics.ProcessStartInfo]::new()
+$startInfo.FileName = $env:ComSpec
+$startInfo.Arguments = '/d /s /c "' + $command + '"'
+$startInfo.WorkingDirectory = $artifactRoot
+$startInfo.UseShellExecute = $true
+$startInfo.WindowStyle = [System.Diagnostics.ProcessWindowStyle]::Hidden
+$process = [System.Diagnostics.Process]::Start($startInfo)
+Set-Content -LiteralPath (Join-Path $artifactRoot "validator-launcher.pid") -Value $process.Id -Encoding ascii
 
 $rpcBody = '{"jsonrpc":"2.0","id":1,"method":"getHealth"}'
 for ($attempt = 0; $attempt -lt 120; $attempt++) {
@@ -48,7 +67,7 @@ for ($attempt = 0; $attempt -lt 120; $attempt++) {
     try {
         $health = Invoke-RestMethod -Method Post -Uri "http://127.0.0.1:8899" -ContentType "application/json" -Body $rpcBody
         if ($health.result -eq "ok") {
-            Write-Output "Agave 4.0.0 local validator healthy (PID $($process.Id), RPC http://127.0.0.1:8899)"
+            Write-Output "Agave 4.0.0 local validator healthy (launcher PID $($process.Id), RPC http://127.0.0.1:8899)"
             exit 0
         }
     } catch {

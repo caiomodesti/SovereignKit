@@ -1,0 +1,241 @@
+{
+  "schemaVersion": "AsymmetryAnalysis@0.1.0",
+  "policyVersion": "ClassificationPolicyV0Experimental",
+  "inputHash": "0b53085647fe6c524365cc1f7528fbccf95d8283e3f664721d1049af2359230e",
+  "definition": {
+    "experimentId": "sprint-5-live-controlled",
+    "experimentVersion": "1",
+    "configurationHash": "270db1db42b4cbfbf804bab31267e0cc88bd0c17bfe9b1689cc7cb59999c0352",
+    "windowId": "sprint-5-live-controlled:insufficient_data:observer-local",
+    "windowVersion": "1",
+    "phase": "insufficient_data",
+    "observerId": "observer-local",
+    "routeIds": [
+      "route-a",
+      "route-b",
+      "route-c"
+    ],
+    "probeIndices": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+    ]
+  },
+  "cells": [
+    {
+      "routeId": "route-a",
+      "transactionClass": "MATCHED_CONTROL",
+      "expectedCount": 10,
+      "completeCount": 10,
+      "missingCount": 0,
+      "invalidExclusionCount": 0,
+      "successCount": 10,
+      "inconclusiveCount": 0,
+      "pairingBreachCount": 0,
+      "successRate": 1,
+      "completeCaseSuccessRate": 1,
+      "inconclusiveRate": 0,
+      "wilson95": {
+        "low": 0.722467,
+        "high": 1
+      }
+    },
+    {
+      "routeId": "route-a",
+      "transactionClass": "PROGRAM_X",
+      "expectedCount": 10,
+      "completeCount": 10,
+      "missingCount": 0,
+      "invalidExclusionCount": 0,
+      "successCount": 10,
+      "inconclusiveCount": 0,
+      "pairingBreachCount": 0,
+      "successRate": 1,
+      "completeCaseSuccessRate": 1,
+      "inconclusiveRate": 0,
+      "wilson95": {
+        "low": 0.722467,
+        "high": 1
+      }
+    },
+    {
+      "routeId": "route-b",
+      "transactionClass": "MATCHED_CONTROL",
+      "expectedCount": 10,
+      "completeCount": 10,
+      "missingCount": 0,
+      "invalidExclusionCount": 0,
+      "successCount": 10,
+      "inconclusiveCount": 0,
+      "pairingBreachCount": 0,
+      "successRate": 1,
+      "completeCaseSuccessRate": 1,
+      "inconclusiveRate": 0,
+      "wilson95": {
+        "low": 0.722467,
+        "high": 1
+      }
+    },
+    {
+      "routeId": "route-b",
+      "transactionClass": "PROGRAM_X",
+      "expectedCount": 10,
+      "completeCount": 10,
+      "missingCount": 0,
+      "invalidExclusionCount": 0,
+      "successCount": 10,
+      "inconclusiveCount": 0,
+      "pairingBreachCount": 0,
+      "successRate": 1,
+      "completeCaseSuccessRate": 1,
+      "inconclusiveRate": 0,
+      "wilson95": {
+        "low": 0.722467,
+        "high": 1
+      }
+    },
+    {
+      "routeId": "route-c",
+      "transactionClass": "MATCHED_CONTROL",
+      "expectedCount": 10,
+      "completeCount": 10,
+      "missingCount": 0,
+      "invalidExclusionCount": 0,
+      "successCount": 10,
+      "inconclusiveCount": 0,
+      "pairingBreachCount": 0,
+      "successRate": 1,
+      "completeCaseSuccessRate": 1,
+      "inconclusiveRate": 0,
+      "wilson95": {
+        "low": 0.722467,
+        "high": 1
+      }
+    },
+    {
+      "routeId": "route-c",
+      "transactionClass": "PROGRAM_X",
+      "expectedCount": 10,
+      "completeCount": 10,
+      "missingCount": 0,
+      "invalidExclusionCount": 0,
+      "successCount": 10,
+      "inconclusiveCount": 0,
+      "pairingBreachCount": 0,
+      "successRate": 1,
+      "completeCaseSuccessRate": 1,
+      "inconclusiveRate": 0,
+      "wilson95": {
+        "low": 0.722467,
+        "high": 1
+      }
+    }
+  ],
+  "classifications": [
+    {
+      "routeId": "route-a",
+      "classification": "INSUFFICIENT_DATA",
+      "evidenceStrength": "INSUFFICIENT",
+      "reasons": [
+        "minimum 30 complete units required per route/class"
+      ],
+      "controlSuccessRate": 1,
+      "testSuccessRate": 1,
+      "absoluteClassGap": 0,
+      "peerTestBaseline": {
+        "excludedRouteId": "route-a",
+        "eligibleRouteIds": [],
+        "completeCount": 0,
+        "successCount": 0,
+        "successRate": null,
+        "routes": [
+          {
+            "routeId": "route-b",
+            "completeCount": 10,
+            "successRate": 1,
+            "inconclusiveRate": 0
+          },
+          {
+            "routeId": "route-c",
+            "completeCount": 10,
+            "successRate": 1,
+            "inconclusiveRate": 0
+          }
+        ]
+      }
+    },
+    {
+      "routeId": "route-b",
+      "classification": "INSUFFICIENT_DATA",
+      "evidenceStrength": "INSUFFICIENT",
+      "reasons": [
+        "minimum 30 complete units required per route/class"
+      ],
+      "controlSuccessRate": 1,
+      "testSuccessRate": 1,
+      "absoluteClassGap": 0,
+      "peerTestBaseline": {
+        "excludedRouteId": "route-b",
+        "eligibleRouteIds": [],
+        "completeCount": 0,
+        "successCount": 0,
+        "successRate": null,
+        "routes": [
+          {
+            "routeId": "route-a",
+            "completeCount": 10,
+            "successRate": 1,
+            "inconclusiveRate": 0
+          },
+          {
+            "routeId": "route-c",
+            "completeCount": 10,
+            "successRate": 1,
+            "inconclusiveRate": 0
+          }
+        ]
+      }
+    },
+    {
+      "routeId": "route-c",
+      "classification": "INSUFFICIENT_DATA",
+      "evidenceStrength": "INSUFFICIENT",
+      "reasons": [
+        "minimum 30 complete units required per route/class"
+      ],
+      "controlSuccessRate": 1,
+      "testSuccessRate": 1,
+      "absoluteClassGap": 0,
+      "peerTestBaseline": {
+        "excludedRouteId": "route-c",
+        "eligibleRouteIds": [],
+        "completeCount": 0,
+        "successCount": 0,
+        "successRate": null,
+        "routes": [
+          {
+            "routeId": "route-a",
+            "completeCount": 10,
+            "successRate": 1,
+            "inconclusiveRate": 0
+          },
+          {
+            "routeId": "route-b",
+            "completeCount": 10,
+            "successRate": 1,
+            "inconclusiveRate": 0
+          }
+        ]
+      }
+    }
+  ],
+  "invalidUnitIds": [],
+  "duplicateSignatures": []
+}
