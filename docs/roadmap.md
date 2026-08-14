@@ -54,6 +54,16 @@ Validate current Solana APIs and operational behavior. Do not treat Devnet as th
 
 Publish methodology, dataset, caveats, and results with careful route identity policy. Controlled findings remain clearly labeled.
 
+**Accepted:** versioned Markdown/JSON/CSV report, source/output hash manifest,
+reproduction command, route identity policy, and hostile publication audit.
+
 ## Sprint 12 — Security, quality, and demo hardening
 
 Complete infrastructure, dependency, secrets, abuse, load, retry, privacy, and reproducibility audits.
+
+## Post-v0.1 expansion gates
+
+After Sprint 12, expansion is evidence- and customer-gated: judge/design-partner
+readiness, operationally independent observation, private managed beta, and
+only then responsible ecosystem reporting. See
+[Hackathon, business, roadmap, and expansion readiness](hackathon-and-growth-readiness.md).

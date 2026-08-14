@@ -241,6 +241,17 @@ The run reached logical quorum 2/3 and a finalized 1,000,000-lamport recipient b
 See the [acceptance audit](docs/sprint-10-acceptance.md) and
 [retained fixture](fixtures/sprint-10/devnet-accepted-run-20260814T220116Z/).
 
+### Public experimental report
+
+```powershell
+corepack pnpm verify:sprint-11
+```
+
+Sprint 11 freezes the accepted controlled and Devnet evidence into a
+deterministic [public report](reports/public-experimental-report-v0.1/report.md)
+with canonical JSON, CSV, and SHA-256 provenance. The two evidence sets remain
+methodologically separate; the report is not a provider scorecard.
+
 ## Evidence chain
 
 ```mermaid
@@ -272,10 +283,14 @@ The dashboard and summaries are downstream views. They do not replace raw eviden
 | Sprint 8 | local evidence dashboard | ✅ accepted |
 | Sprint 9 | probe-informed route ordering | ✅ accepted |
 | Sprint 10 | real Devnet integration validation | ✅ accepted |
+| Sprint 11 | reproducible public experimental report | ✅ accepted |
+| Sprint 12 | security, quality, and demo hardening | ⏳ not started |
 | Later validation | stronger observer independence | ⏳ not started |
-| Public infrastructure | hosted feed, public report, production hardening | ⏳ gated by evidence |
+| Public infrastructure | hosted feed and production operations | ⏳ gated by evidence and customer discovery |
 
 The detailed sequence and claim gates live in the [project roadmap](docs/roadmap.md).
+The post-v0.1 path and current hackathon/business assessment live in
+[Hackathon, business, roadmap, and expansion readiness](docs/hackathon-and-growth-readiness.md).
 
 ## What SovereignKit can—and cannot—say
 

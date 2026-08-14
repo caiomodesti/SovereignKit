@@ -43,6 +43,7 @@ This index separates normative contracts, implementation design, reproducible ev
 - [Sprint 8 — local evidence dashboard](sprint-8-reproduction.md)
 - [Sprint 9 — probe-informed route ordering](sprint-9-reproduction.md)
 - [Sprint 10 — Devnet integration validation](sprint-10-devnet-validation.md)
+- [Sprint 11 — public experimental report](sprint-11-reproduction.md)
 
 ## Hostile audits and acceptance
 
@@ -61,14 +62,17 @@ The repository keeps sprint-level acceptance and hostile audits so a later imple
 | 8 | [acceptance](sprint-8-acceptance.md) | [hostile audit](sprint-8-hostile-audit.md) |
 | 9 | [acceptance](sprint-9-acceptance.md) | [hostile audit](sprint-9-hostile-audit.md) |
 | 10 | [acceptance](sprint-10-acceptance.md) | included in acceptance record |
+| 11 | [acceptance](sprint-11-acceptance.md) | [audit](sprint-11-hostile-audit.md) |
 
 ## Latest status
 
-- [Sprint 10 Devnet validation contract and reproduction](sprint-10-devnet-validation.md)
-- [Sprint 10 accepted run and resolved blockers](sprint-10-status.md)
+- [Sprint 11 public report](../reports/public-experimental-report-v0.1/report.md)
+- [Sprint 11 reproduction](sprint-11-reproduction.md)
+- [Sprint 11 hostile publication audit](sprint-11-hostile-audit.md)
 
 ## Product and commercial context
 
 - [Commercial thesis v0.1](commercial-thesis-v0.1.md)
 - [Dashboard contract](dashboard.md)
 - [Current claim limits](epistemic-limits.md)
+- [Hackathon, business, roadmap, and expansion readiness](hackathon-and-growth-readiness.md)
