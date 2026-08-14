@@ -12,22 +12,28 @@
     "expires_at": { "type": "string", "format": "date-time" },
     "policy_id": { "const": "ClassificationPolicyV0Experimental@0.1.0" },
     "input_hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
-    "generator_version": { "type": "string", "minLength": 1 },
+    "generator_version": { "const": "IntelligenceSnapshotGenerator@0.1.0" },
     "route_intelligence": {
       "type": "array",
+      "maxItems": 10000,
       "items": {
         "type": "object", "additionalProperties": false,
-        "required": ["route_id", "transaction_class", "classification", "evidence_strength", "window_id", "sample_count", "observed_at"],
+        "required": ["route_id", "transaction_class", "classification", "evidence_strength", "window_id", "experiment_id", "experiment_version", "observer_id", "configuration_hash", "source_input_hash", "sample_count", "observed_at", "avoid_after_consecutive_snapshots", "restore_after_consecutive_snapshots"],
         "properties": {
-          "route_id": { "type": "string" },
+          "route_id": { "type": "string", "minLength": 1, "maxLength": 160 },
           "transaction_class": { "enum": ["MATCHED_CONTROL", "PROGRAM_X"] },
           "classification": { "enum": ["HEALTHY", "DEGRADED", "ASYMMETRIC", "INSUFFICIENT_DATA", "UNKNOWN"] },
-          "evidence_strength": { "enum": ["INSUFFICIENT", "LIMITED", "STRONG_CONTROLLED"] },
-          "window_id": { "type": "string" },
+          "evidence_strength": { "enum": ["INSUFFICIENT", "LIMITED", "STRONG_CONTROLLED", "NONE"] },
+          "window_id": { "type": "string", "minLength": 1, "maxLength": 160 },
+          "experiment_id": { "type": "string", "minLength": 1, "maxLength": 160 },
+          "experiment_version": { "type": "string", "minLength": 1, "maxLength": 160 },
+          "observer_id": { "type": "string", "minLength": 1, "maxLength": 160 },
+          "configuration_hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+          "source_input_hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
           "sample_count": { "type": "integer", "minimum": 0 },
           "observed_at": { "type": "string", "format": "date-time" },
-          "avoid_after_consecutive_snapshots": { "type": "integer", "minimum": 1, "default": 2 },
-          "restore_after_consecutive_snapshots": { "type": "integer", "minimum": 1, "default": 3 }
+          "avoid_after_consecutive_snapshots": { "type": "integer", "minimum": 1, "maximum": 100 },
+          "restore_after_consecutive_snapshots": { "type": "integer", "minimum": 1, "maximum": 100 }
         }
       }
     }
