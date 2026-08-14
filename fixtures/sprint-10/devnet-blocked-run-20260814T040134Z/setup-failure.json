@@ -1,0 +1,9 @@
+{
+  "capturedAt": "2026-08-14T04:01:58.315Z",
+  "stage": "DEVNET_FAUCET",
+  "endpointOrigin": "https://api.devnet.solana.com",
+  "classification": "EXTERNAL_SETUP_FAILURE",
+  "message": "Error: Devnet faucet failed after 5 bounded attempts; cause: HTTP error (429): Too Many Requests",
+  "transactionCreated": false,
+  "methodologicalFinding": null
+}

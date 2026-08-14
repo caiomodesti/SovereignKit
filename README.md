@@ -10,7 +10,7 @@
 </p>
 
 <p align="center">
-  <img alt="Status: Sprint 9 accepted" src="https://img.shields.io/badge/status-Sprint_9_accepted-38BDF8?style=flat-square">
+  <img alt="Status: Sprint 10 accepted" src="https://img.shields.io/badge/status-Sprint_10_accepted-38BDF8?style=flat-square">
   <img alt="Controlled evidence" src="https://img.shields.io/badge/evidence-controlled-2DD4A8?style=flat-square">
   <img alt="Tests: 84 of 84" src="https://img.shields.io/badge/tests-84%2F84-2DD4A8?style=flat-square">
   <img alt="Agave 4.0.0" src="https://img.shields.io/badge/Agave-4.0.0-F4B860?style=flat-square">
@@ -31,7 +31,7 @@ SovereignKit is open-source infrastructure for **measuring, explaining, and rout
 | an RPC or reliability engineer | reproduce broad degradation versus class-selective behavior |
 | a researcher | inspect raw evidence, statistical units, windows, assumptions, and claim limits |
 
-**Current boundary:** v0.1 is a controlled, local proof—not a public provider-ranking service, a censorship oracle, or a decentralized observer network. Sprint 9 is accepted on `main`; probe-informed routing changes only the order of locally eligible routes and retains fail-open local policy. No public hosted feed, Devnet validation, or decentralized observer network exists yet.
+**Current boundary:** v0.1 is a controlled proof plus a narrowly scoped Devnet integration validation—not a public provider-ranking service, a censorship oracle, or a decentralized observer network. Sprint 10 validates one real finalized Devnet lifecycle while explicitly not treating Devnet as the statistical proof or a Mainnet performance proxy. No public hosted feed or decentralized observer network exists yet.
 
 ## Why this exists
 
@@ -229,6 +229,18 @@ This reproduces fresh class-selective ordering, matched-control stability, the b
 
 The Telemetry Core has also completed a real healthy lifecycle against local Agave 4.0.0: submission, RPC acknowledgment, three-reader polling, 2/3 quorum, confirmation, finalization, and finalized balance verification. See the [Sprint 1.5 evidence](docs/sprint-1.5-acceptance.md) and [committed healthy fixture](fixtures/integration/agave-4.0.0/healthy/).
 
+### Devnet integration validation
+
+```powershell
+corepack pnpm verify:sprint-10:static
+```
+
+Sprint 10 retains a real Devnet transaction whose raw events reconstruct
+`CREATED → SUBMISSION_ATTEMPTED → RPC_ACKNOWLEDGED → OBSERVATION_PENDING → OBSERVED_EXECUTION_SUCCESS → CONFIRMED → FINALIZED`.
+The run reached logical quorum 2/3 and a finalized 1,000,000-lamport recipient balance.
+See the [acceptance audit](docs/sprint-10-acceptance.md) and
+[retained fixture](fixtures/sprint-10/devnet-accepted-run-20260814T220116Z/).
+
 ## Evidence chain
 
 ```mermaid
@@ -259,7 +271,8 @@ The dashboard and summaries are downstream views. They do not replace raw eviden
 | Sprint 7 | versioned fail-open intelligence feed | ✅ accepted |
 | Sprint 8 | local evidence dashboard | ✅ accepted |
 | Sprint 9 | probe-informed route ordering | ✅ accepted |
-| Later validation | Devnet integration and stronger observer independence | ⏳ not started |
+| Sprint 10 | real Devnet integration validation | ✅ accepted |
+| Later validation | stronger observer independence | ⏳ not started |
 | Public infrastructure | hosted feed, public report, production hardening | ⏳ gated by evidence |
 
 The detailed sequence and claim gates live in the [project roadmap](docs/roadmap.md).
@@ -278,7 +291,7 @@ The detailed sequence and claim gates live in the [project roadmap](docs/roadmap
 - Intent, censorship, or blame attribution.
 - Universal transaction classification.
 - A claim that three readers on one host are independently operated infrastructure.
-- Mainnet or Devnet generalization from the local controlled experiment.
+- Mainnet performance or general Devnet accessibility rates from one integration run.
 - A decentralized observer network.
 - Calibrated production alert confidence or a public provider scorecard.
 
