@@ -22,6 +22,12 @@ export class IdempotentProbeResultIngestor {
   }
 
   ingest(result: SignedProbeResult, collectorTime = new Date()): IngestionOutcome {
+    const outcome = this.assess(result, collectorTime);
+    if (outcome.status === "ACCEPTED") this.#commit(result);
+    return outcome;
+  }
+
+  assess(result: SignedProbeResult, collectorTime = new Date()): IngestionOutcome {
     const schemaError = validateResultShape(result);
     if (schemaError !== undefined) return this.#rejected(schemaError);
     const entry = this.#allowlist.get(`${result.observer_id}\u001f${result.observer_key_id}`);
@@ -42,18 +48,25 @@ export class IdempotentProbeResultIngestor {
 
     const existingByResult = this.#byResultId.get(result.result_id);
     const existingByIdempotency = this.#byIdempotencyKey.get(result.idempotency_key);
-    const sequenceKey = `${result.observer_id}\u001f${result.observer_sequence}`;
+    const sequenceKey = sequenceKeyFor(result);
     const existingBySequence = this.#byObserverSequence.get(sequenceKey);
     const existing = existingByResult ?? existingByIdempotency ?? existingBySequence;
     if (existing !== undefined) {
       if (canonicalJson(existing) === canonicalJson(result)) return { status: "DUPLICATE", storedCount: this.#accepted.length };
-      return this.#rejected("result_id or idempotency_key conflicts with an existing result");
+      return this.#rejected("result_id, idempotency_key, or observer_sequence conflicts with an existing result");
+    }
+    return { status: "ACCEPTED", storedCount: this.#accepted.length + 1 };
+  }
+
+  #commit(result: SignedProbeResult): void {
+    const sequenceKey = sequenceKeyFor(result);
+    if (this.#byResultId.has(result.result_id) || this.#byIdempotencyKey.has(result.idempotency_key) || this.#byObserverSequence.has(sequenceKey)) {
+      throw new Error("cannot commit a ProbeResult that conflicts with current ingestion state");
     }
     this.#byResultId.set(result.result_id, result);
     this.#byIdempotencyKey.set(result.idempotency_key, result);
     this.#byObserverSequence.set(sequenceKey, result);
     this.#accepted.push(result);
-    return { status: "ACCEPTED", storedCount: this.#accepted.length };
   }
 
   acceptedResults(): readonly SignedProbeResult[] { return [...this.#accepted]; }
@@ -61,6 +74,10 @@ export class IdempotentProbeResultIngestor {
   #rejected(reason: string): IngestionOutcome {
     return { status: "REJECTED", reason, storedCount: this.#accepted.length };
   }
+}
+
+function sequenceKeyFor(result: SignedProbeResult): string {
+  return `${result.observer_id}\u001f${result.experiment_definition_hash}\u001f${result.observer_sequence}`;
 }
 
 function validateResultShape(result: SignedProbeResult): string | undefined {
@@ -72,7 +89,7 @@ function validateResultShape(result: SignedProbeResult): string | undefined {
   if (!/^[0-9a-f]{64}$/.test(result.unit.unit_id)) return "invalid unit_id";
   if (!/^[0-9a-f]{64}$/.test(result.experiment_definition_hash)) return "invalid experiment_definition_hash";
   if (!/^[0-9a-f]{64}$/.test(result.payload_hash)) return "invalid payload_hash";
-  if (!/^[0-9a-f-]{36}$/.test(result.result_id)) return "invalid result_id";
+  if (!/^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(result.result_id)) return "invalid result_id";
   if (result.signature.length < 80 || result.signature.length > 90) return "invalid transaction signature";
   if (result.observer_sequence < 0 || !Number.isSafeInteger(result.observer_sequence)) return "invalid observer_sequence";
   if (result.unit.observer_id !== result.observer_id) return "unit observer_id mismatch";

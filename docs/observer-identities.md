@@ -12,14 +12,14 @@ valid_from
 valid_until?
 ```
 
-Raw Telemetry Core events already carry `observerId` and `keyId`. ProbeResult signing is implemented in a later sprint; Sprint 1 does not invent a PKI.
+ProbeResult signing is implemented with Ed25519. Sprint 6 adds a versioned PKCS#8 private-key document for the standalone Observer process and a centrally administered public-key allowlist. This is not a PKI or decentralized identity network.
 
 ## Private key handling
 
 - Never hardcode or commit private keys.
 - Local development files live under `.secrets/`, which is ignored by Git.
 - Use one distinct key for each observer identity.
-- Future deployments use their environment's secret provider.
+- Future deployments must use their environment's secret provider or hardware-backed custody; the local JSON document is development-only.
 - Payer keys and observer-signing keys are separate by invariant.
 
 Expected local layout, not committed:
@@ -33,4 +33,4 @@ Expected local layout, not committed:
 
 ## Rotation semantics
 
-The allowlist may contain multiple non-overlapping keys for one `observer_id`. Verification selects `key_id`, checks the public key and validity interval, and then verifies the canonical payload signature. Revocation and remote key management are deferred; this is central allowlist administration, not decentralized identity.
+The allowlist may contain multiple non-overlapping keys for one `observer_id`. Verification selects `key_id`, checks the public key and validity interval at observer and Collector times, and then verifies the canonical payload signature. Revocation and remote key management are deferred; this is central allowlist administration, not decentralized identity.

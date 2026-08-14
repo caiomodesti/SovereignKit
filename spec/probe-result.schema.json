@@ -12,17 +12,17 @@
   ],
   "properties": {
     "schema_version": { "const": "0.1.0" },
-    "result_id": { "type": "string", "format": "uuid" },
+    "result_id": { "type": "string", "pattern": "^[A-Fa-f0-9]{8}(?:-[A-Fa-f0-9]{4}){3}-[A-Fa-f0-9]{12}$" },
     "idempotency_key": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
-    "observer_id": { "type": "string", "minLength": 1 },
-    "observer_key_id": { "type": "string", "minLength": 1 },
+    "observer_id": { "$ref": "#/$defs/logicalIdentifier" },
+    "observer_key_id": { "$ref": "#/$defs/logicalIdentifier" },
     "observer_sequence": { "type": "integer", "minimum": 0 },
     "unit": { "$ref": "#/$defs/unit" },
     "experiment_definition_hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
     "signature": { "type": "string", "minLength": 80, "maxLength": 90 },
     "submission": { "$ref": "#/$defs/submission" },
-    "reader_claims": { "type": "array", "items": { "$ref": "#/$defs/claim" } },
-    "quorum_decisions": { "type": "array", "items": { "$ref": "#/$defs/decision" } },
+    "reader_claims": { "type": "array", "maxItems": 64, "items": { "$ref": "#/$defs/claim" } },
+    "quorum_decisions": { "type": "array", "minItems": 1, "maxItems": 16, "items": { "$ref": "#/$defs/decision" } },
     "terminal_state": {
       "enum": [
         "OBSERVED_EXECUTION_FAILED", "CONFIRMED", "FINALIZED", "EXPIRED",
@@ -31,18 +31,24 @@
     },
     "observer_wall_time": { "type": "string", "format": "date-time" },
     "payload_hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
-    "observer_signature": { "type": "string", "minLength": 1 }
+    "observer_signature": { "type": "string", "minLength": 80, "maxLength": 100, "pattern": "^[A-Za-z0-9_-]+$" }
   },
   "$defs": {
+    "logicalIdentifier": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 160,
+      "pattern": "^[A-Za-z0-9._:-]+$"
+    },
     "unit": {
       "type": "object", "additionalProperties": false,
       "required": ["experiment_id", "experiment_version", "phase", "observer_id", "route_id", "transaction_class", "probe_index", "unit_id"],
       "properties": {
-        "experiment_id": { "type": "string" },
-        "experiment_version": { "type": "string" },
+        "experiment_id": { "$ref": "#/$defs/logicalIdentifier" },
+        "experiment_version": { "$ref": "#/$defs/logicalIdentifier" },
         "phase": { "enum": ["healthy", "degraded", "asymmetric", "insufficient_data"] },
-        "observer_id": { "type": "string" },
-        "route_id": { "type": "string" },
+        "observer_id": { "$ref": "#/$defs/logicalIdentifier" },
+        "route_id": { "$ref": "#/$defs/logicalIdentifier" },
         "transaction_class": { "enum": ["MATCHED_CONTROL", "PROGRAM_X"] },
         "probe_index": { "type": "integer", "minimum": 0 },
         "unit_id": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
@@ -52,10 +58,10 @@
       "type": "object", "additionalProperties": false,
       "required": ["attempt_id", "attempt_number", "outcome", "blockhash", "blockhash_context_slot", "last_valid_block_height", "serialized_size_bytes", "created_at", "submitted_at"],
       "properties": {
-        "attempt_id": { "type": "string", "format": "uuid" },
+        "attempt_id": { "$ref": "#/$defs/logicalIdentifier" },
         "attempt_number": { "const": 1 },
         "outcome": { "enum": ["RPC_ACKNOWLEDGED", "RPC_REJECTED"] },
-        "blockhash": { "type": "string" },
+        "blockhash": { "type": "string", "minLength": 32, "maxLength": 64 },
         "blockhash_context_slot": { "type": "integer", "minimum": 0 },
         "last_valid_block_height": { "type": "integer", "minimum": 0 },
         "serialized_size_bytes": { "type": "integer", "minimum": 1 },
@@ -63,32 +69,32 @@
         "submitted_at": { "type": "string", "format": "date-time" },
         "response_at": { "type": "string", "format": "date-time" },
         "rpc_error_code": { "type": ["integer", "string"] },
-        "rpc_error_category": { "type": "string" }
+        "rpc_error_category": { "$ref": "#/$defs/logicalIdentifier" }
       }
     },
     "claim": {
       "type": "object", "additionalProperties": false,
       "required": ["claim_id", "reader_id", "observed_at", "signature_status"],
       "properties": {
-        "claim_id": { "type": "string", "format": "uuid" },
-        "reader_id": { "type": "string" },
+        "claim_id": { "$ref": "#/$defs/logicalIdentifier" },
+        "reader_id": { "$ref": "#/$defs/logicalIdentifier" },
         "observed_at": { "type": "string", "format": "date-time" },
         "signature_status": { "type": ["string", "null"], "enum": [null, "processed", "confirmed", "finalized"] },
         "rpc_context_slot": { "type": "integer", "minimum": 0 },
         "transaction_slot": { "type": "integer", "minimum": 0 },
         "execution_error": {},
         "observed_block_height": { "type": "integer", "minimum": 0 },
-        "reader_error": { "type": "string" }
+        "reader_error": { "type": "string", "maxLength": 2048 }
       }
     },
     "decision": {
       "type": "object", "additionalProperties": false,
       "required": ["decision_id", "decision_type", "supporting_claim_ids", "decided_at", "quorum_rule_version"],
       "properties": {
-        "decision_id": { "type": "string", "format": "uuid" },
+        "decision_id": { "$ref": "#/$defs/logicalIdentifier" },
         "decision_type": { "enum": ["OBSERVED_EXECUTION_SUCCESS", "OBSERVED_EXECUTION_FAILED", "CONFIRMED", "FINALIZED", "EXPIRED", "OBSERVATION_INCONCLUSIVE"] },
-        "supporting_claim_ids": { "type": "array", "minItems": 2, "items": { "type": "string", "format": "uuid" } },
-        "dissenting_claim_ids": { "type": "array", "items": { "type": "string", "format": "uuid" } },
+        "supporting_claim_ids": { "type": "array", "minItems": 2, "maxItems": 64, "uniqueItems": true, "items": { "$ref": "#/$defs/logicalIdentifier" } },
+        "dissenting_claim_ids": { "type": "array", "maxItems": 64, "uniqueItems": true, "items": { "$ref": "#/$defs/logicalIdentifier" } },
         "decided_at": { "type": "string", "format": "date-time" },
         "quorum_rule_version": { "const": "ObservationQuorum@0.1.0" }
       }

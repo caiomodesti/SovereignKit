@@ -1,4 +1,4 @@
-import { createPublicKey, generateKeyPairSync, sign, verify, type KeyObject } from "node:crypto";
+import { createPrivateKey, createPublicKey, generateKeyPairSync, sign, verify, type KeyObject } from "node:crypto";
 
 import { canonicalJson, sha256Hex } from "./canonical.js";
 import type { ObserverAllowlistEntry, SignedProbeResult, UnsignedProbeResult } from "./types.js";
@@ -10,6 +10,14 @@ export interface ObserverKeyPair {
   readonly publicKeySpkiBase64: string;
 }
 
+export interface ObserverPrivateKeyDocument {
+  readonly schemaVersion: "ObserverPrivateKey@0.1.0";
+  readonly observerId: string;
+  readonly keyId: string;
+  readonly privateKeyPkcs8Base64: string;
+  readonly publicKeySpkiBase64: string;
+}
+
 export function generateObserverKeyPair(observerId: string, keyId: string): ObserverKeyPair {
   if (observerId.length === 0 || keyId.length === 0) throw new Error("observerId and keyId are required");
   const pair = generateKeyPairSync("ed25519");
@@ -18,6 +26,32 @@ export function generateObserverKeyPair(observerId: string, keyId: string): Obse
     keyId,
     privateKey: pair.privateKey,
     publicKeySpkiBase64: pair.publicKey.export({ type: "spki", format: "der" }).toString("base64"),
+  };
+}
+
+export function exportObserverPrivateKey(keyPair: ObserverKeyPair): ObserverPrivateKeyDocument {
+  return {
+    schemaVersion: "ObserverPrivateKey@0.1.0",
+    observerId: keyPair.observerId,
+    keyId: keyPair.keyId,
+    privateKeyPkcs8Base64: keyPair.privateKey.export({ type: "pkcs8", format: "der" }).toString("base64"),
+    publicKeySpkiBase64: keyPair.publicKeySpkiBase64,
+  };
+}
+
+export function importObserverPrivateKey(document: ObserverPrivateKeyDocument): ObserverKeyPair {
+  if (document.schemaVersion !== "ObserverPrivateKey@0.1.0" || document.observerId.length === 0 || document.keyId.length === 0) {
+    throw new Error("invalid observer private key document");
+  }
+  const privateKey = createPrivateKey({ key: Buffer.from(document.privateKeyPkcs8Base64, "base64"), type: "pkcs8", format: "der" });
+  if (privateKey.asymmetricKeyType !== "ed25519") throw new Error("observer private key must be Ed25519");
+  const derivedPublicKey = createPublicKey(privateKey).export({ type: "spki", format: "der" }).toString("base64");
+  if (derivedPublicKey !== document.publicKeySpkiBase64) throw new Error("observer private/public key mismatch");
+  return {
+    observerId: document.observerId,
+    keyId: document.keyId,
+    privateKey,
+    publicKeySpkiBase64: derivedPublicKey,
   };
 }
 

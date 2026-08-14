@@ -40,9 +40,9 @@
 | Intelligence feed tampering/staleness | Bad routing | Schema/version/TTL validation, transport security later, hysteresis, override, fail-open |
 | Signature/account correlation | Privacy leakage | Probe/user separation, opt-in user telemetry, minimization and retention policy |
 
-## Security non-goals for Sprint 0
+## Security status after Sprint 6
 
-No production key custody, remote deployment, public ingestion, database authorization, or network service exists yet. Their controls must be implemented and tested before exposure.
+Local observer signing, central allowlisting, exhaustive ProbeResult schema validation, payload limits, single-writer durable ingestion, and restart replay reconstruction now exist. Production key custody, remote deployment, public ingestion, database authorization, TLS/client authentication, multi-writer coordination, external anchoring, and abuse operations do not. They must be implemented and tested before exposure.
 
 ## Residual critical risks
 
