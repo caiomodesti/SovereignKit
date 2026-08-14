@@ -59,6 +59,12 @@ The repository keeps sprint-level acceptance and hostile audits so a later imple
 | 7 | [acceptance](sprint-7-acceptance.md) | [hostile audit](sprint-7-hostile-audit.md) |
 | 8 | [acceptance](sprint-8-acceptance.md) | [hostile audit](sprint-8-hostile-audit.md) |
 | 9 | [acceptance](sprint-9-acceptance.md) | [hostile audit](sprint-9-hostile-audit.md) |
+| 10 (in progress) | [pending acceptance](sprint-10-acceptance.md) | included in pending acceptance record |
+
+## Work in progress
+
+- [Sprint 10 Devnet validation contract](sprint-10-devnet-validation.md)
+- [Sprint 10 status and blockers](sprint-10-status.md)
 
 ## Product and commercial context
 
