@@ -142,6 +142,13 @@ export function buildIntelligenceSnapshot(options: {
 export type IntelligenceDisposition = "LOCAL_PRIMARY_FALLBACK" | "AVOID";
 export type IntelligenceDeveloperOverride = "LOCAL_PRIMARY_FALLBACK" | "AVOID" | undefined;
 
+export interface IntelligenceRoutingDecision {
+  readonly disposition: IntelligenceDisposition;
+  readonly source: "SNAPSHOT" | "DEVELOPER_OVERRIDE" | "FAIL_OPEN";
+  readonly snapshotVersion?: number;
+  readonly reason?: string;
+}
+
 export interface SnapshotPollResult {
   readonly status: "APPLIED" | "UNCHANGED" | "FAIL_OPEN";
   readonly version?: number;
@@ -211,6 +218,9 @@ export class IntelligenceSnapshotClient {
   readonly #states = new Map<string, HysteresisState>();
   #lastVersion = 0;
   #lastSnapshotHash: string | undefined;
+  #activeSnapshotGeneratedAtMs: number | undefined;
+  #activeSnapshotExpiresAtMs: number | undefined;
+  #lastFailOpenReason = "intelligence feed has not been polled";
   #feedAvailable = false;
 
   constructor(options: {
@@ -236,12 +246,16 @@ export class IntelligenceSnapshotClient {
       const snapshotHash = sha256Hex(canonicalJson(typed));
       if (typed.version === this.#lastVersion) {
         if (snapshotHash !== this.#lastSnapshotHash) return this.#failOpen("snapshot version equivocation");
+        this.#activeSnapshotGeneratedAtMs = Date.parse(typed.generated_at);
+        this.#activeSnapshotExpiresAtMs = Date.parse(typed.expires_at);
         this.#feedAvailable = true;
         return { status: "UNCHANGED", version: typed.version };
       }
       this.#lastVersion = typed.version;
       this.#lastSnapshotHash = snapshotHash;
       this.#apply(typed);
+      this.#activeSnapshotGeneratedAtMs = Date.parse(typed.generated_at);
+      this.#activeSnapshotExpiresAtMs = Date.parse(typed.expires_at);
       this.#feedAvailable = true;
       return { status: "APPLIED", version: typed.version };
     } catch (error) {
@@ -249,16 +263,43 @@ export class IntelligenceSnapshotClient {
     }
   }
 
-  disposition(routeId: string, transactionClass: IntelligenceTransactionClass): IntelligenceDisposition {
+  decision(routeId: string, transactionClass: IntelligenceTransactionClass, now = new Date()): IntelligenceRoutingDecision {
     let override: IntelligenceDeveloperOverride;
     try {
       override = this.#developerOverride?.(routeId, transactionClass);
     } catch {
-      return "LOCAL_PRIMARY_FALLBACK";
+      return { disposition: "LOCAL_PRIMARY_FALLBACK", source: "FAIL_OPEN", reason: "developer override threw" };
     }
-    if (override !== undefined) return override;
-    if (!this.#feedAvailable) return "LOCAL_PRIMARY_FALLBACK";
-    return this.#states.get(intelligenceKey(routeId, transactionClass))?.avoided === true ? "AVOID" : "LOCAL_PRIMARY_FALLBACK";
+    if (override !== undefined) {
+      if (override !== "AVOID" && override !== "LOCAL_PRIMARY_FALLBACK") {
+        return { disposition: "LOCAL_PRIMARY_FALLBACK", source: "FAIL_OPEN", reason: "developer override returned an unsupported disposition" };
+      }
+      return { disposition: override, source: "DEVELOPER_OVERRIDE" };
+    }
+    const nowMs = now.getTime();
+    if (!Number.isFinite(nowMs)) return { disposition: "LOCAL_PRIMARY_FALLBACK", source: "FAIL_OPEN", reason: "routing decision time is invalid" };
+    if (!this.#feedAvailable) return { disposition: "LOCAL_PRIMARY_FALLBACK", source: "FAIL_OPEN", reason: this.#lastFailOpenReason };
+    if (this.#activeSnapshotGeneratedAtMs === undefined || nowMs < this.#activeSnapshotGeneratedAtMs) {
+      this.#feedAvailable = false;
+      this.#lastFailOpenReason = "snapshot generated_at became future-dated before routing decision";
+      return { disposition: "LOCAL_PRIMARY_FALLBACK", source: "FAIL_OPEN", reason: this.#lastFailOpenReason };
+    }
+    if (this.#activeSnapshotExpiresAtMs === undefined || nowMs >= this.#activeSnapshotExpiresAtMs) {
+      this.#feedAvailable = false;
+      this.#lastFailOpenReason = "snapshot became stale before routing decision";
+      return { disposition: "LOCAL_PRIMARY_FALLBACK", source: "FAIL_OPEN", reason: this.#lastFailOpenReason };
+    }
+    const state = this.#states.get(intelligenceKey(routeId, transactionClass));
+    return {
+      disposition: state?.avoided === true ? "AVOID" : "LOCAL_PRIMARY_FALLBACK",
+      source: "SNAPSHOT",
+      snapshotVersion: this.#lastVersion,
+      ...(state === undefined ? { reason: "snapshot has no matching route/class entry" } : {}),
+    };
+  }
+
+  disposition(routeId: string, transactionClass: IntelligenceTransactionClass, now = new Date()): IntelligenceDisposition {
+    return this.decision(routeId, transactionClass, now).disposition;
   }
 
   #apply(snapshot: IntelligenceSnapshot): void {
@@ -289,6 +330,7 @@ export class IntelligenceSnapshotClient {
 
   #failOpen(reason: string): SnapshotPollResult {
     this.#feedAvailable = false;
+    this.#lastFailOpenReason = reason;
     return { status: "FAIL_OPEN", reason };
   }
 }

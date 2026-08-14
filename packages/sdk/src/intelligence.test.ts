@@ -50,12 +50,12 @@ describe("polling, TTL, hysteresis, override, and fail-open", () => {
     const v2 = buildSnapshot(2, "ASYMMETRIC");
     const client = queuedClient([v1, v1, v2]);
     expect(await client.poll(now())).toEqual({ status: "APPLIED", version: 1 });
-    expect(client.disposition("route-a", "PROGRAM_X")).toBe("LOCAL_PRIMARY_FALLBACK");
+    expect(client.disposition("route-a", "PROGRAM_X", now())).toBe("LOCAL_PRIMARY_FALLBACK");
     expect(await client.poll(now())).toEqual({ status: "UNCHANGED", version: 1 });
-    expect(client.disposition("route-a", "PROGRAM_X")).toBe("LOCAL_PRIMARY_FALLBACK");
+    expect(client.disposition("route-a", "PROGRAM_X", now())).toBe("LOCAL_PRIMARY_FALLBACK");
     expect(await client.poll(now())).toEqual({ status: "APPLIED", version: 2 });
-    expect(client.disposition("route-a", "PROGRAM_X")).toBe("AVOID");
-    expect(client.disposition("route-a", "MATCHED_CONTROL")).toBe("LOCAL_PRIMARY_FALLBACK");
+    expect(client.disposition("route-a", "PROGRAM_X", now())).toBe("AVOID");
+    expect(client.disposition("route-a", "MATCHED_CONTROL", now())).toBe("LOCAL_PRIMARY_FALLBACK");
   });
 
   test("requires three healthy snapshots to restore an avoided class", async () => {
@@ -65,12 +65,12 @@ describe("polling, TTL, hysteresis, override, and fail-open", () => {
     ]);
     await client.poll(now());
     await client.poll(now());
-    expect(client.disposition("route-a", "PROGRAM_X")).toBe("AVOID");
+    expect(client.disposition("route-a", "PROGRAM_X", now())).toBe("AVOID");
     await client.poll(now());
     await client.poll(now());
-    expect(client.disposition("route-a", "PROGRAM_X")).toBe("AVOID");
+    expect(client.disposition("route-a", "PROGRAM_X", now())).toBe("AVOID");
     await client.poll(now());
-    expect(client.disposition("route-a", "PROGRAM_X")).toBe("LOCAL_PRIMARY_FALLBACK");
+    expect(client.disposition("route-a", "PROGRAM_X", now())).toBe("LOCAL_PRIMARY_FALLBACK");
   });
 
   test("fails open while unavailable and recovers from the same still-fresh version without another hysteresis vote", async () => {
@@ -89,11 +89,11 @@ describe("polling, TTL, hysteresis, override, and fail-open", () => {
     });
     await client.poll(now());
     await client.poll(now());
-    expect(client.disposition("route-a", "PROGRAM_X")).toBe("AVOID");
+    expect(client.disposition("route-a", "PROGRAM_X", now())).toBe("AVOID");
     expect(await client.poll(now())).toMatchObject({ status: "FAIL_OPEN" });
-    expect(client.disposition("route-a", "PROGRAM_X")).toBe("LOCAL_PRIMARY_FALLBACK");
+    expect(client.disposition("route-a", "PROGRAM_X", now())).toBe("LOCAL_PRIMARY_FALLBACK");
     expect(await client.poll(now())).toEqual({ status: "UNCHANGED", version: 2 });
-    expect(client.disposition("route-a", "PROGRAM_X")).toBe("AVOID");
+    expect(client.disposition("route-a", "PROGRAM_X", now())).toBe("AVOID");
   });
 
   test("fails open for stale, malformed, future, and rolled-back snapshots", async () => {
@@ -120,8 +120,8 @@ describe("polling, TTL, hysteresis, override, and fail-open", () => {
       developerOverride: (routeId, transactionClass) => routeId === "route-a" && transactionClass === "PROGRAM_X" ? "AVOID" : undefined,
     });
     await client.poll(now());
-    expect(client.disposition("route-a", "PROGRAM_X")).toBe("AVOID");
-    expect(client.disposition("route-a", "MATCHED_CONTROL")).toBe("LOCAL_PRIMARY_FALLBACK");
+    expect(client.disposition("route-a", "PROGRAM_X", now())).toBe("AVOID");
+    expect(client.disposition("route-a", "MATCHED_CONTROL", now())).toBe("LOCAL_PRIMARY_FALLBACK");
   });
 
   test("fails open on same-version equivocation and on a throwing override", async () => {
@@ -134,13 +134,48 @@ describe("polling, TTL, hysteresis, override, and fail-open", () => {
     });
     expect(await client.poll(now())).toEqual({ status: "APPLIED", version: 1 });
     expect(await client.poll(now())).toMatchObject({ status: "FAIL_OPEN", reason: /equivocation/ });
-    expect(client.disposition("route-a", "PROGRAM_X")).toBe("LOCAL_PRIMARY_FALLBACK");
+    expect(client.disposition("route-a", "PROGRAM_X", now())).toBe("LOCAL_PRIMARY_FALLBACK");
   });
 
   test("times out a poll and returns local policy", async () => {
     const client = new IntelligenceSnapshotClient({ pollTimeoutMs: 5, fetchSnapshot: async () => new Promise(() => undefined) });
     expect(await client.poll(now())).toMatchObject({ status: "FAIL_OPEN", reason: "snapshot poll timed out" });
-    expect(client.disposition("route-a", "PROGRAM_X")).toBe("LOCAL_PRIMARY_FALLBACK");
+    expect(client.disposition("route-a", "PROGRAM_X", now())).toBe("LOCAL_PRIMARY_FALLBACK");
+  });
+
+  test("rechecks TTL at decision time even when no later poll occurs", async () => {
+    const client = queuedClient([buildSnapshot(1, "ASYMMETRIC"), buildSnapshot(2, "ASYMMETRIC")]);
+    await client.poll(now());
+    await client.poll(now());
+    expect(client.decision("route-a", "PROGRAM_X", now())).toMatchObject({ disposition: "AVOID", source: "SNAPSHOT", snapshotVersion: 2 });
+    expect(client.decision("route-a", "PROGRAM_X", new Date("2026-08-14T00:01:00.000Z"))).toEqual({
+      disposition: "LOCAL_PRIMARY_FALLBACK",
+      source: "FAIL_OPEN",
+      reason: "snapshot became stale before routing decision",
+    });
+  });
+
+  test("fails open when the routing clock moves before snapshot generation", async () => {
+    const client = queuedClient([buildSnapshot(1, "HEALTHY")]);
+    await client.poll(now());
+    expect(client.decision("route-a", "PROGRAM_X", new Date("2026-08-13T23:59:59.999Z"))).toEqual({
+      disposition: "LOCAL_PRIMARY_FALLBACK",
+      source: "FAIL_OPEN",
+      reason: "snapshot generated_at became future-dated before routing decision",
+    });
+  });
+
+  test("fails open on an unsupported runtime developer override value", async () => {
+    const client = new IntelligenceSnapshotClient({
+      pollTimeoutMs: 10,
+      fetchSnapshot: async () => buildSnapshot(1, "HEALTHY"),
+      developerOverride: (() => "UNSUPPORTED") as never,
+    });
+    expect(client.decision("route-a", "PROGRAM_X", now())).toEqual({
+      disposition: "LOCAL_PRIMARY_FALLBACK",
+      source: "FAIL_OPEN",
+      reason: "developer override returned an unsupported disposition",
+    });
   });
 
   test("polls a bounded JSON snapshot over HTTP", async () => {

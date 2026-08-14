@@ -27,7 +27,7 @@ Observer signs ProbeResult      v
                               Experiment Summary   intelligence snapshot
                                                           |
                                                           v
-                                                SDK polling + local fallback
+                                       SDK polling + bounded route ordering
 ```
 
 ## Route model
@@ -95,6 +95,11 @@ The Observatory exposes a polled, versioned snapshot containing `version`, `gene
 - allows developer override;
 - returns to local primary/fallback when unavailable or stale;
 - never treats the feed as an authorization system.
+
+When an MVP transaction class is explicitly declared, the router first applies
+the local `maxRoutes` window and then moves `AVOID` routes behind locally
+preferred routes. It never removes an avoided route or introduces a route that
+local configuration excluded.
 
 ## Proposed implementation boundaries
 

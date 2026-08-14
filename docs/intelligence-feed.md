@@ -37,4 +37,8 @@ Fail-open affects the current disposition; prior counters remain in process memo
 
 ## Routing boundary
 
-The client returns only `LOCAL_PRIMARY_FALLBACK` or `AVOID`. Sprint 7 does not inject that result into `ReactiveRouter`. Until Sprint 9, the existing configured primary/fallback order is unchanged.
+Sprint 9 consumes the disposition through the bounded contract in
+[probe-informed routing](probe-informed-routing.md). The client now exposes a
+decision source and repeats TTL/future-time validation at routing time. The
+router applies intelligence only for an explicitly declared MVP class and can
+reorder, but never remove or add, locally eligible routes.

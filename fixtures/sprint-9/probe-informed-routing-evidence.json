@@ -1,0 +1,79 @@
+{
+  "evidenceVersion": "Sprint9ProbeInformedRouting@0.1.0",
+  "sourceScenario": "asymmetric",
+  "sourceInputHash": "ff82b977498c033ff7ea730e9a5b2eb7f98bfd5004bad2c5d691adfd52952377",
+  "sourceObservedAt": "2026-08-12T16:50:54.093Z",
+  "snapshotInputHash": "66887c6f614f719fd09ce2c884630adb1a014ce69a1eda93910219fb908df7c1",
+  "routerVersion": "ReactiveRouter@0.2.0",
+  "cases": {
+    "freshProgramX": {
+      "routerVersion": "ReactiveRouter@0.2.0",
+      "routingMode": "PROBE_INFORMED",
+      "configuredRouteIds": ["route-a", "route-b", "route-c"],
+      "selectedRouteIds": ["route-b", "route-c", "route-a"],
+      "intelligenceDecisions": [
+        { "routeId": "route-a", "disposition": "AVOID", "source": "SNAPSHOT", "snapshotVersion": 2 },
+        { "routeId": "route-b", "disposition": "LOCAL_PRIMARY_FALLBACK", "source": "SNAPSHOT", "snapshotVersion": 2 },
+        { "routeId": "route-c", "disposition": "LOCAL_PRIMARY_FALLBACK", "source": "SNAPSHOT", "snapshotVersion": 2 }
+      ],
+      "declaredTransactionClass": "PROGRAM_X",
+      "finalState": "CONFIRMED",
+      "confirmationObservedAfterRouteId": "route-b",
+      "visitedRouteIds": ["route-b"]
+    },
+    "freshControl": {
+      "routerVersion": "ReactiveRouter@0.2.0",
+      "routingMode": "PROBE_INFORMED",
+      "configuredRouteIds": ["route-a", "route-b", "route-c"],
+      "selectedRouteIds": ["route-a", "route-b", "route-c"],
+      "intelligenceDecisions": [
+        { "routeId": "route-a", "disposition": "LOCAL_PRIMARY_FALLBACK", "source": "SNAPSHOT", "snapshotVersion": 2 },
+        { "routeId": "route-b", "disposition": "LOCAL_PRIMARY_FALLBACK", "source": "SNAPSHOT", "snapshotVersion": 2 },
+        { "routeId": "route-c", "disposition": "LOCAL_PRIMARY_FALLBACK", "source": "SNAPSHOT", "snapshotVersion": 2 }
+      ],
+      "declaredTransactionClass": "MATCHED_CONTROL",
+      "finalState": "CONFIRMED",
+      "confirmationObservedAfterRouteId": "route-a",
+      "visitedRouteIds": ["route-a"]
+    },
+    "boundedProgramX": {
+      "routerVersion": "ReactiveRouter@0.2.0",
+      "routingMode": "PROBE_INFORMED",
+      "configuredRouteIds": ["route-a", "route-b"],
+      "selectedRouteIds": ["route-b", "route-a"],
+      "intelligenceDecisions": [
+        { "routeId": "route-a", "disposition": "AVOID", "source": "SNAPSHOT", "snapshotVersion": 2 },
+        { "routeId": "route-b", "disposition": "LOCAL_PRIMARY_FALLBACK", "source": "SNAPSHOT", "snapshotVersion": 2 }
+      ],
+      "declaredTransactionClass": "PROGRAM_X",
+      "finalState": "CONFIRMED",
+      "confirmationObservedAfterRouteId": "route-b",
+      "visitedRouteIds": ["route-b"]
+    },
+    "staleProgramX": {
+      "routerVersion": "ReactiveRouter@0.2.0",
+      "routingMode": "PROBE_INFORMED",
+      "configuredRouteIds": ["route-a", "route-b", "route-c"],
+      "selectedRouteIds": ["route-a", "route-b", "route-c"],
+      "intelligenceDecisions": [
+        { "routeId": "route-a", "disposition": "LOCAL_PRIMARY_FALLBACK", "source": "FAIL_OPEN", "reason": "snapshot became stale before routing decision" },
+        { "routeId": "route-b", "disposition": "LOCAL_PRIMARY_FALLBACK", "source": "FAIL_OPEN", "reason": "snapshot became stale before routing decision" },
+        { "routeId": "route-c", "disposition": "LOCAL_PRIMARY_FALLBACK", "source": "FAIL_OPEN", "reason": "snapshot became stale before routing decision" }
+      ],
+      "declaredTransactionClass": "PROGRAM_X",
+      "finalState": "CONFIRMED",
+      "confirmationObservedAfterRouteId": "route-a",
+      "visitedRouteIds": ["route-a"]
+    },
+    "legacyLocal": {
+      "routerVersion": "ReactiveRouter@0.2.0",
+      "routingMode": "LOCAL_PRIMARY_FALLBACK",
+      "configuredRouteIds": ["route-a", "route-b", "route-c"],
+      "selectedRouteIds": ["route-a", "route-b", "route-c"],
+      "intelligenceDecisions": [],
+      "finalState": "CONFIRMED",
+      "confirmationObservedAfterRouteId": "route-a",
+      "visitedRouteIds": ["route-a"]
+    }
+  }
+}

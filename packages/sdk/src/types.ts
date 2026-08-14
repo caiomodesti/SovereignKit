@@ -1,4 +1,4 @@
-export const ROUTER_VERSION = "ReactiveRouter@0.1.0" as const;
+export const ROUTER_VERSION = "ReactiveRouter@0.2.0" as const;
 
 export interface LogicalRoute {
   readonly routeId: string;
@@ -62,6 +62,7 @@ export interface ReactiveRouterPolicy {
 
 export type RouterEventType =
   | "ROUTING_STARTED"
+  | "PROBE_INFORMED_ORDER_SELECTED"
   | "ROUTE_ATTEMPT_STARTED"
   | "ROUTE_RPC_ACKNOWLEDGED"
   | "ROUTE_RPC_REJECTED"
@@ -105,8 +106,21 @@ export type RouterFinalState =
   | "EXPIRED"
   | "OBSERVATION_INCONCLUSIVE";
 
+export interface IntelligenceRouteDecisionTrace {
+  readonly routeId: string;
+  readonly disposition: "LOCAL_PRIMARY_FALLBACK" | "AVOID";
+  readonly source: "SNAPSHOT" | "DEVELOPER_OVERRIDE" | "FAIL_OPEN";
+  readonly snapshotVersion?: number;
+  readonly reason?: string;
+}
+
 export interface ReactiveRoutingResult {
   readonly routerVersion: typeof ROUTER_VERSION;
+  readonly routingMode: "LOCAL_PRIMARY_FALLBACK" | "PROBE_INFORMED";
+  readonly configuredRouteIds: readonly string[];
+  readonly selectedRouteIds: readonly string[];
+  readonly intelligenceDecisions: readonly IntelligenceRouteDecisionTrace[];
+  readonly declaredTransactionClass?: "MATCHED_CONTROL" | "PROGRAM_X";
   readonly finalState: RouterFinalState;
   readonly confirmationObservedAfterRouteId?: string;
   readonly attempts: readonly RouteAttemptTrace[];

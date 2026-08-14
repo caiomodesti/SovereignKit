@@ -38,6 +38,8 @@
 | Probe matching defect | False asymmetry | Pre-submit matching validation and exclusion, serialized artifact hashes |
 | State/account contention | Confounding | Unique accounts where needed, identical layout, randomized order, record state conflicts |
 | Intelligence feed tampering/staleness | Bad routing | Schema/version/TTL validation, transport security later, hysteresis, override, fail-open |
+| Malformed intelligence adapter decision | Unsafe route order | Runtime decision validation, local-order fail-open, immutable eligible set |
+| Near-expiry or clock-rollback decision | Stale route order | Repeat generated/expiry checks at routing start; record decision source/version |
 | Signature/account correlation | Privacy leakage | Probe/user separation, opt-in user telemetry, minimization and retention policy |
 
 ## Security status after Sprint 6

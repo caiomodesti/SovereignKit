@@ -26,8 +26,9 @@ if (observedAt !== evidence.source_observed_at || generated.version !== evidence
 }
 
 const client = new IntelligenceSnapshotClient({ pollTimeoutMs: 100, fetchSnapshot: async () => generated });
-const poll = await client.poll(new Date("2026-08-14T00:00:01.000Z"));
+const fixtureNow = new Date("2026-08-14T00:00:01.000Z");
+const poll = await client.poll(fixtureNow);
 if (poll.status !== "APPLIED") throw new Error(`fixture was not applied: ${JSON.stringify(poll)}`);
-if (client.disposition("route-a", "PROGRAM_X") !== "LOCAL_PRIMARY_FALLBACK") throw new Error("one snapshot must not cross the avoid hysteresis threshold");
-if (client.disposition("route-a", "PROGRAM_X") !== evidence.disposition_after_one_snapshot) throw new Error("fixture disposition differs from retained evidence");
-process.stdout.write(`${JSON.stringify({ reproduced: true, version: generated.version, entries: generated.route_intelligence.length, sourceObservedAt: observedAt, inputHash: generated.input_hash, firstPoll: poll.status, dispositionAfterOneSnapshot: client.disposition("route-a", "PROGRAM_X") })}\n`);
+if (client.disposition("route-a", "PROGRAM_X", fixtureNow) !== "LOCAL_PRIMARY_FALLBACK") throw new Error("one snapshot must not cross the avoid hysteresis threshold");
+if (client.disposition("route-a", "PROGRAM_X", fixtureNow) !== evidence.disposition_after_one_snapshot) throw new Error("fixture disposition differs from retained evidence");
+process.stdout.write(`${JSON.stringify({ reproduced: true, version: generated.version, entries: generated.route_intelligence.length, sourceObservedAt: observedAt, inputHash: generated.input_hash, firstPoll: poll.status, dispositionAfterOneSnapshot: client.disposition("route-a", "PROGRAM_X", fixtureNow) })}\n`);
