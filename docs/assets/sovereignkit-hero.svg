@@ -1,0 +1,101 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="520" viewBox="0 0 1400 520" role="img" aria-labelledby="title desc">
+  <title id="title">SovereignKit</title>
+  <desc id="desc">Transaction accessibility observatory and resilient routing SDK for Solana.</desc>
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#07111A"/>
+      <stop offset="0.58" stop-color="#0A1824"/>
+      <stop offset="1" stop-color="#0C1B28"/>
+    </linearGradient>
+    <linearGradient id="routeA" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#5B8DEF" stop-opacity=".25"/>
+      <stop offset="1" stop-color="#5B8DEF"/>
+    </linearGradient>
+    <linearGradient id="routeB" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#38BDF8" stop-opacity=".25"/>
+      <stop offset="1" stop-color="#38BDF8"/>
+    </linearGradient>
+    <linearGradient id="routeC" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#2DD4A8" stop-opacity=".2"/>
+      <stop offset="1" stop-color="#2DD4A8"/>
+    </linearGradient>
+    <radialGradient id="glow">
+      <stop offset="0" stop-color="#38BDF8" stop-opacity=".2"/>
+      <stop offset="1" stop-color="#38BDF8" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="softGlow" x="-100%" y="-100%" width="300%" height="300%">
+      <feGaussianBlur stdDeviation="10"/>
+    </filter>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M40 0H0V40" fill="none" stroke="#9CB4C5" stroke-opacity=".045"/>
+    </pattern>
+  </defs>
+
+  <rect width="1400" height="520" rx="28" fill="url(#background)"/>
+  <rect width="1400" height="520" rx="28" fill="url(#grid)"/>
+  <circle cx="1140" cy="250" r="260" fill="url(#glow)"/>
+  <path d="M0 1h1400v518H0z" fill="none" stroke="#38BDF8" stroke-opacity=".16" stroke-width="2" rx="28"/>
+
+  <g transform="translate(88 84)">
+    <rect width="62" height="62" rx="15" fill="#0C1B28" stroke="#38BDF8" stroke-opacity=".55"/>
+    <path d="M14 18h13c8 0 11 4 11 11v8c0 7 4 11 11 11h1M14 31h36M14 44h13c8 0 11-4 11-11v-8c0-7 4-11 11-11h1" fill="none" stroke-linecap="round" stroke-width="4" stroke="#38BDF8"/>
+    <text x="82" y="45" fill="#EAF7FF" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="34" font-weight="700" letter-spacing="-1">SOVEREIGNKIT</text>
+  </g>
+
+  <g transform="translate(88 205)">
+    <text fill="#EAF7FF" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="55" font-weight="650" letter-spacing="-2">
+      <tspan x="0" y="0">Measure the path.</tspan>
+      <tspan x="0" y="68">Preserve the evidence.</tspan>
+    </text>
+    <text x="2" y="155" fill="#9CB4C5" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="20">
+      Solana transaction accessibility observatory · resilient routing SDK
+    </text>
+  </g>
+
+  <g transform="translate(860 88)">
+    <text x="0" y="4" fill="#9CB4C5" font-family="SFMono-Regular, Consolas, monospace" font-size="12" letter-spacing="1.5">LOGICAL ROUTES</text>
+    <text x="378" y="4" fill="#9CB4C5" font-family="SFMono-Regular, Consolas, monospace" font-size="12" letter-spacing="1.5">OBSERVE</text>
+
+    <g transform="translate(0 48)">
+      <circle cx="14" cy="28" r="7" fill="#5B8DEF"/>
+      <text x="34" y="34" fill="#EAF7FF" font-family="SFMono-Regular, Consolas, monospace" font-size="15">route_a</text>
+      <path d="M120 28C215 28 230 110 326 110" fill="none" stroke="url(#routeA)" stroke-width="3"/>
+    </g>
+    <g transform="translate(0 145)">
+      <circle cx="14" cy="28" r="7" fill="#38BDF8"/>
+      <text x="34" y="34" fill="#EAF7FF" font-family="SFMono-Regular, Consolas, monospace" font-size="15">route_b</text>
+      <path d="M120 28H326" fill="none" stroke="url(#routeB)" stroke-width="3"/>
+    </g>
+    <g transform="translate(0 242)">
+      <circle cx="14" cy="28" r="7" fill="#2DD4A8"/>
+      <text x="34" y="34" fill="#EAF7FF" font-family="SFMono-Regular, Consolas, monospace" font-size="15">route_c</text>
+      <path d="M120 28C215 28 230-54 326-54" fill="none" stroke="url(#routeC)" stroke-width="3"/>
+    </g>
+
+    <circle cx="356" cy="173" r="47" fill="#38BDF8" opacity=".1" filter="url(#softGlow)"/>
+    <circle cx="356" cy="173" r="25" fill="#07111A" stroke="#38BDF8" stroke-width="3"/>
+    <circle cx="356" cy="173" r="7" fill="#38BDF8"/>
+
+    <g transform="translate(412 108)">
+      <rect width="91" height="35" rx="8" fill="#10293A" stroke="#38BDF8" stroke-opacity=".35"/>
+      <text x="45" y="23" text-anchor="middle" fill="#EAF7FF" font-family="SFMono-Regular, Consolas, monospace" font-size="12">reader_1</text>
+    </g>
+    <g transform="translate(412 155)">
+      <rect width="91" height="35" rx="8" fill="#10293A" stroke="#38BDF8" stroke-opacity=".35"/>
+      <text x="45" y="23" text-anchor="middle" fill="#EAF7FF" font-family="SFMono-Regular, Consolas, monospace" font-size="12">reader_2</text>
+    </g>
+    <g transform="translate(412 202)">
+      <rect width="91" height="35" rx="8" fill="#10293A" stroke="#38BDF8" stroke-opacity=".35"/>
+      <text x="45" y="23" text-anchor="middle" fill="#EAF7FF" font-family="SFMono-Regular, Consolas, monospace" font-size="12">reader_3</text>
+    </g>
+    <path d="M381 173L412 125M381 173H412M381 173L412 219" fill="none" stroke="#9CB4C5" stroke-opacity=".5"/>
+    <rect x="412" y="262" width="91" height="34" rx="17" fill="#2DD4A8" fill-opacity=".12" stroke="#2DD4A8" stroke-opacity=".55"/>
+    <text x="457" y="284" text-anchor="middle" fill="#2DD4A8" font-family="SFMono-Regular, Consolas, monospace" font-size="12" font-weight="700">QUORUM 2/3</text>
+  </g>
+
+  <g transform="translate(88 459)">
+    <circle cx="6" cy="-5" r="5" fill="#2DD4A8"/>
+    <text x="20" y="0" fill="#9CB4C5" font-family="SFMono-Regular, Consolas, monospace" font-size="13">append-only · signed evidence · fail-open</text>
+  </g>
+</svg>
+
