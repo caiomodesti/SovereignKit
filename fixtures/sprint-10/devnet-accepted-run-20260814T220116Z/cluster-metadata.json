@@ -1,0 +1,11 @@
+{
+  "capturedAt": "2026-08-14T22:01:17.999Z",
+  "endpointOrigin": "https://api.devnet.solana.com",
+  "health": "ok",
+  "genesisHash": "EtWTRABZaYq6iMfeYKouRu166VU2xqa1wcaWoxPkrZBG",
+  "version": {
+    "feature-set": 565236538,
+    "solana-core": "4.2.0"
+  },
+  "startProcessedSlot": "483923790"
+}

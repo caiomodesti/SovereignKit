@@ -42,6 +42,7 @@ This index separates normative contracts, implementation design, reproducible ev
 - [Sprint 7 — intelligence feed](sprint-7-reproduction.md)
 - [Sprint 8 — local evidence dashboard](sprint-8-reproduction.md)
 - [Sprint 9 — probe-informed route ordering](sprint-9-reproduction.md)
+- [Sprint 10 — Devnet integration validation](sprint-10-devnet-validation.md)
 
 ## Hostile audits and acceptance
 
@@ -59,12 +60,12 @@ The repository keeps sprint-level acceptance and hostile audits so a later imple
 | 7 | [acceptance](sprint-7-acceptance.md) | [hostile audit](sprint-7-hostile-audit.md) |
 | 8 | [acceptance](sprint-8-acceptance.md) | [hostile audit](sprint-8-hostile-audit.md) |
 | 9 | [acceptance](sprint-9-acceptance.md) | [hostile audit](sprint-9-hostile-audit.md) |
-| 10 (in progress) | [pending acceptance](sprint-10-acceptance.md) | included in pending acceptance record |
+| 10 | [acceptance](sprint-10-acceptance.md) | included in acceptance record |
 
-## Work in progress
+## Latest status
 
-- [Sprint 10 Devnet validation contract](sprint-10-devnet-validation.md)
-- [Sprint 10 status and blockers](sprint-10-status.md)
+- [Sprint 10 Devnet validation contract and reproduction](sprint-10-devnet-validation.md)
+- [Sprint 10 accepted run and resolved blockers](sprint-10-status.md)
 
 ## Product and commercial context
 

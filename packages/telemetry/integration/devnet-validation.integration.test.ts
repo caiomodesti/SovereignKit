@@ -5,6 +5,7 @@ import {
   AccountRole,
   address,
   appendTransactionMessageInstruction,
+  createKeyPairSignerFromBytes,
   createSolanaRpc,
   createTransactionMessage,
   generateKeyPairSigner,
@@ -36,6 +37,7 @@ import {
 
 const enabled = process.env.SOVEREIGNKIT_DEVNET === "1";
 const submissionEndpoint = process.env.SOVEREIGNKIT_DEVNET_SUBMISSION_ENDPOINT ?? "https://api.devnet.solana.com";
+const feePayerKeypairPath = process.env.SOVEREIGNKIT_DEVNET_FEE_PAYER_KEYPAIR;
 const readerEndpoints = parseReaderEndpoints(
   process.env.SOVEREIGNKIT_DEVNET_READER_ENDPOINTS ?? Array(3).fill(submissionEndpoint).join(","),
 );
@@ -67,27 +69,36 @@ describe.skipIf(!enabled)("Sprint 10 Devnet integration validation", () => {
       startProcessedSlot: startSlot,
     });
 
-    const [feePayer, recipient] = await Promise.all([generateKeyPairSigner(), generateKeyPairSigner()]);
-    let airdropSignature: Signature;
-    try {
-      airdropSignature = await requestAirdropWithRetry(() => rpc.requestAirdrop(
-        feePayer.address,
-        lamports(10_000_000n),
-        { commitment: "confirmed" },
-      ).send());
-    } catch (error) {
-      await writeJson(join(artifactDirectory, "setup-failure.json"), {
-        capturedAt: new Date().toISOString(),
-        stage: "DEVNET_FAUCET",
-        endpointOrigin: endpointOrigin(submissionEndpoint),
-        classification: "EXTERNAL_SETUP_FAILURE",
-        message: errorMessage(error),
-        transactionCreated: false,
-        methodologicalFinding: null,
-      });
-      throw error;
+    const [feePayer, recipient] = await Promise.all([
+      feePayerKeypairPath === undefined
+        ? generateKeyPairSigner()
+        : loadDisposableFeePayer(feePayerKeypairPath),
+      generateKeyPairSigner(),
+    ]);
+    let setupFundingSignature: Signature | null = null;
+    if (feePayerKeypairPath === undefined) {
+      try {
+        setupFundingSignature = await requestAirdropWithRetry(() => rpc.requestAirdrop(
+          feePayer.address,
+          lamports(10_000_000n),
+          { commitment: "confirmed" },
+        ).send());
+      } catch (error) {
+        await writeJson(join(artifactDirectory, "setup-failure.json"), {
+          capturedAt: new Date().toISOString(),
+          stage: "DEVNET_FAUCET",
+          endpointOrigin: endpointOrigin(submissionEndpoint),
+          classification: "EXTERNAL_SETUP_FAILURE",
+          message: errorMessage(error),
+          transactionCreated: false,
+          methodologicalFinding: null,
+        });
+        throw error;
+      }
+      await waitForStatus(rpc, setupFundingSignature, "confirmed", 120_000);
     }
-    await waitForStatus(rpc, airdropSignature, "confirmed", 120_000);
+    const startingBalance = await rpc.getBalance(feePayer.address, { commitment: "confirmed" }).send();
+    expect(startingBalance.value).toBeGreaterThanOrEqual(lamports(2_000_000n));
 
     const latest = await rpc.getLatestBlockhash({ commitment: "confirmed" }).send();
     const transferData = new Uint8Array(12);
@@ -154,7 +165,7 @@ describe.skipIf(!enabled)("Sprint 10 Devnet integration validation", () => {
       readers: readerEndpoints.map((endpoint, index) =>
         new SolanaKitObservationReader(`devnet-logical-reader-${index + 1}`, endpoint)),
       clock,
-      pollIntervalMs: 500,
+      pollIntervalMs: 3_000,
       observationDeadlineMs: 180_000,
       readerRequestTimeoutMs: 10_000,
       requiredQuorum: 2,
@@ -162,6 +173,7 @@ describe.skipIf(!enabled)("Sprint 10 Devnet integration validation", () => {
 
     const rawEvents = await store.readByAttempt(descriptor.attemptId);
     const reconstructed = deriveTimeline(rawEvents);
+    await new Promise(resolveDelay => setTimeout(resolveDelay, 2_000));
     const finalStatus = await rpc.getSignatureStatuses([signature], { searchTransactionHistory: true }).send();
     const finalizedBalance = await rpc.getBalance(recipient.address, { commitment: "finalized" }).send();
     const endSlot = await rpc.getSlot({ commitment: "finalized" }).send();
@@ -202,7 +214,9 @@ describe.skipIf(!enabled)("Sprint 10 Devnet integration validation", () => {
         providerLabel: "Solana public Devnet RPC unless overridden",
       },
       commitments: {
-        airdrop: "confirmed",
+        fundingSetup: feePayerKeypairPath === undefined
+          ? "airdrop_confirmed"
+          : "pre_funded_balance_confirmed",
         blockhash: "confirmed",
         preflight: "confirmed",
         blockHeightObservation: "confirmed",
@@ -218,12 +232,22 @@ describe.skipIf(!enabled)("Sprint 10 Devnet integration validation", () => {
       observationQuorum: {
         logicalReaderCount: 3,
         required: 2,
+        pollIntervalMs: 3_000,
         endpointOrigins: readerEndpoints.map(endpointOrigin),
         operationalIndependence: "not established by this test",
       },
-      ephemeralKeypairs: true,
+      keyManagement: {
+        feePayer: feePayerKeypairPath === undefined
+          ? "ephemeral_in_memory_faucet_funded"
+          : "pre_funded_disposable_local_keypair",
+        recipient: "ephemeral_in_memory",
+        secretMaterialPersistedInEvidence: false,
+      },
+      funding: {
+        startingBalanceLamports: startingBalance.value,
+        setupFundingSignature,
+      },
       transactionSignature: signature,
-      airdropSignature,
       blockhash: latest.value.blockhash,
       lastValidBlockHeight: latest.value.lastValidBlockHeight,
       recipient: recipient.address,
@@ -279,6 +303,18 @@ async function requestAirdropWithRetry(
     }
   }
   throw new Error("Devnet faucet failed after 5 bounded attempts", { cause: lastError });
+}
+
+async function loadDisposableFeePayer(path: string) {
+  const parsed: unknown = JSON.parse(await readFile(resolve(path), "utf8"));
+  if (
+    !Array.isArray(parsed)
+    || parsed.length !== 64
+    || !parsed.every(value => Number.isInteger(value) && value >= 0 && value <= 255)
+  ) {
+    throw new Error("SOVEREIGNKIT_DEVNET_FEE_PAYER_KEYPAIR must reference a 64-byte Solana keypair JSON array");
+  }
+  return createKeyPairSignerFromBytes(new Uint8Array(parsed as number[]));
 }
 
 function parseReaderEndpoints(value: string): readonly [string, string, string] {

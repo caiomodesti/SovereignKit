@@ -27,13 +27,14 @@ Primary references:
 |---|---|
 | Default submission endpoint | `https://api.devnet.solana.com` |
 | Transaction | unique legacy System Program transfer |
-| Keypairs | generated in memory for each run |
-| Airdrop | 10,000,000 lamports, `confirmed`, at most 5 bounded attempts |
+| Keypairs | recipient generated in memory; fee payer generated in memory or loaded from an ignored disposable file |
+| Funding setup | 10,000,000-lamport confirmed airdrop (at most 5 attempts), or confirmed balance on a disposable keypair |
 | Transfer | 1,000,000 lamports |
 | Blockhash commitment | `confirmed` |
 | Preflight | enabled, `confirmed` |
 | Send retries | 5 |
 | Observation | 3 logical readers, quorum 2/3 |
+| Poll interval | 3,000 ms to remain below public per-method rate limits |
 | Final evidence | finalized signature status and recipient balance |
 | Raw truth | append-only JSONL |
 
@@ -51,6 +52,16 @@ $env:SOVEREIGNKIT_ARTIFACT_DIR = "artifacts/sprint-10/devnet-$(Get-Date -Format 
 corepack pnpm check:devnet:integration
 corepack pnpm test:devnet
 ```
+
+When the public faucet is unavailable, use a disposable pre-funded Devnet keypair.
+Never use a Mainnet wallet or commit the keypair file:
+
+```powershell
+$env:SOVEREIGNKIT_DEVNET_FEE_PAYER_KEYPAIR = ".secrets/sprint-10-devnet-fee-payer.json"
+```
+
+The evidence records the funding mode, public address and starting balance but never
+the keypair path or secret bytes.
 
 Optional reader endpoints (exactly three comma-separated URLs):
 

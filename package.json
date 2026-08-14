@@ -35,7 +35,7 @@
     "verify:sprint-7": "corepack pnpm build && corepack pnpm test && node scripts/verify-sprint-7-fixture.mjs",
     "verify:sprint-8": "corepack pnpm build && corepack pnpm check && corepack pnpm test && node scripts/verify-sprint-8-dashboard.mjs",
     "verify:sprint-9": "corepack pnpm build && corepack pnpm check && corepack pnpm test && node scripts/verify-sprint-7-fixture.mjs && node scripts/verify-sprint-9-routing.mjs",
-    "verify:sprint-10:static": "corepack pnpm build && corepack pnpm check && corepack pnpm test && corepack pnpm check:devnet:integration && node scripts/verify-sprint-10-blocked-fixture.mjs",
+    "verify:sprint-10:static": "corepack pnpm build && corepack pnpm check && corepack pnpm test && corepack pnpm check:devnet:integration && node scripts/verify-sprint-10-blocked-fixture.mjs && node scripts/verify-sprint-10-accepted-fixture.mjs",
     "verify:sprint-5": "corepack pnpm build && node scripts/verify-sprint-5-fixtures.mjs",
     "env:doctor": "node scripts/env-doctor.mjs",
     "env:doctor:core": "node scripts/env-doctor.mjs --core",

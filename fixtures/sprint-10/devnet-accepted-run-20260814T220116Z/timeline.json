@@ -1,0 +1,109 @@
+{
+  "transactionId": "devnet-2RzqePQSCvQL6Ve88sZR6uLMyNiKE7HukCN9aqroYgTud8LAWYzZX8XrnsEGdWt6BC78pQLWuufiyH7dzaAn5mvD",
+  "attemptId": "devnet-attempt-2RzqePQSCvQL6Ve88sZR6uLMyNiKE7HukCN9aqroYgTud8LAWYzZX8XrnsEGdWt6BC78pQLWuufiyH7dzaAn5mvD",
+  "experimentId": "sprint-10-devnet-integration-validation",
+  "probeId": "devnet-healthy-0",
+  "routeId": "devnet-submission-route",
+  "signature": "2RzqePQSCvQL6Ve88sZR6uLMyNiKE7HukCN9aqroYgTud8LAWYzZX8XrnsEGdWt6BC78pQLWuufiyH7dzaAn5mvD",
+  "validity": {
+    "blockhash": "8uzFwjSrDYH7D2FfZ9GBJNfqGQro1PMkpsirDs91BBCy",
+    "contextSlot": "483923790",
+    "lastValidBlockHeight": "471734479",
+    "fetchedAt": "2026-08-14T22:01:18.278Z",
+    "blockhashCommitment": "confirmed"
+  },
+  "lifecycle": [
+    {
+      "state": "CREATED",
+      "sourceEventIds": [
+        "632cfb7f-e298-4380-b469-9cc4e45f4ac4"
+      ],
+      "wallClock": "2026-08-14T22:01:18.279Z",
+      "monotonicNs": "2467025470600"
+    },
+    {
+      "state": "SUBMISSION_ATTEMPTED",
+      "sourceEventIds": [
+        "b05fc66d-2d39-425a-b61a-811c001a15b6"
+      ],
+      "wallClock": "2026-08-14T22:01:18.281Z",
+      "monotonicNs": "2467027327900"
+    },
+    {
+      "state": "RPC_ACKNOWLEDGED",
+      "sourceEventIds": [
+        "537717b4-5bab-411b-95a2-1452ecbfbda2"
+      ],
+      "wallClock": "2026-08-14T22:01:18.411Z",
+      "monotonicNs": "2467157361200"
+    },
+    {
+      "state": "OBSERVATION_PENDING",
+      "sourceEventIds": [
+        "9affb00b-a4a8-4961-8f1d-ebaccfbbfe55"
+      ],
+      "wallClock": "2026-08-14T22:01:18.412Z",
+      "monotonicNs": "2467158588100"
+    },
+    {
+      "state": "OBSERVED_EXECUTION_SUCCESS",
+      "sourceEventIds": [
+        "0a789c37-99eb-4bec-afca-34e14595b365",
+        "3f02f2cf-f0aa-43bf-8a4e-b387a63ffee1"
+      ],
+      "wallClock": "2026-08-14T22:01:21.943Z",
+      "monotonicNs": "2470689288700"
+    },
+    {
+      "state": "CONFIRMED",
+      "sourceEventIds": [
+        "3f02f2cf-f0aa-43bf-8a4e-b387a63ffee1",
+        "b4f8d383-2a21-4eb8-bd46-12d822bea5a2"
+      ],
+      "wallClock": "2026-08-14T22:01:21.945Z",
+      "monotonicNs": "2470691233100"
+    },
+    {
+      "state": "FINALIZED",
+      "sourceEventIds": [
+        "4eb6e315-995b-4ca5-b530-92df929df07d",
+        "f2f3a53b-df25-4649-87b2-19abeda05c17"
+      ],
+      "wallClock": "2026-08-14T22:01:31.656Z",
+      "monotonicNs": "2480402243500"
+    }
+  ],
+  "derivedState": "FINALIZED",
+  "executionOutcome": "success",
+  "quorum": {
+    "version": "logical-observation-quorum-v0.1",
+    "required": 2,
+    "observedSuccessReaderIds": [
+      "devnet-logical-reader-1",
+      "devnet-logical-reader-2",
+      "devnet-logical-reader-3"
+    ],
+    "observedFailureReaderIds": [],
+    "confirmedReaderIds": [
+      "devnet-logical-reader-1",
+      "devnet-logical-reader-2",
+      "devnet-logical-reader-3"
+    ],
+    "finalizedReaderIds": [
+      "devnet-logical-reader-1",
+      "devnet-logical-reader-3"
+    ],
+    "expiredHeightReaderIds": [],
+    "hasAnyLedgerObservation": true,
+    "inconsistentExecutionClaims": false
+  },
+  "durations": {
+    "rpcResponseMs": 130.0333,
+    "observedMs": 3663.8181,
+    "confirmedMs": 3665.7625,
+    "finalizedMs": 13376.7729
+  },
+  "rawEventCount": 34,
+  "effectiveObservationCount": 27,
+  "anomalies": []
+}

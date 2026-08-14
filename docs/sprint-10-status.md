@@ -1,13 +1,23 @@
 # Sprint 10 status
 
-Status: **IN PROGRESS — NOT ACCEPTED**
+Status: **ACCEPTED — DEVNET INTEGRATION VALIDATION ONLY**
 
-The Devnet validation contract and opt-in live harness exist. The complete static
-verifier passes: build, workspace typecheck, 84/84 unit tests, and Devnet integration
-typecheck. A real Devnet run still has to complete before this sprint can be accepted.
+The complete static verifier passes: build, workspace typecheck, 84/84 unit tests,
+Devnet integration typecheck, blocked-run verification, and accepted-run deterministic
+reconstruction.
 
-No Devnet result is currently claimed. No fixture is accepted merely because the
-harness compiles or because an RPC acknowledges submission.
+The accepted run is retained at
+`fixtures/sprint-10/devnet-accepted-run-20260814T220116Z/`.
+
+- signature: `2RzqePQSCvQL6Ve88sZR6uLMyNiKE7HukCN9aqroYgTud8LAWYzZX8XrnsEGdWt6BC78pQLWuufiyH7dzaAn5mvD`;
+- cluster: Devnet genesis `EtWTRABZ...PkrZBG`, `solana-core 4.2.0`;
+- lifecycle: CREATED through FINALIZED, derived from 34 raw events;
+- acknowledgment: 131.891 ms;
+- observed/confirmed: approximately 3.66 seconds;
+- finalized: approximately 13.38 seconds;
+- quorum: observed and confirmed 3/3, finalized 2/3;
+- finalized recipient balance: 1,000,000 lamports;
+- operational reader independence: explicitly not established.
 
 ## Live attempts on 2026-08-14
 
@@ -25,14 +35,18 @@ The final blocked run is retained under
 Devnet read surface (`solana-core 4.2.0`) followed by an external faucet failure,
 with `transactionCreated: false` and `methodologicalFinding: null`.
 
-## Blockers
+## Resolved blockers
 
-- the public Devnet faucet is rate-limiting this operator IP;
-- the recommended PoW fallback is not buildable with the current pinned Windows GNU
-  environment without a toolchain decision;
+- Faucet rate limiting was bypassed using a disposable, locally ignored, pre-funded
+  Devnet-only keypair. No user wallet secret entered the repository or evidence.
+- Reader polling was reduced from 500 ms to 3,000 ms after a real transaction finalized
+  but the public RPC rate-limited the original observation loop.
+- The PoW fallback remains incompatible with the pinned Windows GNU environment, but
+  it is no longer required for this acceptance run.
 
 The initial pnpm wrapper error was resolved by running a frozen-lockfile, offline
 install with Corepack pnpm 11.16.0. It changed no dependency or version contract.
 
-These are operational/toolchain blockers, not evidence of transaction asymmetry.
-Sprint 11 remains prohibited.
+These setup failures remain retained as operational evidence and are not classified
+as transaction asymmetry. Sprint 11 may begin only after this accepted branch is
+reviewed and merged.

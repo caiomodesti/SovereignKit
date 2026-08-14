@@ -4,23 +4,25 @@
 |---:|---|---|---|
 | 1 | Current official RPC semantics reviewed | PASS | links and frozen profile in Sprint 10 design |
 | 2 | Devnet remains integration-only | PASS | explicit scope guard in docs and evidence schema |
-| 3 | Unique transaction and ephemeral keypairs | PASS (HARNESS) | generated in memory for every opt-in run |
-| 4 | RPC acknowledgement separate from landing | PASS (HARNESS) | existing telemetry coordinator and asserted lifecycle |
-| 5 | Raw JSONL deterministically reconstructs timeline | PASS (HARNESS) | canonical reconstruction assertion |
-| 6 | Logical ObservationQuorum 2/3 | PASS (HARNESS) | exactly three configurable readers, quorum two |
+| 3 | Unique transaction and disposable key isolation | PASS | unique signature; in-memory recipient; ignored disposable fee payer; no secret in evidence |
+| 4 | RPC acknowledgement separate from landing | PASS | acknowledgment at 131.891 ms; observation at 3,663.818 ms |
+| 5 | Raw JSONL deterministically reconstructs timeline | PASS | 34 retained events reproduce the canonical timeline |
+| 6 | Logical ObservationQuorum 2/3 | PASS | 3/3 observed and confirmed; 2/3 finalized |
 | 7 | Operational reader independence is not overstated | PASS | evidence always says not established |
-| 8 | Cluster identity/version captured | PASS (HARNESS) | genesis hash, RPC version, processed/finalized slots |
-| 9 | Blockhash lifetime captured | PASS (HARNESS) | context slot and last valid block height |
-| 10 | Endpoint secrets excluded from evidence | PASS (HARNESS) | only URL origin is persisted |
+| 8 | Cluster identity/version captured | PASS | Devnet genesis hash, solana-core 4.2.0, processed/finalized slots |
+| 9 | Blockhash lifetime captured | PASS | blockhash, context slot 483923790, last valid block height 471734479 |
+| 10 | Endpoint secrets excluded from evidence | PASS | only public URL origin; verifier confirms no claimed secret persistence |
 | 11 | Integration typecheck | PASS | TypeScript 7.0.2, no errors |
 | 12 | Unit regression | PASS | 84/84 tests |
-| 13 | Real Devnet transaction acknowledged | BLOCKED | retained setup failure: public faucet HTTP 429 |
-| 14 | Real quorum observed execution | BLOCKED | no funded ephemeral signer, therefore no transaction |
-| 15 | Real confirmed/finalized evidence retained | BLOCKED | no transaction signature exists |
+| 13 | Real Devnet transaction acknowledged | PASS | signature `2RzqePQS...An5mvD`; matching RPC response |
+| 14 | Real quorum observed execution | PASS | success/confirmed 3/3; finalized readers 1 and 3 |
+| 15 | Real confirmed/finalized evidence retained | PASS | finalized RPC status, 1,000,000-lamport finalized recipient balance |
 | 16 | Full static wrapper | PASS | build, workspace typecheck, 84/84 tests, integration typecheck |
 | 17 | No Sprint 11 work began | PASS | no public report implementation or publication |
 
-Verdict: **NOT ACCEPTED**. Harness-level passes do not substitute for criteria 13–15.
+Verdict: **ACCEPTED** for Devnet integration validation only. This is not a
+controlled statistical proof, a Mainnet proxy, or evidence of operationally
+independent readers.
 
 ## Hostile methodology audit
 
@@ -46,4 +48,5 @@ Verdict: **NOT ACCEPTED**. Harness-level passes do not substitute for criteria 1
 - Operator clock timestamps are useful provenance but are not globally synchronized.
 - Rate limits, load balancers, provider upstream sharing, and network path correlation
   remain uncontrolled.
-- `@solana/kit 7.0.0` compiled compatibility is established; live compatibility is not.
+- `@solana/kit 7.0.0` live compatibility is established for this one retained run,
+  endpoint, cluster version, operator location, and timestamp only.

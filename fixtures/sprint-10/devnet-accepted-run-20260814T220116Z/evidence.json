@@ -1,0 +1,102 @@
+{
+  "evidenceVersion": "sprint-10-devnet-validation@0.1.0",
+  "generatedAt": "2026-08-14T22:01:34.052Z",
+  "scope": "integration validation only; not controlled statistical proof or Mainnet proxy",
+  "cluster": {
+    "genesisHash": "EtWTRABZaYq6iMfeYKouRu166VU2xqa1wcaWoxPkrZBG",
+    "version": {
+      "feature-set": 565236538,
+      "solana-core": "4.2.0"
+    },
+    "startProcessedSlot": "483923790",
+    "endFinalizedSlot": "483923818"
+  },
+  "route": {
+    "routeId": "devnet-submission-route",
+    "logicalEndpointOrigin": "https://api.devnet.solana.com",
+    "transport": "https_json_rpc",
+    "observerRegion": "operator-local",
+    "configurationProfile": "devnet-integration-v1",
+    "providerLabel": "Solana public Devnet RPC unless overridden"
+  },
+  "commitments": {
+    "fundingSetup": "pre_funded_balance_confirmed",
+    "blockhash": "confirmed",
+    "preflight": "confirmed",
+    "blockHeightObservation": "confirmed",
+    "finalBalance": "finalized"
+  },
+  "sendConfiguration": {
+    "encoding": "base64",
+    "maxRetries": 5,
+    "minContextSlot": "483923790",
+    "preflightCommitment": "confirmed",
+    "skipPreflight": false
+  },
+  "observationQuorum": {
+    "logicalReaderCount": 3,
+    "required": 2,
+    "pollIntervalMs": 3000,
+    "endpointOrigins": [
+      "https://api.devnet.solana.com",
+      "https://api.devnet.solana.com",
+      "https://api.devnet.solana.com"
+    ],
+    "operationalIndependence": "not established by this test"
+  },
+  "keyManagement": {
+    "feePayer": "pre_funded_disposable_local_keypair",
+    "recipient": "ephemeral_in_memory",
+    "secretMaterialPersistedInEvidence": false
+  },
+  "funding": {
+    "startingBalanceLamports": "97990000",
+    "setupFundingSignature": null
+  },
+  "transactionSignature": "2RzqePQSCvQL6Ve88sZR6uLMyNiKE7HukCN9aqroYgTud8LAWYzZX8XrnsEGdWt6BC78pQLWuufiyH7dzaAn5mvD",
+  "blockhash": "8uzFwjSrDYH7D2FfZ9GBJNfqGQro1PMkpsirDs91BBCy",
+  "lastValidBlockHeight": "471734479",
+  "recipient": "CezGTAy9HMYBpfDzMkXMNrzXbWwwQtSv3xpaAcYqZkh6",
+  "recipientFinalizedBalanceLamports": "1000000",
+  "finalRpcStatus": {
+    "confirmationStatus": "finalized",
+    "confirmations": null,
+    "err": null,
+    "slot": "483923793",
+    "status": {
+      "Ok": null
+    }
+  },
+  "rawEventCount": 34,
+  "lifecycle": [
+    "CREATED",
+    "SUBMISSION_ATTEMPTED",
+    "RPC_ACKNOWLEDGED",
+    "OBSERVATION_PENDING",
+    "OBSERVED_EXECUTION_SUCCESS",
+    "CONFIRMED",
+    "FINALIZED"
+  ],
+  "quorum": {
+    "version": "logical-observation-quorum-v0.1",
+    "required": 2,
+    "observedSuccessReaderIds": [
+      "devnet-logical-reader-1",
+      "devnet-logical-reader-2",
+      "devnet-logical-reader-3"
+    ],
+    "observedFailureReaderIds": [],
+    "confirmedReaderIds": [
+      "devnet-logical-reader-1",
+      "devnet-logical-reader-2",
+      "devnet-logical-reader-3"
+    ],
+    "finalizedReaderIds": [
+      "devnet-logical-reader-1",
+      "devnet-logical-reader-3"
+    ],
+    "expiredHeightReaderIds": [],
+    "hasAnyLedgerObservation": true,
+    "inconsistentExecutionClaims": false
+  }
+}
