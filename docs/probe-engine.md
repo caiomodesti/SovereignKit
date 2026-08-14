@@ -39,7 +39,7 @@ Observer identities use dedicated Ed25519 keypairs unrelated to fee payers. Sign
 3. canonicalize the payload plus hash;
 4. create an Ed25519 signature encoded as base64url.
 
-Private keys remain non-serializable `KeyObject` instances in the public helper and are never included in fixtures. `observer_key_id` is now required by the versioned schema because signature verification and key rotation are impossible without it.
+Private keys are held as `KeyObject` instances while signing. Sprint 6 can export/import a versioned PKCS#8 development document for a standalone process; it belongs only under ignored secret storage and is never included in evidence. `observer_key_id` is required because signature verification and key rotation are impossible without it.
 
 ## Ingestion semantics
 
@@ -50,4 +50,4 @@ The in-memory Sprint 2 collector fixture checks basic schema invariants, derived
 - Reused result ID, idempotency key, or observer sequence with different content: `REJECTED`.
 - Tampering, unknown/expired key, false quorum, or invalid derived IDs: `REJECTED`.
 
-Full network collector hardening and exhaustive JSON Schema validation remain Sprint 6. This fixture must not be described as a decentralized network or production storage system.
+Sprint 6 adds exhaustive JSON Schema validation, a loopback HTTP boundary, durable single-writer JSONL, restart reconstruction, and process separation in `@sovereignkit/collector`. Neither the Sprint 2 fixture nor the hardened local Collector is a decentralized network or production multi-host storage system.

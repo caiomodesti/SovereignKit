@@ -66,12 +66,15 @@ Conflicts, missing quorum, or expiration evidence that does not reach quorum bec
 
 The central MVP collector:
 
-1. validates schema version;
+1. validates the complete versioned schema before type narrowing;
 2. verifies observer allowlist membership and signature;
-3. rejects duplicate `result_id` or `idempotency_key`;
-4. preserves raw claims append-only;
+3. rejects conflicting `result_id`, `idempotency_key`, or definition-scoped observer sequence;
+4. appends the signed result with Collector sequence/time and calls `fsync` before indexing it;
 5. derives no frontend-only state;
-6. records collector receipt time separately from observer time.
+6. records collector receipt time separately from observer time;
+7. reconstructs replay indexes from the validated log on restart and fails closed on corruption.
+
+Sprint 6 implements this only as a loopback, single-writer JSONL service. It is operational process separation on one host, not infrastructure independence or production public ingestion.
 
 ## Analysis boundary
 

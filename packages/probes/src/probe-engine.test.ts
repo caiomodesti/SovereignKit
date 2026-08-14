@@ -10,7 +10,9 @@ import {
   declareProbeUnits,
   deriveIdempotencyKey,
   executeRandomizedProbePlan,
+  exportObserverPrivateKey,
   generateObserverKeyPair,
+  importObserverPrivateKey,
   randomizeProbeUnits,
   sha256Hex,
   signProbeResult,
@@ -126,6 +128,18 @@ describe("Unique structurally matched Solana transactions", () => {
 });
 
 describe("Signed ProbeResult and idempotent allowlisted ingestion", () => {
+  test("exports and reloads an Ed25519 observer key without changing its public identity", () => {
+    const generated = generateObserverKeyPair("observer-br", "key-1");
+    const document = exportObserverPrivateKey(generated);
+    const loaded = importObserverPrivateKey(document);
+    const signed = signProbeResult(makeUnsignedResult(), loaded);
+    expect(loaded.publicKeySpkiBase64).toBe(generated.publicKeySpkiBase64);
+    expect(new IdempotentProbeResultIngestor([allowlistFor(generated)]).ingest(signed, new Date("2026-08-12T12:00:01.000Z")))
+      .toMatchObject({ status: "ACCEPTED" });
+    expect(() => importObserverPrivateKey({ ...document, publicKeySpkiBase64: generateObserverKeyPair("other", "key").publicKeySpkiBase64 }))
+      .toThrow(/mismatch/);
+  });
+
   test("accepts once, treats an exact replay as a no-op, and rejects conflicting replay", () => {
     const keyPair = generateObserverKeyPair("observer-br", "key-1");
     const allowlist = allowlistFor(keyPair);
@@ -156,6 +170,22 @@ describe("Signed ProbeResult and idempotent allowlisted ingestion", () => {
       quorum_decisions: [{ ...makeUnsignedResult().quorum_decisions[0]!, supporting_claim_ids: [randomUUID()] }],
     }, keyPair);
     expect(new IdempotentProbeResultIngestor([active]).ingest(falseQuorum)).toMatchObject({ status: "REJECTED", reason: /fewer than two/ });
+  });
+
+  test("scopes observer sequence replay protection to an experiment definition", () => {
+    const keyPair = generateObserverKeyPair("observer-br", "key-1");
+    const firstUnsigned = makeUnsignedResult();
+    const secondUnitId = sha256Hex(["sprint-2-controlled", "2", "healthy", "observer-br", "route-a", "MATCHED_CONTROL", "0"].join("\u001f"));
+    const secondUnsigned = {
+      ...makeUnsignedResult(),
+      result_id: randomUUID(),
+      idempotency_key: deriveIdempotencyKey("observer-br", secondUnitId),
+      experiment_definition_hash: sha256Hex("second-experiment-definition"),
+      unit: { ...makeUnsignedResult().unit, experiment_version: "2", unit_id: secondUnitId },
+    };
+    const collector = new IdempotentProbeResultIngestor([allowlistFor(keyPair)]);
+    expect(collector.ingest(signProbeResult(firstUnsigned, keyPair), new Date("2026-08-12T12:00:01.000Z"))).toMatchObject({ status: "ACCEPTED" });
+    expect(collector.ingest(signProbeResult(secondUnsigned, keyPair), new Date("2026-08-12T12:00:01.000Z"))).toMatchObject({ status: "ACCEPTED", storedCount: 2 });
   });
 });
 
