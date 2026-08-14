@@ -1,7 +1,7 @@
 {
   "name": "@sovereignkit/sdk",
-  "version": "0.1.0",
-  "description": "Bounded reactive primary/fallback routing for Solana transactions",
+  "version": "0.2.0",
+  "description": "Bounded fail-open probe-informed routing for Solana transactions",
   "type": "module",
   "license": "Apache-2.0",
   "sideEffects": false,

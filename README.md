@@ -10,9 +10,9 @@
 </p>
 
 <p align="center">
-  <img alt="Status: Sprint 8 accepted" src="https://img.shields.io/badge/status-Sprint_8_accepted-38BDF8?style=flat-square">
+  <img alt="Status: Sprint 9 accepted" src="https://img.shields.io/badge/status-Sprint_9_accepted-38BDF8?style=flat-square">
   <img alt="Controlled evidence" src="https://img.shields.io/badge/evidence-controlled-2DD4A8?style=flat-square">
-  <img alt="Tests: 72 of 72" src="https://img.shields.io/badge/tests-72%2F72-2DD4A8?style=flat-square">
+  <img alt="Tests: 84 of 84" src="https://img.shields.io/badge/tests-84%2F84-2DD4A8?style=flat-square">
   <img alt="Agave 4.0.0" src="https://img.shields.io/badge/Agave-4.0.0-F4B860?style=flat-square">
   <img alt="TypeScript strict" src="https://img.shields.io/badge/TypeScript-strict-5B8DEF?style=flat-square">
   <a href="LICENSE"><img alt="Apache 2.0 license" src="https://img.shields.io/badge/license-Apache--2.0-EAF7FF?style=flat-square&labelColor=0C1B28"></a>
@@ -31,7 +31,7 @@ SovereignKit is open-source infrastructure for **measuring, explaining, and rout
 | an RPC or reliability engineer | reproduce broad degradation versus class-selective behavior |
 | a researcher | inspect raw evidence, statistical units, windows, assumptions, and claim limits |
 
-**Current boundary:** v0.1 is a controlled, local proof—not a public provider-ranking service, a censorship oracle, or a decentralized observer network. Sprint 8 is accepted on `main`; probe-informed routing is implemented separately and remains subject to review before becoming part of the accepted default branch.
+**Current boundary:** v0.1 is a controlled, local proof—not a public provider-ranking service, a censorship oracle, or a decentralized observer network. Sprint 9 is accepted on `main`; probe-informed routing changes only the order of locally eligible routes and retains fail-open local policy. No public hosted feed, Devnet validation, or decentralized observer network exists yet.
 
 ## Why this exists
 
@@ -57,7 +57,7 @@ The accepted controlled experiment is deliberately narrow and reproducible.
 | Logical readers per observation | **3** |
 | Quorum | **2 / 3** |
 | Required scenarios distinguished | **4 / 4** |
-| Deterministic tests on accepted `main` | **72 / 72** |
+| Deterministic tests on accepted `main` | **84 / 84** |
 
 The evidence is `LIMITED` at `n=30` per eligible cell. All three local readers share one validator and host, so agreement demonstrates **logical redundancy**, not operational infrastructure independence.
 
@@ -95,7 +95,7 @@ flowchart LR
     G --> H["Collector<br/>validate · dedupe · append"]
     H --> I["Asymmetry Engine<br/>window · compare · classify"]
     I --> J["Versioned snapshot"]
-    J --> K["SDK<br/>TTL · hysteresis · fail-open"]
+    J --> K["SDK<br/>TTL · hysteresis · route ordering · fail-open"]
     I --> L["Evidence dashboard"]
 ```
 
@@ -154,7 +154,7 @@ flowchart TB
 | Hostile Proxy | `@sovereignkit/hostile-proxy` | loopback-only pass-through, selective rejection, and precommitted degradation |
 | Collector | `@sovereignkit/collector` | runtime validation, observer allowlist, idempotency, durable local ingestion |
 | Analysis | `@sovereignkit/analysis` | explicit windows, missingness, Wilson intervals, peer baselines, experimental classification |
-| SDK | `@sovereignkit/sdk` | bounded primary/fallback routing, snapshot validation, TTL, hysteresis, developer override |
+| SDK | `@sovereignkit/sdk` | bounded primary/fallback routing, snapshot validation, TTL, hysteresis, developer override, probe-informed route ordering |
 | Dashboard | `@sovereignkit/dashboard` | static, read-only rendering of accepted evidence and provenance |
 
 ### Contracts that do not move silently
@@ -217,6 +217,14 @@ node .\scripts\verify-sprint-5-fixtures.mjs
 
 Expected durable outputs include raw signed probe evidence plus reproducible experiment summaries in Markdown, canonical JSON, and CSV. Start with the [Sprint 5 reproduction guide](docs/sprint-5-reproduction.md) and verify the [formal GO checkpoint](docs/go-kill-checkpoint-sprint-5.md).
 
+### Probe-informed routing evidence
+
+```powershell
+corepack pnpm verify:sprint-9
+```
+
+This reproduces fresh class-selective ordering, matched-control stability, the bounded `maxRoutes` case, stale-feed fail-open behavior, and legacy routing without a declared class. See the [Sprint 9 reproduction guide](docs/sprint-9-reproduction.md) and [hostile audit](docs/sprint-9-hostile-audit.md).
+
 ### Live validator lifecycle proof
 
 The Telemetry Core has also completed a real healthy lifecycle against local Agave 4.0.0: submission, RPC acknowledgment, three-reader polling, 2/3 quorum, confirmation, finalization, and finalized balance verification. See the [Sprint 1.5 evidence](docs/sprint-1.5-acceptance.md) and [committed healthy fixture](fixtures/integration/agave-4.0.0/healthy/).
@@ -250,7 +258,7 @@ The dashboard and summaries are downstream views. They do not replace raw eviden
 | Sprint 6 | durable local Collector | ✅ accepted |
 | Sprint 7 | versioned fail-open intelligence feed | ✅ accepted |
 | Sprint 8 | local evidence dashboard | ✅ accepted |
-| Sprint 9 | probe-informed route ordering | 🟡 implemented, under review |
+| Sprint 9 | probe-informed route ordering | ✅ accepted |
 | Later validation | Devnet integration and stronger observer independence | ⏳ not started |
 | Public infrastructure | hosted feed, public report, production hardening | ⏳ gated by evidence |
 
@@ -282,7 +290,7 @@ Read the normative [epistemic limits](docs/epistemic-limits.md) before citing pr
   <tr>
     <td width="33%" valign="top"><strong>🔭 Understand</strong><br><br><a href="docs/product-spec.md">Product specification</a><br><a href="docs/architecture.md">Architecture</a><br><a href="docs/methodology.md">Methodology</a><br><a href="docs/measurement-model.md">Measurement model</a><br><a href="docs/epistemic-limits.md">Epistemic limits</a></td>
     <td width="33%" valign="top"><strong>🧬 Verify</strong><br><br><a href="docs/sprint-1.5-reproduction.md">Live validator proof</a><br><a href="docs/sprint-5-reproduction.md">Controlled experiment</a><br><a href="docs/sprint-5-hostile-audit.md">Hostile audit</a><br><a href="docs/go-kill-checkpoint-sprint-5.md">GO/KILL checkpoint</a><br><a href="docs/threat-model.md">Threat model</a></td>
-    <td width="33%" valign="top"><strong>🛠 Build</strong><br><br><a href="docs/telemetry-core.md">Telemetry Core</a><br><a href="docs/probe-engine.md">Probe Engine</a><br><a href="docs/collector.md">Collector</a><br><a href="docs/intelligence-feed.md">Intelligence feed</a><br><a href="docs/dashboard.md">Dashboard</a></td>
+    <td width="33%" valign="top"><strong>🛠 Build</strong><br><br><a href="docs/telemetry-core.md">Telemetry Core</a><br><a href="docs/probe-engine.md">Probe Engine</a><br><a href="docs/collector.md">Collector</a><br><a href="docs/intelligence-feed.md">Intelligence feed</a><br><a href="docs/probe-informed-routing.md">Probe-informed routing</a><br><a href="docs/dashboard.md">Dashboard</a></td>
   </tr>
 </table>
 

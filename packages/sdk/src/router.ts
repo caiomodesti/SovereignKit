@@ -1,10 +1,13 @@
 import { randomUUID } from "node:crypto";
 import { performance } from "node:perf_hooks";
 
+import type { IntelligenceRoutingDecision, IntelligenceTransactionClass } from "./intelligence.js";
+
 import {
   ROUTER_VERSION,
   type IndependentObservation,
   type IndependentObserver,
+  type IntelligenceRouteDecisionTrace,
   type LogicalRoute,
   type ReactiveRouterPolicy,
   type ReactiveRoutingResult,
@@ -21,9 +24,18 @@ export interface ReactiveRouterOptions {
   readonly policy: ReactiveRouterPolicy;
   readonly submitter: RouteSubmitter;
   readonly observer: IndependentObserver;
+  readonly intelligenceSource?: RouteIntelligenceDecisionSource;
   readonly telemetryHook?: RouterTelemetryHook;
   readonly wallClock?: () => Date;
   readonly monotonicClockMs?: () => number;
+}
+
+export interface RouteIntelligenceDecisionSource {
+  decision(routeId: string, transactionClass: IntelligenceTransactionClass, now?: Date): IntelligenceRoutingDecision;
+}
+
+export interface ProbeInformedRoutingContext {
+  readonly transactionClass: IntelligenceTransactionClass;
 }
 
 export class ReactiveRouter {
@@ -31,6 +43,7 @@ export class ReactiveRouter {
   readonly #policy: ReactiveRouterPolicy;
   readonly #submitter: RouteSubmitter;
   readonly #observer: IndependentObserver;
+  readonly #intelligenceSource: RouteIntelligenceDecisionSource | undefined;
   readonly #telemetryHook: RouterTelemetryHook | undefined;
   readonly #wallClock: () => Date;
   readonly #monotonicClockMs: () => number;
@@ -41,18 +54,23 @@ export class ReactiveRouter {
     this.#policy = options.policy;
     this.#submitter = options.submitter;
     this.#observer = options.observer;
+    this.#intelligenceSource = options.intelligenceSource;
     this.#telemetryHook = options.telemetryHook;
     this.#wallClock = options.wallClock ?? (() => new Date());
     this.#monotonicClockMs = options.monotonicClockMs ?? (() => performance.now());
   }
 
-  async route(transaction: SignedTransactionRequest): Promise<ReactiveRoutingResult> {
+  async route(transaction: SignedTransactionRequest, context?: ProbeInformedRoutingContext): Promise<ReactiveRoutingResult> {
     validateTransaction(transaction);
+    validateRoutingContext(context);
     const startedAt = this.#monotonicClockMs();
     const events: RouterEvent[] = [];
     const hookErrors: string[] = [];
     const attempts: RouteAttemptTrace[] = [];
     const visited = new Set<string>();
+    const configuredRoutes = this.#routes.slice(0, this.#policy.maxRoutes);
+    const selection = selectRoutes(configuredRoutes, context, this.#intelligenceSource, this.#wallClock());
+    const selectedRoutes = selection.routes;
     let sequence = 0;
 
     const emit = async (
@@ -91,6 +109,11 @@ export class ReactiveRouter {
       confirmationObservedAfterRouteId?: string,
     ): ReactiveRoutingResult => ({
       routerVersion: ROUTER_VERSION,
+      routingMode: selection.routingMode,
+      configuredRouteIds: configuredRoutes.map(route => route.routeId),
+      selectedRouteIds: selectedRoutes.map(route => route.routeId),
+      intelligenceDecisions: selection.decisions,
+      ...(context === undefined ? {} : { declaredTransactionClass: context.transactionClass }),
       finalState,
       ...(confirmationObservedAfterRouteId === undefined ? {} : { confirmationObservedAfterRouteId }),
       attempts,
@@ -99,8 +122,19 @@ export class ReactiveRouter {
       telemetryHookErrors: hookErrors,
     });
 
-    await emit("ROUTING_STARTED", { maxRoutes: this.#policy.maxRoutes, overallDeadlineMs: this.#policy.overallDeadlineMs });
-    const selectedRoutes = this.#routes.slice(0, this.#policy.maxRoutes);
+    await emit("ROUTING_STARTED", {
+      maxRoutes: this.#policy.maxRoutes,
+      overallDeadlineMs: this.#policy.overallDeadlineMs,
+      routingMode: selection.routingMode,
+    });
+    if (context !== undefined) {
+      await emit("PROBE_INFORMED_ORDER_SELECTED", {
+        transactionClass: context.transactionClass,
+        configuredRouteIds: configuredRoutes.map(route => route.routeId),
+        selectedRouteIds: selectedRoutes.map(route => route.routeId),
+        decisions: selection.decisions,
+      });
+    }
 
     for (let index = 0; index < selectedRoutes.length; index += 1) {
       const route = selectedRoutes[index]!;
@@ -191,6 +225,56 @@ export class ReactiveRouter {
   }
 }
 
+function selectRoutes(
+  routes: readonly LogicalRoute[],
+  context: ProbeInformedRoutingContext | undefined,
+  source: RouteIntelligenceDecisionSource | undefined,
+  now: Date,
+): {
+  readonly routes: readonly LogicalRoute[];
+  readonly routingMode: "LOCAL_PRIMARY_FALLBACK" | "PROBE_INFORMED";
+  readonly decisions: readonly IntelligenceRouteDecisionTrace[];
+} {
+  if (context === undefined) return { routes, routingMode: "LOCAL_PRIMARY_FALLBACK", decisions: [] };
+  const decisions = routes.map(route => {
+    if (source === undefined) {
+      return {
+        routeId: route.routeId,
+        disposition: "LOCAL_PRIMARY_FALLBACK",
+        source: "FAIL_OPEN",
+        reason: "intelligence source is not configured",
+      } satisfies IntelligenceRouteDecisionTrace;
+    }
+    try {
+      return normalizeIntelligenceDecision(route.routeId, source.decision(route.routeId, context.transactionClass, now));
+    } catch {
+      return {
+        routeId: route.routeId,
+        disposition: "LOCAL_PRIMARY_FALLBACK",
+        source: "FAIL_OPEN",
+        reason: "intelligence source threw",
+      } satisfies IntelligenceRouteDecisionTrace;
+    }
+  });
+  const dispositionByRoute = new Map(decisions.map(decision => [decision.routeId, decision.disposition]));
+  const locallyPreferred = routes.filter(route => dispositionByRoute.get(route.routeId) !== "AVOID");
+  const avoidedLastResort = routes.filter(route => dispositionByRoute.get(route.routeId) === "AVOID");
+  return { routes: [...locallyPreferred, ...avoidedLastResort], routingMode: "PROBE_INFORMED", decisions };
+}
+
+function normalizeIntelligenceDecision(routeId: string, decision: IntelligenceRoutingDecision): IntelligenceRouteDecisionTrace {
+  const invalidStructure = (decision.disposition !== "AVOID" && decision.disposition !== "LOCAL_PRIMARY_FALLBACK") ||
+      (decision.source !== "SNAPSHOT" && decision.source !== "DEVELOPER_OVERRIDE" && decision.source !== "FAIL_OPEN") ||
+      (decision.snapshotVersion !== undefined && (!Number.isSafeInteger(decision.snapshotVersion) || decision.snapshotVersion < 1)) ||
+      (decision.reason !== undefined && typeof decision.reason !== "string");
+  const invalidSemantics = (decision.source === "FAIL_OPEN" && decision.disposition !== "LOCAL_PRIMARY_FALLBACK") ||
+    (decision.source === "SNAPSHOT" ? decision.snapshotVersion === undefined : decision.snapshotVersion !== undefined);
+  if (invalidStructure || invalidSemantics) {
+    return { routeId, disposition: "LOCAL_PRIMARY_FALLBACK", source: "FAIL_OPEN", reason: "intelligence source returned an invalid decision" };
+  }
+  return { routeId, ...decision };
+}
+
 type BoundedResult<T> =
   | { readonly status: "COMPLETED"; readonly value: T }
   | { readonly status: "FAILED"; readonly error: unknown }
@@ -250,6 +334,12 @@ function validateOptions(options: ReactiveRouterOptions): void {
 function validateTransaction(transaction: SignedTransactionRequest): void {
   if (transaction.transactionId.length === 0 || transaction.signature.length === 0 || transaction.wireTransactionBase64.length === 0) {
     throw new Error("signed transaction identifiers and bytes are required");
+  }
+}
+
+function validateRoutingContext(context: ProbeInformedRoutingContext | undefined): void {
+  if (context !== undefined && context.transactionClass !== "MATCHED_CONTROL" && context.transactionClass !== "PROGRAM_X") {
+    throw new Error("probe-informed routing requires an explicitly declared supported transaction class");
   }
 }
 

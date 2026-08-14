@@ -30,9 +30,7 @@ This index separates normative contracts, implementation design, reproducible ev
 - [Collector](collector.md)
 - [Intelligence feed](intelligence-feed.md)
 - [Dashboard](dashboard.md)
-
-Probe-informed routing is implemented on a review branch and will join this
-index only after its acceptance record reaches `main`.
+- [Probe-informed routing](probe-informed-routing.md)
 
 ## Reproduce accepted evidence
 
@@ -43,6 +41,7 @@ index only after its acceptance record reaches `main`.
 - [Sprint 6 — durable Collector](sprint-6-reproduction.md)
 - [Sprint 7 — intelligence feed](sprint-7-reproduction.md)
 - [Sprint 8 — local evidence dashboard](sprint-8-reproduction.md)
+- [Sprint 9 — probe-informed route ordering](sprint-9-reproduction.md)
 
 ## Hostile audits and acceptance
 
@@ -59,6 +58,7 @@ The repository keeps sprint-level acceptance and hostile audits so a later imple
 | 6 | [acceptance](sprint-6-acceptance.md) | [hostile audit](sprint-6-hostile-audit.md) |
 | 7 | [acceptance](sprint-7-acceptance.md) | [hostile audit](sprint-7-hostile-audit.md) |
 | 8 | [acceptance](sprint-8-acceptance.md) | [hostile audit](sprint-8-hostile-audit.md) |
+| 9 | [acceptance](sprint-9-acceptance.md) | [hostile audit](sprint-9-hostile-audit.md) |
 
 ## Product and commercial context
 

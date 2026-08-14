@@ -1,8 +1,17 @@
-# Reactive Router v0.1
+# Reactive Router v0.2
 
 ## Contract
 
-The Sprint 3 router accepts one already-signed Solana transaction and a locally ordered list of logical routes. It attempts at most `maxRoutes`, never revisits a `route_id`, and stops at the global deadline. This is reactive primary/fallback routing only; it does not consume Observatory intelligence or classify transactions.
+The router accepts one already-signed Solana transaction and a locally ordered
+list of logical routes. It attempts at most `maxRoutes`, never revisits a
+`route_id`, and stops at the global deadline. Sprint 9 may reorder that locally
+eligible set using fresh intelligence for an explicitly declared MVP class. It
+does not classify transaction semantics, remove fallbacks, or expand the local
+route window.
+
+See [probe-informed routing](probe-informed-routing.md) for the v0.2 ordering
+contract. Calling `route(transaction)` without a class retains the Sprint 3
+local behavior.
 
 ## Success semantics
 
