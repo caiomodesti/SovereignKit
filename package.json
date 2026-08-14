@@ -30,6 +30,7 @@
     "check:collector:integration": "node node_modules/typescript/bin/tsc -p packages/collector/tsconfig.integration.json --noEmit",
     "test:collector:process": "corepack pnpm build && corepack pnpm check:collector:integration && node node_modules/vitest/vitest.mjs run packages/collector/integration/process-separation.integration.test.ts --testTimeout=30000",
     "verify:sprint-6": "corepack pnpm build && corepack pnpm test && corepack pnpm test:collector:process && node scripts/verify-sprint-6-contracts.mjs",
+    "verify:sprint-7": "corepack pnpm build && corepack pnpm test && node scripts/verify-sprint-7-fixture.mjs",
     "verify:sprint-5": "corepack pnpm build && node scripts/verify-sprint-5-fixtures.mjs",
     "env:doctor": "node scripts/env-doctor.mjs",
     "env:doctor:core": "node scripts/env-doctor.mjs --core",
