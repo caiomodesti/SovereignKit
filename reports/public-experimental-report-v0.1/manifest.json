@@ -1,0 +1,239 @@
+{
+  "generatedAt": "2026-08-14T22:26:54.474Z",
+  "generator": "scripts/generate-sprint-11-report.mjs",
+  "outputs": [
+    {
+      "bytes": 12660,
+      "format": "markdown",
+      "path": "reports/public-experimental-report-v0.1/report.md",
+      "sha256": "fd8cfea622ba70b8e943bd6618aa221824c26680bf7ea92b4b29dbc16b12b8ea"
+    },
+    {
+      "bytes": 30844,
+      "format": "json",
+      "path": "reports/public-experimental-report-v0.1/report.json",
+      "sha256": "377af08415a3120de1957f005fb13c7e53472b57417a2772c9497ee0602f0c33"
+    },
+    {
+      "bytes": 5102,
+      "format": "csv",
+      "path": "reports/public-experimental-report-v0.1/report.csv",
+      "sha256": "79c9204135fa3da7b4ce7f48bf60c41e29769bf67d881074ac769377a6b79592"
+    }
+  ],
+  "reportVersion": "SovereignKitPublicExperimentalReport@0.1.0",
+  "reproducibilityCommand": "corepack pnpm verify:sprint-11",
+  "schemaVersion": "PublicReportManifest@0.1.0",
+  "sourceFiles": [
+    {
+      "bytes": 6327,
+      "path": "fixtures/integration/agave-4.0.0/controlled-experiment/asymmetric/derived/classifications.json",
+      "sha256": "8f97bd7c1e970d100af619dc970918e8aa45179d2a6930499fea77dc8f3c93a7"
+    },
+    {
+      "bytes": 60013,
+      "path": "fixtures/integration/agave-4.0.0/controlled-experiment/asymmetric/derived/execution-plan.json",
+      "sha256": "593510220f49d41dae6a78886fa9ae4554cf4d43d7d196723df6adbac6774c4d"
+    },
+    {
+      "bytes": 113094,
+      "path": "fixtures/integration/agave-4.0.0/controlled-experiment/asymmetric/derived/measurements.json",
+      "sha256": "0124e324db8f50727b1f84a56c617164413d099339e6d01ed1824e7eff8d7c81"
+    },
+    {
+      "bytes": 638,
+      "path": "fixtures/integration/agave-4.0.0/controlled-experiment/asymmetric/experiment-definition.json",
+      "sha256": "016c950e0de7ae1a5a55e1c6e7c8042d18a19984fdeff159a1085af24d76d75f"
+    },
+    {
+      "bytes": 455631,
+      "path": "fixtures/integration/agave-4.0.0/controlled-experiment/asymmetric/raw/probe-results.jsonl",
+      "sha256": "8fac8e3a21b693cabd7d9a2e7c02e29a7ae8a8522db47a2b8c0226ed48b7734e"
+    },
+    {
+      "bytes": 123750,
+      "path": "fixtures/integration/agave-4.0.0/controlled-experiment/asymmetric/raw/reader-claims.jsonl",
+      "sha256": "db1e0b3977b96eb15958f0c9c678b9863695d119a3af621c926634975da07f58"
+    },
+    {
+      "bytes": 675,
+      "path": "fixtures/integration/agave-4.0.0/controlled-experiment/asymmetric/summary/experiment-summary.csv",
+      "sha256": "acb6cfce925042916eb683dec2bf5c5a84d2e409e8ba3312216c68512a051cfd"
+    },
+    {
+      "bytes": 6327,
+      "path": "fixtures/integration/agave-4.0.0/controlled-experiment/asymmetric/summary/experiment-summary.json",
+      "sha256": "a2e085f06f9abb684b4ebb8b8e77173019e206b86ccb2f9f587c4f302df354eb"
+    },
+    {
+      "bytes": 1508,
+      "path": "fixtures/integration/agave-4.0.0/controlled-experiment/asymmetric/summary/experiment-summary.md",
+      "sha256": "7c96881192152793254972349ad6f51706c24adf38a299dcb389c1f4968321d5"
+    },
+    {
+      "bytes": 6313,
+      "path": "fixtures/integration/agave-4.0.0/controlled-experiment/degraded/derived/classifications.json",
+      "sha256": "33d67fc1955e43012f98c2137dcb83c9e5fd7e56ec28e4af5b18afc3bc7c17e7"
+    },
+    {
+      "bytes": 59941,
+      "path": "fixtures/integration/agave-4.0.0/controlled-experiment/degraded/derived/execution-plan.json",
+      "sha256": "f51cd82f7e172393b2d39c95958aea2615e203f4a67f2f66ac125996b607cb0b"
+    },
+    {
+      "bytes": 112616,
+      "path": "fixtures/integration/agave-4.0.0/controlled-experiment/degraded/derived/measurements.json",
+      "sha256": "d27bd753bd02f8e5f536263ff17771afeaef5fc6dc60783146d0eb4528c8db7a"
+    },
+    {
+      "bytes": 634,
+      "path": "fixtures/integration/agave-4.0.0/controlled-experiment/degraded/experiment-definition.json",
+      "sha256": "c3286d68c86c20413fbe7d9cf111e8b086145e8d9f42ab5ef5798ecf970c74d7"
+    },
+    {
+      "bytes": 453065,
+      "path": "fixtures/integration/agave-4.0.0/controlled-experiment/degraded/raw/probe-results.jsonl",
+      "sha256": "a9a76eb376c1a594fe942db41fe721dc22a745ad58c3648ebea9b49b82dcf4f9"
+    },
+    {
+      "bytes": 120888,
+      "path": "fixtures/integration/agave-4.0.0/controlled-experiment/degraded/raw/reader-claims.jsonl",
+      "sha256": "c5153806e3f18e10131245666eeed75afcc93d413c484853a866af87458da59a"
+    },
+    {
+      "bytes": 667,
+      "path": "fixtures/integration/agave-4.0.0/controlled-experiment/degraded/summary/experiment-summary.csv",
+      "sha256": "06b8b0ed59d1594e4f6af1b07b79c69beced052f9c4f00ece211eed5efb412cb"
+    },
+    {
+      "bytes": 6313,
+      "path": "fixtures/integration/agave-4.0.0/controlled-experiment/degraded/summary/experiment-summary.json",
+      "sha256": "db6af2b4c8b1e462390976bb77ff058e96d4d74f11073033959ae3ee28a42ea9"
+    },
+    {
+      "bytes": 1497,
+      "path": "fixtures/integration/agave-4.0.0/controlled-experiment/degraded/summary/experiment-summary.md",
+      "sha256": "336d62bc2223fd01bc96762309a78ab372189d7e4f4b1cff27dfb0730d531816"
+    },
+    {
+      "bytes": 2555,
+      "path": "fixtures/integration/agave-4.0.0/controlled-experiment/experiment-manifest.json",
+      "sha256": "f55254d53bc5b737f59f9d3cb1da25424b69885f7f66a4fc50a95ef7201a1bc5"
+    },
+    {
+      "bytes": 6284,
+      "path": "fixtures/integration/agave-4.0.0/controlled-experiment/healthy/derived/classifications.json",
+      "sha256": "052c4dab8a36f872714e46c1db2f33c71f3b5c5ff784e8d0833137d994610ccf"
+    },
+    {
+      "bytes": 60133,
+      "path": "fixtures/integration/agave-4.0.0/controlled-experiment/healthy/derived/execution-plan.json",
+      "sha256": "8652278b8f78935a449c39fa8a2d28c42f6c61648c3cd46e16266e3665ec9e0d"
+    },
+    {
+      "bytes": 112767,
+      "path": "fixtures/integration/agave-4.0.0/controlled-experiment/healthy/derived/measurements.json",
+      "sha256": "1d10da3f9b6a2339ca30411dae08a19f8fad761036f1a58f1356c031ea77e066"
+    },
+    {
+      "bytes": 632,
+      "path": "fixtures/integration/agave-4.0.0/controlled-experiment/healthy/experiment-definition.json",
+      "sha256": "14c75aafdc0519bd40bdafe1905c827be622c78fdd52445ab88f250eb1d3fe18"
+    },
+    {
+      "bytes": 455374,
+      "path": "fixtures/integration/agave-4.0.0/controlled-experiment/healthy/raw/probe-results.jsonl",
+      "sha256": "23224929c079dda7bfddc9bdbda88ad790b49745f69635171aaff1c3ccaa4e58"
+    },
+    {
+      "bytes": 126360,
+      "path": "fixtures/integration/agave-4.0.0/controlled-experiment/healthy/raw/reader-claims.jsonl",
+      "sha256": "97dfcae94c8e614758e59506c21be30a2c97b7b29ff863b982dd8aba4313d79f"
+    },
+    {
+      "bytes": 663,
+      "path": "fixtures/integration/agave-4.0.0/controlled-experiment/healthy/summary/experiment-summary.csv",
+      "sha256": "b679d73c3a033ebb0fb8dc5a03c2d04e84163050e8ff5ee9a375ee55d4b44816"
+    },
+    {
+      "bytes": 6284,
+      "path": "fixtures/integration/agave-4.0.0/controlled-experiment/healthy/summary/experiment-summary.json",
+      "sha256": "959ccc8f42d48bf598f4e52e72ff30e0c9f867795915f804166412858154e37d"
+    },
+    {
+      "bytes": 1508,
+      "path": "fixtures/integration/agave-4.0.0/controlled-experiment/healthy/summary/experiment-summary.md",
+      "sha256": "84b31f6b673944dab6c5f09b7a26779ef50ff5f485b184fd90df93b4f3a2cdc3"
+    },
+    {
+      "bytes": 6011,
+      "path": "fixtures/integration/agave-4.0.0/controlled-experiment/insufficient_data/derived/classifications.json",
+      "sha256": "5b821d13f8a15861ad9abac6f056e4d94925951b336bb8f67e0c922ab43ff97e"
+    },
+    {
+      "bytes": 19973,
+      "path": "fixtures/integration/agave-4.0.0/controlled-experiment/insufficient_data/derived/execution-plan.json",
+      "sha256": "0b30e95fff9081683946fa64c10122b1bffbfba01f40c3633358e6c3d7efaf41"
+    },
+    {
+      "bytes": 38152,
+      "path": "fixtures/integration/agave-4.0.0/controlled-experiment/insufficient_data/derived/measurements.json",
+      "sha256": "82401769750d974104741d2bf679abb08d4ed6cb19caaadb7cad6b0c3e409c8d"
+    },
+    {
+      "bytes": 492,
+      "path": "fixtures/integration/agave-4.0.0/controlled-experiment/insufficient_data/experiment-definition.json",
+      "sha256": "c48be7388eee1c20fb0d496cadf14e30845fa10a3da608ae68586b10f5dedf7a"
+    },
+    {
+      "bytes": 153289,
+      "path": "fixtures/integration/agave-4.0.0/controlled-experiment/insufficient_data/raw/probe-results.jsonl",
+      "sha256": "a03040c0fd7e70edbd98d123cebb31f9abd1d51da16f63d13f720876365ba7e2"
+    },
+    {
+      "bytes": 42840,
+      "path": "fixtures/integration/agave-4.0.0/controlled-experiment/insufficient_data/raw/reader-claims.jsonl",
+      "sha256": "464b898d6f21f2e67cc6bc5115d2005cd759460f5b5938cdf7d364a3f2fb6041"
+    },
+    {
+      "bytes": 714,
+      "path": "fixtures/integration/agave-4.0.0/controlled-experiment/insufficient_data/summary/experiment-summary.csv",
+      "sha256": "12a800a76c8ed55265602b68a7867b3d36ec4a25bfba8319b4bc91b67da9079a"
+    },
+    {
+      "bytes": 6011,
+      "path": "fixtures/integration/agave-4.0.0/controlled-experiment/insufficient_data/summary/experiment-summary.json",
+      "sha256": "cf4cded05b94f01baa6c1e12d360ba145dff575d8d63ce76911aef4f53bebf24"
+    },
+    {
+      "bytes": 1564,
+      "path": "fixtures/integration/agave-4.0.0/controlled-experiment/insufficient_data/summary/experiment-summary.md",
+      "sha256": "e02a178f3ba9ce52779a40041460a9f3707befa9f28d606d71a006f5a4980ac2"
+    },
+    {
+      "bytes": 297,
+      "path": "fixtures/sprint-10/devnet-accepted-run-20260814T220116Z/cluster-metadata.json",
+      "sha256": "0149a63420cd6e2d2da4255b648a373255230e9deae878d249b252d080b1239a"
+    },
+    {
+      "bytes": 3054,
+      "path": "fixtures/sprint-10/devnet-accepted-run-20260814T220116Z/evidence.json",
+      "sha256": "34bd2c3147169b9426693fe81b329598ab6792bbbb0eb7e8d81b7b1107cf5ec5"
+    },
+    {
+      "bytes": 29732,
+      "path": "fixtures/sprint-10/devnet-accepted-run-20260814T220116Z/raw-events.jsonl",
+      "sha256": "2a41ae4118844b10d5a2c3fa886b9b6794ef428d3f2b6eb32090f5c275cbada3"
+    },
+    {
+      "bytes": 3275,
+      "path": "fixtures/sprint-10/devnet-accepted-run-20260814T220116Z/timeline.json",
+      "sha256": "df833fa21c15b8dc8b6d406ce7c6849638ad63ba2e4ecbdec1fd03d99aeb2fba"
+    },
+    {
+      "bytes": 411,
+      "path": "fixtures/sprint-10/devnet-accepted-run-20260814T220116Z/timeline.txt",
+      "sha256": "6caef9087d8a861527124d949323b0122808ef648e3cb730deb8220a28c52ae0"
+    }
+  ]
+}
