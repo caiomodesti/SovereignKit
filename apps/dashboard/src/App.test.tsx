@@ -24,6 +24,8 @@ describe("evidence dashboard", () => {
     expect(screen.getAllByText("STALE").length).toBeGreaterThan(0);
     expect(screen.getByText("600")).toBeDefined();
     expect(screen.getByText("observer-local")).toBeDefined();
+    expect(screen.getByRole("heading", { name: "How a submission becomes reproducible intelligence" })).toBeDefined();
+    expect(screen.getByRole("heading", { name: "RPC acknowledgment is not landing" })).toBeDefined();
 
     await user.selectOptions(screen.getByRole("combobox", { name: "Scenario" }), "healthy");
     expect(screen.getByText("No controlled findings")).toBeDefined();

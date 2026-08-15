@@ -126,6 +126,7 @@ export function App({ loader = loadDashboardData, now = new Date() }: AppProps) 
         <nav aria-label="Dashboard sections">
           <a href="#overview"><Activity aria-hidden="true" size={17} />Overview</a>
           <a href="#replay"><Play aria-hidden="true" size={17} />Guided replay</a>
+          <a href="#architecture"><Database aria-hidden="true" size={17} />Architecture</a>
           <a href="#routes"><Route aria-hidden="true" size={17} />Routes & classes</a>
           <a href="#incidents"><AlertTriangle aria-hidden="true" size={17} />Incidents</a>
           <a href="#failover"><GitBranch aria-hidden="true" size={17} />Failover</a>
@@ -171,6 +172,36 @@ export function App({ loader = loadDashboardData, now = new Date() }: AppProps) 
             <div><span>Key identifier</span><code>{data.observers[0]?.keyId ?? "Unavailable"}</code></div>
             <div><span>Collector policy</span><strong>ALLOWLISTED</strong></div>
           </div>
+        </section>
+
+        <section id="architecture" aria-labelledby="architecture-title">
+          <div className="section-heading"><div><p className="eyebrow">Evidence before policy</p><h2 id="architecture-title">How a submission becomes reproducible intelligence</h2></div></div>
+          <div className="architecture-flow" aria-label="SovereignKit evidence architecture">
+            <ArchitectureNode step="01" title="Matched probes" detail="Unique signed transaction per route, class, and probe index" />
+            <ArrowRight aria-hidden="true" size={18} />
+            <ArchitectureNode step="02" title="Logical routes" detail="Submission perspectives; never assumed to be physical paths" />
+            <ArrowRight aria-hidden="true" size={18} />
+            <ArchitectureNode step="03" title="2-of-3 quorum" detail="Ledger observation remains separate from RPC acknowledgment" />
+            <ArrowRight aria-hidden="true" size={18} />
+            <ArchitectureNode step="04" title="Signed evidence" detail="Schema-validated, allowlisted, idempotent, append-only results" />
+            <ArrowRight aria-hidden="true" size={18} />
+            <ArchitectureNode step="05" title="Experimental policy" detail="Explicit windows produce evidence-bounded classifications" />
+            <ArrowRight aria-hidden="true" size={18} />
+            <ArchitectureNode step="06" title="Fail-open SDK" detail="Fresh intelligence may reorder routes; local policy always survives" />
+          </div>
+        </section>
+
+        <section id="lifecycle" aria-labelledby="lifecycle-title">
+          <div className="section-heading"><div><p className="eyebrow">Immutable facts → derived timeline</p><h2 id="lifecycle-title">RPC acknowledgment is not landing</h2></div></div>
+          <div className="lifecycle-flow" aria-label="Healthy transaction lifecycle">
+            {data.devnetProof.lifecycle.map((state, index) => (
+              <div className={state === "RPC_ACKNOWLEDGED" ? "lifecycle-state lifecycle-state--warning" : "lifecycle-state"} key={state}>
+                <span>{String(index + 1).padStart(2, "0")}</span><strong>{state.replaceAll("_", " ")}</strong>
+                {state === "RPC_ACKNOWLEDGED" && <small>submission response only</small>}
+              </div>
+            ))}
+          </div>
+          <p className="fine-print">This healthy sequence was reconstructed from 34 retained raw Devnet events. Confirmation and finalization came from reader observations, never from the submitting route alone.</p>
         </section>
 
         <section id="replay" aria-labelledby="replay-title">
@@ -333,4 +364,8 @@ function Metric({ icon, label, value, detail }: { readonly icon: React.ReactNode
 
 function Method({ title, items }: { readonly title: string; readonly items: readonly string[] }) {
   return <article className="method"><h3>{title}</h3><ul>{items.map(item => <li key={item}><Check aria-hidden="true" size={15} />{item}</li>)}</ul></article>;
+}
+
+function ArchitectureNode({ step, title, detail }: { readonly step: string; readonly title: string; readonly detail: string }) {
+  return <article className="architecture-node"><span>{step}</span><strong>{title}</strong><p>{detail}</p></article>;
 }
