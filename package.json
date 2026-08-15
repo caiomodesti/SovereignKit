@@ -15,7 +15,7 @@
   "scripts": {
     "build": "node node_modules/typescript/bin/tsc -p packages/telemetry/tsconfig.json && node node_modules/typescript/bin/tsc -p packages/probes/tsconfig.json && node node_modules/typescript/bin/tsc -p packages/collector/tsconfig.json && node node_modules/typescript/bin/tsc -p packages/sdk/tsconfig.json && node node_modules/typescript/bin/tsc -p packages/hostile-proxy/tsconfig.json && node node_modules/typescript/bin/tsc -p packages/analysis/tsconfig.json && corepack pnpm --filter @sovereignkit/dashboard build",
     "build:site": "corepack pnpm --filter @sovereignkit/dashboard build && node scripts/stage-sites-dashboard.mjs",
-    "check": "node node_modules/typescript/bin/tsc -p packages/telemetry/tsconfig.json --noEmit && node node_modules/typescript/bin/tsc -p packages/probes/tsconfig.json --noEmit && node node_modules/typescript/bin/tsc -p packages/collector/tsconfig.json --noEmit && node node_modules/typescript/bin/tsc -p packages/sdk/tsconfig.json --noEmit && node node_modules/typescript/bin/tsc -p packages/hostile-proxy/tsconfig.json --noEmit && node node_modules/typescript/bin/tsc -p packages/analysis/tsconfig.json --noEmit && node node_modules/typescript/bin/tsc -p apps/dashboard/tsconfig.json --noEmit",
+    "check": "node node_modules/typescript/bin/tsc -p packages/telemetry/tsconfig.json --noEmit && node node_modules/typescript/bin/tsc -p packages/probes/tsconfig.json --noEmit && node node_modules/typescript/bin/tsc -p packages/collector/tsconfig.json --noEmit && node node_modules/typescript/bin/tsc -p packages/sdk/tsconfig.json --noEmit && node node_modules/typescript/bin/tsc -p packages/hostile-proxy/tsconfig.json --noEmit && node node_modules/typescript/bin/tsc -p packages/analysis/tsconfig.json --noEmit && node node_modules/typescript/bin/tsc -p apps/dashboard/tsconfig.json --noEmit && node node_modules/typescript/bin/tsc -p apps/video/tsconfig.json --noEmit",
     "test": "node node_modules/vitest/vitest.mjs run packages/telemetry/src packages/probes/src packages/collector/src packages/sdk/src packages/hostile-proxy/src packages/analysis/src apps/dashboard/src",
     "test:coverage": "node node_modules/vitest/vitest.mjs run --coverage packages/telemetry/src packages/probes/src packages/collector/src packages/sdk/src packages/hostile-proxy/src packages/analysis/src apps/dashboard/src",
     "check:integration": "node node_modules/typescript/bin/tsc -p packages/telemetry/tsconfig.integration.json --noEmit",
@@ -44,7 +44,11 @@
     "verify:sprint-5": "corepack pnpm build && node scripts/verify-sprint-5-fixtures.mjs",
     "env:doctor": "node scripts/env-doctor.mjs",
     "env:doctor:core": "node scripts/env-doctor.mjs --core",
-    "examples:timelines": "node node_modules/typescript/bin/tsc -p packages/telemetry/tsconfig.json && node scripts/print-timeline-examples.mjs"
+    "examples:timelines": "node node_modules/typescript/bin/tsc -p packages/telemetry/tsconfig.json && node scripts/print-timeline-examples.mjs",
+    "video:audio": "corepack pnpm --filter @sovereignkit/video audio",
+    "video:check": "corepack pnpm --filter @sovereignkit/video check",
+    "video:thumbnail": "corepack pnpm --filter @sovereignkit/video thumbnail",
+    "video:render": "corepack pnpm --filter @sovereignkit/video render"
   },
   "devDependencies": {
     "@types/node": "22.20.1",

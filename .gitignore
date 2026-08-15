@@ -17,3 +17,5 @@ tmp/
 *-keypair.json
 ledger/
 ledgers/
+apps/video/out/
+apps/video/public/audio/generated/
