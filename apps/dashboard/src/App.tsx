@@ -6,8 +6,10 @@ import {
   Check,
   CircleDot,
   Database,
+  ExternalLink,
   FlaskConical,
   GitBranch,
+  Play,
   RefreshCw,
   Route,
   ShieldCheck,
@@ -30,6 +32,26 @@ const scenarioLabels: Record<Scenario["id"], string> = {
   insufficient_data: "Insufficient data",
 };
 
+const replayScenarioIds = ["healthy", "degraded", "asymmetric"] as const;
+
+const replayCopy: Record<(typeof replayScenarioIds)[number], { readonly title: string; readonly question: string; readonly finding: string }> = {
+  healthy: {
+    title: "Establish the baseline",
+    question: "Can matched classes land through every logical route?",
+    finding: "All routes remain HEALTHY; the two declared classes move together.",
+  },
+  degraded: {
+    title: "Introduce broad degradation",
+    question: "Can the policy avoid mistaking a general route failure for asymmetry?",
+    finding: "Both classes degrade together on route-a, producing DEGRADED—not ASYMMETRIC.",
+  },
+  asymmetric: {
+    title: "Introduce selective rejection",
+    question: "Can matched probes reveal a reproducible class-selective difference?",
+    finding: "route-a keeps the control while PROGRAM_X falls away, producing ASYMMETRIC.",
+  },
+};
+
 function StatusBadge({ value }: { readonly value: Classification | "FRESH" | "STALE" | "INVALID" | "CONFIRMED" }) {
   return <span className={`status status--${value.toLowerCase()}`}><CircleDot aria-hidden="true" size={14} />{value.replaceAll("_", " ")}</span>;
 }
@@ -46,8 +68,8 @@ function LoadingState() {
   return (
     <main className="state-page" aria-live="polite" aria-busy="true">
       <div className="spinner" aria-hidden="true" />
-      <h1>Carregando evidências</h1>
-      <p>Validando o dataset local e sua proveniência.</p>
+      <h1>Loading evidence</h1>
+      <p>Validating the local dataset and its provenance.</p>
     </main>
   );
 }
@@ -56,9 +78,9 @@ function ErrorState({ message, retry }: { readonly message: string; readonly ret
   return (
     <main className="state-page" role="alert">
       <AlertTriangle aria-hidden="true" size={32} />
-      <h1>Evidência indisponível</h1>
+      <h1>Evidence unavailable</h1>
       <p>{message}</p>
-      <button className="button" type="button" onClick={retry}><RefreshCw aria-hidden="true" size={16} />Tentar novamente</button>
+      <button className="button" type="button" onClick={retry}><RefreshCw aria-hidden="true" size={16} />Try again</button>
     </main>
   );
 }
@@ -68,6 +90,7 @@ export function App({ loader = loadDashboardData, now = new Date() }: AppProps) 
   const [error, setError] = useState<string>();
   const [reloadKey, setReloadKey] = useState(0);
   const [scenarioId, setScenarioId] = useState<Scenario["id"]>("asymmetric");
+  const [replayIndex, setReplayIndex] = useState(0);
 
   useEffect(() => {
     let active = true;
@@ -87,6 +110,11 @@ export function App({ loader = loadDashboardData, now = new Date() }: AppProps) 
   const incidents = scenario.classifications
     .filter(item => item.classification !== "HEALTHY")
     .map(item => ({ scenario, classification: item }));
+  const replayScenarioId = replayScenarioIds[replayIndex] ?? "healthy";
+  const replayScenario = data.scenarios.find(value => value.id === replayScenarioId);
+  if (replayScenario === undefined) return <ErrorState message="guided replay evidence is unavailable" retry={() => setReloadKey(value => value + 1)} />;
+  const replayRoute = replayScenario.classifications.find(value => value.routeId === "route-a");
+  if (replayRoute === undefined) return <ErrorState message="guided replay route evidence is unavailable" retry={() => setReloadKey(value => value + 1)} />;
 
   return (
     <div className="shell">
@@ -95,8 +123,9 @@ export function App({ loader = loadDashboardData, now = new Date() }: AppProps) 
           <span className="brand__mark"><ShieldCheck aria-hidden="true" size={19} /></span>
           <span><strong>SovereignKit</strong><small>Evidence console</small></span>
         </a>
-        <nav aria-label="Seções do dashboard">
+        <nav aria-label="Dashboard sections">
           <a href="#overview"><Activity aria-hidden="true" size={17} />Overview</a>
+          <a href="#replay"><Play aria-hidden="true" size={17} />Guided replay</a>
           <a href="#routes"><Route aria-hidden="true" size={17} />Routes & classes</a>
           <a href="#incidents"><AlertTriangle aria-hidden="true" size={17} />Incidents</a>
           <a href="#failover"><GitBranch aria-hidden="true" size={17} />Failover</a>
@@ -111,7 +140,7 @@ export function App({ loader = loadDashboardData, now = new Date() }: AppProps) 
       <main className="content">
         <header className="topbar">
           <div>
-            <p className="eyebrow">Observatory / Sprint 8</p>
+            <p className="eyebrow">Observatory / accepted v0.1 evidence</p>
             <h1>Transaction accessibility evidence</h1>
           </div>
           <div className="feed-indicator" title={`Snapshot expires at ${data.feed.expiresAt}`}>
@@ -123,7 +152,7 @@ export function App({ loader = loadDashboardData, now = new Date() }: AppProps) 
         <section id="overview" aria-labelledby="overview-title">
           <div className="section-heading">
             <div><p className="eyebrow">Accepted controlled run</p><h2 id="overview-title">Evidence overview</h2></div>
-            <span className="source-time">Generated {new Date(data.evidenceGeneratedAt).toLocaleString("pt-BR", { dateStyle: "medium", timeStyle: "short" })}</span>
+            <span className="source-time">Generated {new Date(data.evidenceGeneratedAt).toLocaleString("en-US", { dateStyle: "medium", timeStyle: "short" })}</span>
           </div>
           <div className="metric-grid">
             <Metric icon={<FlaskConical />} label="Scenarios" value={data.overview.scenarioCount.toString()} detail="all required outcomes" />
@@ -140,6 +169,48 @@ export function App({ loader = loadDashboardData, now = new Date() }: AppProps) 
             <div><span>Authenticated observer</span><strong>{data.observers[0]?.observerId ?? "Unavailable"}</strong></div>
             <div><span>Key identifier</span><code>{data.observers[0]?.keyId ?? "Unavailable"}</code></div>
             <div><span>Collector policy</span><strong>ALLOWLISTED</strong></div>
+          </div>
+        </section>
+
+        <section id="replay" aria-labelledby="replay-title">
+          <div className="section-heading">
+            <div><p className="eyebrow">Three-step incident replay</p><h2 id="replay-title">See the distinction the experiment was built to prove</h2></div>
+            <span className="count-pill">Step {replayIndex + 1} / {replayScenarioIds.length}</span>
+          </div>
+          <div className="replay-shell">
+            <div className="replay-tabs" role="tablist" aria-label="Incident replay steps">
+              {replayScenarioIds.map((id, index) => (
+                <button
+                  aria-controls="replay-panel"
+                  aria-selected={replayIndex === index}
+                  className={replayIndex === index ? "replay-tab replay-tab--active" : "replay-tab"}
+                  key={id}
+                  onClick={() => { setReplayIndex(index); setScenarioId(id); }}
+                  role="tab"
+                  type="button"
+                >
+                  <span>{index + 1}</span><strong>{id.toUpperCase()}</strong>
+                </button>
+              ))}
+            </div>
+            <article className="replay-panel" id="replay-panel" role="tabpanel">
+              <div className="replay-panel__copy">
+                <p className="eyebrow">{replayCopy[replayScenarioId].title}</p>
+                <h3>{replayCopy[replayScenarioId].question}</h3>
+                <p>{replayCopy[replayScenarioId].finding}</p>
+                <div className="replay-result"><StatusBadge value={replayRoute.classification} /><span>{replayRoute.evidenceStrength} evidence</span></div>
+              </div>
+              <div className="replay-comparison" aria-label="route-a class comparison">
+                <div><span>Matched control</span><strong>{formatPercent(replayRoute.controlSuccessRate)}</strong></div>
+                <ArrowRight aria-hidden="true" size={20} />
+                <div><span>Program X</span><strong>{formatPercent(replayRoute.testSuccessRate)}</strong></div>
+                <div className="replay-gap"><span>Absolute class gap</span><strong>{formatPercent(replayRoute.absoluteClassGap)}</strong></div>
+              </div>
+            </article>
+            <div className="replay-actions">
+              <button className="button button--secondary" disabled={replayIndex === 0} onClick={() => { const next = Math.max(0, replayIndex - 1); setReplayIndex(next); setScenarioId(replayScenarioIds[next] ?? "healthy"); }} type="button">Previous</button>
+              <button className="button" disabled={replayIndex === replayScenarioIds.length - 1} onClick={() => { const next = Math.min(replayScenarioIds.length - 1, replayIndex + 1); setReplayIndex(next); setScenarioId(replayScenarioIds[next] ?? "asymmetric"); }} type="button">Next finding<ArrowRight aria-hidden="true" size={16} /></button>
+            </div>
           </div>
         </section>
 
@@ -216,13 +287,27 @@ export function App({ loader = loadDashboardData, now = new Date() }: AppProps) 
           <div className="feed-card">
             <div className="section-heading"><div><p className="eyebrow">Polling snapshot v{data.feed.version}</p><h2>Feed state</h2></div><StatusBadge value={feedHealth} /></div>
             <dl>
-              <div><dt>Generated</dt><dd>{new Date(data.feed.generatedAt).toLocaleString("pt-BR")}</dd></div>
-              <div><dt>Expired</dt><dd>{new Date(data.feed.expiresAt).toLocaleString("pt-BR")}</dd></div>
+              <div><dt>Generated</dt><dd>{new Date(data.feed.generatedAt).toLocaleString("en-US")}</dd></div>
+              <div><dt>Expired</dt><dd>{new Date(data.feed.expiresAt).toLocaleString("en-US")}</dd></div>
               <div><dt>Route/class entries</dt><dd>{data.feed.routeIntelligence.length}</dd></div>
               <div><dt>SDK disposition</dt><dd><code>{data.feed.dispositionAfterOneSnapshot}</code></dd></div>
             </dl>
             <div className="notice notice--neutral"><ShieldCheck aria-hidden="true" size={18} /><p>Stale or unavailable intelligence fails open to the local primary/fallback policy.</p></div>
           </div>
+        </section>
+
+        <section id="devnet" aria-labelledby="devnet-title">
+          <div className="section-heading"><div><p className="eyebrow">Separate integration validation</p><h2 id="devnet-title">Real finalized Devnet transaction</h2></div><StatusBadge value="CONFIRMED" /></div>
+          <div className="devnet-proof">
+            <div>
+              <span>Transaction signature</span>
+              <code title={data.devnetProof.transactionSignature}>{shortHash(data.devnetProof.transactionSignature)}</code>
+            </div>
+            <div><span>Observed lifecycle</span><strong>{data.devnetProof.lifecycle.length} derived states</strong></div>
+            <div><span>Observation quorum</span><strong>{data.devnetProof.quorum.required} / {data.devnetProof.quorum.logicalReaderCount}</strong></div>
+            <a className="button" href={data.devnetProof.explorerUrl} rel="noreferrer" target="_blank">Open in Solana Explorer<ExternalLink aria-hidden="true" size={15} /></a>
+          </div>
+          <p className="fine-print">{data.devnetProof.scope}. Reader endpoints in this run did not establish operational independence.</p>
         </section>
 
         <section id="methodology" aria-labelledby="method-title">

@@ -97,4 +97,18 @@ export interface DashboardDataset {
     readonly observationIndependence: string;
     readonly primaryFailureMode: string;
   };
+  readonly devnetProof: {
+    readonly evidenceVersion: string;
+    readonly generatedAt: string;
+    readonly scope: string;
+    readonly transactionSignature: string;
+    readonly explorerUrl: string;
+    readonly lifecycle: readonly string[];
+    readonly quorum: {
+      readonly required: number;
+      readonly logicalReaderCount: number;
+      readonly finalizedReaderIds: readonly string[];
+      readonly operationalIndependence: string;
+    };
+  };
 }
