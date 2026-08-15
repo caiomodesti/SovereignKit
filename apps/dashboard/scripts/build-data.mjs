@@ -9,6 +9,7 @@ const sourceFiles = [
   ...scenarioIds.map(id => `fixtures/integration/agave-4.0.0/controlled-experiment/${id}/summary/experiment-summary.json`),
   "fixtures/integration/agave-4.0.0/router-failover/router-evidence.json",
   "fixtures/sprint-7/intelligence-snapshot-evidence.json",
+  "fixtures/sprint-10/devnet-accepted-run-20260814T220116Z/evidence.json",
 ];
 
 const readJson = async path => JSON.parse(await readFile(resolve(root, path), "utf8"));
@@ -19,6 +20,7 @@ const summaries = Object.fromEntries(await Promise.all(scenarioIds.map(async id 
 ])));
 const failoverEvidence = await readJson("fixtures/integration/agave-4.0.0/router-failover/router-evidence.json");
 const feedEvidence = await readJson("fixtures/sprint-7/intelligence-snapshot-evidence.json");
+const devnetEvidence = await readJson("fixtures/sprint-10/devnet-accepted-run-20260814T220116Z/evidence.json");
 
 if (manifest.evidenceVersion !== "sprint-5-live-controlled-experiment@0.1.0") {
   throw new Error("unsupported controlled-experiment manifest");
@@ -100,6 +102,20 @@ const dataset = {
     attempts: failoverEvidence.result.attempts,
     observationIndependence: failoverEvidence.observationIndependence,
     primaryFailureMode: failoverEvidence.primaryFailureMode,
+  },
+  devnetProof: {
+    evidenceVersion: devnetEvidence.evidenceVersion,
+    generatedAt: devnetEvidence.generatedAt,
+    scope: devnetEvidence.scope,
+    transactionSignature: devnetEvidence.transactionSignature,
+    explorerUrl: `https://explorer.solana.com/tx/${devnetEvidence.transactionSignature}?cluster=devnet`,
+    lifecycle: devnetEvidence.lifecycle,
+    quorum: {
+      required: devnetEvidence.observationQuorum.required,
+      logicalReaderCount: devnetEvidence.observationQuorum.logicalReaderCount,
+      finalizedReaderIds: devnetEvidence.quorum.finalizedReaderIds,
+      operationalIndependence: devnetEvidence.observationQuorum.operationalIndependence,
+    },
   },
 };
 

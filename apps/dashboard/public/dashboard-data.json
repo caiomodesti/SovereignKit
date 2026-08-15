@@ -10,7 +10,8 @@
     "fixtures/integration/agave-4.0.0/controlled-experiment/asymmetric/summary/experiment-summary.json",
     "fixtures/integration/agave-4.0.0/controlled-experiment/insufficient_data/summary/experiment-summary.json",
     "fixtures/integration/agave-4.0.0/router-failover/router-evidence.json",
-    "fixtures/sprint-7/intelligence-snapshot-evidence.json"
+    "fixtures/sprint-7/intelligence-snapshot-evidence.json",
+    "fixtures/sprint-10/devnet-accepted-run-20260814T220116Z/evidence.json"
   ],
   "overview": {
     "scenarioCount": 4,
@@ -1162,5 +1163,30 @@
     ],
     "observationIndependence": "three distinct RPC client instances sharing one local validator",
     "primaryFailureMode": "controlled adapter rejection; Sprint 4 will replace this with a network proxy"
+  },
+  "devnetProof": {
+    "evidenceVersion": "sprint-10-devnet-validation@0.1.0",
+    "generatedAt": "2026-08-14T22:01:34.052Z",
+    "scope": "integration validation only; not controlled statistical proof or Mainnet proxy",
+    "transactionSignature": "2RzqePQSCvQL6Ve88sZR6uLMyNiKE7HukCN9aqroYgTud8LAWYzZX8XrnsEGdWt6BC78pQLWuufiyH7dzaAn5mvD",
+    "explorerUrl": "https://explorer.solana.com/tx/2RzqePQSCvQL6Ve88sZR6uLMyNiKE7HukCN9aqroYgTud8LAWYzZX8XrnsEGdWt6BC78pQLWuufiyH7dzaAn5mvD?cluster=devnet",
+    "lifecycle": [
+      "CREATED",
+      "SUBMISSION_ATTEMPTED",
+      "RPC_ACKNOWLEDGED",
+      "OBSERVATION_PENDING",
+      "OBSERVED_EXECUTION_SUCCESS",
+      "CONFIRMED",
+      "FINALIZED"
+    ],
+    "quorum": {
+      "required": 2,
+      "logicalReaderCount": 3,
+      "finalizedReaderIds": [
+        "devnet-logical-reader-1",
+        "devnet-logical-reader-3"
+      ],
+      "operationalIndependence": "not established by this test"
+    }
   }
 }

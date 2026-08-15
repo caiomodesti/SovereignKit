@@ -25,5 +25,6 @@ describe("dashboard evidence adapter", () => {
 
   it("rejects incomplete evidence instead of rendering invented defaults", () => {
     expect(() => validateDashboardDataset({ ...dataset, scenarios: [] })).toThrow("four scenarios");
+    expect(() => validateDashboardDataset({ ...dataset, devnetProof: { ...dataset.devnetProof, lifecycle: [] } })).toThrow("Devnet evidence");
   });
 });

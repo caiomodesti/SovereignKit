@@ -14,6 +14,7 @@
   },
   "scripts": {
     "build": "node node_modules/typescript/bin/tsc -p packages/telemetry/tsconfig.json && node node_modules/typescript/bin/tsc -p packages/probes/tsconfig.json && node node_modules/typescript/bin/tsc -p packages/collector/tsconfig.json && node node_modules/typescript/bin/tsc -p packages/sdk/tsconfig.json && node node_modules/typescript/bin/tsc -p packages/hostile-proxy/tsconfig.json && node node_modules/typescript/bin/tsc -p packages/analysis/tsconfig.json && corepack pnpm --filter @sovereignkit/dashboard build",
+    "build:site": "corepack pnpm --filter @sovereignkit/dashboard build && node scripts/stage-sites-dashboard.mjs",
     "check": "node node_modules/typescript/bin/tsc -p packages/telemetry/tsconfig.json --noEmit && node node_modules/typescript/bin/tsc -p packages/probes/tsconfig.json --noEmit && node node_modules/typescript/bin/tsc -p packages/collector/tsconfig.json --noEmit && node node_modules/typescript/bin/tsc -p packages/sdk/tsconfig.json --noEmit && node node_modules/typescript/bin/tsc -p packages/hostile-proxy/tsconfig.json --noEmit && node node_modules/typescript/bin/tsc -p packages/analysis/tsconfig.json --noEmit && node node_modules/typescript/bin/tsc -p apps/dashboard/tsconfig.json --noEmit",
     "test": "node node_modules/vitest/vitest.mjs run packages/telemetry/src packages/probes/src packages/collector/src packages/sdk/src packages/hostile-proxy/src packages/analysis/src apps/dashboard/src",
     "test:coverage": "node node_modules/vitest/vitest.mjs run --coverage packages/telemetry/src packages/probes/src packages/collector/src packages/sdk/src packages/hostile-proxy/src packages/analysis/src apps/dashboard/src",
@@ -38,6 +39,8 @@
     "verify:sprint-10:static": "corepack pnpm build && corepack pnpm check && corepack pnpm test && corepack pnpm check:devnet:integration && node scripts/verify-sprint-10-blocked-fixture.mjs && node scripts/verify-sprint-10-accepted-fixture.mjs",
     "report:sprint-11": "node scripts/generate-sprint-11-report.mjs --write",
     "verify:sprint-11": "corepack pnpm build && corepack pnpm check && corepack pnpm test && node scripts/verify-sprint-5-fixtures.mjs && node scripts/verify-sprint-10-accepted-fixture.mjs && node scripts/generate-sprint-11-report.mjs --check",
+    "audit:secrets": "node scripts/audit-repository-secrets.mjs",
+    "verify:sprint-12": "corepack pnpm verify:sprint-11 && corepack pnpm audit:secrets && cargo test --manifest-path programs/matched-probe/Cargo.toml --locked",
     "verify:sprint-5": "corepack pnpm build && node scripts/verify-sprint-5-fixtures.mjs",
     "env:doctor": "node scripts/env-doctor.mjs",
     "env:doctor:core": "node scripts/env-doctor.mjs --core",
