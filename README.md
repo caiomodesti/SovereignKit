@@ -3,6 +3,7 @@
 </p>
 
 <p align="center">
+  <a href="https://sovereignkit-observatory.samuel-rramos.chatgpt.site"><img alt="Live demo" src="https://img.shields.io/badge/OPEN-LIVE_DEMO-2DD4A8?style=for-the-badge&labelColor=07111A"></a>
   <a href="#-reproduce-the-evidence"><img alt="Reproduce" src="https://img.shields.io/badge/REPRODUCE-THE_EVIDENCE-38BDF8?style=for-the-badge&labelColor=07111A"></a>
   <a href="docs/architecture.md"><img alt="Architecture" src="https://img.shields.io/badge/EXPLORE-ARCHITECTURE-5B8DEF?style=for-the-badge&labelColor=07111A"></a>
   <a href="docs/methodology.md"><img alt="Methodology" src="https://img.shields.io/badge/READ-METHODOLOGY-2DD4A8?style=for-the-badge&labelColor=07111A"></a>
@@ -10,7 +11,7 @@
 </p>
 
 <p align="center">
-  <img alt="Status: Sprint 10 accepted" src="https://img.shields.io/badge/status-Sprint_10_accepted-38BDF8?style=flat-square">
+  <img alt="Status: Sprint 12 hardening" src="https://img.shields.io/badge/status-Sprint_12_hardening-38BDF8?style=flat-square">
   <img alt="Controlled evidence" src="https://img.shields.io/badge/evidence-controlled-2DD4A8?style=flat-square">
   <img alt="Tests: 84 of 84" src="https://img.shields.io/badge/tests-84%2F84-2DD4A8?style=flat-square">
   <img alt="Agave 4.0.0" src="https://img.shields.io/badge/Agave-4.0.0-F4B860?style=flat-square">
@@ -22,7 +23,7 @@
 
 ## The project in 30 seconds
 
-SovereignKit is open-source infrastructure for **measuring, explaining, and routing around Solana transaction-accessibility failures**. It combines a controlled experiment, signed observer evidence, an append-only collector, an experimental asymmetry classifier, a versioned intelligence feed, a fail-open SDK, and a local evidence dashboard.
+SovereignKit is open-source infrastructure for **measuring, explaining, and routing around Solana transaction-accessibility failures**. It combines a controlled experiment, signed observer evidence, an append-only collector, an experimental asymmetry classifier, a versioned intelligence feed, a fail-open SDK, and a [public read-only evidence dashboard](https://sovereignkit-observatory.samuel-rramos.chatgpt.site).
 
 | If you are… | SovereignKit helps you… |
 |---|---|
@@ -284,7 +285,7 @@ The dashboard and summaries are downstream views. They do not replace raw eviden
 | Sprint 9 | probe-informed route ordering | ✅ accepted |
 | Sprint 10 | real Devnet integration validation | ✅ accepted |
 | Sprint 11 | reproducible public experimental report | ✅ accepted |
-| Sprint 12 | security, quality, and demo hardening | ⏳ not started |
+| Sprint 12 | security, quality, and demo hardening | 🟡 gate passed; submission work remains |
 | Later validation | stronger observer independence | ⏳ not started |
 | Public infrastructure | hosted feed and production operations | ⏳ gated by evidence and customer discovery |
 
