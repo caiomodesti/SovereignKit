@@ -89,7 +89,7 @@ export function App({ loader = loadDashboardData, now = new Date() }: AppProps) 
   const [data, setData] = useState<DashboardDataset>();
   const [error, setError] = useState<string>();
   const [reloadKey, setReloadKey] = useState(0);
-  const [scenarioId, setScenarioId] = useState<Scenario["id"]>("asymmetric");
+  const [scenarioId, setScenarioId] = useState<Scenario["id"]>("healthy");
   const [replayIndex, setReplayIndex] = useState(0);
 
   useEffect(() => {
@@ -129,6 +129,7 @@ export function App({ loader = loadDashboardData, now = new Date() }: AppProps) 
           <a href="#routes"><Route aria-hidden="true" size={17} />Routes & classes</a>
           <a href="#incidents"><AlertTriangle aria-hidden="true" size={17} />Incidents</a>
           <a href="#failover"><GitBranch aria-hidden="true" size={17} />Failover</a>
+          <a href="#devnet"><ExternalLink aria-hidden="true" size={17} />Devnet proof</a>
           <a href="#methodology"><BookOpen aria-hidden="true" size={17} />Methodology</a>
         </nav>
         <div className="sidebar__foot">
@@ -234,7 +235,7 @@ export function App({ loader = loadDashboardData, now = new Date() }: AppProps) 
           <div className="table-card">
             <div className="table-scroll">
               <table>
-                <caption className="sr-only">Classificação e taxa de sucesso por rota</caption>
+                <caption className="sr-only">Classification and success rate by route</caption>
                 <thead><tr><th>Route</th><th>Classification</th><th>Matched control</th><th>Program X</th><th>Class gap</th><th>Evidence</th></tr></thead>
                 <tbody>{scenario.classifications.map(item => (
                   <tr key={item.routeId}>
