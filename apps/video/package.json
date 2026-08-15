@@ -1,0 +1,26 @@
+{
+  "name": "@sovereignkit/video",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "audio": "node scripts/generate-voiceover.mjs",
+    "check": "node ../../node_modules/typescript/bin/tsc -p tsconfig.json --noEmit",
+    "studio": "remotion studio src/index.ts",
+    "render": "remotion render src/index.ts SovereignKitPitch out/sovereignkit-hackathon.mp4 --codec h264 --crf 18 --color-space bt709",
+    "thumbnail": "remotion still src/index.ts SovereignKitThumbnail out/sovereignkit-thumbnail.png --frame 0"
+  },
+  "dependencies": {
+    "@remotion/noise": "4.0.512",
+    "@remotion/transitions": "4.0.512",
+    "node-edge-tts": "1.2.10",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "remotion": "4.0.512"
+  },
+  "devDependencies": {
+    "@remotion/cli": "4.0.512",
+    "@types/react": "19.2.14",
+    "@types/react-dom": "19.2.3"
+  }
+}

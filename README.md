@@ -25,6 +25,11 @@
 
 SovereignKit is open-source infrastructure for **measuring, explaining, and routing around Solana transaction-accessibility failures**. It combines a controlled experiment, signed observer evidence, an append-only collector, an experimental asymmetry classifier, a versioned intelligence feed, a fail-open SDK, and a [public read-only evidence dashboard](https://sovereignkit-observatory.samuel-rramos.chatgpt.site).
 
+The 2m48s English walkthrough is available in the
+[hackathon demo release](https://github.com/caiomodesti/SovereignKit/releases/tag/hackathon-demo-v0.1).
+Its Remotion source, narration script, thumbnail, captions, and reproduction
+commands are versioned in this repository.
+
 | If you are… | SovereignKit helps you… |
 |---|---|
 | a wallet or protocol team | distinguish an RPC response from real ledger observation |
