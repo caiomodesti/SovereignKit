@@ -18,7 +18,7 @@ hostile proxy, observer process, or intelligence feed as public services.
 |---|---|---|---|
 | S12-01 | High before remediation | No repository CI gate existed | Added least-privilege CI with immutable action SHAs, exact Node/pnpm/Rust versions, frozen lockfile, ignored install scripts, tests, builds, fixture verification, Rust tests, and dependency audit |
 | S12-02 | Medium before remediation | Production dashboard emitted source maps | Disabled production source maps |
-| S12-03 | Medium before remediation | Hosted-demo browser policy was unspecified | Added CSP, frame denial, no-referrer, MIME sniffing protection, restrictive permissions policy, and no forms/analytics/backend |
+| S12-03 | Medium before remediation | Hosted-demo browser policy was unspecified | Routed HTML through the Worker and added CSP, frame denial, no-referrer, MIME sniffing protection, restrictive permissions policy, and no forms/analytics/backend; CSP is duplicated in a document meta policy as defense in depth |
 | S12-04 | Medium before remediation | Public dataset validation was shallow and did not contain the Devnet proof | Added scenario identity checks, Devnet lifecycle/quorum validation, and deterministic derivation from the accepted fixture |
 | S12-05 | Low before remediation | Secret checks were manual only | Added a deterministic tracked-file/path scanner and CI gate; retained manual history archaeology |
 | S12-06 | Informational | Accepted evidence exposes public-chain identifiers and operator timestamps | Classified and documented in `data-privacy-v0.1.md`; no private or authenticated material found |
@@ -97,4 +97,3 @@ passes. Public collector/proxy/feed deployment remains blocked by TLS/client
 authentication, production key custody, authorization, abuse controls,
 multi-tenant isolation, retention/deletion operations, and independent
 infrastructure validation.
-
