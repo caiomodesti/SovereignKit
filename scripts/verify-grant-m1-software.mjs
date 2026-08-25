@@ -14,6 +14,10 @@ const requiredFiles = [
   "spec/grant-observer-registry.schema.json",
   "packages/collector/src/observation-worker.ts",
   "packages/collector/src/observer-runtime.ts",
+  "packages/collector/integration/grant-m1-local-readiness.integration.test.ts",
+  "scripts/run-grant-m1-local-readiness.ps1",
+  "scripts/verify-grant-m1-local-readiness.mjs",
+  "fixtures/grant-m1/local-readiness-20260825.json",
 ];
 
 const contents = new Map(await Promise.all(requiredFiles.map(async path => [path, await readFile(path, "utf8")])));
@@ -32,5 +36,9 @@ if (!contents.get("deploy/grant-pilot/systemd/sovereignkit-observer.service").in
 }
 if (!contents.get("docs/grant-milestone-1-status.md").includes("Milestone 2 has not started")) {
   throw new Error("Milestone 1 status must preserve the Milestone 2 gate");
+}
+const readinessAnchor = JSON.parse(contents.get("fixtures/grant-m1/local-readiness-20260825.json"));
+if (readinessAnchor.evidence_scope !== "LOCAL_SOFTWARE_READINESS_ONLY" || readinessAnchor.infrastructure_independence !== false || readinessAnchor.private_key_retained !== false) {
+  throw new Error("local readiness anchor must preserve its non-independent, secret-free claim boundary");
 }
 process.stdout.write(`${JSON.stringify({ status: "PASS", gate: "GRANT_M1_SOFTWARE", requiredFiles: requiredFiles.length })}\n`);

@@ -34,6 +34,32 @@ node node_modules/vitest/vitest.mjs run packages/collector/integration/process-s
 
 This starts Observer and Collector as different OS processes, submits signed evidence, restarts the Collector, and verifies durable replay protection.
 
+## Retained local readiness run
+
+Start the pinned Agave validator in one terminal:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts/start-local-validator.ps1
+```
+
+Then execute the retained readiness proof in another terminal:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts/run-grant-m1-local-readiness.ps1
+```
+
+The command creates a new timestamped directory under
+`artifacts/grant-m1/local-readiness/`, performs a real legacy System Program
+transfer, observes it through three logical reader clients, derives a 2/3
+terminal state, signs the ProbeResult with a temporary observer identity,
+delivers it to the loopback Collector, captures health surfaces, reopens the
+Collector log, and verifies that no observer private key entered the evidence
+directory. The temporary signing key is deleted after the run.
+
+This is a deployment-readiness rehearsal, not independent-observer evidence.
+All three readers, the observer, and the Collector share one machine and one
+local validator, so the verifier requires `infrastructure_independence: false`.
+
 ## Acceptance gate
 
 The external acceptance command is intentionally impossible to pass without retained real evidence:
@@ -50,6 +76,10 @@ It requires at least three unique observer identities, providers, provider-accou
 - deterministic tests: 92/92 PASS;
 - Collector/Observer separate-process integration: PASS;
 - grant software contract: PASS;
+- retained local readiness harness: PASS against Agave 4.0.0;
+- real local transaction: `5e545kvHHdAVY633iegqQqV9A1p5p3DxXGhJLNwWdoTahpAqNoauTyt4vBqwZv4Mgf1rFzpc5T3WJ3rLoKMyemes`;
+- retained raw polls: 280;
+- public evidence anchor: `fixtures/grant-m1/local-readiness-20260825.json`;
 - dashboard production build: PASS;
 - tracked-file secret audit: PASS;
 - three-provider external acceptance: NOT RUN / evidence does not exist yet.

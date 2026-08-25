@@ -58,3 +58,9 @@ The Collector remains loopback-only by design. Install `systemd/sovereignkit-col
 - explicit limitations where ownership, ASN, geography, or upstream RPC routes overlap.
 
 Secrets, unredacted invoices, account passwords, payment data, IP allowlist secrets, API tokens, and private keys must not be published.
+
+Before provisioning any provider, rehearse this exact evidence path against the
+project-controlled local Agave validator with
+`scripts/run-grant-m1-local-readiness.ps1`. Its output is intentionally marked
+`LOCAL_SOFTWARE_READINESS_ONLY`; copying or relabeling that evidence into the
+external acceptance directory is prohibited.

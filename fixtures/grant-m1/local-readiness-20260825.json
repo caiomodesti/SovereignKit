@@ -1,0 +1,26 @@
+{
+  "schema_version": "GrantM1LocalReadinessAnchor@0.1.0",
+  "generated_at": "2026-08-25T01:07:08.178Z",
+  "runtime_commit": "450eb90576307b1975ed525c8365406c25749913",
+  "transaction_signature": "5e545kvHHdAVY633iegqQqV9A1p5p3DxXGhJLNwWdoTahpAqNoauTyt4vBqwZv4Mgf1rFzpc5T3WJ3rLoKMyemes",
+  "airdrop_signature": "2vtVVcvi49KkPbwp4dmy6VcYCJh8WdyXqXjQaUqJpY4p2VyKfGD9uUssKnZtmzbbhwaerwR1ZTJWujH93TH344x9",
+  "terminal_state": "FINALIZED",
+  "raw_poll_count": 280,
+  "collector_recovered_records": 1,
+  "infrastructure_independence": false,
+  "evidence_scope": "LOCAL_SOFTWARE_READINESS_ONLY",
+  "private_key_retained": false,
+  "limitation": "Three logical readers and all processes shared one machine and one project-controlled local Agave validator. This anchor cannot satisfy Grant Milestone 1 external acceptance.",
+  "local_evidence_manifest": [
+    { "path": "allowlist-public.json", "bytes": 275, "sha256": "76987d742bd4bfc7a05952cd4400b84633bbe1c8e2d823f4c48eef42926a100a" },
+    { "path": "collector-accepted.jsonl", "bytes": 2809, "sha256": "c39e1b3c7610496b2541000051e25f005b05693d009c1ff17a550bd732fd3888" },
+    { "path": "collector-restart-evidence.json", "bytes": 94, "sha256": "21f8d06bda6c97bb1fee50364937ca0eabbcf67ae5c1fb64a64e8996c0a6aff8" },
+    { "path": "health-snapshots.json", "bytes": 834, "sha256": "8dcb6d3738cdaf2b23673ef7142d2a8585567032a8903834ce7f1b3ed2b2c981" },
+    { "path": "observation-job.json", "bytes": 1341, "sha256": "d482f8060425f69e50d405ba69720af596757d2ab07a53d5777d351425bb27f3" },
+    { "path": "observer-delivery.jsonl", "bytes": 468, "sha256": "1533bfd6a0f0c4001a4b831140435a378e473c19a29adfe8382933928cddfa2c" },
+    { "path": "raw-observations.jsonl", "bytes": 306584, "sha256": "faf64df4af18c0ca6745bc63f084571de8394cfc4db5290c99152c0d13140606" },
+    { "path": "reader-registry.json", "bytes": 496, "sha256": "f87c38687ca816eb768d528f1ee9bb4349e867a21d8ec2ba2f7fe777b4eade43" },
+    { "path": "run-metadata.json", "bytes": 1117, "sha256": "a95e057270afb2d0058c8b383185a171a3eb6c97ea6c4dcda1dc1d31f914bdb6" },
+    { "path": "spool/000000.json", "bytes": 2991, "sha256": "e3a04c41fef83d052d943b7664408d010568b837d26894493bf30c05bbfaab43" }
+  ]
+}
