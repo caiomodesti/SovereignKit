@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sovereignkit.org/spec/grant-m1-evidence-index.schema.json",
+  "title": "SovereignKit Grant Milestone 1 Evidence Index v0.2",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "generated_at", "observers"],
+  "properties": {
+    "schema_version": { "const": "GrantM1EvidenceIndex@0.2.0" },
+    "generated_at": { "type": "string", "format": "date-time" },
+    "observers": {
+      "type": "array",
+      "minItems": 3,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/observerEvidence" }
+    }
+  },
+  "$defs": {
+    "identifier": { "type": "string", "minLength": 1, "maxLength": 160, "pattern": "^[A-Za-z0-9._:-]+$" },
+    "evidenceReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256"],
+      "properties": {
+        "path": { "type": "string", "minLength": 1, "maxLength": 512, "pattern": "^observers/[A-Za-z0-9._:-]+/.+" },
+        "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+      }
+    },
+    "referenceList": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "$ref": "#/$defs/evidenceReference" } },
+    "observerEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["observer_id", "signed_results", "raw_observations", "health_history", "restart_evidence", "provider_evidence", "failure_matrix"],
+      "properties": {
+        "observer_id": { "$ref": "#/$defs/identifier" },
+        "signed_results": { "$ref": "#/$defs/referenceList" },
+        "raw_observations": { "$ref": "#/$defs/referenceList" },
+        "health_history": { "$ref": "#/$defs/referenceList" },
+        "restart_evidence": { "$ref": "#/$defs/referenceList" },
+        "provider_evidence": { "$ref": "#/$defs/referenceList" },
+        "failure_matrix": { "$ref": "#/$defs/referenceList" }
+      }
+    }
+  }
+}
