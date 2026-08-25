@@ -29,9 +29,9 @@ try {
   $env:SOVEREIGNKIT_RPC_ENDPOINT = $RpcEndpoint
   $env:SOVEREIGNKIT_ARTIFACT_DIR = $ArtifactDirectory
   $env:SOVEREIGNKIT_RUNTIME_COMMIT = $runtimeCommit
-  corepack pnpm build
+  corepack pnpm@11.16.0 build
   if ($LASTEXITCODE -ne 0) { throw "Workspace build failed" }
-  corepack pnpm check:collector:integration
+  corepack pnpm@11.16.0 check:collector:integration
   if ($LASTEXITCODE -ne 0) { throw "Collector integration typecheck failed" }
   node node_modules/vitest/vitest.mjs run packages/collector/integration/grant-m1-local-readiness.integration.test.ts --testTimeout=120000
   if ($LASTEXITCODE -ne 0) { throw "Grant M1 local readiness run failed" }

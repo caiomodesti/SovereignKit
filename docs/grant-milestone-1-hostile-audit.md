@@ -8,6 +8,7 @@ Verdict: `CONDITIONAL GO` for continued Milestone 1 engineering; `NO-GO` for mil
 - malformed, unknown, stale, invalid-signature, duplicate, conflicting, delayed, unavailable, and disagreement cases have deterministic local coverage;
 - signed delivery receipts and accepted Collector records are append-only and synchronized before in-memory commitment;
 - remote Collector configuration requires HTTPS, while health surfaces remain loopback-only in the shipped process templates.
+- one retained local Agave run now proves the complete job, raw polling, quorum derivation, temporary-key signing, delivery, health, durable collection, and Collector replay path; its public anchor explicitly denies infrastructure independence.
 
 ## Blocking findings before external acceptance
 
@@ -31,11 +32,10 @@ Verdict: `CONDITIONAL GO` for continued Milestone 1 engineering; `NO-GO` for mil
 
 ## Required next evidence
 
-1. one complete local job-to-raw-log-to-signature-to-Collector run;
-2. deployment and recovery on three real provider hosts;
-3. sanitized independence records and public identities;
-4. real cross-host healthy, delayed, unavailable, disagreement, and quorum tests;
-5. clock, TLS, firewall, disk, restart, and secret-permission evidence;
-6. successful `verify-grant-m1-acceptance.mjs` execution against the retained evidence directory.
+1. deployment and recovery on three real provider hosts;
+2. sanitized independence records and public identities;
+3. real cross-host healthy, delayed, unavailable, disagreement, and quorum tests;
+4. clock, TLS, firewall, disk, restart, and secret-permission evidence;
+5. successful `verify-grant-m1-acceptance.mjs` execution against the retained evidence directory.
 
 Milestone 2 MUST NOT start while any blocking item remains.

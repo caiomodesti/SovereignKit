@@ -76,7 +76,10 @@ It requires at least three unique observer identities, providers, provider-accou
 - deterministic tests: 92/92 PASS;
 - Collector/Observer separate-process integration: PASS;
 - grant software contract: PASS;
-- retained local readiness harness: IMPLEMENTED; live run result recorded separately;
+- retained local readiness harness: PASS against Agave 4.0.0;
+- real local transaction: `5e545kvHHdAVY633iegqQqV9A1p5p3DxXGhJLNwWdoTahpAqNoauTyt4vBqwZv4Mgf1rFzpc5T3WJ3rLoKMyemes`;
+- retained raw polls: 280;
+- public evidence anchor: `fixtures/grant-m1/local-readiness-20260825.json`;
 - dashboard production build: PASS;
 - tracked-file secret audit: PASS;
 - three-provider external acceptance: NOT RUN / evidence does not exist yet.
