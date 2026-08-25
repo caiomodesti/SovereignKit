@@ -14,6 +14,9 @@ const requiredFiles = [
   "spec/grant-observer-registry.schema.json",
   "packages/collector/src/observation-worker.ts",
   "packages/collector/src/observer-runtime.ts",
+  "packages/collector/integration/grant-m1-local-readiness.integration.test.ts",
+  "scripts/run-grant-m1-local-readiness.ps1",
+  "scripts/verify-grant-m1-local-readiness.mjs",
 ];
 
 const contents = new Map(await Promise.all(requiredFiles.map(async path => [path, await readFile(path, "utf8")])));

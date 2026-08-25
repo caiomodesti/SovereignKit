@@ -30,5 +30,8 @@
     "@sovereignkit/telemetry": "workspace:*",
     "ajv": "8.20.0",
     "ajv-formats": "3.0.1"
+  },
+  "devDependencies": {
+    "@solana/kit": "7.0.0"
   }
 }
