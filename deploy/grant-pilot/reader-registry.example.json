@@ -1,0 +1,8 @@
+{
+  "schemaVersion": "ObservationReaderRegistry@0.1.0",
+  "readers": [
+    { "readerId": "reader-a", "endpoint": "https://reader-a.example.invalid" },
+    { "readerId": "reader-b", "endpoint": "https://reader-b.example.invalid" },
+    { "readerId": "reader-c", "endpoint": "https://reader-c.example.invalid" }
+  ]
+}

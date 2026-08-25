@@ -97,6 +97,9 @@ importers:
       '@sovereignkit/probes':
         specifier: workspace:*
         version: link:../probes
+      '@sovereignkit/telemetry':
+        specifier: workspace:*
+        version: link:../telemetry
       ajv:
         specifier: 8.20.0
         version: 8.20.0

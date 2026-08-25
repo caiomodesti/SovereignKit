@@ -1,0 +1,12 @@
+{
+  "schemaVersion": "ObserverRuntimeConfig@0.1.0",
+  "privateKeyPath": "/etc/sovereignkit/secrets/observer-private.json",
+  "spoolDirectory": "/var/lib/sovereignkit/spool",
+  "deliveryLogPath": "/var/lib/sovereignkit/evidence/observer-delivery.jsonl",
+  "collectorUrl": "https://collector.example.invalid",
+  "pollIntervalMs": 1000,
+  "requestTimeoutMs": 10000,
+  "heartbeatIntervalMs": 60000,
+  "healthHost": "127.0.0.1",
+  "healthPort": 8790
+}

@@ -1,0 +1,30 @@
+[Unit]
+Description=SovereignKit grant pilot signed evidence collector
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=sovereignkit
+Group=sovereignkit
+WorkingDirectory=/opt/sovereignkit
+ExecStart=/usr/bin/node packages/collector/dist/collector-process.js /opt/sovereignkit/spec/probe-result.schema.json /etc/sovereignkit/allowlist.json /var/lib/sovereignkit/evidence/accepted.jsonl 8787
+Restart=on-failure
+RestartSec=5s
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+LockPersonality=true
+RestrictSUIDSGID=true
+RestrictRealtime=true
+SystemCallArchitectures=native
+ReadOnlyPaths=/opt/sovereignkit /etc/sovereignkit
+ReadWritePaths=/var/lib/sovereignkit
+UMask=0077
+
+[Install]
+WantedBy=multi-user.target

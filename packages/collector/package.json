@@ -14,7 +14,10 @@
   "files": ["dist"],
   "bin": {
     "sovereignkit-collector": "./dist/collector-process.js",
-    "sovereignkit-observer": "./dist/observer-process.js"
+    "sovereignkit-observer": "./dist/observer-process.js",
+    "sovereignkit-observer-runtime": "./dist/observer-runtime-process.js",
+    "sovereignkit-observer-keygen": "./dist/observer-keygen-process.js",
+    "sovereignkit-observation-worker": "./dist/observation-worker-process.js"
   },
   "scripts": {
     "build": "node ../../node_modules/typescript/bin/tsc -p tsconfig.json",
@@ -24,6 +27,7 @@
   },
   "dependencies": {
     "@sovereignkit/probes": "workspace:*",
+    "@sovereignkit/telemetry": "workspace:*",
     "ajv": "8.20.0",
     "ajv-formats": "3.0.1"
   }

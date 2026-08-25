@@ -1,0 +1,20 @@
+{
+  "schema_version": "GrantObserverRegistry@0.1.0",
+  "generated_at": "2026-08-24T00:00:00.000Z",
+  "observers": [
+    {
+      "observer_id": "observer-provider-a",
+      "key_id": "key-2026-01",
+      "provider_label": "REPLACE_WITH_PROVIDER",
+      "provider_account_fingerprint": "REDACTED_STABLE_FINGERPRINT",
+      "instance_id_sanitized": "REDACTED_STABLE_INSTANCE_ID",
+      "region": "REPLACE_WITH_REGION",
+      "country_code": "ZZ",
+      "network_asn": 0,
+      "runtime_commit": "0000000000000000000000000000000000000000",
+      "provisioned_at": "2026-08-24T00:00:00.000Z",
+      "independence_status": "ASSERTED",
+      "evidence_refs": ["private/provider-console-screenshot-redacted"]
+    }
+  ]
+}

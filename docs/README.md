@@ -11,6 +11,12 @@ This index separates normative contracts, implementation design, reproducible ev
 5. [Epistemic limits](epistemic-limits.md)
 6. [Threat model](threat-model.md)
 7. [Roadmap](roadmap.md)
+8. [Project master plan](project-master-plan.md)
+9. [Grant pilot plan](grant-pilot-plan.md)
+10. [Grant weekly status](grant-weekly-status.md)
+11. [Grant Milestone 1 status](grant-milestone-1-status.md)
+12. [Grant Milestone 1 reproduction](grant-milestone-1-reproduction.md)
+13. [Grant Milestone 1 hostile audit](grant-milestone-1-hostile-audit.md)
 
 ## Normative experiment contracts
 
