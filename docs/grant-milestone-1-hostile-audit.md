@@ -9,6 +9,7 @@ Verdict: `CONDITIONAL GO` for continued Milestone 1 engineering; `NO-GO` for mil
 - signed delivery receipts and accepted Collector records are append-only and synchronized before in-memory commitment;
 - remote Collector configuration requires HTTPS, while health surfaces remain loopback-only in the shipped process templates.
 - one retained local Agave run now proves the complete job, raw polling, quorum derivation, temporary-key signing, delivery, health, durable collection, and Collector replay path; its public anchor explicitly denies infrastructure independence.
+- the external acceptance verifier now rejects existence-only evidence: every observer artifact is path-scoped and SHA-256 bound, signed results are cryptographically checked, raw polls are correlated, operational records are content-validated, and private-key markers are forbidden.
 
 ## Blocking findings before external acceptance
 

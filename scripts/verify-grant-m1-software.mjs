@@ -12,11 +12,16 @@ const requiredFiles = [
   "deploy/grant-pilot/systemd/sovereignkit-observation-worker@.service",
   "deploy/grant-pilot/systemd/sovereignkit-collector.service",
   "spec/grant-observer-registry.schema.json",
+  "spec/grant-m1-evidence-index.schema.json",
   "packages/collector/src/observation-worker.ts",
   "packages/collector/src/observer-runtime.ts",
   "packages/collector/integration/grant-m1-local-readiness.integration.test.ts",
   "scripts/run-grant-m1-local-readiness.ps1",
   "scripts/verify-grant-m1-local-readiness.mjs",
+  "scripts/verify-grant-m1-acceptance.mjs",
+  "scripts/lib/grant-m1-acceptance.mjs",
+  "scripts/tests/grant-m1-acceptance-contracts.test.mjs",
+  "deploy/grant-pilot/evidence-index.example.json",
   "fixtures/grant-m1/local-readiness-20260825.json",
 ];
 
@@ -40,5 +45,9 @@ if (!contents.get("docs/grant-milestone-1-status.md").includes("Milestone 2 has 
 const readinessAnchor = JSON.parse(contents.get("fixtures/grant-m1/local-readiness-20260825.json"));
 if (readinessAnchor.evidence_scope !== "LOCAL_SOFTWARE_READINESS_ONLY" || readinessAnchor.infrastructure_independence !== false || readinessAnchor.private_key_retained !== false) {
   throw new Error("local readiness anchor must preserve its non-independent, secret-free claim boundary");
+}
+if (!contents.get("scripts/lib/grant-m1-acceptance.mjs").includes("GrantM1EvidenceIndex@0.2.0") ||
+    !contents.get("scripts/lib/grant-m1-acceptance.mjs").includes("signed result signature is invalid")) {
+  throw new Error("grant acceptance verifier must enforce the hashed v0.2 evidence contract and cryptographic signatures");
 }
 process.stdout.write(`${JSON.stringify({ status: "PASS", gate: "GRANT_M1_SOFTWARE", requiredFiles: requiredFiles.length })}\n`);

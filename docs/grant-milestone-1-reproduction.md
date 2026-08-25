@@ -70,6 +70,14 @@ node scripts/verify-grant-m1-acceptance.mjs --evidence <sanitized-m1-evidence-di
 
 It requires at least three unique observer identities, providers, provider-account fingerprints, and sanitized instances; corroborated independence; matching allowlist identities; and existing signed-result, raw-observation, health, restart, provider, and failure-matrix evidence for every observer.
 
+The external evidence index uses `GrantM1EvidenceIndex@0.2.0`. Every artifact
+reference contains a relative observer-scoped path and a lowercase SHA-256.
+Acceptance recomputes each hash, rejects empty or oversized files, searches for
+private-key markers, cryptographically verifies signed ProbeResults against the
+public allowlist, correlates raw polls to signed transaction signatures, and
+validates the minimum health, provider, restart, and failure-matrix content.
+Placeholder files cannot satisfy the gate.
+
 ## Current validation record
 
 - typecheck: PASS;

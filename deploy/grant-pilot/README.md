@@ -59,6 +59,34 @@ The Collector remains loopback-only by design. Install `systemd/sovereignkit-col
 
 Secrets, unredacted invoices, account passwords, payment data, IP allowlist secrets, API tokens, and private keys must not be published.
 
+Build `evidence-index.json` from `evidence-index.example.json` only after the
+files are final. Replace every zero hash with the SHA-256 of the referenced
+artifact and add one complete entry per observer. The acceptance verifier
+requires version `GrantM1EvidenceIndex@0.2.0`, observer-scoped paths, valid
+signatures, correlated raw polls, non-placeholder operational evidence, and no
+private-key markers.
+
+The content contracts for each observer are:
+
+- `health_history`: at least one record with matching `observer_id`,
+  `ready: true`, `clock_synchronized: true`, and
+  `key_permissions_verified: true`;
+- `restart_evidence`: at least one matching record with
+  `restart_succeeded: true` and `recovered_records >= 1`;
+- `provider_evidence`: a matching `observer_id`, provider label, region, and
+  non-zero ASN plus `corroborated: true`;
+- `failure_matrix`: one matching record whose `cases` marks `HEALTHY`,
+  `DELAYED`, `ONE_READER_UNAVAILABLE`, `TWO_READERS_UNAVAILABLE`, and
+  `DISAGREEMENT` as `PASS`;
+- `signed_results`: at least one cryptographically valid `FINALIZED`
+  ProbeResult with a valid 2/3 decision;
+- `raw_observations`: parseable `RawObservationPoll@0.1.0` JSONL correlated to
+  the signed transaction signature and containing exactly three reader IDs.
+
+The example contains one observer only to show the shape. A candidate bundle
+must expand it to at least three complete observer entries and replace every
+placeholder and zero hash before running acceptance.
+
 Before provisioning any provider, rehearse this exact evidence path against the
 project-controlled local Agave validator with
 `scripts/run-grant-m1-local-readiness.ps1`. Its output is intentionally marked
