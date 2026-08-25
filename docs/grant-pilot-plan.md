@@ -1,11 +1,11 @@
 # SovereignKit Grant Pilot Plan
 
-Status: planning baseline only  
-Grant decision: pending  
+Status: Grant Milestone 1 in progress
+Grant decision: approved by Superteam Brazil; user reported KYC completed on 2026-08-24
 Grant scope: USD 1,500  
 Target deadline: 2026-10-31  
 Baseline reference: `pre-grant-pilot-v0.1` at `2f85184`  
-Implementation gate: Milestone 1 MUST NOT start without explicit authorization after grant approval.
+Implementation gate: Milestone 1 authorized by the user on 2026-08-24. Milestones 2 and 3 remain gated by the acceptance sequence in this document.
 
 ## Purpose and scope
 
@@ -160,7 +160,7 @@ The following items cannot be satisfied solely inside the repository and remain 
 | Monitoring destination | Provide an alert destination and account if required | Before official pilot | Approximately USD 0–10/month |
 | Public dataset hosting | Approve GitHub Release, object storage, or static-hosting destination | Milestones 2–3 | Approximately USD 0–5/month |
 | Independence evidence | Preserve sanitized instance IDs, invoices, region records, and provider ownership evidence | Milestone 1 acceptance | No additional expected cost |
-| Grant decision | Confirm grant approval and explicitly authorize Milestone 1 | Before implementation | External decision |
+| Grant decision | Confirm grant approval and explicitly authorize Milestone 1 | Before implementation | Approved grant notice and user authorization recorded on 2026-08-24 |
 
 Credentials must be entered directly into the selected provider, secret manager, or GitHub Environment. Primary account passwords, seed phrases, private keys, and billing credentials must not be sent through chat.
 
@@ -274,4 +274,4 @@ The first sandboxed typecheck attempt could not read installed AJV modules becau
 
 ## Execution gate
 
-This document prepares the baseline and plan only. Because grant approval is pending, Milestone 1 remains gated. No observer runtime, remote collector, deployment infrastructure, hosted feed, or other milestone feature may begin until the user explicitly authorizes Milestone 1 after the grant decision.
+Grant approval, KYC completion, and the user's authorization to continue were recorded on 2026-08-24. Milestone 1 is now the only active milestone. Milestone 2 MUST NOT begin until Milestone 1 is `ACCEPTED`, and Milestone 3 MUST NOT begin until Milestone 2 completes its real 14-day window and qualifying-observation threshold.

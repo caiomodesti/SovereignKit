@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sovereignkit.org/spec/grant-observer-registry.schema.json",
+  "title": "SovereignKit Grant Observer Registry v0.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "generated_at", "observers"],
+  "properties": {
+    "schema_version": { "const": "GrantObserverRegistry@0.1.0" },
+    "generated_at": { "type": "string", "format": "date-time" },
+    "observers": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/observer" }
+    }
+  },
+  "$defs": {
+    "identifier": { "type": "string", "minLength": 1, "maxLength": 160, "pattern": "^[A-Za-z0-9._:-]+$" },
+    "observer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["observer_id", "key_id", "provider_label", "provider_account_fingerprint", "instance_id_sanitized", "region", "country_code", "network_asn", "runtime_commit", "provisioned_at", "independence_status", "evidence_refs"],
+      "properties": {
+        "observer_id": { "$ref": "#/$defs/identifier" },
+        "key_id": { "$ref": "#/$defs/identifier" },
+        "provider_label": { "type": "string", "minLength": 1, "maxLength": 160 },
+        "provider_account_fingerprint": { "type": "string", "minLength": 8, "maxLength": 256 },
+        "instance_id_sanitized": { "type": "string", "minLength": 8, "maxLength": 256 },
+        "region": { "type": "string", "minLength": 1, "maxLength": 160 },
+        "country_code": { "type": "string", "pattern": "^[A-Z]{2}$" },
+        "network_asn": { "type": "integer", "minimum": 0, "maximum": 4294967295 },
+        "runtime_commit": { "type": "string", "pattern": "^[a-f0-9]{40}$" },
+        "provisioned_at": { "type": "string", "format": "date-time" },
+        "independence_status": { "enum": ["ASSERTED", "CORROBORATED", "DISPUTED"] },
+        "evidence_refs": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "type": "string", "minLength": 1, "maxLength": 512 } }
+      }
+    }
+  }
+}

@@ -1,0 +1,19 @@
+collector.example.invalid {
+	encode zstd gzip
+
+	@ingest {
+		method POST
+		path /v0/probe-results
+	}
+
+	handle @ingest {
+		request_body {
+			max_size 256KB
+		}
+		reverse_proxy 127.0.0.1:8787
+	}
+
+	handle {
+		respond "not found" 404
+	}
+}

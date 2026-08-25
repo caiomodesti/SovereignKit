@@ -1,0 +1,41 @@
+# Grant Milestone 1 hostile audit — in progress
+
+Verdict: `CONDITIONAL GO` for continued Milestone 1 engineering; `NO-GO` for milestone acceptance or Milestone 2.
+
+## What is genuinely proven
+
+- an observer host can derive a result from three reader interfaces, retain raw polls, form a 2/3 terminal decision, sign with a dedicated Ed25519 identity, and submit to an allowlisted durable Collector;
+- malformed, unknown, stale, invalid-signature, duplicate, conflicting, delayed, unavailable, and disagreement cases have deterministic local coverage;
+- signed delivery receipts and accepted Collector records are append-only and synchronized before in-memory commitment;
+- remote Collector configuration requires HTTPS, while health surfaces remain loopback-only in the shipped process templates.
+
+## Blocking findings before external acceptance
+
+1. No three real observer hosts exist. Process count, containers, or aliases cannot substitute for providers under distinct control planes.
+2. The observation worker and signing/delivery runtime are separate stages. Their job handoff needs an end-to-end retained run and operational recovery procedure.
+3. Submission metadata enters through an observation job. Raw reader calls corroborate ledger observation but do not independently prove that every submission fact in the job is truthful. Assignment provenance must be retained.
+4. The three logical readers inside one observer may share upstream infrastructure. Reader overlap must be documented and cannot be described as three independent infrastructures.
+5. Ed25519 authenticates the observer key, not the truth, location, provider, or completeness of its report.
+6. A central Collector can omit valid evidence even though it cannot forge an observer signature. Public omission detection is outside Milestone 1 and remains a follow-on risk.
+7. TLS terminates at an external edge. Rate limiting, firewalling, certificate issuance, clock synchronization, disk monitoring, retention, and backup have templates but no real-host evidence.
+8. File-based signing keys are appropriate for this bounded pilot only after OS ACL verification. They are not HSM-backed and must never be confused with payer wallets.
+9. Observer and Collector clocks affect validity and chronology. No cross-provider clock-drift evidence exists yet.
+10. Linux systemd hardening is reviewed statically but has not been exercised on the chosen provider images.
+
+## Residual methodological risks
+
+- Devnet behavior will not establish Mainnet performance or provider intent;
+- provider labels, regions, ASNs, and account ownership remain assertions until corroborated;
+- a 14-day future sample will remain bounded and cannot establish a universal Solana accessibility index;
+- public route naming could create legal and reputational risk, so remediation-oriented disclosure and explicit claim limits remain mandatory.
+
+## Required next evidence
+
+1. one complete local job-to-raw-log-to-signature-to-Collector run;
+2. deployment and recovery on three real provider hosts;
+3. sanitized independence records and public identities;
+4. real cross-host healthy, delayed, unavailable, disagreement, and quorum tests;
+5. clock, TLS, firewall, disk, restart, and secret-permission evidence;
+6. successful `verify-grant-m1-acceptance.mjs` execution against the retained evidence directory.
+
+Milestone 2 MUST NOT start while any blocking item remains.

@@ -11,9 +11,9 @@
 </p>
 
 <p align="center">
-  <img alt="Status: Sprint 12 hardening" src="https://img.shields.io/badge/status-Sprint_12_hardening-38BDF8?style=flat-square">
+  <img alt="Status: Grant Milestone 1 in progress" src="https://img.shields.io/badge/status-Grant_M1_in_progress-38BDF8?style=flat-square">
   <img alt="Controlled evidence" src="https://img.shields.io/badge/evidence-controlled-2DD4A8?style=flat-square">
-  <img alt="Tests: 84 of 84" src="https://img.shields.io/badge/tests-84%2F84-2DD4A8?style=flat-square">
+  <img alt="Tests: 92 of 92" src="https://img.shields.io/badge/tests-92%2F92-2DD4A8?style=flat-square">
   <img alt="Agave 4.0.0" src="https://img.shields.io/badge/Agave-4.0.0-F4B860?style=flat-square">
   <img alt="TypeScript strict" src="https://img.shields.io/badge/TypeScript-strict-5B8DEF?style=flat-square">
   <a href="LICENSE"><img alt="Apache 2.0 license" src="https://img.shields.io/badge/license-Apache--2.0-EAF7FF?style=flat-square&labelColor=0C1B28"></a>

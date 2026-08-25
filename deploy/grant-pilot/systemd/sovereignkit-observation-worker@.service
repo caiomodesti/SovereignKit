@@ -1,0 +1,25 @@
+[Unit]
+Description=SovereignKit observation job %i
+After=network-online.target sovereignkit-observer.service
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=sovereignkit
+Group=sovereignkit
+WorkingDirectory=/opt/sovereignkit
+ExecStart=/usr/bin/node packages/collector/dist/observation-worker-process.js /var/lib/sovereignkit/jobs/%i.json /etc/sovereignkit/readers.json /var/lib/sovereignkit/spool/%i.json /var/lib/sovereignkit/evidence/raw/%i.jsonl
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+LockPersonality=true
+RestrictSUIDSGID=true
+RestrictRealtime=true
+SystemCallArchitectures=native
+ReadOnlyPaths=/opt/sovereignkit /etc/sovereignkit /var/lib/sovereignkit/jobs
+ReadWritePaths=/var/lib/sovereignkit/spool /var/lib/sovereignkit/evidence
+UMask=0077
