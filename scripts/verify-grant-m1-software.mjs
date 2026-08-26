@@ -4,6 +4,7 @@ const requiredFiles = [
   "docs/project-master-plan.md",
   "docs/grant-pilot-plan.md",
   "docs/grant-milestone-1-status.md",
+  "docs/adr/ADR-021-fail-closed-host-preflight.md",
   "deploy/grant-pilot/README.md",
   "deploy/grant-pilot/Caddyfile.example",
   "deploy/grant-pilot/observer-runtime.example.json",
@@ -24,7 +25,10 @@ const requiredFiles = [
   "scripts/verify-grant-m1-recovery-drill.mjs",
   "scripts/verify-grant-m1-acceptance.mjs",
   "scripts/lib/grant-m1-acceptance.mjs",
+  "scripts/lib/grant-m1-host-preflight.mjs",
+  "scripts/capture-grant-m1-host-preflight.mjs",
   "scripts/tests/grant-m1-acceptance-contracts.test.mjs",
+  "scripts/tests/grant-m1-host-preflight.test.mjs",
   "deploy/grant-pilot/evidence-index.example.json",
   "fixtures/grant-m1/local-readiness-20260825.json",
 ];
@@ -54,5 +58,10 @@ if (!contents.get("scripts/lib/grant-m1-acceptance.mjs").includes("GrantM1Eviden
     !contents.get("scripts/lib/grant-m1-acceptance.mjs").includes("assignment signature is invalid") ||
     !contents.get("scripts/lib/grant-m1-acceptance.mjs").includes("signed result signature is invalid")) {
   throw new Error("grant acceptance verifier must enforce the hashed v0.3 evidence contract plus assignment and observer signatures");
+}
+if (!contents.get("scripts/lib/grant-m1-host-preflight.mjs").includes("GrantM1HostPreflight@0.1.0") ||
+    !contents.get("scripts/capture-grant-m1-host-preflight.mjs").includes("NTPSynchronized") ||
+    !contents.get("scripts/capture-grant-m1-host-preflight.mjs").includes("systemctl")) {
+  throw new Error("grant host preflight must retain its versioned clock and service checks");
 }
 process.stdout.write(`${JSON.stringify({ status: "PASS", gate: "GRANT_M1_SOFTWARE", requiredFiles: requiredFiles.length })}\n`);
