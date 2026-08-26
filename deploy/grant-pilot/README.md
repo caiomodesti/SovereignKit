@@ -63,6 +63,32 @@ covers their observation deadline and delivery handoff.
 7. Inspect `http://127.0.0.1:8790/health` and `/ready` through SSH or the provider monitoring plane.
 8. Retain the immutable signed assignment, assignment-authority public entry, raw observation JSONL, journal heartbeats, and `/var/lib/sovereignkit/evidence/observer-delivery.jsonl`.
 
+After the long-running observer is active, capture the fail-closed host preflight
+on each Linux observer. Use the exact frozen commit being deployed; the command
+refuses an unsynchronized clock, inactive service, dirty or mismatched checkout,
+wrong Node.js runtime, non-loopback readiness URL, insecure/symlinked key, wrong
+observer identity, or insufficient disk. It writes with exclusive-create mode
+and never reads the key contents:
+
+```bash
+sudo -u sovereignkit -- node scripts/capture-grant-m1-host-preflight.mjs \
+  --observer-id observer-provider-a \
+  --key-path /etc/sovereignkit/secrets/observer-private.json \
+  --runtime-root /opt/sovereignkit \
+  --expected-runtime-commit REPLACE_WITH_FROZEN_40_CHARACTER_COMMIT \
+  --expected-node-version v22.17.0 \
+  --health-url http://127.0.0.1:8790/ready \
+  --service sovereignkit-observer.service \
+  --output /var/lib/sovereignkit/evidence/host-preflight-0001.jsonl
+```
+
+The preflight must run as the same `sovereignkit` service account that owns the
+private key. Running it as `root` intentionally fails the ownership check.
+
+Run this separately on all three hosts. A local or copied record does not prove
+provider independence, and a PASS does not replace restart, provider, failure,
+or signed-observation evidence.
+
 The signed assignment proves who authorized the job and that its submission metadata was not altered after authorization. It does not independently prove that the issuer's submission claim is true. Milestone 1 acceptance therefore also requires the local observation-worker command, its exclusive assignment-bound raw reader log, process/journal evidence, and cross-host validation. Precomputed or centrally fabricated unsigned results cannot satisfy acceptance.
 
 ## Collector and TLS

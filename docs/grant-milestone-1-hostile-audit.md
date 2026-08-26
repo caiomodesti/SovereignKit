@@ -12,6 +12,7 @@ Verdict: `CONDITIONAL GO` for continued Milestone 1 engineering; `NO-GO` for mil
 - the external acceptance verifier now rejects existence-only evidence: every observer artifact is path-scoped and SHA-256 bound, signed results are cryptographically checked, raw polls are correlated, operational records are content-validated, and private-key markers are forbidden.
 - observation jobs now require a short-lived Ed25519-signed assignment; raw polls bind to its ID and payload hash, and the external verifier correlates assignment, polls, and ProbeResult.
 - a local outage/restart drill proves queued evidence survives Observer restart, delivers after Collector recovery, reconstructs one accepted record after Collector restart, and creates no duplicate delivery record.
+- a versioned Linux host preflight now prevents a nominally healthy record when the clock, key ACL, service, runtime commit/Node.js version/tree, observer identity, loopback readiness, or disk threshold is unsafe; no real provider host has executed it yet.
 
 ## Blocking findings before external acceptance
 
@@ -21,7 +22,7 @@ Verdict: `CONDITIONAL GO` for continued Milestone 1 engineering; `NO-GO` for mil
 4. The three logical readers inside one observer may share upstream infrastructure. Reader overlap must be documented and cannot be described as three independent infrastructures.
 5. Ed25519 authenticates the observer key, not the truth, location, provider, or completeness of its report.
 6. A central Collector can omit valid evidence even though it cannot forge an observer signature. Public omission detection is outside Milestone 1 and remains a follow-on risk.
-7. TLS terminates at an external edge. Rate limiting, firewalling, certificate issuance, clock synchronization, disk monitoring, retention, and backup have templates but no real-host evidence.
+7. TLS terminates at an external edge. Clock, key ACL, service state, runtime commit/Node.js version/tree, readiness identity, and disk have a fail-closed capture command, but rate limiting, firewalling, certificate issuance, ongoing disk monitoring, retention, backup, and all real-host execution evidence remain absent.
 8. File-based signing keys are appropriate for this bounded pilot only after OS ACL verification. They are not HSM-backed and must never be confused with payer wallets.
 9. Observer and Collector clocks affect validity and chronology. No cross-provider clock-drift evidence exists yet.
 10. Linux systemd hardening is reviewed statically but has not been exercised on the chosen provider images.

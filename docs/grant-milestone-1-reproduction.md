@@ -77,6 +77,20 @@ records. The generated evidence is verified by
 This drill must be repeated independently on all three real observer hosts. A
 local pass cannot satisfy the external restart-evidence requirement.
 
+## Real-host preflight command
+
+After deploying the frozen commit on a Linux observer and starting its service,
+run the versioned fail-closed capture documented in
+`deploy/grant-pilot/README.md`. The command verifies the actual local systemd
+service, `timedatectl` synchronization state, loopback `/ready` identity, Git
+commit, Node.js version, and tracked-tree cleanliness, observer-key metadata
+without reading key contents, and an explicit free-disk floor. Its output is
+suitable for the observer's indexed `health_history` evidence.
+
+The pure preflight contracts are exercised on every software gate. A unit-test
+PASS is not host evidence, and the command intentionally fails on non-Linux
+machines rather than fabricating a deployment result.
+
 ## Acceptance gate
 
 The external acceptance command is intentionally impossible to pass without retained real evidence:
@@ -99,7 +113,7 @@ Placeholder files cannot satisfy the gate.
 
 - typecheck: PASS;
 - deterministic tests: 93/93 PASS;
-- assignment/evidence hostile contracts: 7/7 PASS;
+- assignment/evidence hostile contracts: 14/14 PASS;
 - Collector/Observer separate-process integration: PASS;
 - grant software contract: PASS;
 - retained local readiness harness: PASS against Agave 4.0.0;
