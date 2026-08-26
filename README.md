@@ -328,7 +328,10 @@ Read the normative [epistemic limits](docs/epistemic-limits.md) before citing pr
   </tr>
 </table>
 
-Browse the complete [documentation index](docs/README.md) or the [architecture decision records](docs/adr/README.md).
+Browse the complete [documentation index](docs/README.md), the
+[grant progress log](docs/grant-weekly-status.md), the
+[grant communication policy](docs/grant-progress-communications.md), or the
+[architecture decision records](docs/adr/README.md).
 
 ## Repository layout
 

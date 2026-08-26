@@ -14,7 +14,7 @@ Verdict: `CONDITIONAL GO` for continued Milestone 1 engineering; `NO-GO` for mil
 ## Blocking findings before external acceptance
 
 1. No three real observer hosts exist. Process count, containers, or aliases cannot substitute for providers under distinct control planes.
-2. The observation worker and signing/delivery runtime are separate stages. Their job handoff needs an end-to-end retained run and operational recovery procedure.
+2. The observation worker and signing/delivery runtime are separate stages. Their handoff now has a retained local end-to-end run, but the recovery procedure still requires real-host execution and evidence.
 3. Submission metadata enters through an observation job. Raw reader calls corroborate ledger observation but do not independently prove that every submission fact in the job is truthful. Assignment provenance must be retained.
 4. The three logical readers inside one observer may share upstream infrastructure. Reader overlap must be documented and cannot be described as three independent infrastructures.
 5. Ed25519 authenticates the observer key, not the truth, location, provider, or completeness of its report.

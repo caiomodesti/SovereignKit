@@ -2,6 +2,12 @@
 
 This append-only human-readable status log supports the grant's weekly communication requirement. Detailed evidence remains in versioned artifacts and milestone acceptance indexes.
 
+Communication cadence and claim boundaries are defined in
+[Grant progress communications](grant-progress-communications.md). The normal
+cadence is one concise public update per week, plus an additional update only
+when a milestone is accepted or a material blocker changes. Daily engineering
+activity belongs in commits and CI rather than promotional status claims.
+
 ## 2026-08-24 — Grant activation
 
 - Grant: approved for USDG 1,500.
