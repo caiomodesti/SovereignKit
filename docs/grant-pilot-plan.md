@@ -176,11 +176,11 @@ Allowed status values are `NOT_STARTED`, `IN_PROGRESS`, `BLOCKED_BY_USER`, `IMPL
 | Cryptographic identity | Existing Ed25519 identity and allowlist | Existing signing/ingestion tests plus rotation test | Public keys, key IDs, validity records | IMPLEMENTED_NOT_VALIDATED |
 | Signed observations | Existing signed `ProbeResult` | Existing signature tests plus deployed observation verification | Signed payloads and hashes | IMPLEMENTED_NOT_VALIDATED |
 | Signature verification | Existing collector verification | Invalid, unknown, expired, and altered payload tests | Collector outcomes and verifier output | IMPLEMENTED_NOT_VALIDATED |
-| Observer health | Reuse collector health; add observer health/readiness | Healthy, degraded dependency, stale heartbeat | Health history | NOT_STARTED |
-| Failure detection | Add signed heartbeat and timeout policy | Unavailable, delayed, stale, recovery | Failure timeline and incident record | NOT_STARTED |
-| Remote authenticated ingestion | Keep collector core behind a secure remote boundary | TLS/auth, limits, retry, duplicate, outage | Ingress config and accepted/rejected evidence | NOT_STARTED |
+| Observer health | Observer health/readiness and structured heartbeat implemented | Healthy, degraded dependency, stale heartbeat locally covered | Local health evidence; external history still required | IMPLEMENTED_NOT_VALIDATED |
+| Failure detection | Signed heartbeat, timeout policy, and deterministic failure matrix implemented | Unavailable, delayed, stale, recovery locally covered | Local failure evidence; external failure timeline still required | IMPLEMENTED_NOT_VALIDATED |
+| Remote authenticated ingestion | HTTPS-only remote delivery boundary and authenticated Collector validation implemented | TLS requirement, invalid identity, retry, duplicate, and outage locally covered | Deployment templates and local accepted/rejected evidence; hosted endpoint still required | IMPLEMENTED_NOT_VALIDATED |
 | Multiple logical routes | Existing route model; configure external Devnet endpoints | Per-route submission/observation dry run | Frozen route registry | BLOCKED_BY_USER |
-| Continuous operation | Add scheduler, supervisor, spool, and monitoring | Restart, missed cadence, collector outage, disk limit | Runtime and daily health records | NOT_STARTED |
+| Continuous operation | Long-running runtime, systemd supervisor templates, durable spool/receipts, and monitoring surfaces implemented | Restart, retry, duplicate, outage, and process separation locally covered | Local runtime evidence; multi-day external operation still required | IMPLEMENTED_NOT_VALIDATED |
 | Fourteen-day window | Operate accepted topology for real elapsed time | Window-boundary validator | First/last timestamps and daily records | BLOCKED_BY_USER |
 | 3,000 qualifying observations | Freeze validator and collect above target with margin | Qualification and cumulative-count checks | Public qualifying index and totals | BLOCKED_BY_USER |
 | Public evidence feed | Extend existing versioned snapshot pipeline | Freshness, schema, rollback, aggregation, fail-open | Hosted machine-readable snapshots | NOT_STARTED |
@@ -190,7 +190,7 @@ Allowed status values are `NOT_STARTED`, `IN_PROGRESS`, `BLOCKED_BY_USER`, `IMPL
 | Reproducible outputs | Reuse deterministic report and verifier pipeline | Byte/checksum reproduction | Markdown/JSON/CSV and manifest | IMPLEMENTED_NOT_VALIDATED |
 | Final technical report | Extend Sprint 11 report structure | Rebuild, link, KPI consistency checks | Public report and source manifest | NOT_STARTED |
 | Infrastructure independence proof | Add topology evidence checklist and registry | Reviewer verification against external records | Provider/instance/ASN evidence with limitations | BLOCKED_BY_USER |
-| Milestone completion proof | Reuse acceptance-report and evidence-index pattern | Requirement-to-evidence audit | Grant acceptance index | NOT_STARTED |
+| Milestone completion proof | Versioned evidence index and hostile acceptance verifier implemented | 5/5 hostile evidence-contract tests pass locally | External evidence index cannot pass until three real deployments exist | IMPLEMENTED_NOT_VALIDATED |
 
 No milestone row may move to `ACCEPTED` merely because code exists.
 
