@@ -64,8 +64,8 @@ and unsanitized instance records must never appear.
 > identidade Ed25519 própria, resultados assinados, quorum lógico 2/3, entrega
 > durável ao Collector, health/readiness, heartbeats e templates de deployment.
 >
-> ✅ 92/92 testes determinísticos
-> ✅ 5/5 testes hostis do contrato de evidência
+> ✅ 93/93 testes determinísticos
+> ✅ 7/7 testes hostis do contrato de evidência
 > ✅ transação real em Agave local chegou a `FINALIZED`
 > ✅ 280 polls brutos preservados
 > ✅ ProbeResult assinado, aceito e recuperado pelo Collector

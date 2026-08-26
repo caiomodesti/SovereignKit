@@ -2,8 +2,8 @@ import { createHash, createPublicKey, verify } from "node:crypto";
 import { lstat, readFile, realpath } from "node:fs/promises";
 import { isAbsolute, relative, resolve, sep } from "node:path";
 
-const EVIDENCE_FIELDS = ["signed_results", "raw_observations", "health_history", "restart_evidence", "provider_evidence", "failure_matrix"];
-const PRIVATE_MARKERS = ["privateKeyPkcs8Base64", "ObserverPrivateKey@", "BEGIN PRIVATE KEY"];
+const EVIDENCE_FIELDS = ["assignment_provenance", "signed_results", "raw_observations", "health_history", "restart_evidence", "provider_evidence", "failure_matrix"];
+const PRIVATE_MARKERS = ["privateKeyPkcs8Base64", "ObserverPrivateKey@", "AssignmentAuthorityPrivateKey@", "BEGIN PRIVATE KEY"];
 
 export async function verifyGrantM1Acceptance(evidenceRootText) {
   const evidenceRoot = resolve(evidenceRootText);
@@ -11,6 +11,7 @@ export async function verifyGrantM1Acceptance(evidenceRootText) {
   const resolveInside = path => resolveEvidencePath(evidenceRoot, path);
   const registry = await readJson(resolveInside("observer-registry.json"), "observer registry", evidenceRootReal);
   const allowlist = await readJson(resolveInside("allowlist.json"), "allowlist", evidenceRootReal);
+  const assignmentAuthorities = await readJson(resolveInside("assignment-authorities.json"), "assignment authority allowlist", evidenceRootReal);
   const evidenceIndex = await readJson(resolveInside("evidence-index.json"), "evidence index", evidenceRootReal);
 
   if (registry.schema_version !== "GrantObserverRegistry@0.1.0" || !Array.isArray(registry.observers) || registry.observers.length < 3) throw new Error("Milestone 1 requires at least three registry observers");
@@ -43,11 +44,16 @@ export async function verifyGrantM1Acceptance(evidenceRootText) {
   const allowlistByIdentity = new Map(allowlist.map(entry => [`${entry.observerId}\u001f${entry.keyId}`, validateAllowlistEntry(entry)]));
   for (const observer of observers) if (!allowlistByIdentity.has(`${observer.observer_id}\u001f${observer.key_id}`)) throw new Error(`${observer.observer_id} has no matching public allowlist identity`);
 
-  if (evidenceIndex.schema_version !== "GrantM1EvidenceIndex@0.2.0" || !Array.isArray(evidenceIndex.observers) || evidenceIndex.observers.length !== observers.length) throw new Error("evidence-index.json must use GrantM1EvidenceIndex@0.2.0 with exactly one entry per observer");
+  if (!Array.isArray(assignmentAuthorities) || assignmentAuthorities.length === 0) throw new Error("assignment-authorities.json must contain at least one public authority");
+  requireUnique(assignmentAuthorities.map(entry => `${entry.issuerId}\u001f${entry.keyId}`), "assignment authority issuer/key");
+  const assignmentAuthoritiesByIdentity = new Map(assignmentAuthorities.map(entry => [`${entry.issuerId}\u001f${entry.keyId}`, validateAssignmentAuthorityEntry(entry)]));
+
+  if (evidenceIndex.schema_version !== "GrantM1EvidenceIndex@0.3.0" || !Array.isArray(evidenceIndex.observers) || evidenceIndex.observers.length !== observers.length) throw new Error("evidence-index.json must use GrantM1EvidenceIndex@0.3.0 with exactly one entry per observer");
   requireUnique(evidenceIndex.observers.map(value => value.observer_id), "evidence index observer_id");
   const seenPaths = new Set();
   let signedResultCount = 0;
   let rawPollCount = 0;
+  let assignmentCount = 0;
   for (const observer of observers) {
     const entry = evidenceIndex.observers.find(value => value.observer_id === observer.observer_id);
     if (entry === undefined) throw new Error(`${observer.observer_id} has no evidence index entry`);
@@ -76,16 +82,59 @@ export async function verifyGrantM1Acceptance(evidenceRootText) {
       resultSignatures.add(result.signature);
       signedResultCount += 1;
     }
+    const assignments = evidenceByField.get("assignment_provenance").flatMap(artifact => artifact.records);
+    const assignmentsByResult = new Map();
+    for (const assignment of assignments) {
+      const authority = assignmentAuthoritiesByIdentity.get(`${assignment?.issuerId}\u001f${assignment?.issuerKeyId}`);
+      if (authority === undefined) throw new Error(`${observer.observer_id} assignment authority is not allowlisted`);
+      validateAssignment(assignment, observer, authority);
+      if (assignmentsByResult.has(assignment.job.resultId)) throw new Error(`${observer.observer_id} has duplicate assignments for result ${assignment.job.resultId}`);
+      assignmentsByResult.set(assignment.job.resultId, assignment);
+      assignmentCount += 1;
+    }
+    for (const result of signedResults) {
+      const assignment = assignmentsByResult.get(result.result_id);
+      if (assignment === undefined || !assignmentMatchesResult(assignment, result)) throw new Error(`${observer.observer_id} signed result lacks matching assignment provenance`);
+      const observedAt = Date.parse(result.observer_wall_time);
+      if (observedAt < Date.parse(assignment.issuedAt) || observedAt > Date.parse(assignment.expiresAt)) throw new Error(`${observer.observer_id} result was produced outside its assignment window`);
+    }
     const rawRecords = evidenceByField.get("raw_observations").flatMap(artifact => artifact.records);
     for (const poll of rawRecords) {
-      if (poll?.schema_version !== "RawObservationPoll@0.1.0" || poll.observer_id !== observer.observer_id || !resultSignatures.has(poll.signature)) throw new Error(`${observer.observer_id} raw observation is not correlated to an indexed signed result`);
+      const assignment = assignments.find(value => value.assignmentId === poll?.assignment_id && value.payloadHash === poll?.assignment_payload_hash);
+      if (poll?.schema_version !== "RawObservationPoll@0.2.0" || assignment === undefined || poll.observer_id !== observer.observer_id || !resultSignatures.has(poll.signature) || assignment.job.signature !== poll.signature) throw new Error(`${observer.observer_id} raw observation is not correlated to an indexed signed assignment and result`);
       if (!Array.isArray(poll.claims) || new Set(poll.claims.map(claim => claim?.reader_id)).size !== 3) throw new Error(`${observer.observer_id} raw observation must contain three unique logical readers`);
       rawPollCount += 1;
     }
     if (rawRecords.length === 0) throw new Error(`${observer.observer_id} has no raw observation polls`);
     validateObserverScopedRecords(evidenceByField, observer);
   }
-  return { status: "PASS", gate: "GRANT_M1_ACCEPTANCE", observers: observers.length, runtimeCommit: [...runtimeCommits][0], signedResults: signedResultCount, rawPolls: rawPollCount, evidenceRoot };
+  return { status: "PASS", gate: "GRANT_M1_ACCEPTANCE", observers: observers.length, runtimeCommit: [...runtimeCommits][0], assignments: assignmentCount, signedResults: signedResultCount, rawPolls: rawPollCount, evidenceRoot };
+}
+
+function validateAssignment(assignment, observer, authority) {
+  if (assignment?.schemaVersion !== "ObservationAssignment@0.1.0" || !/^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/iu.test(assignment.assignmentId) || assignment.job?.observerId !== observer.observer_id || assignment.job?.observerKeyId !== observer.key_id) throw new Error(`${observer.observer_id} assignment structure or observer identity is invalid`);
+  if (assignment.job.schemaVersion !== "ObservationJob@0.1.0" || !Number.isSafeInteger(assignment.job.observerSequence) || assignment.job.observerSequence < 0 ||
+      !Number.isSafeInteger(assignment.job.pollIntervalMs) || assignment.job.pollIntervalMs < 100 || assignment.job.pollIntervalMs > 30_000 ||
+      !Number.isSafeInteger(assignment.job.observationDeadlineMs) || assignment.job.observationDeadlineMs < assignment.job.pollIntervalMs || assignment.job.observationDeadlineMs > 300_000 ||
+      !Number.isSafeInteger(assignment.job.readerRequestTimeoutMs) || assignment.job.readerRequestTimeoutMs < 100 || assignment.job.readerRequestTimeoutMs > 30_000) {
+    throw new Error(`${observer.observer_id} assignment job contract is invalid`);
+  }
+  const { payloadHash, issuerSignature, ...unsigned } = assignment;
+  if (!/^[a-f0-9]{64}$/u.test(payloadHash) || typeof issuerSignature !== "string" || sha256Hex(Buffer.from(canonicalJson(unsigned))) !== payloadHash) throw new Error(`${observer.observer_id} assignment payload hash is invalid`);
+  const issuedAt = Date.parse(assignment.issuedAt);
+  const expiresAt = Date.parse(assignment.expiresAt);
+  if (!Number.isFinite(issuedAt) || !Number.isFinite(expiresAt) || expiresAt <= issuedAt || expiresAt - issuedAt > 86_400_000 || issuedAt < authority.validFromMs || issuedAt > authority.validUntilMs) throw new Error(`${observer.observer_id} assignment validity is invalid`);
+  let publicKey;
+  try { publicKey = createPublicKey({ key: Buffer.from(authority.publicKeySpkiBase64, "base64"), type: "spki", format: "der" }); }
+  catch { throw new Error(`${observer.observer_id} assignment authority public key encoding is invalid`); }
+  if (!verify(null, Buffer.from(canonicalJson({ ...unsigned, payloadHash })), publicKey, Buffer.from(issuerSignature, "base64url"))) throw new Error(`${observer.observer_id} assignment signature is invalid`);
+}
+
+function assignmentMatchesResult(assignment, result) {
+  const job = assignment.job;
+  return job.resultId === result.result_id && job.observerId === result.observer_id && job.observerKeyId === result.observer_key_id &&
+    job.observerSequence === result.observer_sequence && job.experimentDefinitionHash === result.experiment_definition_hash &&
+    job.signature === result.signature && canonicalJson(job.unit) === canonicalJson(result.unit) && canonicalJson(job.submission) === canonicalJson(result.submission);
 }
 
 function validateObserverScopedRecords(evidenceByField, observer) {
@@ -145,6 +194,16 @@ function validateAllowlistEntry(entry) {
   const validFromMs = Date.parse(entry.validFrom);
   const validUntilMs = entry.validUntil === undefined ? Number.POSITIVE_INFINITY : Date.parse(entry.validUntil);
   if (!Number.isFinite(validFromMs) || Number.isNaN(validUntilMs) || validUntilMs <= validFromMs) throw new Error(`${entry.observerId} allowlist validity interval is invalid`);
+  return { ...entry, validFromMs, validUntilMs };
+}
+
+function validateAssignmentAuthorityEntry(entry) {
+  requireIdentifier(entry?.issuerId, "assignment authority issuerId");
+  requireIdentifier(entry?.keyId, "assignment authority keyId");
+  if (typeof entry.publicKeySpkiBase64 !== "string" || entry.publicKeySpkiBase64.length < 32) throw new Error(`${entry.issuerId} assignment authority public key is invalid`);
+  const validFromMs = Date.parse(entry.validFrom);
+  const validUntilMs = entry.validUntil === undefined ? Number.POSITIVE_INFINITY : Date.parse(entry.validUntil);
+  if (!Number.isFinite(validFromMs) || Number.isNaN(validUntilMs) || validUntilMs <= validFromMs) throw new Error(`${entry.issuerId} assignment authority validity interval is invalid`);
   return { ...entry, validFromMs, validUntilMs };
 }
 

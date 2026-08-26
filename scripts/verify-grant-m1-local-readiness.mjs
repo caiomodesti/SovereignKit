@@ -10,7 +10,8 @@ const requiredFiles = [
   "collector-accepted.jsonl",
   "collector-restart-evidence.json",
   "health-snapshots.json",
-  "observation-job.json",
+  "signed-observation-assignment.json",
+  "assignment-authorities.json",
   "observer-delivery.jsonl",
   "raw-observations.jsonl",
   "reader-registry.json",
@@ -41,13 +42,23 @@ const acceptedResult = JSON.parse(accepted[0]).result;
 if (acceptedResult.signature !== metadata.transaction_signature || acceptedResult.terminal_state !== "FINALIZED") {
   throw new Error("accepted signed result does not match the finalized transaction metadata");
 }
+const assignment = JSON.parse(await readFile(resolve(evidenceRoot, "signed-observation-assignment.json"), "utf8"));
+if (assignment.schemaVersion !== "ObservationAssignment@0.1.0" || assignment.job?.resultId !== acceptedResult.result_id || assignment.job?.signature !== acceptedResult.signature) {
+  throw new Error("signed assignment does not correlate to the accepted result");
+}
+for (const line of raw) {
+  const poll = JSON.parse(line);
+  if (poll.schema_version !== "RawObservationPoll@0.2.0" || poll.assignment_id !== assignment.assignmentId || poll.assignment_payload_hash !== assignment.payloadHash) {
+    throw new Error("raw observations are not bound to the signed assignment");
+  }
+}
 const restart = JSON.parse(await readFile(resolve(evidenceRoot, "collector-restart-evidence.json"), "utf8"));
 if (restart.status !== "PASS" || restart.recovered_records !== 1) throw new Error("Collector replay recovery evidence is missing");
 const files = await recursiveFiles(evidenceRoot);
 if (files.some(path => /private|secret|keypair/iu.test(path))) throw new Error("evidence directory contains a private-key-like filename");
 for (const path of files) {
   const text = await readFile(path, "utf8");
-  if (text.includes("privateKeyPkcs8Base64") || text.includes("ObserverPrivateKey@")) {
+  if (text.includes("privateKeyPkcs8Base64") || text.includes("ObserverPrivateKey@") || text.includes("AssignmentAuthorityPrivateKey@")) {
     throw new Error(`evidence directory contains private observer key material: ${path}`);
   }
 }

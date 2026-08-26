@@ -7,7 +7,13 @@ import type { ObservationReader, SignatureStatusResult } from "@sovereignkit/tel
 import { deriveUnitId, generateObserverKeyPair, sha256Hex, signProbeResult } from "@sovereignkit/probes";
 import { afterEach, describe, expect, test } from "vitest";
 
-import { executeObservationJob, type ObservationJob } from "./observation-worker.js";
+import {
+  generateAssignmentAuthorityKeyPair,
+  signObservationAssignment,
+  type AssignmentAuthorityAllowlistEntry,
+  type SignedObservationAssignment,
+} from "./observation-assignment.js";
+import { executeObservationAssignment, type ObservationJob } from "./observation-worker.js";
 import { ProbeResultSchemaValidator } from "./validation.js";
 
 const temporaryDirectories: string[] = [];
@@ -25,7 +31,7 @@ describe("independent observation worker", () => {
       reader("reader-b", { status: "finalized", slot: 12n, rpcContextSlot: 13n }, 90n),
       reader("reader-c", { status: "confirmed", slot: 12n, rpcContextSlot: 13n }, 90n),
     ];
-    const result = await executeObservationJob({ job, readers, rawLogPath: join(directory, "raw.jsonl") });
+    const result = await executeObservationAssignment({ ...assigned(job), readers, rawLogPath: join(directory, "raw.jsonl") });
     expect(result).toMatchObject({ terminal_state: "FINALIZED", observer_id: job.observerId });
     expect(result.reader_claims).toHaveLength(3);
     expect(result.quorum_decisions[0]?.supporting_claim_ids).toHaveLength(2);
@@ -39,8 +45,8 @@ describe("independent observation worker", () => {
   test("distinguishes failed execution, expiry, and unavailable-reader inconclusiveness", async () => {
     const failedDirectory = await temporaryDirectory();
     const failedJob = makeJob();
-    const failed = await executeObservationJob({
-      job: failedJob,
+    const failed = await executeObservationAssignment({
+      ...assigned(failedJob),
       readers: [
         reader("reader-a", { status: "confirmed", slot: 12n, executionError: { InstructionError: [0, "Custom"] } }, 90n),
         reader("reader-b", { status: "confirmed", slot: 12n, executionError: { InstructionError: [0, "Custom"] } }, 90n),
@@ -52,8 +58,8 @@ describe("independent observation worker", () => {
 
     const expiredDirectory = await temporaryDirectory();
     const expiredJob = makeJob();
-    const expired = await executeObservationJob({
-      job: expiredJob,
+    const expired = await executeObservationAssignment({
+      ...assigned(expiredJob),
       readers: [reader("reader-a", { status: null }, 101n), reader("reader-b", { status: null }, 102n), reader("reader-c", { status: null }, 99n)],
       rawLogPath: join(expiredDirectory, "raw.jsonl"),
     });
@@ -61,8 +67,8 @@ describe("independent observation worker", () => {
 
     const unavailableDirectory = await temporaryDirectory();
     const unavailableJob = { ...makeJob(), observationDeadlineMs: 100, pollIntervalMs: 100 };
-    const unavailable = await executeObservationJob({
-      job: unavailableJob,
+    const unavailable = await executeObservationAssignment({
+      ...assigned(unavailableJob),
       readers: [unavailableReader("reader-a"), unavailableReader("reader-b"), unavailableReader("reader-c")],
       rawLogPath: join(unavailableDirectory, "raw.jsonl"),
       sleep: milliseconds => new Promise(resolve => setTimeout(resolve, milliseconds)),
@@ -130,6 +136,28 @@ function unavailableReader(readerId: string): ObservationReader {
     readerId,
     getSignatureStatus: async () => { throw new TypeError("network unavailable"); },
     getBlockHeight: async () => { throw new TypeError("network unavailable"); },
+  };
+}
+
+function assigned(job: ObservationJob): {
+  readonly assignment: SignedObservationAssignment;
+  readonly authority: AssignmentAuthorityAllowlistEntry;
+  readonly now: () => Date;
+} {
+  const key = generateAssignmentAuthorityKeyPair("grant-coordinator", "assignment-key-1");
+  const assignment = signObservationAssignment({
+    schemaVersion: "ObservationAssignment@0.1.0",
+    assignmentId: randomUUID(),
+    issuerId: key.issuerId,
+    issuerKeyId: key.keyId,
+    issuedAt: "2026-08-25T11:59:00.000Z",
+    expiresAt: "2026-08-25T13:00:00.000Z",
+    job,
+  }, key);
+  return {
+    assignment,
+    authority: { issuerId: key.issuerId, keyId: key.keyId, publicKeySpkiBase64: key.publicKeySpkiBase64, validFrom: "2026-01-01T00:00:00.000Z", validUntil: "2027-01-01T00:00:00.000Z" },
+    now: () => new Date("2026-08-25T12:00:00.000Z"),
   };
 }
 

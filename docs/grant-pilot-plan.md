@@ -176,6 +176,7 @@ Allowed status values are `NOT_STARTED`, `IN_PROGRESS`, `BLOCKED_BY_USER`, `IMPL
 | Cryptographic identity | Existing Ed25519 identity and allowlist | Existing signing/ingestion tests plus rotation test | Public keys, key IDs, validity records | IMPLEMENTED_NOT_VALIDATED |
 | Signed observations | Existing signed `ProbeResult` | Existing signature tests plus deployed observation verification | Signed payloads and hashes | IMPLEMENTED_NOT_VALIDATED |
 | Signature verification | Existing collector verification | Invalid, unknown, expired, and altered payload tests | Collector outcomes and verifier output | IMPLEMENTED_NOT_VALIDATED |
+| Assignment provenance | Short-lived Ed25519-signed assignment with authority allowlist and raw-poll binding | Tampered, expired, wrong-authority, and cross-artifact correlation tests | Signed assignments, authority public entries, bound raw polls | IMPLEMENTED_NOT_VALIDATED |
 | Observer health | Observer health/readiness and structured heartbeat implemented | Healthy, degraded dependency, stale heartbeat locally covered | Local health evidence; external history still required | IMPLEMENTED_NOT_VALIDATED |
 | Failure detection | Signed heartbeat, timeout policy, and deterministic failure matrix implemented | Unavailable, delayed, stale, recovery locally covered | Local failure evidence; external failure timeline still required | IMPLEMENTED_NOT_VALIDATED |
 | Remote authenticated ingestion | HTTPS-only remote delivery boundary and authenticated Collector validation implemented | TLS requirement, invalid identity, retry, duplicate, and outage locally covered | Deployment templates and local accepted/rejected evidence; hosted endpoint still required | IMPLEMENTED_NOT_VALIDATED |
@@ -190,7 +191,7 @@ Allowed status values are `NOT_STARTED`, `IN_PROGRESS`, `BLOCKED_BY_USER`, `IMPL
 | Reproducible outputs | Reuse deterministic report and verifier pipeline | Byte/checksum reproduction | Markdown/JSON/CSV and manifest | IMPLEMENTED_NOT_VALIDATED |
 | Final technical report | Extend Sprint 11 report structure | Rebuild, link, KPI consistency checks | Public report and source manifest | NOT_STARTED |
 | Infrastructure independence proof | Add topology evidence checklist and registry | Reviewer verification against external records | Provider/instance/ASN evidence with limitations | BLOCKED_BY_USER |
-| Milestone completion proof | Versioned evidence index and hostile acceptance verifier implemented | 5/5 hostile evidence-contract tests pass locally | External evidence index cannot pass until three real deployments exist | IMPLEMENTED_NOT_VALIDATED |
+| Milestone completion proof | Versioned evidence index and hostile acceptance verifier implemented | 7/7 hostile evidence-contract tests pass locally | External evidence index cannot pass until three real deployments exist | IMPLEMENTED_NOT_VALIDATED |
 
 No milestone row may move to `ACCEPTED` merely because code exists.
 

@@ -17,6 +17,8 @@
     "sovereignkit-observer": "./dist/observer-process.js",
     "sovereignkit-observer-runtime": "./dist/observer-runtime-process.js",
     "sovereignkit-observer-keygen": "./dist/observer-keygen-process.js",
+    "sovereignkit-assignment-keygen": "./dist/assignment-authority-keygen-process.js",
+    "sovereignkit-assignment-sign": "./dist/observation-assignment-sign-process.js",
     "sovereignkit-observation-worker": "./dist/observation-worker-process.js"
   },
   "scripts": {

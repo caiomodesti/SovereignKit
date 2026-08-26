@@ -32,15 +32,38 @@ The command refuses to overwrite either path. Copy only the public allowlist ent
 
 ## Observer runtime
 
+Create the assignment authority once on the controlled coordinator host. Keep
+the private document outside the repository and copy only the public entry to
+the observer allowlist:
+
+```bash
+node packages/collector/dist/assignment-authority-keygen-process.js \
+  grant-coordinator assignment-key-2026-01 \
+  /etc/sovereignkit-coordinator/assignment-private.json \
+  /var/lib/sovereignkit-coordinator/assignment-public.json \
+  2026-08-25T00:00:00.000Z 2026-12-31T23:59:59.999Z
+
+node packages/collector/dist/observation-assignment-sign-process.js \
+  /etc/sovereignkit-coordinator/assignment-private.json \
+  /var/lib/sovereignkit-coordinator/jobs/job-000001.json \
+  /var/lib/sovereignkit-coordinator/signed/job-000001.json \
+  2026-08-25T12:00:00.000Z 2026-08-25T12:10:00.000Z
+```
+
+The signer refuses to overwrite an existing output. Assignment validity may
+never exceed 24 hours; operational jobs should use the shortest interval that
+covers their observation deadline and delivery handoff.
+
 1. Copy `observer-runtime.example.json` to `/etc/sovereignkit/observer-runtime.json` and replace placeholders.
 2. Copy `reader-registry.example.json` to `/etc/sovereignkit/readers.json`, configure exactly three logical HTTPS readers, and document any shared upstream infrastructure.
-3. Place a versioned observation job at `/var/lib/sovereignkit/jobs/<job-id>.json` and start `sovereignkit-observation-worker@<job-id>`. The oneshot unit writes a new raw JSONL and unsigned ProbeResult with exclusive-create semantics, so a repeated or conflicting job cannot silently overwrite evidence.
-4. The long-running observer runtime detects that locally derived output in `/var/lib/sovereignkit/spool/*.json`, signs it, and delivers it to the Collector.
-5. Install the hardened `systemd/sovereignkit-observer.service` and `systemd/sovereignkit-observation-worker@.service` templates.
-6. Inspect `http://127.0.0.1:8790/health` and `/ready` through SSH or the provider monitoring plane.
-7. Retain the immutable job, raw observation JSONL, journal heartbeats, and `/var/lib/sovereignkit/evidence/observer-delivery.jsonl`.
+3. Create the job centrally, wrap it in a short-lived `ObservationAssignment@0.1.0`, and sign that assignment with the grant coordinator's dedicated Ed25519 assignment key. Place only the signed assignment at `/var/lib/sovereignkit/jobs/<job-id>.json`; publish the matching public entry in `/etc/sovereignkit/assignment-authorities.json` on every observer. The coordinator private key never enters an observer host.
+4. Start `sovereignkit-observation-worker@<job-id>`. The oneshot unit verifies issuer allowlisting, signature, payload hash, and validity before making reader calls. It writes a new raw JSONL and unsigned ProbeResult with exclusive-create semantics, so a repeated or conflicting assignment cannot silently overwrite evidence.
+5. The long-running observer runtime detects that locally derived output in `/var/lib/sovereignkit/spool/*.json`, signs it, and delivers it to the Collector.
+6. Install the hardened `systemd/sovereignkit-observer.service` and `systemd/sovereignkit-observation-worker@.service` templates.
+7. Inspect `http://127.0.0.1:8790/health` and `/ready` through SSH or the provider monitoring plane.
+8. Retain the immutable signed assignment, assignment-authority public entry, raw observation JSONL, journal heartbeats, and `/var/lib/sovereignkit/evidence/observer-delivery.jsonl`.
 
-The signing runtime cannot by itself prove that an unsigned observation was derived honestly. Milestone 1 acceptance therefore requires the local observation-worker command, its exclusive raw reader log, process/journal evidence, and cross-host validation. Precomputed or centrally fabricated unsigned results cannot satisfy acceptance.
+The signed assignment proves who authorized the job and that its submission metadata was not altered after authorization. It does not independently prove that the issuer's submission claim is true. Milestone 1 acceptance therefore also requires the local observation-worker command, its exclusive assignment-bound raw reader log, process/journal evidence, and cross-host validation. Precomputed or centrally fabricated unsigned results cannot satisfy acceptance.
 
 ## Collector and TLS
 
@@ -62,9 +85,9 @@ Secrets, unredacted invoices, account passwords, payment data, IP allowlist secr
 Build `evidence-index.json` from `evidence-index.example.json` only after the
 files are final. Replace every zero hash with the SHA-256 of the referenced
 artifact and add one complete entry per observer. The acceptance verifier
-requires version `GrantM1EvidenceIndex@0.2.0`, observer-scoped paths, valid
-signatures, correlated raw polls, non-placeholder operational evidence, and no
-private-key markers.
+requires version `GrantM1EvidenceIndex@0.3.0`, observer-scoped paths, valid
+assignment and observer signatures, assignment-correlated raw polls,
+non-placeholder operational evidence, and no private-key markers.
 
 The content contracts for each observer are:
 
@@ -80,8 +103,11 @@ The content contracts for each observer are:
   `DISAGREEMENT` as `PASS`;
 - `signed_results`: at least one cryptographically valid `FINALIZED`
   ProbeResult with a valid 2/3 decision;
-- `raw_observations`: parseable `RawObservationPoll@0.1.0` JSONL correlated to
-  the signed transaction signature and containing exactly three reader IDs.
+- `assignment_provenance`: at least one valid short-lived signed assignment
+  whose job exactly matches an indexed ProbeResult;
+- `raw_observations`: parseable `RawObservationPoll@0.2.0` JSONL correlated to
+  both the signed assignment and transaction result and containing exactly
+  three reader IDs.
 
 The example contains one observer only to show the shape. A candidate bundle
 must expand it to at least three complete observer entries and replace every
@@ -92,3 +118,13 @@ project-controlled local Agave validator with
 `scripts/run-grant-m1-local-readiness.ps1`. Its output is intentionally marked
 `LOCAL_SOFTWARE_READINESS_ONLY`; copying or relabeling that evidence into the
 external acceptance directory is prohibited.
+
+Exercise Observer/Collector outage recovery separately with:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts/run-grant-m1-recovery-drill.ps1
+```
+
+The drill proves only local queue preservation, Observer restart delivery,
+Collector log reconstruction, and duplicate suppression. Every external host
+must repeat the equivalent exercise for Milestone 1 acceptance.

@@ -41,10 +41,12 @@
 | Malformed intelligence adapter decision | Unsafe route order | Runtime decision validation, local-order fail-open, immutable eligible set |
 | Near-expiry or clock-rollback decision | Stale route order | Repeat generated/expiry checks at routing start; record decision source/version |
 | Signature/account correlation | Privacy leakage | Probe/user separation, opt-in user telemetry, minimization and retention policy |
+| Unsigned or altered observation job | Fabricated assignment provenance | Short-lived Ed25519 assignment, issuer allowlist, payload hash, expiry, and raw-poll binding |
+| Dishonest assignment issuer | False submission metadata with a valid signature | Signatures prove origin, not truth; retain submission receipts and bound independent reader evidence |
 
 ## Security status after Sprint 6
 
-Local observer signing, central allowlisting, exhaustive ProbeResult schema validation, payload limits, single-writer durable ingestion, and restart replay reconstruction now exist. Production key custody, remote deployment, public ingestion, database authorization, TLS/client authentication, multi-writer coordination, external anchoring, and abuse operations do not. They must be implemented and tested before exposure.
+Local observer signing, signed assignment provenance, central allowlisting, exhaustive ProbeResult schema validation, payload limits, single-writer durable ingestion, and restart replay reconstruction now exist. Production key custody, remote deployment, public ingestion, database authorization, TLS/client authentication, multi-writer coordination, external anchoring, and abuse operations do not. They must be implemented and tested before exposure.
 
 ## Residual critical risks
 

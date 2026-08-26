@@ -33,7 +33,8 @@ import { describe, expect, test } from "vitest";
 
 import { DurableProbeResultCollector } from "../src/durable-collector.js";
 import { createCollectorHttpServer } from "../src/http.js";
-import { executeObservationJob, type ObservationJob } from "../src/observation-worker.js";
+import { generateAssignmentAuthorityKeyPair, signObservationAssignment } from "../src/observation-assignment.js";
+import { executeObservationAssignment, type ObservationJob } from "../src/observation-worker.js";
 import {
   createObserverHealthServer,
   ObserverDeliveryRuntime,
@@ -155,6 +156,23 @@ describe.skipIf(!enabled)("Grant Milestone 1 retained local readiness proof", ()
         observationDeadlineMs: 60_000,
         readerRequestTimeoutMs: 2_000,
       };
+      const assignmentAuthority = generateAssignmentAuthorityKeyPair("grant-local-coordinator", "assignment-key-1");
+      const authorityEntry = {
+        issuerId: assignmentAuthority.issuerId,
+        keyId: assignmentAuthority.keyId,
+        publicKeySpkiBase64: assignmentAuthority.publicKeySpkiBase64,
+        validFrom: new Date(Date.parse(createdAt) - 60_000).toISOString(),
+        validUntil: new Date(Date.parse(createdAt) + 86_400_000).toISOString(),
+      };
+      const assignment = signObservationAssignment({
+        schemaVersion: "ObservationAssignment@0.1.0",
+        assignmentId: randomUUID(),
+        issuerId: assignmentAuthority.issuerId,
+        issuerKeyId: assignmentAuthority.keyId,
+        issuedAt: createdAt,
+        expiresAt: new Date(Date.parse(createdAt) + 300_000).toISOString(),
+        job,
+      }, assignmentAuthority);
       const readerRegistry = {
         schemaVersion: "ObservationReaderRegistry@0.1.0",
         readers: [
@@ -166,13 +184,14 @@ describe.skipIf(!enabled)("Grant Milestone 1 retained local readiness proof", ()
         limitation: "All three reader clients share one project-controlled local Agave validator.",
       };
       await Promise.all([
-        writeJson(join(artifactDirectory, "observation-job.json"), job),
+        writeJson(join(artifactDirectory, "signed-observation-assignment.json"), assignment),
+        writeJson(join(artifactDirectory, "assignment-authorities.json"), [authorityEntry]),
         writeJson(join(artifactDirectory, "reader-registry.json"), readerRegistry),
       ]);
 
       const rawLogPath = join(artifactDirectory, "raw-observations.jsonl");
       const readers = readerRegistry.readers.map(value => new SolanaKitObservationReader(value.readerId, value.endpoint));
-      const unsigned = await executeObservationJob({ job, readers, rawLogPath });
+      const unsigned = await executeObservationAssignment({ assignment, authority: authorityEntry, readers, rawLogPath });
       expect(unsigned.terminal_state).toBe("FINALIZED");
       const spool = join(artifactDirectory, "spool");
       await mkdir(spool);

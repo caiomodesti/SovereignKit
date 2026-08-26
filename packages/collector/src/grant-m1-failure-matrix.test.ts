@@ -14,7 +14,8 @@ import {
 } from "@sovereignkit/probes";
 import { afterEach, describe, expect, test } from "vitest";
 
-import { executeObservationJob, type ObservationJob } from "./observation-worker.js";
+import { generateAssignmentAuthorityKeyPair, signObservationAssignment } from "./observation-assignment.js";
+import { executeObservationAssignment, type ObservationJob } from "./observation-worker.js";
 import { ProbeResultSchemaValidator } from "./validation.js";
 
 const temporaryDirectories: string[] = [];
@@ -93,10 +94,22 @@ describe("Grant Milestone 1 local failure matrix", () => {
 async function run(job: ObservationJob, readers: readonly ObservationReader[]) {
   const directory = await mkdtemp(join(tmpdir(), "sovereignkit-m1-matrix-"));
   temporaryDirectories.push(directory);
-  return executeObservationJob({
+  const authorityKey = generateAssignmentAuthorityKeyPair("grant-coordinator", "assignment-key-1");
+  const assignment = signObservationAssignment({
+    schemaVersion: "ObservationAssignment@0.1.0",
+    assignmentId: randomUUID(),
+    issuerId: authorityKey.issuerId,
+    issuerKeyId: authorityKey.keyId,
+    issuedAt: "2026-08-24T11:59:00.000Z",
+    expiresAt: "2026-08-24T13:00:00.000Z",
     job,
+  }, authorityKey);
+  return executeObservationAssignment({
+    assignment,
+    authority: { issuerId: authorityKey.issuerId, keyId: authorityKey.keyId, publicKeySpkiBase64: authorityKey.publicKeySpkiBase64, validFrom: "2026-01-01T00:00:00.000Z", validUntil: "2027-01-01T00:00:00.000Z" },
     readers,
     rawLogPath: join(directory, "raw.jsonl"),
+    now: () => new Date("2026-08-24T12:00:00.000Z"),
     sleep: milliseconds => new Promise(resolve => setTimeout(resolve, milliseconds)),
   });
 }
