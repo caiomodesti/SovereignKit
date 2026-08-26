@@ -10,12 +10,14 @@ Verdict: `CONDITIONAL GO` for continued Milestone 1 engineering; `NO-GO` for mil
 - remote Collector configuration requires HTTPS, while health surfaces remain loopback-only in the shipped process templates.
 - one retained local Agave run now proves the complete job, raw polling, quorum derivation, temporary-key signing, delivery, health, durable collection, and Collector replay path; its public anchor explicitly denies infrastructure independence.
 - the external acceptance verifier now rejects existence-only evidence: every observer artifact is path-scoped and SHA-256 bound, signed results are cryptographically checked, raw polls are correlated, operational records are content-validated, and private-key markers are forbidden.
+- observation jobs now require a short-lived Ed25519-signed assignment; raw polls bind to its ID and payload hash, and the external verifier correlates assignment, polls, and ProbeResult.
+- a local outage/restart drill proves queued evidence survives Observer restart, delivers after Collector recovery, reconstructs one accepted record after Collector restart, and creates no duplicate delivery record.
 
 ## Blocking findings before external acceptance
 
 1. No three real observer hosts exist. Process count, containers, or aliases cannot substitute for providers under distinct control planes.
-2. The observation worker and signing/delivery runtime are separate stages. Their handoff now has a retained local end-to-end run, but the recovery procedure still requires real-host execution and evidence.
-3. Submission metadata enters through an observation job. Raw reader calls corroborate ledger observation but do not independently prove that every submission fact in the job is truthful. Assignment provenance must be retained.
+2. The observation worker and signing/delivery runtime are separate stages. Their handoff and recovery now have local executable evidence, but the procedure still requires real-host execution and evidence.
+3. Signed assignment provenance now proves who authorized submission metadata and that it was not altered afterward. Raw reader calls corroborate ledger observation, but neither mechanism independently proves every submission fact is truthful; stronger submission-receipt evidence remains residual.
 4. The three logical readers inside one observer may share upstream infrastructure. Reader overlap must be documented and cannot be described as three independent infrastructures.
 5. Ed25519 authenticates the observer key, not the truth, location, provider, or completeness of its report.
 6. A central Collector can omit valid evidence even though it cannot forge an observer signature. Public omission detection is outside Milestone 1 and remains a follow-on risk.

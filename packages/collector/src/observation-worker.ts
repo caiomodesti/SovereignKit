@@ -4,6 +4,12 @@ import type { ObservationReader, SignatureStatusResult } from "@sovereignkit/tel
 import type { ProbeResultUnit, ProbeSubmission, ReaderClaim, UnsignedProbeResult } from "@sovereignkit/probes";
 import { deriveIdempotencyKey, sha256Hex } from "@sovereignkit/probes";
 
+import {
+  verifyObservationAssignment,
+  type AssignmentAuthorityAllowlistEntry,
+  type SignedObservationAssignment,
+} from "./observation-assignment.js";
+
 export const OBSERVATION_JOB_VERSION = "ObservationJob@0.1.0" as const;
 
 export interface ObservationJob {
@@ -22,7 +28,9 @@ export interface ObservationJob {
 }
 
 export interface RawObservationPoll {
-  readonly schema_version: "RawObservationPoll@0.1.0";
+  readonly schema_version: "RawObservationPoll@0.2.0";
+  readonly assignment_id: string;
+  readonly assignment_payload_hash: string;
   readonly poll_index: number;
   readonly observed_at: string;
   readonly observer_id: string;
@@ -30,15 +38,18 @@ export interface RawObservationPoll {
   readonly claims: readonly ReaderClaim[];
 }
 
-export async function executeObservationJob(input: {
-  readonly job: ObservationJob;
+export async function executeObservationAssignment(input: {
+  readonly assignment: SignedObservationAssignment;
+  readonly authority: AssignmentAuthorityAllowlistEntry;
   readonly readers: readonly ObservationReader[];
   readonly rawLogPath: string;
   readonly now?: () => Date;
   readonly sleep?: (milliseconds: number) => Promise<void>;
 }): Promise<UnsignedProbeResult> {
-  validateObservationJob(input.job, input.readers);
   const now = input.now ?? (() => new Date());
+  verifyObservationAssignment(input.assignment, input.authority, now());
+  const job = input.assignment.job;
+  validateObservationJob(job, input.readers);
   const sleep = input.sleep ?? (milliseconds => new Promise(resolve => setTimeout(resolve, milliseconds)));
   const rawHandle = await open(input.rawLogPath, "wx", 0o600);
   const startedAt = Date.now();
@@ -49,21 +60,23 @@ export async function executeObservationJob(input: {
   try {
     while (terminal === undefined) {
       const observedAt = now().toISOString();
-      latestClaims = await Promise.all(input.readers.map(async reader => observeReader(reader, input.job, pollIndex, observedAt)));
+      latestClaims = await Promise.all(input.readers.map(async reader => observeReader(reader, job, pollIndex, observedAt)));
       const poll: RawObservationPoll = {
-        schema_version: "RawObservationPoll@0.1.0",
+        schema_version: "RawObservationPoll@0.2.0",
+        assignment_id: input.assignment.assignmentId,
+        assignment_payload_hash: input.assignment.payloadHash,
         poll_index: pollIndex,
         observed_at: observedAt,
-        observer_id: input.job.observerId,
-        signature: input.job.signature,
+        observer_id: job.observerId,
+        signature: job.signature,
         claims: latestClaims,
       };
       await appendAndSync(rawHandle, poll);
-      const decision = decide(latestClaims, input.job.submission.last_valid_block_height);
+      const decision = decide(latestClaims, job.submission.last_valid_block_height);
       terminal = decision.terminal;
       supportingClaims = decision.supportingClaims;
       if (terminal !== undefined) break;
-      if (Date.now() - startedAt >= input.job.observationDeadlineMs) {
+      if (Date.now() - startedAt >= job.observationDeadlineMs) {
         const confirmed = latestClaims.filter(claim =>
           (claim.signature_status === "confirmed" || claim.signature_status === "finalized") && claim.execution_error === undefined,
         );
@@ -72,7 +85,7 @@ export async function executeObservationJob(input: {
         break;
       }
       pollIndex += 1;
-      await sleep(input.job.pollIntervalMs);
+      await sleep(job.pollIntervalMs);
     }
   } finally {
     await rawHandle.close();
@@ -83,18 +96,18 @@ export async function executeObservationJob(input: {
   const decidedAt = now().toISOString();
   return {
     schema_version: "0.1.0",
-    result_id: input.job.resultId,
-    idempotency_key: deriveIdempotencyKey(input.job.observerId, input.job.unit.unit_id),
-    observer_id: input.job.observerId,
-    observer_key_id: input.job.observerKeyId,
-    observer_sequence: input.job.observerSequence,
-    unit: input.job.unit,
-    experiment_definition_hash: input.job.experimentDefinitionHash,
-    signature: input.job.signature,
-    submission: input.job.submission,
+    result_id: job.resultId,
+    idempotency_key: deriveIdempotencyKey(job.observerId, job.unit.unit_id),
+    observer_id: job.observerId,
+    observer_key_id: job.observerKeyId,
+    observer_sequence: job.observerSequence,
+    unit: job.unit,
+    experiment_definition_hash: job.experimentDefinitionHash,
+    signature: job.signature,
+    submission: job.submission,
     reader_claims: latestClaims,
     quorum_decisions: [{
-      decision_id: sha256Hex(`${input.job.unit.unit_id}:${terminal}:${decidedAt}`),
+      decision_id: sha256Hex(`${job.unit.unit_id}:${terminal}:${decidedAt}`),
       decision_type: terminal,
       supporting_claim_ids: supportingClaims.map(claim => claim.claim_id),
       decided_at: decidedAt,

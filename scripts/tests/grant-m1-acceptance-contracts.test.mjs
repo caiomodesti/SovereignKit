@@ -12,6 +12,7 @@ test("accepts three cryptographically valid and content-correlated observers", a
   const result = await verifyGrantM1Acceptance(fixture.root);
   assert.equal(result.status, "PASS");
   assert.equal(result.observers, 3);
+  assert.equal(result.assignments, 3);
   assert.equal(result.signedResults, 3);
   assert.equal(result.rawPolls, 3);
 });
@@ -32,6 +33,26 @@ test("rejects tampered signed results even when the index hash is updated", asyn
   await writeJsonl(join(fixture.root, path), [result]);
   await updateReferenceHash(fixture.root, path);
   await assert.rejects(() => verifyGrantM1Acceptance(fixture.root), /payload hash is invalid/u);
+});
+
+test("rejects tampered assignment provenance even when the evidence hash is updated", async () => {
+  const fixture = await makeFixture();
+  const path = "observers/observer-a/signed-assignments.jsonl";
+  const assignment = JSON.parse((await readFile(join(fixture.root, path), "utf8")).trim());
+  assignment.job.submission.outcome = "RPC_REJECTED";
+  await writeJsonl(join(fixture.root, path), [assignment]);
+  await updateReferenceHash(fixture.root, path);
+  await assert.rejects(() => verifyGrantM1Acceptance(fixture.root), /assignment payload hash is invalid/u);
+});
+
+test("rejects raw polls that are not correlated to the signed assignment", async () => {
+  const fixture = await makeFixture();
+  const path = "observers/observer-b/raw-observations.jsonl";
+  const poll = JSON.parse((await readFile(join(fixture.root, path), "utf8")).trim());
+  poll.assignment_id = "ffffffff-ffff-4fff-8fff-ffffffffffff";
+  await writeJsonl(join(fixture.root, path), [poll]);
+  await updateReferenceHash(fixture.root, path);
+  await assert.rejects(() => verifyGrantM1Acceptance(fixture.root), /not correlated to an indexed signed assignment/u);
 });
 
 test("rejects cross-root and cross-observer evidence paths", async () => {
@@ -59,6 +80,14 @@ async function makeFixture() {
   const observers = [];
   const allowlist = [];
   const indexEntries = [];
+  const assignmentAuthority = generateKeyPairSync("ed25519");
+  const assignmentAuthorityEntry = {
+    issuerId: "grant-coordinator",
+    keyId: "assignment-key-1",
+    publicKeySpkiBase64: assignmentAuthority.publicKey.export({ type: "spki", format: "der" }).toString("base64"),
+    validFrom: "2026-08-24T00:00:00.000Z",
+    validUntil: "2026-12-31T23:59:59.999Z",
+  };
   for (const [position, suffix] of ["a", "b", "c"].entries()) {
     const observerId = `observer-${suffix}`;
     const keyId = `key-${suffix}`;
@@ -114,10 +143,37 @@ async function makeFixture() {
     const payloadHash = sha256Hex(canonicalJson(unsigned));
     const signable = canonicalJson({ ...unsigned, payload_hash: payloadHash });
     const signedResult = { ...unsigned, payload_hash: payloadHash, observer_signature: sign(null, Buffer.from(signable), identity.privateKey).toString("base64url") };
+    const assignmentUnsigned = {
+      schemaVersion: "ObservationAssignment@0.1.0",
+      assignmentId: `10000000-0000-4000-8000-00000000000${position}`,
+      issuerId: assignmentAuthorityEntry.issuerId,
+      issuerKeyId: assignmentAuthorityEntry.keyId,
+      issuedAt: "2026-08-25T00:59:00.000Z",
+      expiresAt: "2026-08-25T02:00:00.000Z",
+      job: {
+        schemaVersion: "ObservationJob@0.1.0",
+        resultId: unsigned.result_id,
+        observerId: unsigned.observer_id,
+        observerKeyId: unsigned.observer_key_id,
+        observerSequence: unsigned.observer_sequence,
+        unit: unsigned.unit,
+        experimentDefinitionHash: unsigned.experiment_definition_hash,
+        signature: unsigned.signature,
+        submission: unsigned.submission,
+        pollIntervalMs: 100,
+        observationDeadlineMs: 1_000,
+        readerRequestTimeoutMs: 100,
+      },
+    };
+    const assignmentPayloadHash = sha256Hex(canonicalJson(assignmentUnsigned));
+    const signedAssignment = { ...assignmentUnsigned, payloadHash: assignmentPayloadHash, issuerSignature: sign(null, Buffer.from(canonicalJson({ ...assignmentUnsigned, payloadHash: assignmentPayloadHash })), assignmentAuthority.privateKey).toString("base64url") };
     const files = {
+      assignment_provenance: [`observers/${observerId}/signed-assignments.jsonl`, [signedAssignment], true],
       signed_results: [`observers/${observerId}/signed-results.jsonl`, [signedResult], true],
       raw_observations: [`observers/${observerId}/raw-observations.jsonl`, [{
-        schema_version: "RawObservationPoll@0.1.0",
+        schema_version: "RawObservationPoll@0.2.0",
+        assignment_id: signedAssignment.assignmentId,
+        assignment_payload_hash: signedAssignment.payloadHash,
         poll_index: 0,
         observed_at: "2026-08-25T01:00:00.000Z",
         observer_id: observerId,
@@ -141,7 +197,8 @@ async function makeFixture() {
   await Promise.all([
     writeJson(join(root, "observer-registry.json"), { schema_version: "GrantObserverRegistry@0.1.0", generated_at: "2026-08-25T01:00:00.000Z", observers }),
     writeJson(join(root, "allowlist.json"), allowlist),
-    writeJson(join(root, "evidence-index.json"), { schema_version: "GrantM1EvidenceIndex@0.2.0", generated_at: "2026-08-25T01:00:00.000Z", observers: indexEntries }),
+    writeJson(join(root, "assignment-authorities.json"), [assignmentAuthorityEntry]),
+    writeJson(join(root, "evidence-index.json"), { schema_version: "GrantM1EvidenceIndex@0.3.0", generated_at: "2026-08-25T01:00:00.000Z", observers: indexEntries }),
   ]);
   return { root };
 }
@@ -150,7 +207,7 @@ async function updateReferenceHash(root, path) {
   const indexPath = join(root, "evidence-index.json");
   const index = JSON.parse(await readFile(indexPath, "utf8"));
   for (const observer of index.observers) {
-    for (const field of ["signed_results", "raw_observations", "health_history", "restart_evidence", "provider_evidence", "failure_matrix"]) {
+    for (const field of ["assignment_provenance", "signed_results", "raw_observations", "health_history", "restart_evidence", "provider_evidence", "failure_matrix"]) {
       for (const reference of observer[field]) if (reference.path === path) reference.sha256 = sha256Hex(await readFile(join(root, path)));
     }
   }

@@ -1,0 +1,9 @@
+[
+  {
+    "issuerId": "grant-coordinator",
+    "keyId": "assignment-key-2026-01",
+    "publicKeySpkiBase64": "REPLACE_WITH_COORDINATOR_ED25519_SPKI_BASE64",
+    "validFrom": "2026-08-25T00:00:00.000Z",
+    "validUntil": "2026-12-31T23:59:59.999Z"
+  }
+]

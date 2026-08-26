@@ -60,6 +60,23 @@ This is a deployment-readiness rehearsal, not independent-observer evidence.
 All three readers, the observer, and the Collector share one machine and one
 local validator, so the verifier requires `infrastructure_independence: false`.
 
+## Local recovery drill
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts/run-grant-m1-recovery-drill.ps1
+```
+
+The drill first runs the Observer against an unavailable Collector and requires
+the unsigned result to remain queued. It restarts the Observer, brings up the
+Collector, requires one durable delivery, then restarts both processes and
+requires exactly one reconstructed Collector record and zero duplicate delivery
+records. The generated evidence is verified by
+`scripts/verify-grant-m1-recovery-drill.mjs` and is explicitly scoped as
+`LOCAL_SOFTWARE_RECOVERY_ONLY` with infrastructure independence set to false.
+
+This drill must be repeated independently on all three real observer hosts. A
+local pass cannot satisfy the external restart-evidence requirement.
+
 ## Acceptance gate
 
 The external acceptance command is intentionally impossible to pass without retained real evidence:
@@ -70,18 +87,19 @@ node scripts/verify-grant-m1-acceptance.mjs --evidence <sanitized-m1-evidence-di
 
 It requires at least three unique observer identities, providers, provider-account fingerprints, and sanitized instances; corroborated independence; matching allowlist identities; and existing signed-result, raw-observation, health, restart, provider, and failure-matrix evidence for every observer.
 
-The external evidence index uses `GrantM1EvidenceIndex@0.2.0`. Every artifact
+The external evidence index uses `GrantM1EvidenceIndex@0.3.0`. Every artifact
 reference contains a relative observer-scoped path and a lowercase SHA-256.
 Acceptance recomputes each hash, rejects empty or oversized files, searches for
-private-key markers, cryptographically verifies signed ProbeResults against the
-public allowlist, correlates raw polls to signed transaction signatures, and
+private-key markers, cryptographically verifies signed assignments and
+ProbeResults against their public allowlists, correlates raw polls to both, and
 validates the minimum health, provider, restart, and failure-matrix content.
 Placeholder files cannot satisfy the gate.
 
 ## Current validation record
 
 - typecheck: PASS;
-- deterministic tests: 92/92 PASS;
+- deterministic tests: 93/93 PASS;
+- assignment/evidence hostile contracts: 7/7 PASS;
 - Collector/Observer separate-process integration: PASS;
 - grant software contract: PASS;
 - retained local readiness harness: PASS against Agave 4.0.0;

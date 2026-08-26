@@ -3,22 +3,28 @@ import { dirname, resolve } from "node:path";
 
 import { SolanaKitObservationReader } from "@sovereignkit/telemetry";
 
-import { executeObservationJob, type ObservationJob } from "./observation-worker.js";
+import { executeObservationAssignment } from "./observation-worker.js";
+import type { AssignmentAuthorityAllowlistEntry, SignedObservationAssignment } from "./observation-assignment.js";
 
 interface ReaderRegistry {
   readonly schemaVersion: "ObservationReaderRegistry@0.1.0";
   readonly readers: readonly { readonly readerId: string; readonly endpoint: string }[];
 }
 
-const [jobPathText, readersPathText, unsignedOutputText, rawLogText] = process.argv.slice(2);
-if (jobPathText === undefined || readersPathText === undefined || unsignedOutputText === undefined || rawLogText === undefined) {
-  throw new Error("usage: sovereignkit-observation-worker <job.json> <readers.json> <unsigned-output.json> <raw-observations.jsonl>");
+const [assignmentPathText, authoritiesPathText, readersPathText, unsignedOutputText, rawLogText] = process.argv.slice(2);
+if (assignmentPathText === undefined || authoritiesPathText === undefined || readersPathText === undefined || unsignedOutputText === undefined || rawLogText === undefined) {
+  throw new Error("usage: sovereignkit-observation-worker <signed-assignment.json> <assignment-authorities.json> <readers.json> <unsigned-output.json> <raw-observations.jsonl>");
 }
-const jobPath = resolve(jobPathText);
+const assignmentPath = resolve(assignmentPathText);
+const authoritiesPath = resolve(authoritiesPathText);
 const readersPath = resolve(readersPathText);
 const unsignedOutput = resolve(unsignedOutputText);
 const rawLogPath = resolve(rawLogText);
-const job = JSON.parse(await readFile(jobPath, "utf8")) as ObservationJob;
+const assignment = JSON.parse(await readFile(assignmentPath, "utf8")) as SignedObservationAssignment;
+const authorities = JSON.parse(await readFile(authoritiesPath, "utf8")) as AssignmentAuthorityAllowlistEntry[];
+if (!Array.isArray(authorities)) throw new Error("invalid assignment authority allowlist");
+const authority = authorities.find(entry => entry.issuerId === assignment.issuerId && entry.keyId === assignment.issuerKeyId);
+if (authority === undefined) throw new Error("assignment authority is not allowlisted");
 const registry = JSON.parse(await readFile(readersPath, "utf8")) as ReaderRegistry;
 if (registry.schemaVersion !== "ObservationReaderRegistry@0.1.0" || !Array.isArray(registry.readers)) throw new Error("invalid observation reader registry");
 const readers = registry.readers.map(entry => {
@@ -30,7 +36,7 @@ const readers = registry.readers.map(entry => {
 });
 await mkdir(dirname(unsignedOutput), { recursive: true });
 await mkdir(dirname(rawLogPath), { recursive: true });
-const unsigned = await executeObservationJob({ job, readers, rawLogPath });
+const unsigned = await executeObservationAssignment({ assignment, authority, readers, rawLogPath });
 const output = await open(unsignedOutput, "wx", 0o600);
 try {
   await output.writeFile(`${JSON.stringify(unsigned)}\n`, "utf8");

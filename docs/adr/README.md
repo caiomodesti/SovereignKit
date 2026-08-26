@@ -23,3 +23,4 @@ Status values are `Accepted`, `Superseded`, or `Deprecated`. Accepted ADRs are n
 | [017](ADR-017-windows-test-validator-snapshot-disable.md) | Disable test-validator snapshots in the Windows local proof build |
 | [018](ADR-018-probe-result-identifiers-and-runtime-validation.md) | ProbeResult identifiers and runtime validation |
 | [019](ADR-019-probe-informed-route-ordering.md) | Fail-open probe-informed route ordering |
+| [020](ADR-020-signed-observation-assignments.md) | Signed, short-lived observation assignments |

@@ -16,7 +16,8 @@ import { afterEach, describe, expect, test } from "vitest";
 
 import { DurableProbeResultCollector } from "../src/durable-collector.js";
 import { createCollectorHttpServer } from "../src/http.js";
-import { executeObservationJob, type ObservationJob } from "../src/observation-worker.js";
+import { generateAssignmentAuthorityKeyPair, signObservationAssignment } from "../src/observation-assignment.js";
+import { executeObservationAssignment, type ObservationJob } from "../src/observation-worker.js";
 import { ObserverDeliveryRuntime, type ObserverRuntimeConfig } from "../src/observer-runtime.js";
 
 const repositoryRoot = resolve(fileURLToPath(new URL("../../..", import.meta.url)));
@@ -36,15 +37,27 @@ describe("Grant Milestone 1 local end-to-end software path", () => {
     const keyPath = join(directory, "observer-private.json");
     await writeFile(keyPath, `${JSON.stringify(exportObserverPrivateKey(keyPair))}\n`, { encoding: "utf8", mode: 0o600 });
     const job = makeJob(keyPair.observerId, keyPair.keyId);
-    const rawLogPath = join(directory, "raw-observations.jsonl");
-    const unsigned = await executeObservationJob({
+    const authorityKey = generateAssignmentAuthorityKeyPair("grant-coordinator", "assignment-key-1");
+    const assignment = signObservationAssignment({
+      schemaVersion: "ObservationAssignment@0.1.0",
+      assignmentId: randomUUID(),
+      issuerId: authorityKey.issuerId,
+      issuerKeyId: authorityKey.keyId,
+      issuedAt: "2026-08-25T11:59:00.000Z",
+      expiresAt: "2026-08-25T13:00:00.000Z",
       job,
+    }, authorityKey);
+    const rawLogPath = join(directory, "raw-observations.jsonl");
+    const unsigned = await executeObservationAssignment({
+      assignment,
+      authority: { issuerId: authorityKey.issuerId, keyId: authorityKey.keyId, publicKeySpkiBase64: authorityKey.publicKeySpkiBase64, validFrom: "2026-01-01T00:00:00.000Z", validUntil: "2027-01-01T00:00:00.000Z" },
       readers: [
         reader("reader-a", { status: "finalized", slot: 42n, rpcContextSlot: 43n }, 90n),
         reader("reader-b", { status: "finalized", slot: 42n, rpcContextSlot: 43n }, 90n),
         reader("reader-c", { status: "confirmed", slot: 42n, rpcContextSlot: 43n }, 90n),
       ],
       rawLogPath,
+      now: () => new Date("2026-08-25T12:00:00.000Z"),
     });
     await writeFile(join(spool, "000001.json"), `${JSON.stringify(unsigned)}\n`, "utf8");
 
