@@ -1,0 +1,37 @@
+{
+  "schema_version": "GrantM1OperatorReadiness@0.1.0",
+  "monthly_ceiling_usd": 50,
+  "billing_approved": false,
+  "billing_approved_at": null,
+  "provider_accounts": [
+    {
+      "provider_id": "aws",
+      "account_owner_verified": false,
+      "mfa_enabled": false,
+      "billing_method_verified": false,
+      "budget_alert_enabled": false
+    },
+    {
+      "provider_id": "digitalocean",
+      "account_owner_verified": false,
+      "mfa_enabled": false,
+      "billing_method_verified": false,
+      "budget_alert_enabled": false
+    },
+    {
+      "provider_id": "hetzner",
+      "account_owner_verified": false,
+      "mfa_enabled": false,
+      "billing_method_verified": false,
+      "budget_alert_enabled": false
+    }
+  ],
+  "collector_hostname": {
+    "controlled_by_operator": false,
+    "dns_ready": false,
+    "value": null
+  },
+  "host_key_custody_acknowledged": false,
+  "provisioning_approved": false,
+  "provisioning_approved_at": null
+}

@@ -1,4 +1,5 @@
 import { readFile } from "node:fs/promises";
+import { evaluateGrantM1OperatorReadiness } from "./lib/grant-m1-operator-readiness.mjs";
 
 const requiredFiles = [
   "docs/project-master-plan.md",
@@ -15,6 +16,11 @@ const requiredFiles = [
   "deploy/grant-pilot/systemd/sovereignkit-observer.service",
   "deploy/grant-pilot/systemd/sovereignkit-observation-worker@.service",
   "deploy/grant-pilot/systemd/sovereignkit-collector.service",
+  "deploy/grant-pilot/operator-readiness.example.json",
+  "docs/grant-m1-provider-onboarding.md",
+  "scripts/lib/grant-m1-operator-readiness.mjs",
+  "scripts/verify-grant-m1-operator-readiness.mjs",
+  "scripts/tests/grant-m1-operator-readiness.test.mjs",
   "spec/grant-observer-registry.schema.json",
   "spec/grant-m1-evidence-index.schema.json",
   "packages/collector/src/observation-worker.ts",
@@ -93,5 +99,9 @@ if (infrastructurePlan.schema_version !== "GrantM1InfrastructurePlan@0.1.0" ||
     infrastructurePlan.billing_authorized !== false ||
     infrastructurePlan.status !== "PLANNED_NOT_PROVISIONED") {
   throw new Error("grant infrastructure plan must remain versioned, unprovisioned, and unable to authorize billing");
+}
+const operatorReadiness = evaluateGrantM1OperatorReadiness(JSON.parse(contents.get("deploy/grant-pilot/operator-readiness.example.json")));
+if (operatorReadiness.status !== "ACTION_REQUIRED" || operatorReadiness.blockers.length === 0) {
+  throw new Error("checked-in operator readiness example must remain blocked and secret-free");
 }
 process.stdout.write(`${JSON.stringify({ status: "PASS", gate: "GRANT_M1_SOFTWARE", requiredFiles: requiredFiles.length })}\n`);

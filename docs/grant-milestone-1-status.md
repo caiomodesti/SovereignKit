@@ -27,6 +27,7 @@ Started: 2026-08-24
 - secret-safe single-RPC-route preflight that validates a provider Devnet endpoint while persisting only its public origin and explicitly contributing no observer-independence or milestone-acceptance claim.
 - live Alchemy Solana Devnet route preflight retained at `fixtures/grant-m1/alchemy-devnet-route-20260826.json`: `getHealth`, `getGenesisHash`, `getVersion`, and finalized `getSlot` passed without retaining the credential-bearing URL path.
 - frozen three-provider infrastructure topology and USD 50/month proposed ceiling with repository-enforced `billing_authorized: false`; no cloud component is claimed as provisioned.
+- secret-free operator-readiness gate for provider ownership, MFA, billing controls, budget alerts, Collector DNS, key custody, and explicit provisioning approval; the checked-in example remains deliberately blocked.
 
 ## Not yet implemented or validated
 
