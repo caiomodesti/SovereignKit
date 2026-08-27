@@ -15,6 +15,7 @@ const fragments = [
   ["xox", "p", "-"].join(""),
   ["sk", "live", "_"].join("_"),
   ["pk", "live", "_"].join("_"),
+  ["al", "ch", "_"].join(""),
   ["-----BEGIN", "PRIVATE KEY-----"].join(" "),
 ];
 const findings = [];

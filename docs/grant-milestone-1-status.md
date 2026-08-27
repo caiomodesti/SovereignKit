@@ -24,6 +24,8 @@ Started: 2026-08-24
 - public secret-free anchor for that run at `fixtures/grant-m1/local-readiness-20260825.json`.
 - local recovery drill proving queue preservation during Collector outage, delivery after Observer restart, Collector log reconstruction, and zero duplicate delivery records.
 - Linux host preflight that fails closed on clock synchronization, observer identity/readiness, key ownership and permissions, active service, frozen commit and Node.js version, clean runtime tree, and free-disk threshold while emitting only sanitized evidence.
+- secret-safe single-RPC-route preflight that validates a provider Devnet endpoint while persisting only its public origin and explicitly contributing no observer-independence or milestone-acceptance claim.
+- live Alchemy Solana Devnet route preflight retained at `fixtures/grant-m1/alchemy-devnet-route-20260826.json`: `getHealth`, `getGenesisHash`, `getVersion`, and finalized `getSlot` passed without retaining the credential-bearing URL path.
 
 ## Not yet implemented or validated
 
@@ -36,5 +38,9 @@ Started: 2026-08-24
 - real-host recovery exercises and complete external hostile audit.
 
 The current runtime MUST NOT be described as a completed independent observation layer. The software and deployment path are implemented, locally integrated, and rehearsed against a real local validator, so the status remains `IMPLEMENTED_NOT_VALIDATED`. It remains below `ACCEPTED` until three real external deployments, real remote reader calls, failure/recovery exercises, and independence evidence are retained.
+
+The Alchemy preflight proves that one external logical Devnet RPC route is usable
+from the operator environment. It is neither an observer host nor independence
+evidence, and it does not reduce the three-provider deployment requirement.
 
 Milestone 2 has not started.

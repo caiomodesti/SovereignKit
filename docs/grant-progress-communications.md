@@ -79,6 +79,11 @@ and unsanitized instance records must never appear.
 > Próximo passo: provisionar os três ambientes externos e o Collector HTTPS
 > assim que o acesso aos provedores estiver definido.
 >
+> Atualização de rota: a primeira dependência RPC externa, Alchemy Solana
+> Devnet, passou por um preflight secret-safe de saúde, identidade da rede,
+> versão e slot finalizado. Isso valida uma rota lógica; não conta como observer
+> independente nem altera o status do milestone.
+>
 > Código e metodologia: https://github.com/caiomodesti/SovereignKit
 
 ## Milestone acceptance template

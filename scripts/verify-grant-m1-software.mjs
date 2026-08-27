@@ -26,11 +26,16 @@ const requiredFiles = [
   "scripts/verify-grant-m1-acceptance.mjs",
   "scripts/lib/grant-m1-acceptance.mjs",
   "scripts/lib/grant-m1-host-preflight.mjs",
+  "scripts/lib/grant-m1-rpc-route-preflight.mjs",
   "scripts/capture-grant-m1-host-preflight.mjs",
+  "scripts/run-grant-m1-rpc-route-preflight.mjs",
   "scripts/tests/grant-m1-acceptance-contracts.test.mjs",
   "scripts/tests/grant-m1-host-preflight.test.mjs",
+  "scripts/tests/grant-m1-rpc-route-preflight.test.mjs",
+  "deploy/grant-pilot/rpc-route-endpoint.example.txt",
   "deploy/grant-pilot/evidence-index.example.json",
   "fixtures/grant-m1/local-readiness-20260825.json",
+  "fixtures/grant-m1/alchemy-devnet-route-20260826.json",
 ];
 
 const contents = new Map(await Promise.all(requiredFiles.map(async path => [path, await readFile(path, "utf8")])));
@@ -54,6 +59,15 @@ const readinessAnchor = JSON.parse(contents.get("fixtures/grant-m1/local-readine
 if (readinessAnchor.evidence_scope !== "LOCAL_SOFTWARE_READINESS_ONLY" || readinessAnchor.infrastructure_independence !== false || readinessAnchor.private_key_retained !== false) {
   throw new Error("local readiness anchor must preserve its non-independent, secret-free claim boundary");
 }
+const rpcRouteAnchor = JSON.parse(contents.get("fixtures/grant-m1/alchemy-devnet-route-20260826.json"));
+if (rpcRouteAnchor.schema_version !== "GrantM1RpcRoutePreflight@0.1.0" ||
+    rpcRouteAnchor.scope !== "SINGLE_LOGICAL_RPC_ROUTE_PREFLIGHT_ONLY" ||
+    rpcRouteAnchor.logical_endpoint_origin !== "https://solana-devnet.g.alchemy.com" ||
+    rpcRouteAnchor.credential_material_persisted !== false ||
+    rpcRouteAnchor.operational_independence_established !== false ||
+    rpcRouteAnchor.milestone_acceptance_effect !== "NONE") {
+  throw new Error("Alchemy Devnet route anchor must remain sanitized and make no observer-independence claim");
+}
 if (!contents.get("scripts/lib/grant-m1-acceptance.mjs").includes("GrantM1EvidenceIndex@0.3.0") ||
     !contents.get("scripts/lib/grant-m1-acceptance.mjs").includes("assignment signature is invalid") ||
     !contents.get("scripts/lib/grant-m1-acceptance.mjs").includes("signed result signature is invalid")) {
@@ -63,5 +77,10 @@ if (!contents.get("scripts/lib/grant-m1-host-preflight.mjs").includes("GrantM1Ho
     !contents.get("scripts/capture-grant-m1-host-preflight.mjs").includes("NTPSynchronized") ||
     !contents.get("scripts/capture-grant-m1-host-preflight.mjs").includes("systemctl")) {
   throw new Error("grant host preflight must retain its versioned clock and service checks");
+}
+if (!contents.get("scripts/lib/grant-m1-rpc-route-preflight.mjs").includes("GrantM1RpcRoutePreflight@0.1.0") ||
+    !contents.get("scripts/lib/grant-m1-rpc-route-preflight.mjs").includes("operational_independence_established: false") ||
+    !contents.get("scripts/run-grant-m1-rpc-route-preflight.mjs").includes(".secrets/alchemy-devnet-endpoint.txt")) {
+  throw new Error("grant RPC route preflight must remain versioned, secret-file based, and non-independent");
 }
 process.stdout.write(`${JSON.stringify({ status: "PASS", gate: "GRANT_M1_SOFTWARE", requiredFiles: requiredFiles.length })}\n`);
