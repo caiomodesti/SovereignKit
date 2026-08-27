@@ -162,6 +162,11 @@ The following items cannot be satisfied solely inside the repository and remain 
 | Independence evidence | Preserve sanitized instance IDs, invoices, region records, and provider ownership evidence | Milestone 1 acceptance | No additional expected cost |
 | Grant decision | Confirm grant approval and explicitly authorize Milestone 1 | Before implementation | Approved grant notice and user authorization recorded on 2026-08-24 |
 
+Cost policy: ADR-023 requires a zero-cost review before any paid topology is
+activated. RPC credits are pursued first, eligible free-tier compute must pass
+the full host gate and a 24-hour soak, and ADR-022 remains a USD 50/month paid
+fallback rather than an expected expense. See `grant-milestone-cost-plan.md`.
+
 Credentials must be entered directly into the selected provider, secret manager, or GitHub Environment. Primary account passwords, seed phrases, private keys, and billing credentials must not be sent through chat.
 
 ## Acceptance matrix

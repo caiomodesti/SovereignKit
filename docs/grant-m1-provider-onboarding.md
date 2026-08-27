@@ -2,6 +2,10 @@
 
 Status: `ACTION_REQUIRED` — no cloud resource has been provisioned.
 
+ADR-023 adds a prior zero-cost review. Do not complete the paid-provider gate
+or create an ADR-022 resource until current Superteam partner outcomes and
+free-tier eligibility are recorded.
+
 This runbook converts the operator-controlled prerequisites for Milestone 1
 into an explicit gate. It does not authorize billing, create accounts, buy a
 domain, deploy a host, or establish observer independence.

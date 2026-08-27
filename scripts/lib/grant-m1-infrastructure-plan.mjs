@@ -5,6 +5,13 @@ export function validateGrantM1InfrastructurePlan(plan) {
   if (plan.schema_version !== GRANT_M1_INFRASTRUCTURE_PLAN_VERSION) throw new Error("infrastructure plan version is invalid");
   if (plan.status !== "PLANNED_NOT_PROVISIONED") throw new Error("unprovisioned infrastructure plan must retain its explicit status");
   if (plan.billing_authorized !== false) throw new Error("repository plan cannot authorize provider billing");
+  if (plan.activation_policy?.mode !== "PAID_FALLBACK_ONLY" ||
+      plan.activation_policy?.zero_cost_review_required !== true ||
+      plan.activation_policy?.superteam_partner_outcome !== "PENDING" ||
+      plan.activation_policy?.free_tier_eligibility !== "PENDING" ||
+      plan.activation_policy?.operator_spend_authorization !== "NOT_AUTHORIZED") {
+    throw new Error("paid infrastructure must remain blocked behind the zero-cost review");
+  }
   if (!Array.isArray(plan.components)) throw new Error("infrastructure components are required");
 
   const ids = plan.components.map(component => component.component_id);
