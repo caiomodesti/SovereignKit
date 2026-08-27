@@ -2,9 +2,11 @@
 
 Status: `ACTION_REQUIRED` — no cloud resource has been provisioned.
 
-ADR-023 adds a prior zero-cost review. Do not complete the paid-provider gate
-or create an ADR-022 resource until current Superteam partner outcomes and
-free-tier eligibility are recorded.
+ADR-023 adds a prior zero-cost review. Public-offer research is recorded in
+`deploy/grant-pilot/zero-cost-candidate-plan.json`; account eligibility remains
+unverified. Do not complete the paid-provider gate or create an ADR-022 resource
+until the candidate accounts have been checked and a zero-cost canary has been
+attempted.
 
 This runbook converts the operator-controlled prerequisites for Milestone 1
 into an explicit gate. It does not authorize billing, create accounts, buy a
@@ -12,13 +14,17 @@ domain, deploy a host, or establish observer independence.
 
 ## Before any server exists
 
-1. Create or verify accounts owned by the project operator at AWS,
-   DigitalOcean, and Hetzner. Enable MFA on every account.
+1. First create or verify project-operator accounts for the zero-cost candidates
+   at AWS, Google Cloud, and Oracle Cloud. Enable MFA on every account. If the
+   zero-cost path fails its recorded gates and paid fallback is explicitly
+   approved, then create or verify the ADR-022 DigitalOcean and Hetzner accounts.
 2. Add a billing method directly in each provider console. Never put payment
    details, passwords, recovery codes, API tokens, or full invoices in the
    repository, chat, screenshots, or evidence bundle.
-3. Configure provider-side budget/usage alerts. The frozen plan estimates USD
-   36.98/month before excluded costs and uses USD 50/month as the pilot ceiling.
+3. Configure provider-side budget/usage guards even for free offers. A limit or
+   alert is evidence of control, not a guarantee against charges. The paid
+   fallback estimates USD 36.98/month before excluded costs and uses USD
+   50/month as the pilot ceiling.
 4. Choose a hostname controlled by the operator for the Collector TLS edge.
    Do not publish an IP address or create DNS until the Collector address is
    known.
@@ -30,7 +36,29 @@ domain, deploy a host, or establish observer independence.
 
 ## Local gate file
 
-Copy the public example into the ignored `.secrets` directory:
+For the active zero-cost path, copy its public example into the ignored
+`.secrets` directory:
+
+```powershell
+New-Item -ItemType Directory -Force .secrets | Out-Null
+Copy-Item deploy/grant-pilot/zero-cost-account-readiness.example.json `
+  .secrets/grant-m1-zero-cost-account-readiness.json
+```
+
+Edit only booleans, the approval timestamp, and the planned Collector hostname.
+Do not add account IDs, payment data, credentials, recovery codes, tokens, or
+screenshots. Validate it with:
+
+```powershell
+node scripts/verify-grant-m1-zero-cost-account-readiness.mjs `
+  .secrets/grant-m1-zero-cost-account-readiness.json --require-ready
+```
+
+This gate can authorize only the zero-cost provisioning attempt; it cannot
+activate the paid fallback.
+
+If zero-cost qualification fails and paid fallback is separately approved,
+copy the paid public example:
 
 ```powershell
 New-Item -ItemType Directory -Force .secrets | Out-Null
@@ -50,7 +78,27 @@ node scripts/verify-grant-m1-operator-readiness.mjs `
 Milestone 1 acceptance and it does not permit the software to create or charge
 resources automatically.
 
-## Provisioning sequence after the gate
+## Zero-cost provisioning sequence
+
+1. Validate AWS, Google Cloud, and Oracle account eligibility without creating
+   resources or activating paid continuation.
+2. Create the Oracle home-region Collector candidate only if the console marks
+   the selected A1 shape and boot volume as Always Free eligible.
+3. Harden it, configure the loopback Collector plus TLS edge, and retain a
+   sanitized deployment record.
+4. Create the AWS Lightsail Observer A canary only if the console confirms the
+   selected 2 GiB bundle is covered for the required window.
+5. Require host preflight, signed observation, restart recovery, delivery
+   recovery, 24-hour canary, and sanitized provider evidence.
+6. Stop on any unexplained critical failure. Do not create Observers B or C.
+7. Only after Observer A passes, create Google `e2-micro` Observer B and Oracle
+   A1 Observer C, one at a time, preserving the same gates.
+8. Execute the complete three-host failure matrix and acceptance bundle.
+
+## Paid fallback sequence
+
+This sequence remains blocked until the zero-cost attempt fails materially and
+the operator explicitly authorizes spend:
 
 1. Create the Hetzner Helsinki Collector only.
 2. Harden it, configure the loopback Collector plus TLS edge, and retain a
@@ -63,9 +111,9 @@ resources automatically.
    Hetzner Nuremberg Observer C, one at a time.
 7. Execute the complete three-host failure matrix and acceptance bundle.
 
-The Collector and Observer C share a Hetzner control plane. This coupling must
-remain explicit and the Collector must never be counted as an independent
-observer.
+In the zero-cost plan, the Collector and Observer C share the Oracle control
+plane. In the paid fallback, they share Hetzner. Either coupling must remain
+explicit, and the Collector must never be counted as an independent observer.
 
 ## Evidence that may be retained
 

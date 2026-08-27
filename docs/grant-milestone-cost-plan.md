@@ -1,6 +1,7 @@
 # Grant Milestones 1–3: execution and cost plan
 
-Status: zero-cost review in progress; no paid resource provisioned.
+Status: public-offer research complete; account eligibility and host validation
+required; no resource provisioned.
 
 ## What the grant actually requires
 
@@ -32,17 +33,27 @@ themselves run our observer daemon or establish operational independence.
 
 ### Observer compute
 
-- AWS Lightsail: potentially USD 0 for three months on an eligible selected
-  bundle.
-- Google Cloud: potentially USD 0 for one eligible `e2-micro`, subject to
-  resource and egress limits.
-- Oracle Cloud: potentially USD 0 for Always Free compute, subject to capacity
-  and idle-instance reclamation risk.
+- AWS Lightsail: preferred first observer canary using the 2 GiB public-IPv4
+  bundle when the account console confirms the current free-trial entitlement.
+  The principal risk is automatic paid continuation after the trial.
+- Google Cloud: third-party-independent observer candidate using one eligible
+  `e2-micro`. It has 1 GiB memory, 30 GiB standard disk, and 1 GiB monthly
+  external egress under the current Free Tier, so it must pass the same canary
+  and retain usage measurements.
+- Oracle Cloud: one 1-OCPU/6-GiB A1 observer plus one 1-OCPU/6-GiB Collector
+  fit within the aggregate Always Free compute allowance. Capacity, ARM64
+  compatibility, home-region placement, and idle reclamation remain blockers.
 - OVHcloud: Superteam advertises up to 40% savings; this is a discounted paid
   fallback, not a zero-cost commitment.
 
 No free-tier host is accepted until the same production-like preflight and
 24-hour soak pass. A free label is not evidence of fitness.
+
+The canonical candidate record and its fail-closed validator are
+`deploy/grant-pilot/zero-cost-candidate-plan.json` and
+`scripts/verify-grant-m1-zero-cost-plan.mjs`. Every component deliberately
+retains `account_eligibility: UNVERIFIED`, `provisioned: false`, and
+`admitted: false` until real console and host evidence exists.
 
 ## Possible unavoidable costs
 
