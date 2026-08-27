@@ -63,4 +63,25 @@ activity belongs in commits and CI rather than promotional status claims.
 - Status remains `IMPLEMENTED_NOT_VALIDATED`; no provider host exists and no billing is authorized.
 - Next action: verify free-tier account eligibility and test one 24-hour canary before considering paid infrastructure.
 
+## 2026-08-27 — Zero-cost candidate topology frozen
+
+- Reverified current official AWS Lightsail, Google Cloud Free Tier, Google E2,
+  and Oracle Always Free terms.
+- Froze a machine-readable USD 0 candidate topology: AWS Lightsail Observer A,
+  Google `e2-micro` Observer B, Oracle A1 Observer C, and a second Oracle A1
+  instance as the non-observer Collector.
+- Preserved the Oracle Collector/Observer control-plane coupling explicitly;
+  the Collector contributes nothing to observer independence.
+- Google remains conditional because 1 GiB memory and 1 GiB monthly egress are
+  tight. Oracle remains conditional on capacity, ARM64 compatibility, home
+  region, and idle-reclamation behavior. AWS remains conditional on actual
+  account entitlement and trial expiration controls.
+- Added a fail-closed validator that rejects fake eligibility, hidden spend,
+  provider overlap, missing 24-hour canaries, unofficial offer references,
+  resource-floor violations, Oracle allowance drift, or hidden coupling.
+- Cost incurred: USD 0. No account eligibility, provisioning, or host admission
+  is claimed.
+- Next action: operator account/MFA checks, then Oracle Collector and AWS
+  Observer A only; do not create B or C until A passes.
+
 Milestone 2 has not started.

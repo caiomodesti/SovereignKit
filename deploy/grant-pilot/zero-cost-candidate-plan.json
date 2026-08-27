@@ -1,0 +1,149 @@
+{
+  "schema_version": "GrantM1ZeroCostCandidatePlan@0.1.0",
+  "status": "RESEARCH_COMPLETE_ACCOUNT_VALIDATION_REQUIRED",
+  "researched_at": "2026-08-27T03:33:31.243Z",
+  "cash_spend_authorized": false,
+  "target_cash_monthly_usd": 0,
+  "admission_policy": {
+    "required_observer_count": 3,
+    "required_distinct_observer_providers": 3,
+    "host_preflight_required": true,
+    "observer_canary_minimum_seconds": 86400,
+    "paid_fallback_activation": "EXPLICIT_OPERATOR_APPROVAL_ONLY"
+  },
+  "components": [
+    {
+      "component_id": "collector-oracle-home-region",
+      "role": "COLLECTOR",
+      "provider_id": "oracle",
+      "offer_model": "ALWAYS_FREE",
+      "offer_reference": "https://docs.oracle.com/en-us/iaas/Content/FreeTier/freetier_topic-Always_Free_Resources.htm",
+      "account_eligibility": "UNVERIFIED",
+      "provisioned": false,
+      "admitted": false,
+      "expected_cash_monthly_usd": 0,
+      "architecture": "arm64",
+      "resource_target": {
+        "shape": "VM.Standard.A1.Flex",
+        "ocpu": 1,
+        "memory_mib": 6144,
+        "storage_gib": 50
+      },
+      "required_gates": [
+        "ACCOUNT_ELIGIBILITY_VERIFIED",
+        "BUDGET_GUARD_ACTIVE",
+        "COLLECTOR_RECOVERY_PASS",
+        "TLS_HOSTNAME_CONTROLLED"
+      ],
+      "risk_codes": [
+        "CAPACITY_UNAVAILABLE",
+        "HOME_REGION_ONLY",
+        "IDLE_RECLAMATION",
+        "ARM64_COMPATIBILITY"
+      ]
+    },
+    {
+      "component_id": "observer-aws-lightsail",
+      "role": "OBSERVER",
+      "provider_id": "aws",
+      "offer_model": "TIME_LIMITED_TRIAL",
+      "offer_reference": "https://aws.amazon.com/lightsail/pricing/",
+      "account_eligibility": "UNVERIFIED",
+      "provisioned": false,
+      "admitted": false,
+      "expected_cash_monthly_usd": 0,
+      "architecture": "x64",
+      "resource_target": {
+        "shape": "Linux public IPv4 USD 12 bundle",
+        "vcpu": 2,
+        "memory_mib": 2048,
+        "storage_gib": 60
+      },
+      "required_gates": [
+        "ACCOUNT_ELIGIBILITY_VERIFIED",
+        "BUDGET_GUARD_ACTIVE",
+        "HOST_PREFLIGHT_PASS",
+        "CANARY_24H_PASS"
+      ],
+      "risk_codes": [
+        "ACCOUNT_ELIGIBILITY_UNVERIFIED",
+        "TRIAL_EXPIRY_AUTO_BILLING",
+        "OFFER_MUTABILITY"
+      ]
+    },
+    {
+      "component_id": "observer-google-e2-micro",
+      "role": "OBSERVER",
+      "provider_id": "google-cloud",
+      "offer_model": "ALWAYS_FREE_LIMITED",
+      "offer_reference": "https://docs.cloud.google.com/free/docs/free-cloud-features",
+      "account_eligibility": "UNVERIFIED",
+      "provisioned": false,
+      "admitted": false,
+      "expected_cash_monthly_usd": 0,
+      "architecture": "x64",
+      "resource_target": {
+        "shape": "e2-micro",
+        "vcpu_burst": 2,
+        "sustained_vcpu_fraction": 0.25,
+        "memory_mib": 1024,
+        "storage_gib": 30,
+        "monthly_egress_gib": 1
+      },
+      "required_gates": [
+        "ACCOUNT_ELIGIBILITY_VERIFIED",
+        "BUDGET_GUARD_ACTIVE",
+        "HOST_PREFLIGHT_PASS",
+        "CANARY_24H_PASS"
+      ],
+      "risk_codes": [
+        "BILLING_ACCOUNT_REQUIRED",
+        "LOW_MEMORY",
+        "MONTHLY_EGRESS_LIMIT",
+        "OFFER_MUTABILITY"
+      ]
+    },
+    {
+      "component_id": "observer-oracle-a1",
+      "role": "OBSERVER",
+      "provider_id": "oracle",
+      "offer_model": "ALWAYS_FREE",
+      "offer_reference": "https://docs.oracle.com/en-us/iaas/Content/FreeTier/freetier_topic-Always_Free_Resources.htm",
+      "account_eligibility": "UNVERIFIED",
+      "provisioned": false,
+      "admitted": false,
+      "expected_cash_monthly_usd": 0,
+      "architecture": "arm64",
+      "resource_target": {
+        "shape": "VM.Standard.A1.Flex",
+        "ocpu": 1,
+        "memory_mib": 6144,
+        "storage_gib": 50
+      },
+      "required_gates": [
+        "ACCOUNT_ELIGIBILITY_VERIFIED",
+        "BUDGET_GUARD_ACTIVE",
+        "HOST_PREFLIGHT_PASS",
+        "CANARY_24H_PASS"
+      ],
+      "risk_codes": [
+        "CAPACITY_UNAVAILABLE",
+        "HOME_REGION_ONLY",
+        "IDLE_RECLAMATION",
+        "ARM64_COMPATIBILITY"
+      ]
+    }
+  ],
+  "provisioning_order": [
+    "collector-oracle-home-region",
+    "observer-aws-lightsail",
+    "observer-google-e2-micro",
+    "observer-oracle-a1"
+  ],
+  "known_failure_coupling": "Collector and Observer Oracle share the Oracle tenancy and control plane; the Collector is not an observer and cannot contribute to observer independence.",
+  "fallback": {
+    "plan_file": "deploy/grant-pilot/infrastructure-plan.json",
+    "activation": "EXPLICIT_OPERATOR_APPROVAL_ONLY",
+    "proposed_monthly_ceiling_usd": 50
+  }
+}

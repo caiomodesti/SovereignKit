@@ -18,11 +18,11 @@ unless our observer runtime actually executes in a separately evidenced
 operational environment.
 
 Public cloud free tiers may provide observer compute on distinct providers:
-AWS advertises a three-month Lightsail trial on selected bundles, Google Cloud
+AWS advertises a time-limited Lightsail trial on selected bundles, Google Cloud
 offers one `e2-micro` VM in selected US regions, and Oracle Cloud advertises
 Always Free compute. These offers have eligibility, capacity, architecture,
-egress, and reclamation risks and therefore are candidates, not accepted
-deployments.
+egress, expiration, and reclamation risks and therefore are candidates, not
+accepted deployments.
 
 ## Decision
 
@@ -47,17 +47,20 @@ SovereignKit adopts a zero-cost-first policy for Grant Milestones 1–3:
 
 ## Candidate zero-cost topology
 
-- Observer A: eligible AWS Lightsail free-trial bundle;
-- Observer B: Google Cloud Free Tier `e2-micro` or trial-funded VM;
-- Observer C: Oracle Cloud Always Free compute;
-- Collector: a second Oracle Always Free instance or another separately
-  evidenced credit-funded host.
+- Observer A: eligible AWS Lightsail 2 GiB public-IPv4 free-trial bundle;
+- Observer B: Google Cloud Free Tier `e2-micro` with 1 GiB memory, 30 GiB
+  standard disk, and 1 GiB monthly external egress allowance;
+- Observer C: Oracle Cloud Always Free Ampere A1 with 1 OCPU and 6 GiB memory;
+- Collector: a second Oracle A1 instance with 1 OCPU and 6 GiB memory.
 
-This is not the accepted topology yet. Google capacity may be below the
-previous 2 GiB planning target. Oracle may lack capacity and documents possible
-reclamation of idle Always Free compute. ARM compatibility, disk, egress,
-clock synchronization, stable operation, and provider eligibility must be
-proved rather than assumed.
+The machine-readable candidate plan is
+`deploy/grant-pilot/zero-cost-candidate-plan.json`. It is not an accepted
+topology. Google is exactly at the 1 GiB candidate floor and must prove runtime
+stability plus egress sufficiency. Oracle may lack capacity and documents
+possible reclamation of idle Always Free compute. Its two proposed instances
+together stay within the documented aggregate 2 OCPU, 12 GiB memory, and 200
+GiB block-volume allowances. ARM compatibility, disk, egress, clock
+synchronization, stable operation, and account eligibility must all be proved.
 
 ## Consequences
 
@@ -70,10 +73,11 @@ proved rather than assumed.
   3,000 qualifying signed observations, and the open evidence release remain
   mandatory.
 
-## References checked on 2026-08-26
+## References checked on 2026-08-27
 
 - Superteam member perks: https://superteam.fun/member-perks
 - Alchemy Solana Fund: https://www.alchemy.com/blog/introducing-alchemy-solana-fund
 - AWS Lightsail pricing: https://aws.amazon.com/lightsail/pricing/
 - Google Cloud Free Tier: https://docs.cloud.google.com/free/docs/free-cloud-features
 - Oracle Cloud Always Free compute: https://docs.oracle.com/iaas/Content/FreeTier/freetier_topic-Always_Free_Resources.htm
+- Google E2 machine resources: https://docs.cloud.google.com/compute/docs/general-purpose-machines

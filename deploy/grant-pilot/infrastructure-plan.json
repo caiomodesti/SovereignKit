@@ -7,7 +7,7 @@
     "mode": "PAID_FALLBACK_ONLY",
     "zero_cost_review_required": true,
     "benefit_inventory_status": "IN_PROGRESS_NON_BLOCKING",
-    "free_tier_eligibility": "PENDING",
+    "free_tier_eligibility": "RESEARCH_COMPLETE_ACCOUNT_VALIDATION_REQUIRED",
     "operator_spend_authorization": "NOT_AUTHORIZED"
   },
   "budget": {

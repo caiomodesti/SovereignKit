@@ -1,0 +1,42 @@
+{
+  "schema_version": "GrantM1ZeroCostAccountReadiness@0.1.0",
+  "cash_spend_authorized": false,
+  "provider_accounts": [
+    {
+      "provider_id": "aws",
+      "account_owner_verified": false,
+      "mfa_enabled": false,
+      "offer_terms_reviewed": false,
+      "candidate_offer_visible": false,
+      "billing_guard_active": false,
+      "expiration_exit_control_recorded": false
+    },
+    {
+      "provider_id": "google-cloud",
+      "account_owner_verified": false,
+      "mfa_enabled": false,
+      "offer_terms_reviewed": false,
+      "candidate_offer_visible": false,
+      "billing_guard_active": false,
+      "expiration_exit_control_recorded": false
+    },
+    {
+      "provider_id": "oracle",
+      "account_owner_verified": false,
+      "mfa_enabled": false,
+      "offer_terms_reviewed": false,
+      "candidate_offer_visible": false,
+      "billing_guard_active": false,
+      "expiration_exit_control_recorded": false
+    }
+  ],
+  "collector_hostname_plan": {
+    "controlled_by_operator": false,
+    "conventional_dns": false,
+    "value": null
+  },
+  "host_key_custody_acknowledged": false,
+  "free_price_is_not_independence_acknowledged": false,
+  "provisioning_approved": false,
+  "provisioning_approved_at": null
+}

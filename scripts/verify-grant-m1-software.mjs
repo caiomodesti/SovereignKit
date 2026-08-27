@@ -1,5 +1,6 @@
 import { readFile } from "node:fs/promises";
 import { evaluateGrantM1OperatorReadiness } from "./lib/grant-m1-operator-readiness.mjs";
+import { evaluateGrantM1ZeroCostAccountReadiness } from "./lib/grant-m1-zero-cost-account-readiness.mjs";
 
 const requiredFiles = [
   "docs/project-master-plan.md",
@@ -11,6 +12,8 @@ const requiredFiles = [
   "docs/grant-milestone-cost-plan.md",
   "deploy/grant-pilot/README.md",
   "deploy/grant-pilot/infrastructure-plan.json",
+  "deploy/grant-pilot/zero-cost-candidate-plan.json",
+  "deploy/grant-pilot/zero-cost-account-readiness.example.json",
   "deploy/grant-pilot/Caddyfile.example",
   "deploy/grant-pilot/observer-runtime.example.json",
   "deploy/grant-pilot/reader-registry.example.json",
@@ -49,6 +52,12 @@ const requiredFiles = [
   "scripts/lib/grant-m1-infrastructure-plan.mjs",
   "scripts/verify-grant-m1-infrastructure-plan.mjs",
   "scripts/tests/grant-m1-infrastructure-plan.test.mjs",
+  "scripts/lib/grant-m1-zero-cost-plan.mjs",
+  "scripts/verify-grant-m1-zero-cost-plan.mjs",
+  "scripts/tests/grant-m1-zero-cost-plan.test.mjs",
+  "scripts/lib/grant-m1-zero-cost-account-readiness.mjs",
+  "scripts/verify-grant-m1-zero-cost-account-readiness.mjs",
+  "scripts/tests/grant-m1-zero-cost-account-readiness.test.mjs",
   "deploy/grant-pilot/rpc-route-endpoint.example.txt",
   "deploy/grant-pilot/evidence-index.example.json",
   "fixtures/grant-m1/local-readiness-20260825.json",
@@ -109,8 +118,19 @@ if (infrastructurePlan.schema_version !== "GrantM1InfrastructurePlan@0.1.0" ||
     infrastructurePlan.activation_policy?.operator_spend_authorization !== "NOT_AUTHORIZED") {
   throw new Error("grant infrastructure plan must remain versioned, unprovisioned, and unable to authorize billing");
 }
+const zeroCostPlan = JSON.parse(contents.get("deploy/grant-pilot/zero-cost-candidate-plan.json"));
+if (zeroCostPlan.schema_version !== "GrantM1ZeroCostCandidatePlan@0.1.0" ||
+    zeroCostPlan.status !== "RESEARCH_COMPLETE_ACCOUNT_VALIDATION_REQUIRED" ||
+    zeroCostPlan.cash_spend_authorized !== false ||
+    zeroCostPlan.components?.some(component => component.provisioned !== false || component.admitted !== false)) {
+  throw new Error("zero-cost candidate plan must remain researched, unprovisioned, and unaccepted");
+}
 const operatorReadiness = evaluateGrantM1OperatorReadiness(JSON.parse(contents.get("deploy/grant-pilot/operator-readiness.example.json")));
 if (operatorReadiness.status !== "ACTION_REQUIRED" || operatorReadiness.blockers.length === 0) {
   throw new Error("checked-in operator readiness example must remain blocked and secret-free");
+}
+const zeroCostAccountReadiness = evaluateGrantM1ZeroCostAccountReadiness(JSON.parse(contents.get("deploy/grant-pilot/zero-cost-account-readiness.example.json")));
+if (zeroCostAccountReadiness.status !== "ACTION_REQUIRED" || zeroCostAccountReadiness.blockers.length === 0) {
+  throw new Error("checked-in zero-cost account readiness example must remain blocked and secret-free");
 }
 process.stdout.write(`${JSON.stringify({ status: "PASS", gate: "GRANT_M1_SOFTWARE", requiredFiles: requiredFiles.length })}\n`);
