@@ -91,6 +91,18 @@ The pure preflight contracts are exercised on every software gate. A unit-test
 PASS is not host evidence, and the command intentionally fails on non-Linux
 machines rather than fabricating a deployment result.
 
+## Real-host 24-hour canary
+
+After a host passes preflight, start its one-shot canary unit as documented in
+`deploy/grant-pilot/README.md`. It records and fsyncs one append-only local
+readiness sample per minute. Admission requires at least 24 hours measured by a
+monotonic clock, 95% sample coverage, 99% readiness, no identity mismatch, and
+no gap above three intervals. Preserve both the raw JSONL and its SHA-256-bound
+summary even when the run fails or is interrupted.
+
+The canary qualifies one concrete host only. Three independent providers and
+the remaining cross-host evidence are still required for Milestone 1.
+
 ## Acceptance gate
 
 The external acceptance command is intentionally impossible to pass without retained real evidence:
@@ -122,6 +134,7 @@ Placeholder files cannot satisfy the gate.
 - public evidence anchor: `fixtures/grant-m1/local-readiness-20260825.json`;
 - dashboard production build: PASS;
 - tracked-file secret audit: PASS;
+- 24-hour canary implementation and hostile contracts: PASS locally; real-host run NOT RUN;
 - three-provider external acceptance: NOT RUN / evidence does not exist yet.
 
 The canonical source checkout experienced a local pnpm-store/global-shim inconsistency after a sandboxed dependency reconstruction. To avoid altering versions, validation was also executed in a clean temporary checkout using the committed lockfile. This is an environment limitation, not external deployment evidence.

@@ -28,7 +28,8 @@ Started: 2026-08-24
 - live Alchemy Solana Devnet route preflight retained at `fixtures/grant-m1/alchemy-devnet-route-20260826.json`: `getHealth`, `getGenesisHash`, `getVersion`, and finalized `getSlot` passed without retaining the credential-bearing URL path.
 - frozen three-provider infrastructure topology and USD 50/month proposed ceiling with repository-enforced `billing_authorized: false`; no cloud component is claimed as provisioned.
 - secret-free operator-readiness gate for provider ownership, MFA, billing controls, budget alerts, Collector DNS, key custody, and explicit provisioning approval; the checked-in example remains deliberately blocked.
-- zero-cost-first funding policy that treats RPC credits separately from observer compute and keeps the USD 50/month topology as an unactivated paid fallback pending partner and free-tier checks.
+- zero-cost-first funding policy that treats RPC credits separately from observer compute and keeps the USD 50/month topology as an unactivated paid fallback while free-tier eligibility is checked.
+- fail-closed 24-hour host canary with append-only fsynced readiness samples, explicit coverage/readiness thresholds, identity-mismatch rejection, and a hardened systemd unit; no external host has run it yet.
 
 ## Not yet implemented or validated
 

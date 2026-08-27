@@ -7,7 +7,7 @@ export function validateGrantM1InfrastructurePlan(plan) {
   if (plan.billing_authorized !== false) throw new Error("repository plan cannot authorize provider billing");
   if (plan.activation_policy?.mode !== "PAID_FALLBACK_ONLY" ||
       plan.activation_policy?.zero_cost_review_required !== true ||
-      plan.activation_policy?.superteam_partner_outcome !== "PENDING" ||
+      plan.activation_policy?.benefit_inventory_status !== "IN_PROGRESS_NON_BLOCKING" ||
       plan.activation_policy?.free_tier_eligibility !== "PENDING" ||
       plan.activation_policy?.operator_spend_authorization !== "NOT_AUTHORIZED") {
     throw new Error("paid infrastructure must remain blocked behind the zero-cost review");

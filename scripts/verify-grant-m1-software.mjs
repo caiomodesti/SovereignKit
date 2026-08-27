@@ -18,11 +18,15 @@ const requiredFiles = [
   "deploy/grant-pilot/systemd/sovereignkit-observer.service",
   "deploy/grant-pilot/systemd/sovereignkit-observation-worker@.service",
   "deploy/grant-pilot/systemd/sovereignkit-collector.service",
+  "deploy/grant-pilot/systemd/sovereignkit-canary-soak@.service",
   "deploy/grant-pilot/operator-readiness.example.json",
   "docs/grant-m1-provider-onboarding.md",
   "scripts/lib/grant-m1-operator-readiness.mjs",
   "scripts/verify-grant-m1-operator-readiness.mjs",
   "scripts/tests/grant-m1-operator-readiness.test.mjs",
+  "scripts/lib/grant-m1-canary-soak.mjs",
+  "scripts/run-grant-m1-canary-soak.mjs",
+  "scripts/tests/grant-m1-canary-soak.test.mjs",
   "spec/grant-observer-registry.schema.json",
   "spec/grant-m1-evidence-index.schema.json",
   "packages/collector/src/observation-worker.ts",
@@ -62,7 +66,8 @@ if (observerConfig.schemaVersion !== "ObserverRuntimeConfig@0.1.0" || !String(ob
 }
 if (!contents.get("deploy/grant-pilot/systemd/sovereignkit-observer.service").includes("NoNewPrivileges=true") ||
     !contents.get("deploy/grant-pilot/systemd/sovereignkit-collector.service").includes("ProtectSystem=strict") ||
-    !contents.get("deploy/grant-pilot/systemd/sovereignkit-observation-worker@.service").includes("Type=oneshot")) {
+    !contents.get("deploy/grant-pilot/systemd/sovereignkit-observation-worker@.service").includes("Type=oneshot") ||
+    !contents.get("deploy/grant-pilot/systemd/sovereignkit-canary-soak@.service").includes("--duration-seconds 86400")) {
   throw new Error("grant systemd templates are missing required hardening");
 }
 if (!contents.get("docs/grant-milestone-1-status.md").includes("Milestone 2 has not started")) {

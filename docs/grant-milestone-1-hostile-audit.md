@@ -13,6 +13,7 @@ Verdict: `CONDITIONAL GO` for continued Milestone 1 engineering; `NO-GO` for mil
 - observation jobs now require a short-lived Ed25519-signed assignment; raw polls bind to its ID and payload hash, and the external verifier correlates assignment, polls, and ProbeResult.
 - a local outage/restart drill proves queued evidence survives Observer restart, delivers after Collector recovery, reconstructs one accepted record after Collector restart, and creates no duplicate delivery record.
 - a versioned Linux host preflight now prevents a nominally healthy record when the clock, key ACL, service, runtime commit/Node.js version/tree, observer identity, loopback readiness, or disk threshold is unsafe; no real provider host has executed it yet.
+- a fail-closed 24-hour canary now retains fsynced readiness samples, rejects identity drift and sparse evidence, and measures duration and gaps with a monotonic clock so wall-clock jumps cannot manufacture uptime; it has deterministic contract coverage but no real-host run yet.
 
 ## Blocking findings before external acceptance
 
@@ -26,6 +27,7 @@ Verdict: `CONDITIONAL GO` for continued Milestone 1 engineering; `NO-GO` for mil
 8. File-based signing keys are appropriate for this bounded pilot only after OS ACL verification. They are not HSM-backed and must never be confused with payer wallets.
 9. Observer and Collector clocks affect validity and chronology. No cross-provider clock-drift evidence exists yet.
 10. Linux systemd hardening is reviewed statically but has not been exercised on the chosen provider images.
+11. Free-tier eligibility, quota stability, and provider reclaim/idle-shutdown behavior are unproven until each concrete host completes preflight and the canary.
 
 ## Residual methodological risks
 
@@ -36,7 +38,7 @@ Verdict: `CONDITIONAL GO` for continued Milestone 1 engineering; `NO-GO` for mil
 
 ## Required next evidence
 
-1. deployment and recovery on three real provider hosts;
+1. preflight, 24-hour canary, deployment, and recovery on three real provider hosts;
 2. sanitized independence records and public identities;
 3. real cross-host healthy, delayed, unavailable, disagreement, and quorum tests;
 4. clock, TLS, firewall, disk, restart, and secret-permission evidence;

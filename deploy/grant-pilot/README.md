@@ -93,6 +93,23 @@ Run this separately on all three hosts. A local or copied record does not prove
 provider independence, and a PASS does not replace restart, provider, failure,
 or signed-observation evidence.
 
+Before admitting a free-tier or paid host into the external topology, run the
+same 24-hour canary soak:
+
+```bash
+sudo systemctl start sovereignkit-canary-soak@observer-provider-a.service
+sudo systemctl status sovereignkit-canary-soak@observer-provider-a.service
+```
+
+The unit samples only the loopback `/ready` endpoint every 60 seconds and
+fsyncs append-only JSONL after every sample. Duration and gaps use the process
+monotonic clock, while canonical UTC timestamps remain in the record; a wall
+clock correction therefore cannot manufacture 24 hours. Admission requires 24 real hours,
+at least 95% sample coverage, at least 99% readiness, no observer-identity
+mismatch, and no gap above three intervals. Failed and interrupted runs remain
+evidence and are never rewritten. A canary PASS qualifies one host; it does not
+establish three-provider independence or Milestone 1 acceptance.
+
 The signed assignment proves who authorized the job and that its submission metadata was not altered after authorization. It does not independently prove that the issuer's submission claim is true. Milestone 1 acceptance therefore also requires the local observation-worker command, its exclusive assignment-bound raw reader log, process/journal evidence, and cross-host validation. Precomputed or centrally fabricated unsigned results cannot satisfy acceptance.
 
 ## Collector and TLS

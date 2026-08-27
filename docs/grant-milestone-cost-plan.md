@@ -57,18 +57,19 @@ No free-tier host is accepted until the same production-like preflight and
 Backups, paid monitoring, managed databases, paid dataset hosting, a dedicated
 Solana validator, and paid RPC plans are not required by the approved milestones.
 
-## Questions requiring written confirmation
+## Decisions under the approved contract
 
-1. Is Devnet acceptable for the full 14-day operational pilot, or is Mainnet
-   evidence required in addition to the existing Devnet integration proof?
-2. Do AWS, Google Cloud, and Oracle free-tier VMs count as distinct
-   infrastructure providers when the provider, account, region, instance, ASN,
-   and runtime evidence is retained?
-3. Does the incoming RPC partnership include only endpoints/credits, or also a
-   Linux VM/runner where SovereignKit can hold its own observer key and runtime?
-4. Can Superteam provide a controlled conventional DNS hostname suitable for
-   public HTTPS, or is the `.superteam` benefit Web3-resolution only?
+1. The pilot uses Solana Devnet unless a later grant amendment explicitly adds
+   Mainnet. The approved milestones require multiple Solana transaction routes,
+   not Mainnet spending.
+2. Free-tier VMs count exactly like paid VMs only after real provider, account,
+   region, instance, ASN, runtime, health, failure, and recovery evidence passes.
+3. The incoming partnership is treated as RPC-only unless its published product
+   demonstrably includes a Linux environment suitable for our runtime and key.
+4. A controlled conventional DNS hostname is an implementation requirement for
+   Collector HTTPS; the mechanism may be free or paid and does not change the
+   milestone.
 
-Until these are answered, the paid topology is a fallback and the active work
-remains local Milestone 1 readiness—not Milestone 2 collection.
-
+No external clarification is a prerequisite for continuing Milestone 1. The
+paid topology remains a fallback while the active work qualifies zero-cost
+hosts using the same evidence gates.

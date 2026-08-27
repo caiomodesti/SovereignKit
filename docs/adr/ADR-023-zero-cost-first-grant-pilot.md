@@ -36,9 +36,10 @@ SovereignKit adopts a zero-cost-first policy for Grant Milestones 1–3:
    signing, restart, durable delivery, failure matrix, and evidence contracts.
 4. Require a 24-hour canary soak before admitting any free-tier host into the
    official Milestone 1 topology.
-5. Obtain written grant-operator confirmation that free-tier deployments on
-   distinct cloud providers satisfy the independence requirement and confirm
-   the network scope for the 14-day pilot before Milestone 2 is frozen.
+5. Apply the approved milestone text directly: a free-tier VM is acceptable
+   only when it is a real deployment on a distinct infrastructure provider and
+   retains the same provider, runtime, health, failure, and recovery evidence.
+   Price neither proves nor disproves independence.
 6. Keep ADR-022 as a paid fallback capped at USD 50/month. Activating it still
    requires explicit operator approval after the zero-cost review is complete.
 7. Free credits never justify hidden overages. Provider budget alerts and
@@ -76,4 +77,3 @@ proved rather than assumed.
 - AWS Lightsail pricing: https://aws.amazon.com/lightsail/pricing/
 - Google Cloud Free Tier: https://docs.cloud.google.com/free/docs/free-cloud-features
 - Oracle Cloud Always Free compute: https://docs.oracle.com/iaas/Content/FreeTier/freetier_topic-Always_Free_Resources.htm
-
