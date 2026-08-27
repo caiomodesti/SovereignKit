@@ -31,6 +31,12 @@ test("rejects repository-side billing authorization or fake provisioning", () =>
   assert.throws(() => validateGrantM1InfrastructurePlan(provisioned), /cannot claim/u);
 });
 
+test("rejects bypassing the zero-cost-first activation policy", () => {
+  const bypass = structuredClone(canonicalPlan);
+  bypass.activation_policy.zero_cost_review_required = false;
+  assert.throws(() => validateGrantM1InfrastructurePlan(bypass), /zero-cost review/u);
+});
+
 test("rejects a mismatched estimate or hidden Collector coupling", () => {
   const estimate = structuredClone(canonicalPlan);
   estimate.budget.estimated_base_monthly = 1;

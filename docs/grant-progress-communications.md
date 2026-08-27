@@ -76,8 +76,9 @@ and unsanitized instance records must never appear.
 > só será aceito depois de três observers reais em provedores distintos, com
 > evidência de operação, falhas e recuperação.
 >
-> Próximo passo: provisionar os três ambientes externos e o Collector HTTPS
-> assim que o acesso aos provedores estiver definido.
+> Próximo passo: concluir a revisão zero-cost de benefícios e free tiers,
+> validar um host canário e só então provisionar a topologia externa. A
+> alternativa paga permanece bloqueada e sem cobrança autorizada.
 >
 > Atualização de rota: a primeira dependência RPC externa, Alchemy Solana
 > Devnet, passou por um preflight secret-safe de saúde, identidade da rede,
@@ -117,3 +118,22 @@ answer:
 - whether Superteam prefers a different reporting cadence or channel.
 
 None of these unanswered questions changes the milestone acceptance criteria.
+
+Suggested clarification message:
+
+> Kuka, revisei os três milestones aprovados do SovereignKit e quero evitar
+> gastar o grant desnecessariamente sem enfraquecer a prova. Precisamos de duas
+> coisas diferentes: (1) três rotas RPC Solana e (2) três ambientes Linux
+> realmente separados, em provedores distintos, executando nossos observers e
+> guardando suas próprias chaves. Os benefícios de Alchemy, GetBlock e Carbium
+> cobrem RPC, mas aparentemente não fornecem uma VM Linux.
+>
+> Você consegue confirmar quatro pontos? (a) a nova parceria desta semana é só
+> RPC/créditos ou inclui compute/VPS; (b) VMs em free tier de AWS, Google Cloud
+> e Oracle contam como três provedores independentes se preservarmos toda a
+> evidência; (c) o piloto oficial de 14 dias e 3.000 observações pode ser em
+> Devnet ou precisa incluir Mainnet; e (d) existe algum benefício de hostname
+> DNS convencional para HTTPS, além do domínio Web3 `.superteam`?
+>
+> Nosso fallback pago está limitado a USD 50/mês, mas não vou ativá-lo antes de
+> esgotar essas opções gratuitas.

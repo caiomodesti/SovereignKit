@@ -48,6 +48,19 @@ activity belongs in commits and CI rather than promotional status claims.
 - Validation: build PASS, typecheck PASS, 93/93 deterministic tests PASS, 18/18 focused grant contracts PASS, grant software gate PASS, tracked-file secret audit PASS.
 - Claim boundary: Alchemy is currently one logical RPC dependency. This preflight does not prove an independent observer deployment, provider diversity, quorum independence, or Milestone 1 acceptance.
 - Status remains `IMPLEMENTED_NOT_VALIDATED`.
-- Next action: provision the first real observer host and hosted HTTPS Collector, then repeat the full host, failure, restart, and evidence workflow across three distinct infrastructure providers.
+- Next action: complete the zero-cost partner/free-tier review before provisioning the first real observer host and hosted HTTPS Collector.
+
+## 2026-08-26 — Zero-cost-first infrastructure review
+
+- Re-read the immutable Milestones 1–3 and separated required outcomes from implementation choices.
+- Verified current public Superteam benefits for Alchemy, GetBlock, Carbium, FluxRPC, and OVHcloud.
+- Decision: RPC credits may remove route costs but do not count as independent observer hosts.
+- Added ADR-023: free/credit-funded infrastructure must be attempted and validated before the paid ADR-022 fallback can be activated.
+- Candidate free compute spans AWS, Google Cloud, and Oracle Cloud; every candidate remains unaccepted until eligibility, host preflight, and a 24-hour canary soak pass.
+- Target cash cost: USD 0. Prudential reserve: USD 50/month, maximum USD 100 if two billing months are required.
+- Cost incurred: USD 0.
+- External clarification required: Devnet/Mainnet scope, free-tier independence acceptance, incoming partner scope, and controlled DNS availability.
+- Status remains `IMPLEMENTED_NOT_VALIDATED`; no provider host exists and no billing is authorized.
+- Next action: obtain written clarification, verify free-tier account eligibility, and test one free canary before considering paid infrastructure.
 
 Milestone 2 has not started.

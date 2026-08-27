@@ -3,6 +3,13 @@
   "status": "PLANNED_NOT_PROVISIONED",
   "pricing_verified_at": "2026-08-26T23:30:00.000-03:00",
   "billing_authorized": false,
+  "activation_policy": {
+    "mode": "PAID_FALLBACK_ONLY",
+    "zero_cost_review_required": true,
+    "superteam_partner_outcome": "PENDING",
+    "free_tier_eligibility": "PENDING",
+    "operator_spend_authorization": "NOT_AUTHORIZED"
+  },
   "budget": {
     "currency": "USD",
     "estimated_base_monthly": 36.98,

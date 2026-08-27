@@ -7,6 +7,8 @@ const requiredFiles = [
   "docs/grant-milestone-1-status.md",
   "docs/adr/ADR-021-fail-closed-host-preflight.md",
   "docs/adr/ADR-022-grant-pilot-infrastructure-topology.md",
+  "docs/adr/ADR-023-zero-cost-first-grant-pilot.md",
+  "docs/grant-milestone-cost-plan.md",
   "deploy/grant-pilot/README.md",
   "deploy/grant-pilot/infrastructure-plan.json",
   "deploy/grant-pilot/Caddyfile.example",
@@ -97,7 +99,9 @@ if (!contents.get("scripts/lib/grant-m1-rpc-route-preflight.mjs").includes("Gran
 const infrastructurePlan = JSON.parse(contents.get("deploy/grant-pilot/infrastructure-plan.json"));
 if (infrastructurePlan.schema_version !== "GrantM1InfrastructurePlan@0.1.0" ||
     infrastructurePlan.billing_authorized !== false ||
-    infrastructurePlan.status !== "PLANNED_NOT_PROVISIONED") {
+    infrastructurePlan.status !== "PLANNED_NOT_PROVISIONED" ||
+    infrastructurePlan.activation_policy?.mode !== "PAID_FALLBACK_ONLY" ||
+    infrastructurePlan.activation_policy?.operator_spend_authorization !== "NOT_AUTHORIZED") {
   throw new Error("grant infrastructure plan must remain versioned, unprovisioned, and unable to authorize billing");
 }
 const operatorReadiness = evaluateGrantM1OperatorReadiness(JSON.parse(contents.get("deploy/grant-pilot/operator-readiness.example.json")));

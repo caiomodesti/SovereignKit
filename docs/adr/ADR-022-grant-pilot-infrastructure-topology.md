@@ -3,6 +3,10 @@
 Status: Accepted
 Date: 2026-08-26
 
+Operational note: ADR-023 makes this topology the paid fallback. It remains
+technically valid but MUST NOT be provisioned until the zero-cost review is
+complete and paid fallback is explicitly approved.
+
 ## Context
 
 Milestone 1 requires three operationally independent observers. RPC endpoint
