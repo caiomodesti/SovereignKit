@@ -59,8 +59,8 @@ activity belongs in commits and CI rather than promotional status claims.
 - Candidate free compute spans AWS, Google Cloud, and Oracle Cloud; every candidate remains unaccepted until eligibility, host preflight, and a 24-hour canary soak pass.
 - Target cash cost: USD 0. Prudential reserve: USD 50/month, maximum USD 100 if two billing months are required.
 - Cost incurred: USD 0.
-- External clarification required: Devnet/Mainnet scope, free-tier independence acceptance, incoming partner scope, and controlled DNS availability.
+- Contract interpretation: Devnet multiple-route operation, real provider evidence, and controlled Collector HTTPS follow the approved milestone text; no additional Superteam clarification blocks development.
 - Status remains `IMPLEMENTED_NOT_VALIDATED`; no provider host exists and no billing is authorized.
-- Next action: obtain written clarification, verify free-tier account eligibility, and test one free canary before considering paid infrastructure.
+- Next action: verify free-tier account eligibility and test one 24-hour canary before considering paid infrastructure.
 
 Milestone 2 has not started.

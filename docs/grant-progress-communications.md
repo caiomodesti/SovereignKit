@@ -105,35 +105,10 @@ and unsanitized instance records must never appear.
 >
 > **Evidência:** [public URL]
 
-## Operator questions still open
+## External benefit handling
 
-The project can continue locally while these questions await Superteam's
-answer:
-
-- whether member infrastructure benefits require a referral, promotional code,
-  or membership NFT;
-- how the membership NFT is issued and which official wallet flow is used;
-- whether RPC credits may support an open-source multi-route observability
-  pilot;
-- whether Superteam prefers a different reporting cadence or channel.
-
-None of these unanswered questions changes the milestone acceptance criteria.
-
-Suggested clarification message:
-
-> Kuka, revisei os três milestones aprovados do SovereignKit e quero evitar
-> gastar o grant desnecessariamente sem enfraquecer a prova. Precisamos de duas
-> coisas diferentes: (1) três rotas RPC Solana e (2) três ambientes Linux
-> realmente separados, em provedores distintos, executando nossos observers e
-> guardando suas próprias chaves. Os benefícios de Alchemy, GetBlock e Carbium
-> cobrem RPC, mas aparentemente não fornecem uma VM Linux.
->
-> Você consegue confirmar quatro pontos? (a) a nova parceria desta semana é só
-> RPC/créditos ou inclui compute/VPS; (b) VMs em free tier de AWS, Google Cloud
-> e Oracle contam como três provedores independentes se preservarmos toda a
-> evidência; (c) o piloto oficial de 14 dias e 3.000 observações pode ser em
-> Devnet ou precisa incluir Mainnet; e (d) existe algum benefício de hostname
-> DNS convencional para HTTPS, além do domínio Web3 `.superteam`?
->
-> Nosso fallback pago está limitado a USD 50/mês, mas não vou ativá-lo antes de
-> esgotar essas opções gratuitas.
+Benefit redemption details, membership NFT flows, and newly announced RPC
+partners are operational inputs only. SovereignKit continues the approved
+milestones without asking Superteam to redesign or reinterpret them. A benefit
+is used when its published terms fit the frozen evidence contract; otherwise
+the project uses another implementation option.
