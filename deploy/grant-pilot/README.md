@@ -108,6 +108,29 @@ The Collector remains loopback-only by design. Install `systemd/sovereignkit-col
 
 Secrets, unredacted invoices, account passwords, payment data, IP allowlist secrets, API tokens, and private keys must not be published.
 
+## Single RPC route preflight
+
+An RPC provider account is a route dependency, not an observer deployment. Test each
+credential-bearing Devnet endpoint before it enters an observer registry, while
+keeping the complete URL below the ignored `.secrets/` directory:
+
+```powershell
+New-Item -ItemType Directory -Force .secrets | Out-Null
+Copy-Item deploy/grant-pilot/rpc-route-endpoint.example.txt .secrets/alchemy-devnet-endpoint.txt
+# Replace the single placeholder line locally. Never paste the endpoint into chat or Git.
+corepack pnpm@11.16.0 preflight:grant:m1:rpc-route -- `
+  --endpoint-file .secrets/alchemy-devnet-endpoint.txt `
+  --route-id alchemy-solana-devnet `
+  --provider-label Alchemy `
+  --output artifacts/grant-m1/rpc-routes/alchemy-devnet-preflight.json
+```
+
+The command requires HTTPS, rejects URL userinfo/query/fragment credentials, calls
+`getHealth`, `getGenesisHash`, `getVersion`, and finalized `getSlot`, and writes only
+the endpoint origin. It never writes the credential-bearing path. The output is
+explicitly `SINGLE_LOGICAL_RPC_ROUTE_PREFLIGHT_ONLY`; it establishes neither an
+independent observer nor Milestone 1 acceptance.
+
 Build `evidence-index.json` from `evidence-index.example.json` only after the
 files are final. Replace every zero hash with the SHA-256 of the referenced
 artifact and add one complete entry per observer. The acceptance verifier

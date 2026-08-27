@@ -1,0 +1,23 @@
+{
+  "schema_version": "GrantM1RpcRoutePreflight@0.1.0",
+  "captured_at": "2026-08-27T02:03:08.812Z",
+  "scope": "SINGLE_LOGICAL_RPC_ROUTE_PREFLIGHT_ONLY",
+  "route_id": "alchemy-solana-devnet",
+  "logical_endpoint_origin": "https://solana-devnet.g.alchemy.com",
+  "transport": "https_json_rpc",
+  "provider_label": "Alchemy",
+  "health": "ok",
+  "genesis_hash": "EtWTRABZaYq6iMfeYKouRu166VU2xqa1wcaWoxPkrZBG",
+  "solana_core_version": "4.2.1",
+  "feature_set": 565236538,
+  "finalized_slot": "488624802",
+  "methods_checked": [
+    "getHealth",
+    "getGenesisHash",
+    "getVersion",
+    "getSlot"
+  ],
+  "credential_material_persisted": false,
+  "operational_independence_established": false,
+  "milestone_acceptance_effect": "NONE"
+}

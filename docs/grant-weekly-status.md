@@ -38,4 +38,16 @@ activity belongs in commits and CI rather than promotional status claims.
 - Status remains `IMPLEMENTED_NOT_VALIDATED`; external provider deployments are still required.
 - Next action: select benefits/provider accounts, then deploy one observer per distinct infrastructure provider plus the hosted Collector.
 
+## 2026-08-26 — First external Devnet RPC route preflight
+
+- Configured the grant pilot's first external logical RPC route using Alchemy Solana Devnet.
+- Rotated the provider API credential after screen exposure and retained the final credential only in the Git-ignored local `.secrets/` directory.
+- Added a fail-closed route preflight covering `getHealth`, `getGenesisHash`, `getVersion`, and finalized `getSlot`.
+- Live result: health `ok`, expected Devnet genesis hash, Solana core `4.2.1`, and finalized slot `488624802` at capture time.
+- Public secret-free evidence anchor: `fixtures/grant-m1/alchemy-devnet-route-20260826.json`.
+- Validation: build PASS, typecheck PASS, 93/93 deterministic tests PASS, 18/18 focused grant contracts PASS, grant software gate PASS, tracked-file secret audit PASS.
+- Claim boundary: Alchemy is currently one logical RPC dependency. This preflight does not prove an independent observer deployment, provider diversity, quorum independence, or Milestone 1 acceptance.
+- Status remains `IMPLEMENTED_NOT_VALIDATED`.
+- Next action: provision the first real observer host and hosted HTTPS Collector, then repeat the full host, failure, restart, and evidence workflow across three distinct infrastructure providers.
+
 Milestone 2 has not started.
