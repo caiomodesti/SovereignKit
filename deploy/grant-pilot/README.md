@@ -2,6 +2,10 @@
 
 Status: software template only; no external deployment is accepted by the presence of these files.
 
+Before any paid resource is created, complete the operator-only gate in
+[`docs/grant-m1-provider-onboarding.md`](../../docs/grant-m1-provider-onboarding.md).
+The checked-in example is deliberately blocked and contains no credentials.
+
 ## Topology
 
 - one HTTPS edge terminates TLS and forwards only `POST /v0/probe-results` to a loopback Collector;
