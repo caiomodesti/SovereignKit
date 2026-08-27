@@ -47,6 +47,7 @@
     "verify:grant:m1:acceptance": "node scripts/verify-grant-m1-acceptance.mjs",
     "test:grant:m1:acceptance-contracts": "node --test scripts/tests/grant-m1-acceptance-contracts.test.mjs",
     "verify:grant:m1:local-readiness": "node scripts/verify-grant-m1-local-readiness.mjs",
+    "verify:grant:m1:infrastructure-plan": "node scripts/verify-grant-m1-infrastructure-plan.mjs",
     "verify:grant:m1:recovery-drill": "node scripts/verify-grant-m1-recovery-drill.mjs",
     "capture:grant:m1:host-preflight": "node scripts/capture-grant-m1-host-preflight.mjs",
     "preflight:grant:m1:rpc-route": "node scripts/run-grant-m1-rpc-route-preflight.mjs",

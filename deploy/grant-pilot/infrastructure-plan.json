@@ -1,0 +1,97 @@
+{
+  "schema_version": "GrantM1InfrastructurePlan@0.1.0",
+  "status": "PLANNED_NOT_PROVISIONED",
+  "pricing_verified_at": "2026-08-26T23:30:00.000-03:00",
+  "billing_authorized": false,
+  "budget": {
+    "currency": "USD",
+    "estimated_base_monthly": 36.98,
+    "proposed_monthly_ceiling": 50,
+    "excluded": [
+      "taxes",
+      "hetzner_primary_ipv4",
+      "backups",
+      "domain_registration",
+      "excess_network_traffic"
+    ]
+  },
+  "components": [
+    {
+      "component_id": "observer-aws-sa-east-1",
+      "role": "OBSERVER",
+      "provider_id": "aws",
+      "provider_label": "AWS Lightsail",
+      "region": "sa-east-1",
+      "location_label": "South America (Sao Paulo)",
+      "plan": "Small-2GB Linux with public IPv4",
+      "vcpu": 2,
+      "memory_mib": 2048,
+      "storage_gib": 60,
+      "base_monthly_usd": 12,
+      "provisioned": false
+    },
+    {
+      "component_id": "observer-digitalocean-nyc3",
+      "role": "OBSERVER",
+      "provider_id": "digitalocean",
+      "provider_label": "DigitalOcean",
+      "region": "nyc3",
+      "location_label": "New York 3",
+      "plan": "Basic 2 GiB shared CPU",
+      "vcpu": 1,
+      "memory_mib": 2048,
+      "storage_gib": 50,
+      "base_monthly_usd": 12,
+      "provisioned": false
+    },
+    {
+      "component_id": "observer-hetzner-nbg1",
+      "role": "OBSERVER",
+      "provider_id": "hetzner",
+      "provider_label": "Hetzner Cloud",
+      "region": "nbg1",
+      "location_label": "Nuremberg",
+      "plan": "CX23 shared x86",
+      "vcpu": 2,
+      "memory_mib": 4096,
+      "storage_gib": 40,
+      "base_monthly_usd": 6.49,
+      "provisioned": false
+    },
+    {
+      "component_id": "collector-hetzner-hel1",
+      "role": "COLLECTOR",
+      "provider_id": "hetzner",
+      "provider_label": "Hetzner Cloud",
+      "region": "hel1",
+      "location_label": "Helsinki",
+      "plan": "CX23 shared x86",
+      "vcpu": 2,
+      "memory_mib": 4096,
+      "storage_gib": 40,
+      "base_monthly_usd": 6.49,
+      "provisioned": false,
+      "public_ingress_path": "/v0/probe-results",
+      "health_loopback_only": true
+    }
+  ],
+  "constraints": {
+    "required_observer_count": 3,
+    "required_distinct_observer_providers": 3,
+    "collector_is_not_an_observer": true,
+    "provisioning_order": [
+      "collector-hetzner-hel1",
+      "observer-aws-sa-east-1",
+      "observer-digitalocean-nyc3",
+      "observer-hetzner-nbg1"
+    ],
+    "canary_gate": "Do not provision observers B or C until Observer A passes host preflight plus restart and delivery recovery.",
+    "known_failure_coupling": "Collector and Observer C share the Hetzner provider account and control plane; the Collector remains a central suppression and availability dependency."
+  },
+  "external_requirements": {
+    "controlled_collector_hostname": "REQUIRED_NOT_ACQUIRED",
+    "provider_accounts": "REQUIRED_NOT_CREATED_OR_VERIFIED",
+    "billing_method": "REQUIRED_NOT_AUTHORIZED",
+    "secret_custody": "REQUIRED_ON_EACH_HOST"
+  }
+}

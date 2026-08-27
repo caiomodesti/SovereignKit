@@ -26,6 +26,7 @@ Started: 2026-08-24
 - Linux host preflight that fails closed on clock synchronization, observer identity/readiness, key ownership and permissions, active service, frozen commit and Node.js version, clean runtime tree, and free-disk threshold while emitting only sanitized evidence.
 - secret-safe single-RPC-route preflight that validates a provider Devnet endpoint while persisting only its public origin and explicitly contributing no observer-independence or milestone-acceptance claim.
 - live Alchemy Solana Devnet route preflight retained at `fixtures/grant-m1/alchemy-devnet-route-20260826.json`: `getHealth`, `getGenesisHash`, `getVersion`, and finalized `getSlot` passed without retaining the credential-bearing URL path.
+- frozen three-provider infrastructure topology and USD 50/month proposed ceiling with repository-enforced `billing_authorized: false`; no cloud component is claimed as provisioned.
 
 ## Not yet implemented or validated
 
