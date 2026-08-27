@@ -5,7 +5,9 @@ const requiredFiles = [
   "docs/grant-pilot-plan.md",
   "docs/grant-milestone-1-status.md",
   "docs/adr/ADR-021-fail-closed-host-preflight.md",
+  "docs/adr/ADR-022-grant-pilot-infrastructure-topology.md",
   "deploy/grant-pilot/README.md",
+  "deploy/grant-pilot/infrastructure-plan.json",
   "deploy/grant-pilot/Caddyfile.example",
   "deploy/grant-pilot/observer-runtime.example.json",
   "deploy/grant-pilot/reader-registry.example.json",
@@ -32,6 +34,9 @@ const requiredFiles = [
   "scripts/tests/grant-m1-acceptance-contracts.test.mjs",
   "scripts/tests/grant-m1-host-preflight.test.mjs",
   "scripts/tests/grant-m1-rpc-route-preflight.test.mjs",
+  "scripts/lib/grant-m1-infrastructure-plan.mjs",
+  "scripts/verify-grant-m1-infrastructure-plan.mjs",
+  "scripts/tests/grant-m1-infrastructure-plan.test.mjs",
   "deploy/grant-pilot/rpc-route-endpoint.example.txt",
   "deploy/grant-pilot/evidence-index.example.json",
   "fixtures/grant-m1/local-readiness-20260825.json",
@@ -82,5 +87,11 @@ if (!contents.get("scripts/lib/grant-m1-rpc-route-preflight.mjs").includes("Gran
     !contents.get("scripts/lib/grant-m1-rpc-route-preflight.mjs").includes("operational_independence_established: false") ||
     !contents.get("scripts/run-grant-m1-rpc-route-preflight.mjs").includes(".secrets/alchemy-devnet-endpoint.txt")) {
   throw new Error("grant RPC route preflight must remain versioned, secret-file based, and non-independent");
+}
+const infrastructurePlan = JSON.parse(contents.get("deploy/grant-pilot/infrastructure-plan.json"));
+if (infrastructurePlan.schema_version !== "GrantM1InfrastructurePlan@0.1.0" ||
+    infrastructurePlan.billing_authorized !== false ||
+    infrastructurePlan.status !== "PLANNED_NOT_PROVISIONED") {
+  throw new Error("grant infrastructure plan must remain versioned, unprovisioned, and unable to authorize billing");
 }
 process.stdout.write(`${JSON.stringify({ status: "PASS", gate: "GRANT_M1_SOFTWARE", requiredFiles: requiredFiles.length })}\n`);

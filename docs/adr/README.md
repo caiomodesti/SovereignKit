@@ -25,3 +25,4 @@ Status values are `Accepted`, `Superseded`, or `Deprecated`. Accepted ADRs are n
 | [019](ADR-019-probe-informed-route-ordering.md) | Fail-open probe-informed route ordering |
 | [020](ADR-020-signed-observation-assignments.md) | Signed, short-lived observation assignments |
 | [021](ADR-021-fail-closed-host-preflight.md) | Fail-closed observer host evidence capture |
+| [022](ADR-022-grant-pilot-infrastructure-topology.md) | Three-provider grant topology and budget boundary |
