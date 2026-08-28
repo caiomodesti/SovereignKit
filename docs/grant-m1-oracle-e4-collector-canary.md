@@ -54,13 +54,16 @@ containing personal data.
 Provisioning is not admission. Basic live preflight, service-only restart, and
 a controlled full-VM reboot all passed. After the reboot, SSH and the enabled
 Collector recovered in approximately 49 seconds, loopback health returned
-`status=ok`, and the append-only evidence file remained mode `0600`. The host
-must still pass:
+`status=ok`, and the append-only evidence file remained mode `0600`. The
+frozen-runtime host preflight and the Collector durability/replay drill have now
+also passed on the real E4 host. The host must still pass:
 
-1. the versioned host preflight;
-2. Collector durable persistence and idempotent replay after restart;
-3. a complete 24-hour canary soak;
-4. secret-free, sanitized evidence retention.
+1. a complete 24-hour canary soak;
+2. final secret-free, sanitized evidence retention for that soak.
+
+The soak started at `2026-08-28T16:26:04.321Z`. Its first fsynced sample was
+healthy with `stored_count=1`; no pass or admission claim exists until the
+complete real-host summary is retrieved and validated.
 
 The Observer owns the delivery queue; the Collector does not. Its recovery gate
 therefore tests its actual responsibility: durable append-only storage and
