@@ -14,6 +14,8 @@ const requiredFiles = [
   "deploy/grant-pilot/infrastructure-plan.json",
   "deploy/grant-pilot/zero-cost-candidate-plan.json",
   "deploy/grant-pilot/zero-cost-account-readiness.example.json",
+  "deploy/grant-pilot/oracle-e4-collector-canary-plan.json",
+  "docs/grant-m1-oracle-e4-collector-canary.md",
   "deploy/grant-pilot/Caddyfile.example",
   "deploy/grant-pilot/observer-runtime.example.json",
   "deploy/grant-pilot/reader-registry.example.json",
@@ -22,6 +24,7 @@ const requiredFiles = [
   "deploy/grant-pilot/systemd/sovereignkit-observation-worker@.service",
   "deploy/grant-pilot/systemd/sovereignkit-collector.service",
   "deploy/grant-pilot/systemd/sovereignkit-canary-soak@.service",
+  "deploy/grant-pilot/systemd/sovereignkit-collector-canary-soak.service",
   "deploy/grant-pilot/operator-readiness.example.json",
   "docs/grant-m1-provider-onboarding.md",
   "scripts/lib/grant-m1-operator-readiness.mjs",
@@ -30,6 +33,12 @@ const requiredFiles = [
   "scripts/lib/grant-m1-canary-soak.mjs",
   "scripts/run-grant-m1-canary-soak.mjs",
   "scripts/tests/grant-m1-canary-soak.test.mjs",
+  "scripts/lib/grant-m1-collector-canary-soak.mjs",
+  "scripts/run-grant-m1-collector-canary-soak.mjs",
+  "scripts/tests/grant-m1-collector-canary-soak.test.mjs",
+  "scripts/lib/grant-m1-collector-durable-replay.mjs",
+  "scripts/run-grant-m1-collector-durable-replay-drill.mjs",
+  "scripts/tests/grant-m1-collector-durable-replay.test.mjs",
   "spec/grant-observer-registry.schema.json",
   "spec/grant-m1-evidence-index.schema.json",
   "packages/collector/src/observation-worker.ts",
@@ -48,6 +57,9 @@ const requiredFiles = [
   "scripts/run-grant-m1-rpc-route-preflight.mjs",
   "scripts/tests/grant-m1-acceptance-contracts.test.mjs",
   "scripts/tests/grant-m1-host-preflight.test.mjs",
+  "scripts/lib/grant-m1-collector-host-preflight.mjs",
+  "scripts/capture-grant-m1-collector-host-preflight.mjs",
+  "scripts/tests/grant-m1-collector-host-preflight.test.mjs",
   "scripts/tests/grant-m1-rpc-route-preflight.test.mjs",
   "scripts/lib/grant-m1-infrastructure-plan.mjs",
   "scripts/verify-grant-m1-infrastructure-plan.mjs",
@@ -58,6 +70,9 @@ const requiredFiles = [
   "scripts/lib/grant-m1-zero-cost-account-readiness.mjs",
   "scripts/verify-grant-m1-zero-cost-account-readiness.mjs",
   "scripts/tests/grant-m1-zero-cost-account-readiness.test.mjs",
+  "scripts/lib/grant-m1-oracle-e4-canary-plan.mjs",
+  "scripts/verify-grant-m1-oracle-e4-canary-plan.mjs",
+  "scripts/tests/grant-m1-oracle-e4-canary-plan.test.mjs",
   "deploy/grant-pilot/rpc-route-endpoint.example.txt",
   "deploy/grant-pilot/evidence-index.example.json",
   "fixtures/grant-m1/local-readiness-20260825.json",
@@ -76,7 +91,8 @@ if (observerConfig.schemaVersion !== "ObserverRuntimeConfig@0.1.0" || !String(ob
 if (!contents.get("deploy/grant-pilot/systemd/sovereignkit-observer.service").includes("NoNewPrivileges=true") ||
     !contents.get("deploy/grant-pilot/systemd/sovereignkit-collector.service").includes("ProtectSystem=strict") ||
     !contents.get("deploy/grant-pilot/systemd/sovereignkit-observation-worker@.service").includes("Type=oneshot") ||
-    !contents.get("deploy/grant-pilot/systemd/sovereignkit-canary-soak@.service").includes("--duration-seconds 86400")) {
+    !contents.get("deploy/grant-pilot/systemd/sovereignkit-canary-soak@.service").includes("--duration-seconds 86400") ||
+    !contents.get("deploy/grant-pilot/systemd/sovereignkit-collector-canary-soak.service").includes("--duration-seconds 86400")) {
   throw new Error("grant systemd templates are missing required hardening");
 }
 if (!contents.get("docs/grant-milestone-1-status.md").includes("Milestone 2 has not started")) {
@@ -105,6 +121,21 @@ if (!contents.get("scripts/lib/grant-m1-host-preflight.mjs").includes("GrantM1Ho
     !contents.get("scripts/capture-grant-m1-host-preflight.mjs").includes("systemctl")) {
   throw new Error("grant host preflight must retain its versioned clock and service checks");
 }
+if (!contents.get("scripts/lib/grant-m1-collector-host-preflight.mjs").includes("GrantM1CollectorHostPreflight@0.1.0") ||
+    !contents.get("scripts/capture-grant-m1-collector-host-preflight.mjs").includes("runtime manifest SHA-256 mismatch") ||
+    !contents.get("scripts/capture-grant-m1-collector-host-preflight.mjs").includes("loopbackBindingExclusive")) {
+  throw new Error("Collector host preflight must retain versioned artifact and loopback checks");
+}
+if (!contents.get("scripts/lib/grant-m1-collector-canary-soak.mjs").includes("GrantM1CollectorCanarySoakSummary@0.1.0") ||
+    !contents.get("scripts/lib/grant-m1-collector-canary-soak.mjs").includes("stored_count_regressed") ||
+    !contents.get("scripts/run-grant-m1-collector-canary-soak.mjs").includes("output.sync()")) {
+  throw new Error("Collector canary must retain versioning, storage-regression detection, and fsynced samples");
+}
+if (!contents.get("scripts/lib/grant-m1-collector-durable-replay.mjs").includes("GrantM1CollectorDurableReplay@0.1.0") ||
+    !contents.get("scripts/run-grant-m1-collector-durable-replay-drill.mjs").includes("systemctl") ||
+    !contents.get("scripts/run-grant-m1-collector-durable-replay-drill.mjs").includes("replayStatus")) {
+  throw new Error("Collector durable replay drill must preserve restart and idempotency checks");
+}
 if (!contents.get("scripts/lib/grant-m1-rpc-route-preflight.mjs").includes("GrantM1RpcRoutePreflight@0.1.0") ||
     !contents.get("scripts/lib/grant-m1-rpc-route-preflight.mjs").includes("operational_independence_established: false") ||
     !contents.get("scripts/run-grant-m1-rpc-route-preflight.mjs").includes(".secrets/alchemy-devnet-endpoint.txt")) {
@@ -124,6 +155,18 @@ if (zeroCostPlan.schema_version !== "GrantM1ZeroCostCandidatePlan@0.1.0" ||
     zeroCostPlan.cash_spend_authorized !== false ||
     zeroCostPlan.components?.some(component => component.provisioned !== false || component.admitted !== false)) {
   throw new Error("zero-cost candidate plan must remain researched, unprovisioned, and unaccepted");
+}
+const oracleE4Canary = JSON.parse(contents.get("deploy/grant-pilot/oracle-e4-collector-canary-plan.json"));
+if (oracleE4Canary.schema_version !== "GrantM1OracleE4CollectorCanaryPlan@0.3.0" ||
+    oracleE4Canary.status !== "PROVISIONED_CANARY_NOT_ADMITTED" ||
+    oracleE4Canary.scope !== "COLLECTOR_CANARY_ONLY" ||
+    oracleE4Canary.billing_authorized_by_repository !== false ||
+    oracleE4Canary.candidate?.provisioned !== true ||
+    oracleE4Canary.candidate?.admitted !== false ||
+    oracleE4Canary.admission_gates?.full_vm_restart_recovery_passed !== true ||
+    oracleE4Canary.admission_gates?.collector_durable_replay_recovery_passed !== false ||
+    oracleE4Canary.methodology_boundaries?.milestone_2_started !== false) {
+  throw new Error("Oracle E4 Collector canary plan must remain bounded, provisioned, and unaccepted");
 }
 const operatorReadiness = evaluateGrantM1OperatorReadiness(JSON.parse(contents.get("deploy/grant-pilot/operator-readiness.example.json")));
 if (operatorReadiness.status !== "ACTION_REQUIRED" || operatorReadiness.blockers.length === 0) {

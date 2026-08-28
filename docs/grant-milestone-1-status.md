@@ -35,6 +35,15 @@ Started: 2026-08-24
   the preferred A1 shape failed with a concrete AD-1 capacity error. The active
   E2 micro canary is deliberately not admitted and has no public ingestion
   path; see `docs/grant-m1-live-infrastructure-log.md`.
+- replacement Oracle E4 Collector canary provisioned with a verified 12.5%
+  burstable baseline and 4 GiB memory. Its loopback Collector is active and
+  passed service-only and full-VM restart recovery, but remains unadmitted
+  pending the versioned preflight, durable replay recovery, and 24-hour soak.
+- Collector-specific fail-closed preflight now verifies the frozen runtime
+  manifest file-by-file, source commit, Node version, systemd unit, clock,
+  service state, loopback-only bind, protected evidence log, health, and disk.
+- Collector-specific 24-hour soak now fsyncs every sample, rejects inadequate
+  coverage/readiness or gaps, and fails if the durable stored count regresses.
 
 ## Not yet implemented or validated
 
@@ -53,9 +62,16 @@ from the operator environment. It is neither an observer host nor independence
 evidence, and it does not reduce the three-provider deployment requirement.
 
 The Oracle E2 micro resource proves only that a candidate VM was provisioned.
-It does not yet prove host fitness, Collector recovery, TLS availability, or
-observer independence. The original A1 target remains blocked by observed
-capacity, and the E2 micro deviation must pass stricter memory and restart gates
-before it can replace that target.
+It failed host fitness and recovery: the guest exposed only 498 MiB physical
+memory, entered heavy swap under installation pressure, and did not restore SSH
+within the bounded check after a Console reboot. The canary is rejected and
+cannot replace the original A1 target. A1 remains blocked by observed capacity;
+the E4 replacement is now the active bounded Collector canary.
+
+The Oracle E4 canary is running but is not a hosted public Collector yet. Its
+basic guest checks, service restart, and full-VM recovery passed; no observer
+identity, independent observation, public TLS ingestion, durable replay, or
+24-hour soak claim is made. Observer queue recovery is a separate observer-host
+gate because the Collector has no delivery queue.
 
 Milestone 2 has not started.

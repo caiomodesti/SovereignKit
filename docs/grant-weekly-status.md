@@ -113,4 +113,39 @@ activity belongs in commits and CI rather than promotional status claims.
 - Next action: observe a real Run Command execution, run host preflight, deploy
   the loopback Collector, then start its recovery and 24-hour canary gates.
 
+## 2026-08-28 — Oracle E2 micro canary rejected
+
+- Real SSH preflight exposed only 498 MiB physical memory, below the frozen
+  1 GiB candidate floor.
+- A locally staged Collector-only runtime removed the unnecessary Solana SDK
+  dependency and passed 22 focused tests, but the host had already entered
+  heavy swap during the earlier install attempt.
+- The VM did not restore SSH within the bounded recovery check after a Console
+  reboot. Decision: `CANARY_REJECTED_RESOURCE_FLOOR_AND_RECOVERY`.
+- No milestone credit is claimed. The next Collector candidate moves outside
+  this Oracle micro path; Superteam RPC benefits remain route resources, while
+  OVHcloud or the bounded paid topology remain compute alternatives.
+- PR 36 passed all required CI and security checks and was merged.
+
+## 2026-08-28 — Oracle E4 Collector replacement running
+
+- Activated Pay As You Go with BRL 1,500 in displayed trial credits and created
+  a BRL 60 monthly budget with an 80% actual-spend alert before provisioning.
+- Provisioned one `VM.Standard.E4.Flex` Collector canary in São Paulo: 1 OCPU,
+  12.5% burstable baseline, 4 GiB memory, Oracle Linux 9, and encrypted boot
+  storage. No public Collector ingestion was opened.
+- Preserved the Console's BRL 131.21 full-rate estimate and the documented
+  burstable calculation of BRL 45.326306625. The project does not present either
+  value as a settled bill.
+- Real SSH preflight confirmed x86-64, approximately 3.45 GiB visible memory,
+  approximately 22 GiB free disk, synchronized UTC time, and no active swap use.
+- Deployed the frozen Collector-only runtime at commit
+  `d2e5e09c01d890c0f142b0cf22010280c38b366c` with Node.js 22.17.0. Loopback
+  health passed and controlled service restart recovery passed.
+- Controlled full-VM reboot recovery passed in approximately 49 seconds: SSH,
+  enabled service, loopback health, and the protected evidence file recovered.
+- Status remains `PROVISIONED_CANARY_NOT_ADMITTED`; durable replay recovery,
+  versioned preflight, and 24-hour soak remain pending. Observer queue recovery
+  remains an observer-host gate. Milestone 2 has not started.
+
 Milestone 2 has not started.

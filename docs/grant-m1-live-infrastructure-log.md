@@ -61,6 +61,54 @@ pass.
   the host remains unadmitted even if it later returns and runs the reduced
   bundle.
 
+## 2026-08-28 — Oracle E2 micro canary rejected
+
+- The instance did not restore SSH availability within the bounded recovery
+  check after the Console reboot.
+- The observed 498 MiB physical memory is below the frozen 1 GiB candidate
+  floor, and installation pressure caused heavy swap plus an unacceptably slow
+  shutdown/recovery path.
+- Decision: `CANARY_REJECTED_RESOURCE_FLOOR_AND_RECOVERY`.
+- The VM MUST NOT host the official Collector or count toward any milestone.
+- Next topology action: move the Collector to an external host that meets the
+  resource floor. Prefer a verified Superteam compute benefit when it provides
+  a general Linux VM with persistent storage; otherwise use the bounded paid
+  fallback. RPC credits remain reserved for route diversity, not compute.
+
+## 2026-08-28 — Oracle E4 Collector canary provisioned, not admitted
+
+- Provisioned `VM.Standard.E4.Flex` in `sa-saopaulo-1` with 1 OCPU, a verified
+  12.5% burstable baseline, 4 GiB configured memory, Oracle Linux 9, and the
+  default encrypted boot volume. Provider resource IDs and addresses are not
+  retained in this public log.
+- Reused the dedicated VCN, public subnet, NSG, and dedicated SSH public key.
+  SSH remains restricted to the operator's current `/32`; Collector ingestion
+  remains closed and the health endpoint binds only to `127.0.0.1:8787`.
+- Oracle displayed BRL 1,500 in trial credits. A BRL 60 monthly budget and an
+  80% actual-spend alert were active before creation.
+- Estimator discrepancy: the Console showed BRL 131.21/month at the full shape
+  rate even though both review and live instance details confirmed the 12.5%
+  baseline. The frozen public-price calculation plus displayed boot volume is
+  BRL 45.326306625/month. Both values are retained; neither is described as a
+  bill.
+- Real guest preflight: x86-64, synchronized UTC clock, approximately 3.45 GiB
+  visible memory, approximately 22 GiB free on `/`, and zero swap use at the
+  capture time.
+- Deployed the Collector-only runtime from commit
+  `d2e5e09c01d890c0f142b0cf22010280c38b366c` using Node.js 22.17.0 after
+  verifying the official Node archive checksum. The service is enabled and
+  active under the hardened systemd unit.
+- Loopback health returned `status=ok`, the service bound only to
+  `127.0.0.1:8787`, and a controlled service restart preserved the append-only
+  evidence file with mode `0600`.
+- A controlled full-VM reboot changed the guest boot identity as expected. SSH,
+  the enabled Collector service, loopback health, and the mode-`0600` evidence
+  file recovered in approximately 49 seconds.
+- Admission status: `PROVISIONED_CANARY_NOT_ADMITTED`. Versioned preflight,
+  durable replay recovery, and the complete 24-hour soak remain pending. The
+  delivery queue belongs to an Observer and is not claimed here. This Collector
+  contributes no observer independence.
+
 ### Required gates before this can become the Collector
 
 1. Run Command delivery and real execution must be observed, not merely
