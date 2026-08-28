@@ -114,9 +114,55 @@ pass.
 1. Run Command delivery and real execution must be observed, not merely
    accepted by the control plane.
 2. Host preflight must prove clock, disk, runtime, and service readiness.
-3. The 1 GiB host must survive build/deployment, restart, queue recovery, and a
-   24-hour production-like canary without swap thrash or memory exhaustion.
+3. The 4 GiB E4 host must survive deployment, Collector durable replay, and a
+   24-hour production-like canary without storage regression or readiness loss.
 4. A controlled conventional DNS hostname and TLS path must exist before any
    observer sends results to it.
 5. The Collector remains a centralized availability dependency and contributes
    nothing to observer independence.
+
+## 2026-08-28 — E4 preflight and durable replay passed; soak running
+
+- The Run Command dynamic group was corrected to match only the active E4
+  instance; the rejected E2 instance is no longer a member. The associated
+  policy remains least privilege: the dynamic group may only consume its own
+  `instance-agent-command-execution-family` resources. Commands created before
+  and immediately after the change remained control-plane `Accepted`, not
+  executed, during this checkpoint. Oracle documents an approximately one-hour
+  propagation window for matching-rule changes, so no execution claim is made.
+- Direct SSH through the existing dedicated, ignored key provided a bounded
+  bootstrap path without weakening key permissions or opening Collector
+  ingestion. Provider addresses and resource IDs remain outside this public
+  log.
+- The fail-closed preflight found that the installed manifest still named
+  source commit `3c904a64b0303c7bd8aad9e37f07fc26f69ab254`, which predates the
+  frozen Collector-only deployment commit. The expected commit was not changed
+  to hide the mismatch.
+- A detached build at frozen commit
+  `d2e5e09c01d890c0f142b0cf22010280c38b366c` produced a 124-file runtime
+  manifest and a 66,174-byte archive with SHA-256
+  `a6401eb0c2ed2f7bb201b59e9baa692bbf45a7e92ca725747737ea440bb6f66c`.
+  The runtime was replaced with an automatic rollback path retained on-host;
+  the Collector recovered with loopback health `status=ok`.
+- The versioned host preflight then passed and wrote mode-`0600` evidence owned
+  by `sovereignkit`, with evidence SHA-256
+  `c4403d90fee4099ffad2851bf4dc9e0b7a904db318be9e7f5731d90aaf0462ba`.
+- The first archived local fixture was rejected because its observer key was
+  not allowlisted. A first synthetic canary attempt was then rejected by the
+  JSON Schema because its phase label was outside the official enum. Both
+  failures occurred before durable append and are retained as negative gate
+  evidence; validation was not weakened.
+- A replacement synthetic replay fixture was signed with an ephemeral,
+  short-lived canary key and validated locally against the signature, ingestor,
+  and official JSON Schema. It is explicitly Collector durability test data,
+  not a Solana observation and not observer-independence evidence.
+- The real-host durable replay drill passed: first ingest accepted exactly one
+  record, service restart reconstructed one record, duplicate replay did not
+  append, evidence remained mode `0600`, and health ended at `storedCount=1`.
+- The 24-hour Collector soak started at `2026-08-28T16:26:04.321Z`. Its first
+  fsynced sample was ready over loopback with HTTP 200 and `stored_count=1`.
+  The systemd unit is enabled and running independently of the operator PC.
+  No summary or admission claim exists until the complete 24-hour evaluator
+  finishes successfully.
+- Admission status remains `PROVISIONED_CANARY_NOT_ADMITTED`. Public DNS/TLS,
+  external observer delivery, and every independence claim remain absent.
