@@ -1,0 +1,77 @@
+{
+  "schema_version": "GrantM1OracleE4CollectorCanaryPlan@0.3.0",
+  "status": "PROVISIONED_CANARY_NOT_ADMITTED",
+  "scope": "COLLECTOR_CANARY_ONLY",
+  "billing_authorized_by_repository": false,
+  "operator_spend_authorization": "CONFIRMED_OUT_OF_BAND_WITH_DOCUMENTED_ESTIMATOR_LIMITATION",
+  "provider": {
+    "provider_id": "oracle",
+    "provider_label": "Oracle Cloud Infrastructure",
+    "region": "sa-saopaulo-1",
+    "account_plan_required": "PAY_AS_YOU_GO"
+  },
+  "candidate": {
+    "component_id": "collector-oracle-e4-gru-canary",
+    "role": "COLLECTOR",
+    "shape": "VM.Standard.E4.Flex",
+    "architecture": "x86_64",
+    "operating_system": "Oracle Linux 9",
+    "ocpu": 1,
+    "memory_gib": 4,
+    "burstable_baseline_fraction": 0.125,
+    "boot_volume_gib": 50,
+    "provisioned": true,
+    "admitted": false,
+    "public_ingress_enabled": false,
+    "health_loopback_only": true
+  },
+  "pricing_snapshot": {
+    "currency": "BRL",
+    "verified_at": "2026-08-28T07:51:00.000-03:00",
+    "source": "https://wwwcmsapi.oracle.com/br/cloud/price-list/",
+    "ocpu_hourly_brl": 0.1308925,
+    "memory_gib_hourly_brl": 0.00785355,
+    "monthly_hours": 730,
+    "estimated_compute_monthly_brl": 34.876306625,
+    "estimated_boot_volume_monthly_brl": 10.45,
+    "estimated_burstable_total_monthly_brl": 45.326306625,
+    "live_console_full_rate_estimate_monthly_brl": 131.21,
+    "live_console_estimator_applies_burstable_baseline": false,
+    "trial_credit_balance_at_creation_brl": 1500,
+    "maximum_console_estimate_monthly_brl": 60,
+    "excluded": [
+      "taxes",
+      "public_ipv4_if_separately_charged",
+      "boot_volume_above_free_or_included_allowance",
+      "excess_egress"
+    ]
+  },
+  "provisioning_gates": {
+    "pay_as_you_go_active": true,
+    "shape_visible_in_region": true,
+    "console_estimate_verified": true,
+    "console_estimate_within_ceiling": false,
+    "official_burstable_calculation_within_ceiling": true,
+    "budget_alert_enabled": true,
+    "operator_final_create_confirmation": true,
+    "reuse_dedicated_vcn_and_nsg": true,
+    "ssh_ingress_restricted_to_operator_cidr": true
+  },
+  "admission_gates": {
+    "basic_live_preflight_passed": true,
+    "versioned_host_preflight_passed": false,
+    "service_restart_recovery_passed": true,
+    "full_vm_restart_recovery_passed": true,
+    "restart_recovery_passed": true,
+    "collector_durable_replay_recovery_passed": false,
+    "canary_soak_minimum_seconds": 86400,
+    "canary_soak_passed": false,
+    "sanitized_evidence_retained": true
+  },
+  "methodology_boundaries": {
+    "collector_is_not_an_observer": true,
+    "observer_independence_effect": "NONE",
+    "milestone_1_acceptance_effect_before_admission": "NONE",
+    "milestone_2_started": false
+  }
+}
