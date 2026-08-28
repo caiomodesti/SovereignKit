@@ -149,3 +149,22 @@ activity belongs in commits and CI rather than promotional status claims.
   remains an observer-host gate. Milestone 2 has not started.
 
 Milestone 2 has not started.
+
+## 2026-08-28 — Oracle E4 preflight and replay passed; 24-hour soak started
+
+- Corrected the Run Command dynamic group to authorize only the active E4;
+  the rejected E2 no longer matches. Preserved the existing least-privilege
+  self-consumption policy and did not claim `Accepted` commands as execution.
+- The fail-closed preflight exposed an older installed runtime manifest at
+  commit `3c904a64b0303c7bd8aad9e37f07fc26f69ab254`. Rebuilt the 124-file
+  runtime at frozen commit `d2e5e09c01d890c0f142b0cf22010280c38b366c`,
+  deployed it with rollback, and then passed the versioned live-host preflight.
+- Passed the real-host Collector durability drill with a short-lived,
+  schema-valid synthetic fixture: one accepted append, restart reconstruction,
+  duplicate replay, one retained record, and mode-`0600` evidence. This is not
+  Solana observation or observer-independence evidence.
+- Started the fail-closed 24-hour soak at `2026-08-28T16:26:04.321Z`. The first
+  sample was healthy with `stored_count=1`; the Oracle-hosted systemd unit runs
+  without requiring the operator PC. Admission remains blocked until the final
+  summary passes.
+- Status remains `PROVISIONED_CANARY_NOT_ADMITTED`. Milestone 2 has not started.
