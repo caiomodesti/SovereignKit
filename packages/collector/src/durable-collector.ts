@@ -6,7 +6,7 @@ import {
   type IngestionOutcome,
   type ObserverAllowlistEntry,
   type SignedProbeResult,
-} from "@sovereignkit/probes";
+} from "@sovereignkit/probes/collector-runtime";
 
 import { ProbeResultSchemaValidator } from "./validation.js";
 

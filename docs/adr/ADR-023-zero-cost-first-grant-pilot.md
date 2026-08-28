@@ -73,6 +73,17 @@ synchronization, stable operation, and account eligibility must all be proved.
   3,000 qualifying signed observations, and the open evidence release remain
   mandatory.
 
+## Implementation note — 2026-08-28
+
+The first Oracle A1 Collector create attempt failed with an observed capacity
+error in São Paulo AD-1. A `VM.Standard.E2.1.Micro` was provisioned as a
+temporary Always Free-eligible Collector canary, not as an accepted replacement
+for the 6 GiB A1 target. Its 1 GiB memory is below the original target and
+therefore adds explicit memory-pressure, restart, recovery, and 24-hour soak
+gates. If it fails any gate, the project will migrate the Collector to a
+documented external free/discounted candidate or activate the bounded paid
+fallback; it will not weaken an acceptance criterion to preserve zero cost.
+
 ## References checked on 2026-08-27
 
 - Superteam member perks: https://superteam.fun/member-perks

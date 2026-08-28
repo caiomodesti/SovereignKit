@@ -1,0 +1,12 @@
+{
+  "name": "@sovereignkit/probes",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./collector-runtime": {
+      "types": "./dist/collector-runtime.d.ts",
+      "import": "./dist/collector-runtime.js"
+    }
+  }
+}

@@ -84,4 +84,33 @@ activity belongs in commits and CI rather than promotional status claims.
 - Next action: operator account/MFA checks, then Oracle Collector and AWS
   Observer A only; do not create B or C until A passes.
 
+## 2026-08-28 — Oracle Collector canary provisioned, not admitted
+
+- Attempted the frozen Oracle A1 Collector candidate first. Oracle returned a
+  concrete AD-1 capacity failure; no A1 instance was created.
+- Provisioned an Always Free-eligible Oracle `VM.Standard.E2.1.Micro` only as a
+  constrained Collector canary: 1 GiB memory, a documented 1/8 OCPU baseline
+  with burst capacity, Oracle Linux 9, and a 46.6 GiB boot volume in
+  `sa-saopaulo-1`.
+- Restricted SSH to the operator's then-current `/32` address and kept public
+  Collector ingestion closed. No secret or provider resource identifier was
+  committed.
+- Preserved local SSH key permissions after a Windows process-identity mismatch
+  prevented direct authentication. Added a single-instance dynamic group and a
+  least-privilege Run Command execution policy instead of weakening the key.
+- The read-only host preflight is control-plane accepted but not yet observed as
+  executed while IAM propagation completes. Acceptance and execution remain
+  separate evidence states.
+- Live operator record: `docs/grant-m1-live-infrastructure-log.md`.
+- Rechecked current Superteam perks. Alchemy, GetBlock, Carbium, and discounted
+  RPC offers can reduce route cost; OVHcloud is a discounted compute fallback;
+  security and legal benefits are reserved for later acceptance/release work.
+  None of these benefits replaces the requirement for three independently
+  hosted observer runtimes.
+- Cost incurred: USD 0 recorded. Status remains
+  `IMPLEMENTED_NOT_VALIDATED`; the canary is
+  `PROVISIONED_CANARY_NOT_ADMITTED`.
+- Next action: observe a real Run Command execution, run host preflight, deploy
+  the loopback Collector, then start its recovery and 24-hour canary gates.
+
 Milestone 2 has not started.
