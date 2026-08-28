@@ -31,6 +31,10 @@ Started: 2026-08-24
 - zero-cost-first funding policy that treats RPC credits separately from observer compute and keeps the USD 50/month topology as an unactivated paid fallback while free-tier eligibility is checked.
 - fail-closed 24-hour host canary with append-only fsynced readiness samples, explicit coverage/readiness thresholds, identity-mismatch rejection, and a hardened systemd unit; no external host has run it yet.
 - machine-readable zero-cost candidate topology covering AWS, Google Cloud, and Oracle Cloud, with official-offer references, resource ceilings, explicit risks, unverified-account markers, zero authorized spend, and fail-closed admission tests.
+- first external Collector canary provisioned on Oracle in `sa-saopaulo-1` after
+  the preferred A1 shape failed with a concrete AD-1 capacity error. The active
+  E2 micro canary is deliberately not admitted and has no public ingestion
+  path; see `docs/grant-m1-live-infrastructure-log.md`.
 
 ## Not yet implemented or validated
 
@@ -47,5 +51,11 @@ The current runtime MUST NOT be described as a completed independent observation
 The Alchemy preflight proves that one external logical Devnet RPC route is usable
 from the operator environment. It is neither an observer host nor independence
 evidence, and it does not reduce the three-provider deployment requirement.
+
+The Oracle E2 micro resource proves only that a candidate VM was provisioned.
+It does not yet prove host fitness, Collector recovery, TLS availability, or
+observer independence. The original A1 target remains blocked by observed
+capacity, and the E2 micro deviation must pass stricter memory and restart gates
+before it can replace that target.
 
 Milestone 2 has not started.

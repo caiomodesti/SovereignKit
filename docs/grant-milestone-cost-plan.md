@@ -1,7 +1,8 @@
 # Grant Milestones 1–3: execution and cost plan
 
-Status: public-offer research complete; account eligibility and host validation
-required; no resource provisioned.
+Status: public-offer research complete; one Oracle Collector canary provisioned
+but not admitted; observer account eligibility and host validation still
+required.
 
 ## What the grant actually requires
 
@@ -43,8 +44,40 @@ themselves run our observer daemon or establish operational independence.
 - Oracle Cloud: one 1-OCPU/6-GiB A1 observer plus one 1-OCPU/6-GiB Collector
   fit within the aggregate Always Free compute allowance. Capacity, ARM64
   compatibility, home-region placement, and idle reclamation remain blockers.
+- Oracle live result on 2026-08-28: the preferred A1 shape was unavailable in
+  São Paulo AD-1. An Always Free-eligible E2 micro with 1 GiB memory was created
+  only as the Collector canary. This does not change the observer topology and
+  is not accepted until its stricter host/recovery/24-hour gates pass.
+- If A1 capacity remains unavailable after the Collector canary, Oracle's
+  documented allowance of up to two E2 micro instances makes a second micro a
+  possible Observer C candidate. It would still have to pass the observer's
+  host and 24-hour gates, and it may not be provisioned before Observer A. This
+  contingency preserves three observer providers (AWS, Google, Oracle) but
+  does not remove the Oracle control-plane coupling with the Collector.
 - OVHcloud: Superteam advertises up to 40% savings; this is a discounted paid
   fallback, not a zero-cost commitment.
+
+### Other relevant current Superteam benefits
+
+- Quantstamp, Ackee, Adevar Labs, Hacken, Cantina, Zellic, FYEO, and Sec3 can
+  reduce later security-review cost. They do not replace the repository's own
+  Milestone 1 hostile tests.
+- Allium and Nansen API credits may corroborate or enrich later public evidence,
+  but third-party indexed data cannot become the sole transaction-observation
+  truth source.
+- Circulox, NeosLegal, and the listed legal-service benefits are commercial and
+  legal support options for the public release; they are not required to run
+  the pilot.
+- The `.superteam` domain perk is not assumed to provide conventional DNS and
+  publicly trusted TLS. It cannot satisfy the Collector hostname gate without
+  a separately verified HTTPS mechanism.
+- Project Advisory and Superteam Fast Track are useful for external review and
+  distribution after technical evidence exists; they do not change milestone
+  acceptance.
+
+This inventory was rechecked against the public member-perks page on
+2026-08-28. Terms remain mutable and are revalidated only when a benefit is
+actually activated.
 
 No free-tier host is accepted until the same production-like preflight and
 24-hour soak pass. A free label is not evidence of fitness.

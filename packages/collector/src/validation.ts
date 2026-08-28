@@ -1,7 +1,7 @@
 import { Ajv2020, type ErrorObject, type ValidateFunction } from "ajv/dist/2020.js";
 import * as addFormatsModule from "ajv-formats";
 
-import type { SignedProbeResult } from "@sovereignkit/probes";
+import type { SignedProbeResult } from "@sovereignkit/probes/collector-runtime";
 
 const addFormats = addFormatsModule.default as unknown as (ajv: Ajv2020) => Ajv2020;
 

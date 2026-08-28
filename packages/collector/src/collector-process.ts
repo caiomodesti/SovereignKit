@@ -1,6 +1,6 @@
 import { readFile } from "node:fs/promises";
 
-import type { ObserverAllowlistEntry } from "@sovereignkit/probes";
+import type { ObserverAllowlistEntry } from "@sovereignkit/probes/collector-runtime";
 
 import { DurableProbeResultCollector } from "./durable-collector.js";
 import { createCollectorHttpServer } from "./http.js";

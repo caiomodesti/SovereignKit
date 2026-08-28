@@ -8,7 +8,8 @@ Type=simple
 User=sovereignkit
 Group=sovereignkit
 WorkingDirectory=/opt/sovereignkit
-ExecStart=/usr/bin/node packages/collector/dist/collector-process.js /opt/sovereignkit/spec/probe-result.schema.json /etc/sovereignkit/allowlist.json /var/lib/sovereignkit/evidence/accepted.jsonl 8787
+Environment=NODE_OPTIONS=--max-old-space-size=192
+ExecStart=/usr/local/bin/node packages/collector/dist/collector-process.js /opt/sovereignkit/spec/probe-result.schema.json /etc/sovereignkit/allowlist.json /var/lib/sovereignkit/evidence/accepted.jsonl 8787
 Restart=on-failure
 RestartSec=5s
 NoNewPrivileges=true
