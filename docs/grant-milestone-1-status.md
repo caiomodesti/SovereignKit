@@ -26,10 +26,10 @@ Started: 2026-08-24
 - Linux host preflight that fails closed on clock synchronization, observer identity/readiness, key ownership and permissions, active service, frozen commit and Node.js version, clean runtime tree, and free-disk threshold while emitting only sanitized evidence.
 - secret-safe single-RPC-route preflight that validates a provider Devnet endpoint while persisting only its public origin and explicitly contributing no observer-independence or milestone-acceptance claim.
 - live Alchemy Solana Devnet route preflight retained at `fixtures/grant-m1/alchemy-devnet-route-20260826.json`: `getHealth`, `getGenesisHash`, `getVersion`, and finalized `getSlot` passed without retaining the credential-bearing URL path.
-- frozen three-provider infrastructure topology and USD 50/month proposed ceiling with repository-enforced `billing_authorized: false`; no cloud component is claimed as provisioned.
+- frozen three-provider infrastructure topology and USD 50/month proposed ceiling with repository-enforced `billing_authorized: false`; the separately approved Oracle E4 Collector canary is the only provisioned cloud component.
 - secret-free operator-readiness gate for provider ownership, MFA, billing controls, budget alerts, Collector DNS, key custody, and explicit provisioning approval; the checked-in example remains deliberately blocked.
 - zero-cost-first funding policy that treats RPC credits separately from observer compute and keeps the USD 50/month topology as an unactivated paid fallback while free-tier eligibility is checked.
-- fail-closed 24-hour host canary with append-only fsynced readiness samples, explicit coverage/readiness thresholds, identity-mismatch rejection, and a hardened systemd unit; no external host has run it yet.
+- fail-closed 24-hour host canary with append-only fsynced readiness samples, explicit coverage/readiness thresholds, identity-mismatch rejection, and a hardened systemd unit; no observer host has run it yet.
 - machine-readable zero-cost candidate topology covering AWS, Google Cloud, and Oracle Cloud, with official-offer references, resource ceilings, explicit risks, unverified-account markers, zero authorized spend, and fail-closed admission tests.
 - first external Collector canary provisioned on Oracle in `sa-saopaulo-1` after
   the preferred A1 shape failed with a concrete AD-1 capacity error. The active
@@ -37,8 +37,8 @@ Started: 2026-08-24
   path; see `docs/grant-m1-live-infrastructure-log.md`.
 - replacement Oracle E4 Collector canary provisioned with a verified 12.5%
   burstable baseline and 4 GiB memory. Its loopback Collector is active and
-  passed service-only and full-VM restart recovery, but remains unadmitted
-  pending the versioned preflight, durable replay recovery, and 24-hour soak.
+  passed service-only and full-VM restart recovery, frozen-runtime preflight,
+  and durable replay recovery, but remains unadmitted pending the 24-hour soak.
 - Collector-specific fail-closed preflight now verifies the frozen runtime
   manifest file-by-file, source commit, Node version, systemd unit, clock,
   service state, loopback-only bind, protected evidence log, health, and disk.

@@ -1,5 +1,5 @@
 {
-  "schema_version": "GrantM1OracleE4CollectorCanaryPlan@0.3.0",
+  "schema_version": "GrantM1OracleE4CollectorCanaryPlan@0.4.0",
   "status": "PROVISIONED_CANARY_NOT_ADMITTED",
   "scope": "COLLECTOR_CANARY_ONLY",
   "billing_authorized_by_repository": false,
@@ -59,11 +59,11 @@
   },
   "admission_gates": {
     "basic_live_preflight_passed": true,
-    "versioned_host_preflight_passed": false,
+    "versioned_host_preflight_passed": true,
     "service_restart_recovery_passed": true,
     "full_vm_restart_recovery_passed": true,
     "restart_recovery_passed": true,
-    "collector_durable_replay_recovery_passed": false,
+    "collector_durable_replay_recovery_passed": true,
     "canary_soak_minimum_seconds": 86400,
     "canary_soak_passed": false,
     "sanitized_evidence_retained": true

@@ -1,12 +1,14 @@
 # Grant Milestone 1 provider onboarding gate
 
-Status: `ACTION_REQUIRED` — no cloud resource has been provisioned.
+Status: `IN_PROGRESS` — the Oracle E4 Collector canary is provisioned but not
+admitted; no observer host has been provisioned.
 
-ADR-023 adds a prior zero-cost review. Public-offer research is recorded in
-`deploy/grant-pilot/zero-cost-candidate-plan.json`; account eligibility remains
-unverified. Do not complete the paid-provider gate or create an ADR-022 resource
-until the candidate accounts have been checked and a zero-cost canary has been
-attempted.
+ADR-023 added a prior zero-cost review. Oracle A1 capacity and E2 host fitness
+failed concretely, so the operator approved a bounded Pay As You Go E4 Collector
+canary. That canary passed frozen-runtime preflight and durable replay recovery;
+its 24-hour soak is running. Do not provision Observer A until the Collector soak
+has a complete passing summary, and do not provision Observers B or C until
+Observer A passes its own host and observation gates.
 
 This runbook converts the operator-controlled prerequisites for Milestone 1
 into an explicit gate. It does not authorize billing, create accounts, buy a

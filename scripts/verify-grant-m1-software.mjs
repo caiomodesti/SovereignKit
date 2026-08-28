@@ -157,14 +157,16 @@ if (zeroCostPlan.schema_version !== "GrantM1ZeroCostCandidatePlan@0.1.0" ||
   throw new Error("zero-cost candidate plan must remain researched, unprovisioned, and unaccepted");
 }
 const oracleE4Canary = JSON.parse(contents.get("deploy/grant-pilot/oracle-e4-collector-canary-plan.json"));
-if (oracleE4Canary.schema_version !== "GrantM1OracleE4CollectorCanaryPlan@0.3.0" ||
+if (oracleE4Canary.schema_version !== "GrantM1OracleE4CollectorCanaryPlan@0.4.0" ||
     oracleE4Canary.status !== "PROVISIONED_CANARY_NOT_ADMITTED" ||
     oracleE4Canary.scope !== "COLLECTOR_CANARY_ONLY" ||
     oracleE4Canary.billing_authorized_by_repository !== false ||
     oracleE4Canary.candidate?.provisioned !== true ||
     oracleE4Canary.candidate?.admitted !== false ||
     oracleE4Canary.admission_gates?.full_vm_restart_recovery_passed !== true ||
-    oracleE4Canary.admission_gates?.collector_durable_replay_recovery_passed !== false ||
+    oracleE4Canary.admission_gates?.versioned_host_preflight_passed !== true ||
+    oracleE4Canary.admission_gates?.collector_durable_replay_recovery_passed !== true ||
+    oracleE4Canary.admission_gates?.canary_soak_passed !== false ||
     oracleE4Canary.methodology_boundaries?.milestone_2_started !== false) {
   throw new Error("Oracle E4 Collector canary plan must remain bounded, provisioned, and unaccepted");
 }

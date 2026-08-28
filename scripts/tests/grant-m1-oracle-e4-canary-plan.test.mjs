@@ -37,11 +37,21 @@ test("rejects cost or resource drift", () => {
 test("rejects premature readiness or weakened methodology", () => {
   const ready = structuredClone(canonicalPlan);
   ready.admission_gates.canary_soak_passed = true;
-  assert.throws(() => validateGrantM1OracleE4CanaryPlan(ready), /must remain false/u);
+  assert.throws(() => validateGrantM1OracleE4CanaryPlan(ready), /must remain unpassed/u);
 
   const boundary = structuredClone(canonicalPlan);
   boundary.methodology_boundaries.observer_independence_effect = "ESTABLISHED";
   assert.throws(() => validateGrantM1OracleE4CanaryPlan(boundary), /methodology boundary/u);
+});
+
+test("requires the observed versioned preflight and durable replay evidence", () => {
+  const preflight = structuredClone(canonicalPlan);
+  preflight.admission_gates.versioned_host_preflight_passed = false;
+  assert.throws(() => validateGrantM1OracleE4CanaryPlan(preflight), /must remain true/u);
+
+  const replay = structuredClone(canonicalPlan);
+  replay.admission_gates.collector_durable_replay_recovery_passed = false;
+  assert.throws(() => validateGrantM1OracleE4CanaryPlan(replay), /must remain true/u);
 });
 
 test("requires the observed full-VM recovery evidence", () => {
