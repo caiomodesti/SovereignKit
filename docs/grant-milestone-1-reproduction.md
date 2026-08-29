@@ -134,7 +134,7 @@ Placeholder files cannot satisfy the gate.
 - public evidence anchor: `fixtures/grant-m1/local-readiness-20260825.json`;
 - dashboard production build: PASS;
 - tracked-file secret audit: PASS;
-- 24-hour canary implementation and hostile contracts: PASS locally; real-host run NOT RUN;
+- 24-hour canary implementation and hostile contracts: PASS locally; corrected Oracle E4 real-host Collector run IN PROGRESS from `2026-08-29T17:17:37.739Z`;
 - three-provider external acceptance: NOT RUN / evidence does not exist yet.
 
 The canonical source checkout experienced a local pnpm-store/global-shim inconsistency after a sandboxed dependency reconstruction. To avoid altering versions, validation was also executed in a clean temporary checkout using the committed lockfile. This is an environment limitation, not external deployment evidence.

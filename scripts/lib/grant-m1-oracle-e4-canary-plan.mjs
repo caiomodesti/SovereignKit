@@ -1,4 +1,4 @@
-export const GRANT_M1_ORACLE_E4_CANARY_PLAN_VERSION = "GrantM1OracleE4CollectorCanaryPlan@0.4.0";
+export const GRANT_M1_ORACLE_E4_CANARY_PLAN_VERSION = "GrantM1OracleE4CollectorCanaryPlan@0.5.0";
 
 const nearlyEqual = (left, right) => Math.abs(left - right) <= 0.000001;
 
@@ -68,8 +68,11 @@ export function validateGrantM1OracleE4CanaryPlan(plan) {
     if (admission[field] !== true) throw new Error(`observed Oracle E4 admission evidence ${field} must remain true`);
   }
   if (admission.canary_soak_passed !== false) throw new Error("Oracle E4 soak must remain unpassed until a complete real-host summary exists");
-  for (const field of ["basic_live_preflight_passed", "service_restart_recovery_passed", "full_vm_restart_recovery_passed", "restart_recovery_passed", "sanitized_evidence_retained"]) {
+  for (const field of ["basic_live_preflight_passed", "service_restart_recovery_passed", "sanitized_evidence_retained"]) {
     if (admission[field] !== true) throw new Error(`observed Oracle E4 evidence ${field} must remain true`);
+  }
+  for (const field of ["full_vm_restart_recovery_passed", "restart_recovery_passed"]) {
+    if (admission[field] !== false) throw new Error(`unverified Oracle E4 evidence ${field} must remain false`);
   }
 
   const boundaries = plan.methodology_boundaries ?? {};

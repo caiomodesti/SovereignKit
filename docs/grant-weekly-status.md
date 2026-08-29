@@ -150,7 +150,11 @@ activity belongs in commits and CI rather than promotional status claims.
 
 Milestone 2 has not started.
 
-## 2026-08-28 — Oracle E4 preflight and replay passed; 24-hour soak started
+## 2026-08-28 — RETRACTED Oracle E4 attribution
+
+The SSH target used for this entry was later proven to be the rejected E2 host.
+Its E4 preflight, replay, reboot, and soak claims are retracted. See the
+2026-08-29 correction below; no Milestone 1 acceptance was claimed.
 
 - Corrected the Run Command dynamic group to authorize only the active E4;
   the rejected E2 no longer matches. Preserved the existing least-privilege
@@ -168,3 +172,16 @@ Milestone 2 has not started.
   without requiring the operator PC. Admission remains blocked until the final
   summary passes.
 - Status remains `PROVISIONED_CANARY_NOT_ADMITTED`. Milestone 2 has not started.
+
+## 2026-08-29 — Corrected E4 gates and real soak started
+
+- Hostile review found that the ignored SSH target still named E2. E4 had no
+  soak evidence, still ran the older runtime, and reported `storedCount=0`.
+- Deployed the frozen 124-file runtime to the actual E4 with rollback retained.
+- Passed the real E4 preflight and durable replay gates; sanitized hashes and
+  boundaries are anchored in
+  `fixtures/grant-m1/oracle-e4-preflight-replay-20260829.json`.
+- Started the true 24-hour soak at `2026-08-29T17:17:37.739Z`; its first sample
+  passed. Earliest completion is `2026-08-30T17:17:37.739Z`.
+- Retracted full-VM restart recovery pending a post-soak rerun. Status remains
+  `PROVISIONED_CANARY_NOT_ADMITTED`; Milestone 2 has not started.

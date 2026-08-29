@@ -12,8 +12,8 @@ Verdict: `CONDITIONAL GO` for continued Milestone 1 engineering; `NO-GO` for mil
 - the external acceptance verifier now rejects existence-only evidence: every observer artifact is path-scoped and SHA-256 bound, signed results are cryptographically checked, raw polls are correlated, operational records are content-validated, and private-key markers are forbidden.
 - observation jobs now require a short-lived Ed25519-signed assignment; raw polls bind to its ID and payload hash, and the external verifier correlates assignment, polls, and ProbeResult.
 - a local outage/restart drill proves queued evidence survives Observer restart, delivers after Collector recovery, reconstructs one accepted record after Collector restart, and creates no duplicate delivery record.
-- a versioned Linux host preflight now prevents a nominally healthy record when the clock, key ACL, service, runtime commit/Node.js version/tree, observer identity, loopback readiness, or disk threshold is unsafe; no real provider host has executed it yet.
-- a fail-closed 24-hour canary now retains fsynced readiness samples, rejects identity drift and sparse evidence, and measures duration and gaps with a monotonic clock so wall-clock jumps cannot manufacture uptime; it has deterministic contract coverage but no real-host run yet.
+- a versioned Linux Collector preflight has now passed on the correctly identified Oracle E4 host; observer-host preflight remains unexecuted externally.
+- a fail-closed 24-hour Collector canary now retains fsynced readiness samples, rejects sparse evidence, and measures duration and gaps with a monotonic clock; the corrected E4 real-host run is in progress and has not passed.
 
 ## Blocking findings before external acceptance
 
