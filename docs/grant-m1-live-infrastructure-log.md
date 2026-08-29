@@ -121,7 +121,13 @@ pass.
 5. The Collector remains a centralized availability dependency and contributes
    nothing to observer independence.
 
-## 2026-08-28 — E4 preflight and durable replay passed; soak running
+## 2026-08-28 — RETRACTED host attribution
+
+The actions below were originally attributed to E4. On 2026-08-29 a hostile
+audit proved that the ignored SSH target file still named the rejected E2 host.
+The E4 preflight, replay, reboot, and soak claims in this section are therefore
+retracted. The historical record is retained to make the correction auditable;
+the corrected E4 evidence follows in the next section.
 
 - The Run Command dynamic group was corrected to match only the active E4
   instance; the rejected E2 instance is no longer a member. The associated
@@ -166,3 +172,33 @@ pass.
   finishes successfully.
 - Admission status remains `PROVISIONED_CANARY_NOT_ADMITTED`. Public DNS/TLS,
   external observer delivery, and every independence claim remain absent.
+
+## 2026-08-29 — E4 attribution corrected; real soak started
+
+- The expected 24-hour summary was absent on E4. Inspection proved that E4 had
+  no soak unit, journal, or soak evidence and still ran source commit
+  `3c904a64b0303c7bd8aad9e37f07fc26f69ab254` with `storedCount=0`.
+- Root cause: the ignored SSH target file named the rejected E2 address. This
+  explains the repeated E2 banner timeouts and invalidates the prior E4 host
+  attribution; it is not evidence that a completed E4 soak failed.
+- E4 itself was `Running`, with Oracle Linux 9.8, x86-64, approximately 4 GiB
+  memory, synchronized time, Node `v22.17.0`, and adequate disk. No new VM or
+  billing action was required.
+- The 124-file frozen runtime at
+  `d2e5e09c01d890c0f142b0cf22010280c38b366c` was deployed transactionally
+  with rollback retained. The Collector recovered healthy on loopback.
+- The real E4 preflight passed at `2026-08-29T17:15:44.667Z`; its evidence
+  SHA-256 is
+  `b756fe8eaa031b11a5ae7aeb25609fe811a5029ddd9f54f9377941df382d2bc6`.
+- The real E4 durability drill passed at `2026-08-29T17:16:47.998Z`: one
+  accepted append, restart reconstruction, duplicate rejection, one retained
+  record, and mode-`0600` evidence. Its evidence SHA-256 is
+  `757fdae4bc12ce69b6d663e2fb3ecce2c71a57a12e88287d1ee6536e4aaf5051`.
+- The true E4 soak started at `2026-08-29T17:17:37.739Z`. Its first fsynced
+  sample was ready with HTTP 200 and `stored_count=1`. It cannot pass before
+  `2026-08-30T17:17:37.739Z` and remains `IN_PROGRESS`.
+- Full-VM restart recovery is reset to unverified. It will be rerun only after
+  the soak completes so the active 24-hour window is not disturbed.
+- Sanitized anchor: `fixtures/grant-m1/oracle-e4-preflight-replay-20260829.json`.
+- Admission remains `PROVISIONED_CANARY_NOT_ADMITTED`; Milestone 2 has not
+  started.

@@ -1,0 +1,51 @@
+{
+  "schema_version": "GrantM1OracleE4CorrectedEvidenceAnchor@0.1.0",
+  "component_id": "collector-oracle-e4-gru-canary",
+  "captured_at": "2026-08-29T17:17:37.739Z",
+  "status": "PREFLIGHT_AND_DURABLE_REPLAY_PASSED_SOAK_IN_PROGRESS",
+  "host_attribution": {
+    "provider": "oracle",
+    "region": "sa-saopaulo-1",
+    "shape": "VM.Standard.E4.Flex",
+    "resource_identifiers_omitted": true
+  },
+  "correction": {
+    "prior_target_was_rejected_e2": true,
+    "prior_e4_soak_claim_retracted": true,
+    "full_vm_restart_recovery_retracted_pending_rerun": true
+  },
+  "preflight": {
+    "captured_at": "2026-08-29T17:15:44.667Z",
+    "sha256": "b756fe8eaa031b11a5ae7aeb25609fe811a5029ddd9f54f9377941df382d2bc6",
+    "ready": true,
+    "runtime_commit": "d2e5e09c01d890c0f142b0cf22010280c38b366c",
+    "node_version": "v22.17.0",
+    "manifest_file_count": 124,
+    "all_checks_passed": true
+  },
+  "durable_replay": {
+    "captured_at": "2026-08-29T17:16:47.998Z",
+    "sha256": "757fdae4bc12ce69b6d663e2fb3ecce2c71a57a12e88287d1ee6536e4aaf5051",
+    "passed": true,
+    "first_ingest_accepted": true,
+    "exactly_one_durable_record": true,
+    "restart_reconstructed_state": true,
+    "replay_rejected_as_duplicate": true,
+    "evidence_mode_0600": true
+  },
+  "soak": {
+    "started_at": "2026-08-29T17:17:37.739Z",
+    "minimum_duration_seconds": 86400,
+    "first_sample_ready": true,
+    "first_sample_http_status": 200,
+    "first_sample_stored_count": 1,
+    "passed": false
+  },
+  "claim_boundaries": {
+    "collector_only": true,
+    "solana_observation": false,
+    "observer_independence": false,
+    "milestone_1_accepted": false,
+    "milestone_2_started": false
+  }
+}

@@ -54,12 +54,12 @@ test("requires the observed versioned preflight and durable replay evidence", ()
   assert.throws(() => validateGrantM1OracleE4CanaryPlan(replay), /must remain true/u);
 });
 
-test("requires the observed full-VM recovery evidence", () => {
+test("rejects an unverified full-VM recovery claim", () => {
   const reboot = structuredClone(canonicalPlan);
-  reboot.admission_gates.full_vm_restart_recovery_passed = false;
-  assert.throws(() => validateGrantM1OracleE4CanaryPlan(reboot), /must remain true/u);
+  reboot.admission_gates.full_vm_restart_recovery_passed = true;
+  assert.throws(() => validateGrantM1OracleE4CanaryPlan(reboot), /must remain false/u);
 
   const aggregate = structuredClone(canonicalPlan);
-  aggregate.admission_gates.restart_recovery_passed = false;
-  assert.throws(() => validateGrantM1OracleE4CanaryPlan(aggregate), /must remain true/u);
+  aggregate.admission_gates.restart_recovery_passed = true;
+  assert.throws(() => validateGrantM1OracleE4CanaryPlan(aggregate), /must remain false/u);
 });

@@ -51,17 +51,17 @@ containing personal data.
 
 ## Admission gate
 
-Provisioning is not admission. Basic live preflight, service-only restart, and
-a controlled full-VM reboot all passed. After the reboot, SSH and the enabled
-Collector recovered in approximately 49 seconds, loopback health returned
-`status=ok`, and the append-only evidence file remained mode `0600`. The
-frozen-runtime host preflight and the Collector durability/replay drill have now
-also passed on the real E4 host. The host must still pass:
+Provisioning is not admission. The frozen-runtime host preflight, service
+restart, and Collector durability/replay drill passed on the correctly
+identified E4 host on 2026-08-29. The earlier full-VM recovery attribution was
+retracted after discovering that the ignored SSH target still named E2. The
+host must still pass:
 
 1. a complete 24-hour canary soak;
-2. final secret-free, sanitized evidence retention for that soak.
+2. a controlled full-VM recovery rerun after the soak;
+3. final secret-free, sanitized evidence retention.
 
-The soak started at `2026-08-28T16:26:04.321Z`. Its first fsynced sample was
+The true E4 soak started at `2026-08-29T17:17:37.739Z`. Its first fsynced sample was
 healthy with `stored_count=1`; no pass or admission claim exists until the
 complete real-host summary is retrieved and validated.
 

@@ -37,8 +37,9 @@ Started: 2026-08-24
   path; see `docs/grant-m1-live-infrastructure-log.md`.
 - replacement Oracle E4 Collector canary provisioned with a verified 12.5%
   burstable baseline and 4 GiB memory. Its loopback Collector is active and
-  passed service-only and full-VM restart recovery, frozen-runtime preflight,
-  and durable replay recovery, but remains unadmitted pending the 24-hour soak.
+  passed service restart, frozen-runtime preflight, and durable replay recovery
+  on the correctly identified host. Full-VM recovery was retracted pending a
+  post-soak rerun.
 - Collector-specific fail-closed preflight now verifies the frozen runtime
   manifest file-by-file, source commit, Node version, systemd unit, clock,
   service state, loopback-only bind, protected evidence log, health, and disk.
@@ -48,7 +49,7 @@ Started: 2026-08-24
   real-host durable replay drill. A synthetic, signed, schema-valid test result
   survived service restart and duplicate replay with exactly one durable
   record; this is Collector evidence only and contributes no observer claim.
-- the E4 24-hour soak is active from `2026-08-28T16:26:04.321Z`; the first
+- the true E4 24-hour soak is active from `2026-08-29T17:17:37.739Z`; the first
   fsynced sample passed, but no summary or admission claim exists yet.
 
 ## Not yet implemented or validated
@@ -75,8 +76,9 @@ cannot replace the original A1 target. A1 remains blocked by observed capacity;
 the E4 replacement is now the active bounded Collector canary.
 
 The Oracle E4 canary is running but is not a hosted public Collector yet. Its
-basic guest checks, service restart, full-VM recovery, frozen-runtime preflight,
-and durable replay passed. The replay used an explicitly synthetic signed
+basic guest checks, service restart, frozen-runtime preflight, and durable
+replay passed on the corrected host. Full-VM recovery remains unverified after
+the target-attribution correction. The replay used an explicitly synthetic signed
 fixture and does not prove Solana observation. No independent observer,
 public-TLS ingestion, completed 24-hour soak, or admission claim is made.
 Observer queue recovery is a separate observer-host gate because the Collector
