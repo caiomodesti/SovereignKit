@@ -23,7 +23,11 @@ Started: 2026-08-24
 - retained local readiness run against Agave 4.0.0 at runtime commit `450eb90576307b1975ed525c8365406c25749913`: a real System Program transaction reached `FINALIZED`, produced 280 raw polls, was signed and durably collected, and survived Collector replay;
 - public secret-free anchor for that run at `fixtures/grant-m1/local-readiness-20260825.json`.
 - local recovery drill proving queue preservation during Collector outage, delivery after Observer restart, Collector log reconstruction, and zero duplicate delivery records.
-- Linux host preflight that fails closed on clock synchronization, observer identity/readiness, key ownership and permissions, active service, frozen commit and Node.js version, clean runtime tree, and free-disk threshold while emitting only sanitized evidence.
+- Linux host preflight v0.2 that fails closed on clock synchronization,
+  observer identity/readiness, key ownership and exact mode `0600`, active and
+  enabled service, loopback-only health, frozen manifest/source commit and
+  Node.js version, systemd-unit integrity, and free-disk threshold while
+  emitting only sanitized evidence.
 - secret-safe single-RPC-route preflight that validates a provider Devnet endpoint while persisting only its public origin and explicitly contributing no observer-independence or milestone-acceptance claim.
 - live Alchemy Solana Devnet route preflight retained at `fixtures/grant-m1/alchemy-devnet-route-20260826.json`: `getHealth`, `getGenesisHash`, `getVersion`, and finalized `getSlot` passed without retaining the credential-bearing URL path.
 - frozen three-provider infrastructure topology and USD 50/month proposed ceiling with repository-enforced `billing_authorized: false`; the separately approved Oracle E4 Collector canary is the only provisioned cloud component.
@@ -31,6 +35,9 @@ Started: 2026-08-24
 - zero-cost-first funding policy that treats RPC credits separately from observer compute and keeps the USD 50/month topology as an unactivated paid fallback while free-tier eligibility is checked.
 - fail-closed 24-hour host canary with append-only fsynced readiness samples, explicit coverage/readiness thresholds, identity-mismatch rejection, and a hardened systemd unit; no observer host has run it yet.
 - machine-readable zero-cost candidate topology covering AWS, Google Cloud, and Oracle Cloud, with official-offer references, resource ceilings, explicit risks, unverified-account markers, zero authorized spend, and fail-closed admission tests.
+- portable Observer deployment package with production-only local workspace
+  packages, lockfile-pinned Solana dependencies, versioned file-level SHA-256
+  manifest, and no requirement for a mutable Git checkout on the host.
 - first external Collector canary provisioned on Oracle in `sa-saopaulo-1` after
   the preferred A1 shape failed with a concrete AD-1 capacity error. The active
   E2 micro canary is deliberately not admitted and has no public ingestion

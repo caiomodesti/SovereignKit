@@ -1,7 +1,7 @@
 {
   "schema_version": "GrantM1ZeroCostCandidatePlan@0.1.0",
   "status": "RESEARCH_COMPLETE_ACCOUNT_VALIDATION_REQUIRED",
-  "researched_at": "2026-08-27T03:33:31.243Z",
+  "researched_at": "2026-08-30T15:00:00.000Z",
   "cash_spend_authorized": false,
   "target_cash_monthly_usd": 0,
   "admission_policy": {
@@ -46,8 +46,8 @@
       "component_id": "observer-aws-lightsail",
       "role": "OBSERVER",
       "provider_id": "aws",
-      "offer_model": "TIME_LIMITED_TRIAL",
-      "offer_reference": "https://aws.amazon.com/lightsail/pricing/",
+      "offer_model": "AWS_FREE_TIER_CREDITS",
+      "offer_reference": "https://aws.amazon.com/free/free-tier-faqs/",
       "account_eligibility": "UNVERIFIED",
       "provisioned": false,
       "admitted": false,
@@ -67,7 +67,8 @@
       ],
       "risk_codes": [
         "ACCOUNT_ELIGIBILITY_UNVERIFIED",
-        "TRIAL_EXPIRY_AUTO_BILLING",
+        "CREDITS_ELIGIBILITY_UNVERIFIED",
+        "CREDITS_EXPIRY_AUTO_BILLING",
         "OFFER_MUTABILITY"
       ]
     },

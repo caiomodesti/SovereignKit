@@ -18,7 +18,12 @@ Three processes, containers, endpoint aliases, accounts under the same underlyin
 
 ## Pinned runtime
 
-Deploy the exact Git commit under review with Node.js `22.17.0` and pnpm `11.16.0`. Install with `pnpm install --frozen-lockfile --ignore-scripts`, build, and retain the commit SHA in the observer registry. Do not use floating container tags or silently upgrade the toolchain.
+Build the exact Git commit under review with Node.js `22.17.0` and pnpm
+`11.16.0`, then stage the Observer with `pnpm stage:grant:m1:observer`. Deploy
+that immutable package, run its lockfile-pinned `npm ci` production dependency command,
+and retain the source commit plus manifest hash in the observer registry. Do not
+build from a mutable checkout on the host, use floating tags, or silently
+upgrade the toolchain.
 
 ## Observer identity
 
@@ -68,19 +73,18 @@ covers their observation deadline and delivery handoff.
 8. Retain the immutable signed assignment, assignment-authority public entry, raw observation JSONL, journal heartbeats, and `/var/lib/sovereignkit/evidence/observer-delivery.jsonl`.
 
 After the long-running observer is active, capture the fail-closed host preflight
-on each Linux observer. Use the exact frozen commit being deployed; the command
-refuses an unsynchronized clock, inactive service, dirty or mismatched checkout,
-wrong Node.js runtime, non-loopback readiness URL, insecure/symlinked key, wrong
-observer identity, or insufficient disk. It writes with exclusive-create mode
-and never reads the key contents:
+on each Linux observer. The command verifies every staged file against the
+versioned SHA-256 manifest and compares the installed systemd unit with the
+staged unit. It refuses an unsynchronized clock, inactive or disabled service,
+non-loopback health binding, wrong Node.js runtime, insecure/symlinked key,
+wrong observer identity, or insufficient disk. It writes with exclusive-create
+mode and never reads the key contents:
 
 ```bash
 sudo -u sovereignkit -- node scripts/capture-grant-m1-host-preflight.mjs \
   --observer-id observer-provider-a \
   --key-path /etc/sovereignkit/secrets/observer-private.json \
   --runtime-root /opt/sovereignkit \
-  --expected-runtime-commit REPLACE_WITH_FROZEN_40_CHARACTER_COMMIT \
-  --expected-node-version v22.17.0 \
   --health-url http://127.0.0.1:8790/ready \
   --service sovereignkit-observer.service \
   --output /var/lib/sovereignkit/evidence/host-preflight-0001.jsonl

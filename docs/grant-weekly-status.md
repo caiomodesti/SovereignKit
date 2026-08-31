@@ -211,3 +211,15 @@ Its E4 preflight, replay, reboot, and soak claims are retracted. See the
   passed with TLS 1.3, HTTP 308, private `/health`, wrong-method 404, and
   schema-validation 422. Observer A and every independence claim remain
   pending; Milestone 2 has not started.
+
+## 2026-08-30 — Observer A deployment gate prepared
+
+- Corrected the AWS assumption: current AWS documentation says new-customer
+  Lightsail trials were replaced by account-specific Free Tier credits. No
+  AWS host is authorized until the console proves credit eligibility, balance,
+  expiration, and a budget guard.
+- Added a portable Observer runtime bundle with a versioned SHA-256 manifest.
+  Host preflight v0.2 now verifies every deployed file, the installed systemd
+  unit, active/enabled service state, loopback-only health, key mode `0600`,
+  clock, identity, Node.js version, and disk. Observer A is not yet provisioned
+  or admitted; Observers B/C and Milestone 2 remain blocked.

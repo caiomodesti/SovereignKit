@@ -18,7 +18,8 @@ unless our observer runtime actually executes in a separately evidenced
 operational environment.
 
 Public cloud free tiers may provide observer compute on distinct providers:
-AWS advertises a time-limited Lightsail trial on selected bundles, Google Cloud
+AWS replaced the older short-term Lightsail trials for new customers with its
+account-eligibility-based Free Tier credit model; Google Cloud
 offers one `e2-micro` VM in selected US regions, and Oracle Cloud advertises
 Always Free compute. These offers have eligibility, capacity, architecture,
 egress, expiration, and reclamation risks and therefore are candidates, not
@@ -47,7 +48,8 @@ SovereignKit adopts a zero-cost-first policy for Grant Milestones 1–3:
 
 ## Candidate zero-cost topology
 
-- Observer A: eligible AWS Lightsail 2 GiB public-IPv4 free-trial bundle;
+- Observer A: AWS Lightsail 2 GiB public-IPv4 bundle only when current Free Tier
+  credits and their expiration are verified in the account console;
 - Observer B: Google Cloud Free Tier `e2-micro` with 1 GiB memory, 30 GiB
   standard disk, and 1 GiB monthly external egress allowance;
 - Observer C: Oracle Cloud Always Free Ampere A1 with 1 OCPU and 6 GiB memory;
@@ -84,11 +86,13 @@ gates. If it fails any gate, the project will migrate the Collector to a
 documented external free/discounted candidate or activate the bounded paid
 fallback; it will not weaken an acceptance criterion to preserve zero cost.
 
-## References checked on 2026-08-27
+## References checked on 2026-08-30
 
 - Superteam member perks: https://superteam.fun/member-perks
 - Alchemy Solana Fund: https://www.alchemy.com/blog/introducing-alchemy-solana-fund
-- AWS Lightsail pricing: https://aws.amazon.com/lightsail/pricing/
+- AWS Free Tier FAQ: https://aws.amazon.com/free/free-tier-faqs/
+- AWS Lightsail billing FAQ: https://docs.aws.amazon.com/lightsail/latest/userguide/amazon-lightsail-frequently-asked-questions-faq-billing-and-account-management.html
+- AWS Lightsail bundles: https://docs.aws.amazon.com/lightsail/latest/userguide/amazon-lightsail-bundles.html
 - Google Cloud Free Tier: https://docs.cloud.google.com/free/docs/free-cloud-features
 - Oracle Cloud Always Free compute: https://docs.oracle.com/iaas/Content/FreeTier/freetier_topic-Always_Free_Resources.htm
 - Google E2 machine resources: https://docs.cloud.google.com/compute/docs/general-purpose-machines

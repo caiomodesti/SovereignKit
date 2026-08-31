@@ -20,6 +20,10 @@ const requiredFiles = [
   "deploy/grant-pilot/collector-tls.env.example",
   "deploy/grant-pilot/systemd/caddy-sovereignkit.conf",
   "deploy/grant-pilot/observer-runtime.example.json",
+  "deploy/grant-pilot/observer-runtime-package.json",
+  "deploy/grant-pilot/observer-runtime-package-lock.json",
+  "deploy/grant-pilot/probes-observer-runtime-package.json",
+  "deploy/grant-pilot/telemetry-observer-runtime-package.json",
   "deploy/grant-pilot/reader-registry.example.json",
   "deploy/grant-pilot/assignment-authorities.example.json",
   "deploy/grant-pilot/systemd/sovereignkit-observer.service",
@@ -56,6 +60,7 @@ const requiredFiles = [
   "scripts/lib/grant-m1-host-preflight.mjs",
   "scripts/lib/grant-m1-rpc-route-preflight.mjs",
   "scripts/capture-grant-m1-host-preflight.mjs",
+  "scripts/stage-grant-m1-observer-runtime.mjs",
   "scripts/run-grant-m1-rpc-route-preflight.mjs",
   "scripts/tests/grant-m1-acceptance-contracts.test.mjs",
   "scripts/tests/grant-m1-host-preflight.test.mjs",
@@ -133,10 +138,12 @@ if (!contents.get("scripts/lib/grant-m1-acceptance.mjs").includes("GrantM1Eviden
     !contents.get("scripts/lib/grant-m1-acceptance.mjs").includes("signed result signature is invalid")) {
   throw new Error("grant acceptance verifier must enforce the hashed v0.3 evidence contract plus assignment and observer signatures");
 }
-if (!contents.get("scripts/lib/grant-m1-host-preflight.mjs").includes("GrantM1HostPreflight@0.1.0") ||
+if (!contents.get("scripts/lib/grant-m1-host-preflight.mjs").includes("GrantM1HostPreflight@0.2.0") ||
+    !contents.get("scripts/lib/grant-m1-host-preflight.mjs").includes("GrantM1ObserverRuntimeManifest@0.1.0") ||
     !contents.get("scripts/capture-grant-m1-host-preflight.mjs").includes("NTPSynchronized") ||
-    !contents.get("scripts/capture-grant-m1-host-preflight.mjs").includes("systemctl")) {
-  throw new Error("grant host preflight must retain its versioned clock and service checks");
+    !contents.get("scripts/capture-grant-m1-host-preflight.mjs").includes("loopbackBindingExclusive") ||
+    !contents.get("scripts/capture-grant-m1-host-preflight.mjs").includes("verifyManifestFiles")) {
+  throw new Error("grant host preflight must retain versioned manifest, clock, service, and loopback checks");
 }
 if (!contents.get("scripts/lib/grant-m1-collector-host-preflight.mjs").includes("GrantM1CollectorHostPreflight@0.1.0") ||
     !contents.get("scripts/capture-grant-m1-collector-host-preflight.mjs").includes("runtime manifest SHA-256 mismatch") ||
