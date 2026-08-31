@@ -5,7 +5,7 @@ const IDENTIFIER = /^[A-Za-z0-9._:-]{1,160}$/u;
 const COMMIT = /^[a-f0-9]{40}$/u;
 const SHA256 = /^[a-f0-9]{64}$/u;
 const NODE_VERSION = /^v[0-9]+\.[0-9]+\.[0-9]+$/u;
-const SAFE_PATH = /^(?!\/)(?!.*(?:^|\/)\.\.(?:\/|$))[A-Za-z0-9._\/-]+$/u;
+const SAFE_PATH = /^(?!\/)(?!.*(?:^|\/)\.\.(?:\/|$))[A-Za-z0-9._@\/-]+$/u;
 
 export function validateObserverRuntimeManifest(manifest) {
   if (!record(manifest) || manifest.schema_version !== GRANT_M1_OBSERVER_RUNTIME_MANIFEST_VERSION) throw new Error("Observer runtime manifest version is invalid");
