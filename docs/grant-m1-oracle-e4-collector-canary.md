@@ -1,6 +1,6 @@
 # Grant Milestone 1 — Oracle E4 Collector canary
 
-Status: `PROVISIONED_CANARY_NOT_ADMITTED`.
+Status: `COLLECTOR_ADMITTED_PRIVATE`.
 
 This is a bounded replacement canary for the rejected Oracle E2 micro Collector.
 It does not replace the three-observer topology, establish observer independence,
@@ -52,18 +52,27 @@ containing personal data.
 ## Admission gate
 
 Provisioning is not admission. The frozen-runtime host preflight, service
-restart, and Collector durability/replay drill passed on the correctly
-identified E4 host on 2026-08-29. The earlier full-VM recovery attribution was
-retracted after discovering that the ignored SSH target still named E2. The
-host must still pass:
+restart, Collector durability/replay drill, 24-hour soak, controlled full-VM
+recovery, and post-reboot versioned preflight have now passed on the correctly
+identified E4 host. The soak ran from `2026-08-29T17:17:37.739Z` through
+`2026-08-30T17:17:37.744Z`, retained 1,441 fsynced samples, achieved 100%
+coverage and readiness, and had zero storage regressions.
 
-1. a complete 24-hour canary soak;
-2. a controlled full-VM recovery rerun after the soak;
-3. final secret-free, sanitized evidence retention.
+The original summary incorrectly reported 86,399 seconds because the evaluator
+subtracted the first sample's 39 ms request latency from a monotonic duration
+already measured from runner start and then rounded down. The immutable JSONL
+was not changed. Its SHA-256 remained
+`2b0c51ea7e78b28d7396c16451cef2afd0f13e086c632fe86613d6d6bcf2e548`,
+and the corrected, regression-tested evaluator reported 86,400 seconds with no
+blockers. The evidence and adjudication are retained at
+`fixtures/grant-m1/oracle-e4-soak-20260830.json`.
 
-The true E4 soak started at `2026-08-29T17:17:37.739Z`. Its first fsynced sample was
-healthy with `stored_count=1`; no pass or admission claim exists until the
-complete real-host summary is retrieved and validated.
+After the soak unit was disabled, the VM rebooted and returned with the
+Collector active and enabled, loopback health ready, `storedCount=1`, protected
+evidence and its hash preserved. A new post-reboot preflight verified the frozen
+124-file runtime and all host checks. This admits only the private Collector
+component. Public TLS, observer deployment, observer independence, Milestone 1
+acceptance, and Milestone 2 remain separate and unclaimed.
 
 The Observer owns the delivery queue; the Collector does not. Its recovery gate
 therefore tests its actual responsibility: durable append-only storage and

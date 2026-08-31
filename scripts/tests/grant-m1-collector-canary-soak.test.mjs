@@ -11,6 +11,25 @@ test("admits a complete healthy 24-hour Collector soak", () => {
   assert.equal(result.storage_regression_count, 0);
 });
 
+test("counts duration from monotonic runner start instead of first sample latency", () => {
+  const samples = healthySamples(1441);
+  samples[0] = createGrantM1CollectorCanarySample({
+    componentId: "collector-e4",
+    sampleIndex: 0,
+    capturedAt: timestamp(0),
+    elapsedMs: 39,
+    latencyMs: 38,
+    httpStatus: 200,
+    healthSnapshot: { status: "ok", storedCount: 1 },
+  });
+  samples.at(-1).elapsed_ms = 86_400_008;
+
+  const result = evaluateGrantM1CollectorCanarySoak({ componentId: "collector-e4", intervalSeconds: 60, samples });
+  assert.equal(result.actual_duration_seconds, 86_400);
+  assert.equal(result.admitted, true);
+  assert.deepEqual(result.blockers, []);
+});
+
 test("rejects short, sparse, unavailable, or regressing evidence", () => {
   assert.equal(evaluateGrantM1CollectorCanarySoak({ componentId: "collector-e4", intervalSeconds: 60, samples: healthySamples(2, 60_000) }).admitted, false);
   const sparse = healthySamples(2, 86_400_000); assert.ok(evaluateGrantM1CollectorCanarySoak({ componentId: "collector-e4", intervalSeconds: 60, samples: sparse }).blockers.includes("sample_coverage_below_95_percent"));

@@ -49,8 +49,13 @@ Started: 2026-08-24
   real-host durable replay drill. A synthetic, signed, schema-valid test result
   survived service restart and duplicate replay with exactly one durable
   record; this is Collector evidence only and contributes no observer claim.
-- the true E4 24-hour soak is active from `2026-08-29T17:17:37.739Z`; the first
-  fsynced sample passed, but no summary or admission claim exists yet.
+- the true E4 24-hour soak completed with 1,441/1,441 ready samples, 100%
+  coverage, zero storage regressions, and preserved raw evidence hash. A
+  regression-tested evaluator correction resolved a one-second false rejection
+  without changing the immutable JSONL.
+- controlled full-VM reboot recovery and the post-reboot versioned preflight
+  passed on the corrected E4 host. The Collector is admitted privately; public
+  TLS, every observer, Milestone 1 acceptance, and Milestone 2 remain pending.
 
 ## Not yet implemented or validated
 
@@ -75,12 +80,13 @@ within the bounded check after a Console reboot. The canary is rejected and
 cannot replace the original A1 target. A1 remains blocked by observed capacity;
 the E4 replacement is now the active bounded Collector canary.
 
-The Oracle E4 canary is running but is not a hosted public Collector yet. Its
-basic guest checks, service restart, frozen-runtime preflight, and durable
-replay passed on the corrected host. Full-VM recovery remains unverified after
-the target-attribution correction. The replay used an explicitly synthetic signed
-fixture and does not prove Solana observation. No independent observer,
-public-TLS ingestion, completed 24-hour soak, or admission claim is made.
+The Oracle E4 host is admitted as the private Collector component but is not a
+hosted public Collector yet. Its basic guest checks, service restart,
+frozen-runtime preflight, durable replay, complete 24-hour soak, controlled
+full-VM recovery, and post-reboot preflight passed on the corrected host. The
+replay used an explicitly synthetic signed fixture and does not prove Solana
+observation. No independent observer, public-TLS ingestion, complete
+Milestone 1, or Milestone 2 claim is made.
 Observer queue recovery is a separate observer-host gate because the Collector
 has no delivery queue.
 

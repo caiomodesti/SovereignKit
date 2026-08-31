@@ -12,6 +12,25 @@ test("admits a complete healthy 24-hour canary", () => {
   assert.deepEqual(summary.blockers, []);
 });
 
+test("counts observer soak duration from monotonic runner start", () => {
+  const samples = healthySamples();
+  samples[0] = createGrantM1CanarySample({
+    observerId: "observer-provider-a",
+    sampleIndex: 0,
+    capturedAt: samples[0].captured_at,
+    elapsedMs: 39,
+    latencyMs: 38,
+    httpStatus: 200,
+    healthSnapshot: { status: "ready", observerId: "observer-provider-a" },
+  });
+  samples.at(-1).elapsed_ms = 86_400_008;
+
+  const summary = evaluateGrantM1CanarySoak({ observerId: "observer-provider-a", intervalSeconds: 60, samples });
+  assert.equal(summary.actual_duration_seconds, 86_400);
+  assert.equal(summary.admitted, true);
+  assert.deepEqual(summary.blockers, []);
+});
+
 test("preserves failures and rejects an identity mismatch", () => {
   const samples = healthySamples();
   samples[500] = createGrantM1CanarySample({

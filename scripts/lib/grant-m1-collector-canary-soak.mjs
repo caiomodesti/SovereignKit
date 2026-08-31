@@ -40,6 +40,7 @@ export function evaluateGrantM1CollectorCanarySoak({ componentId, intervalSecond
     const at = Date.parse(current.captured_at);
     if (at <= previousAt || current.elapsed_ms <= previousElapsed) throw new Error("Collector canary time sequence is not strictly increasing");
     if (previousElapsed >= 0) maxGapMs = Math.max(maxGapMs, current.elapsed_ms - previousElapsed);
+    else maxGapMs = current.elapsed_ms;
     if (current.stored_count !== null) {
       if (current.stored_count < previousStoredCount) storageRegressions += 1;
       previousStoredCount = current.stored_count;
@@ -47,7 +48,10 @@ export function evaluateGrantM1CollectorCanarySoak({ componentId, intervalSecond
     previousAt = at; previousElapsed = current.elapsed_ms;
   }
 
-  const actualDurationMs = samples.at(-1).elapsed_ms - samples[0].elapsed_ms;
+  // elapsed_ms is measured from the runner's monotonic start, so the final
+  // sample already represents the full soak duration. Subtracting the first
+  // sample's request latency can falsely reject an otherwise complete run.
+  const actualDurationMs = samples.at(-1).elapsed_ms;
   const expectedSamples = Math.floor(actualDurationMs / (intervalSeconds * 1000)) + 1;
   const coverageRatio = Math.min(1, samples.length / expectedSamples);
   const readySamples = samples.filter(value => value.ready).length;

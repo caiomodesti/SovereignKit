@@ -6,22 +6,22 @@ import { validateGrantM1OracleE4CanaryPlan } from "../lib/grant-m1-oracle-e4-can
 
 const canonicalPlan = JSON.parse(await readFile("deploy/grant-pilot/oracle-e4-collector-canary-plan.json", "utf8"));
 
-test("accepts the bounded provisioned but unadmitted Oracle E4 Collector canary", () => {
+test("accepts the bounded admitted private Oracle E4 Collector", () => {
   const result = validateGrantM1OracleE4CanaryPlan(structuredClone(canonicalPlan));
   assert.equal(result.status, "PASS");
   assert.equal(result.provisioned, true);
-  assert.equal(result.admitted, false);
+  assert.equal(result.admitted, true);
   assert.ok(result.estimatedComputeMonthlyBrl < result.maximumConsoleEstimateMonthlyBrl);
 });
 
-test("rejects repository-side billing authorization or fake admission", () => {
+test("rejects repository-side billing authorization or admission rollback", () => {
   const billing = structuredClone(canonicalPlan);
   billing.billing_authorized_by_repository = true;
   assert.throws(() => validateGrantM1OracleE4CanaryPlan(billing), /cannot authorize/u);
 
-  const admitted = structuredClone(canonicalPlan);
-  admitted.candidate.admitted = true;
-  assert.throws(() => validateGrantM1OracleE4CanaryPlan(admitted), /without claiming admission/u);
+  const unadmitted = structuredClone(canonicalPlan);
+  unadmitted.candidate.admitted = false;
+  assert.throws(() => validateGrantM1OracleE4CanaryPlan(unadmitted), /must be admitted/u);
 });
 
 test("rejects cost or resource drift", () => {
@@ -34,10 +34,10 @@ test("rejects cost or resource drift", () => {
   assert.throws(() => validateGrantM1OracleE4CanaryPlan(memory), /resources drifted/u);
 });
 
-test("rejects premature readiness or weakened methodology", () => {
-  const ready = structuredClone(canonicalPlan);
-  ready.admission_gates.canary_soak_passed = true;
-  assert.throws(() => validateGrantM1OracleE4CanaryPlan(ready), /must remain unpassed/u);
+test("rejects missing admission evidence or weakened methodology", () => {
+  const soak = structuredClone(canonicalPlan);
+  soak.admission_gates.canary_soak_passed = false;
+  assert.throws(() => validateGrantM1OracleE4CanaryPlan(soak), /must remain true/u);
 
   const boundary = structuredClone(canonicalPlan);
   boundary.methodology_boundaries.observer_independence_effect = "ESTABLISHED";
@@ -54,12 +54,12 @@ test("requires the observed versioned preflight and durable replay evidence", ()
   assert.throws(() => validateGrantM1OracleE4CanaryPlan(replay), /must remain true/u);
 });
 
-test("rejects an unverified full-VM recovery claim", () => {
+test("requires verified full-VM and post-reboot recovery", () => {
   const reboot = structuredClone(canonicalPlan);
-  reboot.admission_gates.full_vm_restart_recovery_passed = true;
-  assert.throws(() => validateGrantM1OracleE4CanaryPlan(reboot), /must remain false/u);
+  reboot.admission_gates.full_vm_restart_recovery_passed = false;
+  assert.throws(() => validateGrantM1OracleE4CanaryPlan(reboot), /must remain true/u);
 
-  const aggregate = structuredClone(canonicalPlan);
-  aggregate.admission_gates.restart_recovery_passed = true;
-  assert.throws(() => validateGrantM1OracleE4CanaryPlan(aggregate), /must remain false/u);
+  const postReboot = structuredClone(canonicalPlan);
+  postReboot.admission_gates.post_reboot_versioned_host_preflight_passed = false;
+  assert.throws(() => validateGrantM1OracleE4CanaryPlan(postReboot), /must remain true/u);
 });
