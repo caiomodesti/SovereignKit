@@ -116,6 +116,43 @@ The signed assignment proves who authorized the job and that its submission meta
 
 The Collector remains loopback-only by design. Install `systemd/sovereignkit-collector.service`, place the merged public allowlist at `/etc/sovereignkit/allowlist.json`, and use the Caddy template to expose only the signed ingestion route over HTTPS. The Collector's `/health` endpoint remains private. Apply provider firewall limits, log retention, clock synchronization, disk alerts, and backups before external validation.
 
+The public edge requires a controlled DNS hostname. Temporary tunnel names,
+shared wildcard resolvers, direct-IP configuration, and self-signed certificates
+do not satisfy this gate. Create an `A` record that resolves the chosen hostname
+to the Collector address, then open only TCP 80 and 443 at the provider edge and
+guest firewall. Keep SSH restricted to the operator CIDR and keep port 8787
+unreachable outside loopback.
+
+Copy `Caddyfile.example` to `/etc/caddy/Caddyfile`, copy
+`collector-tls.env.example` to `/etc/caddy/sovereignkit.env`, replace the invalid
+hostname locally, and install `systemd/caddy-sovereignkit.conf` as a Caddy
+service drop-in. Validate before restart:
+
+```bash
+sudo caddy validate --config /etc/caddy/Caddyfile --adapter caddyfile
+sudo systemctl daemon-reload
+sudo systemctl enable --now caddy
+```
+
+Keep the expected public address in a single-line ignored file; it is read only
+to correlate DNS and is never written to evidence. From the operator machine,
+capture the live gate with a new exclusive output path:
+
+```powershell
+node scripts/run-grant-m1-collector-tls-preflight.mjs `
+  --component-id collector-oracle-e4-gru-canary `
+  --collector-origin https://REPLACE_WITH_CONTROLLED_HOSTNAME `
+  --expected-address-file .secrets/grant-m1-e4-public-address `
+  --output artifacts/grant-m1/collector-tls-preflight.json
+```
+
+The gate requires publicly trusted TLS 1.2 or 1.3, more than 24 hours of
+certificate validity, DNS correlation to the private expected-address file,
+HTTP-to-HTTPS redirect, remote `404` for `/health`, remote `404` for a wrong
+ingestion method, and `422` for an invalid JSON object reaching the Collector's
+schema validator. It sends no valid ProbeResult and establishes no observer
+independence or Milestone acceptance.
+
 ## Required retained evidence
 
 - provider, account, sanitized instance ID, region, ASN/network, provision time, and runtime commit;

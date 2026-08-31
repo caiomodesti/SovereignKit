@@ -1,5 +1,9 @@
-collector.example.invalid {
+{$SOVEREIGNKIT_COLLECTOR_HOSTNAME} {
 	encode zstd gzip
+	header {
+		-Server
+		Cache-Control "no-store"
+	}
 
 	@ingest {
 		method POST
