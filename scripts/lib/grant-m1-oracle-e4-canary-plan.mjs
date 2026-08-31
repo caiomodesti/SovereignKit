@@ -1,12 +1,12 @@
-export const GRANT_M1_ORACLE_E4_CANARY_PLAN_VERSION = "GrantM1OracleE4CollectorCanaryPlan@0.6.0";
+export const GRANT_M1_ORACLE_E4_CANARY_PLAN_VERSION = "GrantM1OracleE4CollectorCanaryPlan@0.7.0";
 
 const nearlyEqual = (left, right) => Math.abs(left - right) <= 0.000001;
 
 export function validateGrantM1OracleE4CanaryPlan(plan) {
   if (plan === null || typeof plan !== "object") throw new Error("Oracle E4 canary plan must be an object");
   if (plan.schema_version !== GRANT_M1_ORACLE_E4_CANARY_PLAN_VERSION) throw new Error("Oracle E4 canary plan version is invalid");
-  if (plan.status !== "COLLECTOR_ADMITTED_PRIVATE" || plan.scope !== "COLLECTOR_CANARY_ONLY") {
-    throw new Error("Oracle E4 canary must remain an admitted private Collector-only component");
+  if (plan.status !== "COLLECTOR_ADMITTED_PUBLIC_TLS" || plan.scope !== "COLLECTOR_CANARY_ONLY") {
+    throw new Error("Oracle E4 canary must remain an admitted public-TLS Collector-only component");
   }
   if (plan.billing_authorized_by_repository !== false ||
       plan.operator_spend_authorization !== "CONFIRMED_OUT_OF_BAND_WITH_DOCUMENTED_ESTIMATOR_LIMITATION") {
@@ -25,8 +25,10 @@ export function validateGrantM1OracleE4CanaryPlan(plan) {
   if (candidate.ocpu !== 1 || candidate.memory_gib !== 4 || candidate.burstable_baseline_fraction !== 0.125 || candidate.boot_volume_gib < 46) {
     throw new Error("Oracle E4 candidate resources drifted from the bounded canary");
   }
-  if (candidate.provisioned !== true || candidate.admitted !== true || candidate.public_ingress_enabled !== false || candidate.health_loopback_only !== true) {
-    throw new Error("Oracle Collector must be admitted without claiming public exposure");
+  if (candidate.provisioned !== true || candidate.admitted !== true || candidate.public_ingress_enabled !== true ||
+      candidate.public_ingress_route !== "POST /v0/probe-results" || candidate.public_health_exposed !== false ||
+      candidate.health_loopback_only !== true) {
+    throw new Error("Oracle Collector public TLS boundary is invalid");
   }
 
   const pricing = plan.pricing_snapshot ?? {};
@@ -70,6 +72,10 @@ export function validateGrantM1OracleE4CanaryPlan(plan) {
   for (const field of ["basic_live_preflight_passed", "service_restart_recovery_passed", "sanitized_evidence_retained"]) {
     if (admission[field] !== true) throw new Error(`observed Oracle E4 evidence ${field} must remain true`);
   }
+  for (const field of ["controlled_dns_matched", "public_tls_preflight_passed", "plaintext_redirect_passed", "schema_validating_ingress_reached"]) {
+    if (admission[field] !== true) throw new Error(`observed Oracle E4 TLS evidence ${field} must remain true`);
+  }
+  if (!['TLSv1.2', 'TLSv1.3'].includes(admission.tls_protocol)) throw new Error("Oracle E4 TLS protocol is invalid");
   const boundaries = plan.methodology_boundaries ?? {};
   if (boundaries.collector_is_not_an_observer !== true || boundaries.observer_independence_effect !== "NONE" ||
       boundaries.milestone_1_acceptance_effect !== "COLLECTOR_COMPONENT_ONLY" || boundaries.milestone_2_started !== false) {

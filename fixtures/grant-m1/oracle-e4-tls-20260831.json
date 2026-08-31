@@ -1,0 +1,22 @@
+{
+  "schema_version": "GrantM1CollectorTlsPreflight@0.1.0",
+  "component_id": "collector-oracle-e4-gru-canary",
+  "captured_at": "2026-08-31T01:54:52.193Z",
+  "scope": "PRIVATE_COLLECTOR_TLS_EDGE_ONLY",
+  "collector_origin": "https://collector.sovereignkit.org",
+  "resolved_address_count": 1,
+  "expected_address_matched": true,
+  "expected_address_persisted": false,
+  "tls_authorized": true,
+  "tls_protocol": "TLSv1.3",
+  "certificate_valid_until": "2026-11-29T00:55:43.000Z",
+  "http_redirect_status": 308,
+  "public_health_status": 404,
+  "wrong_method_status": 404,
+  "invalid_payload_status": 422,
+  "exposed_route": "POST /v0/probe-results",
+  "public_health_exposed": false,
+  "signed_result_submitted": false,
+  "observer_independence_established": false,
+  "milestone_acceptance_effect": "NONE"
+}

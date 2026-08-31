@@ -1,8 +1,8 @@
 # Grant Milestones 1–3: execution and cost plan
 
-Status: public-offer research complete; one Oracle Collector canary provisioned
-but not admitted; observer account eligibility and host validation still
-required.
+Status: public-offer research complete; the Oracle Collector and its narrow
+public-TLS edge are admitted; observer account eligibility and host validation
+are still required.
 
 ## What the grant actually requires
 
@@ -91,7 +91,8 @@ retains `account_eligibility: UNVERIFIED`, `provisioned: false`, and
 ## Possible unavoidable costs
 
 - a small cloud overage if a free allocation expires or is exceeded;
-- a domain only if no controlled free hostname is acceptable for TLS;
+- the controlled domain was purchased for USD 7.98; the displayed current
+  renewal is USD 11.84/year and must be reviewed before renewal;
 - Devnet has no transaction-fee purchase requirement; Mainnet transaction fees
   would require a small SOL balance only if the grant operator explicitly
   requires Mainnet for the pilot;
