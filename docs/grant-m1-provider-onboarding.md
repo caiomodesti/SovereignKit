@@ -88,10 +88,11 @@ resources automatically.
    the selected A1 shape and boot volume as Always Free eligible.
 3. Harden it, configure the loopback Collector plus TLS edge, and retain a
    sanitized deployment record.
-4. Create the AWS Lightsail Observer A canary only if the console confirms that
-   the account has current AWS Free Tier credits sufficient for the selected
-   USD 12/month 2 GiB bundle and shows their expiration. The obsolete short-term
-   Lightsail trial must not be assumed.
+4. Create the AWS EC2 Observer A canary only after the console confirms Free
+   Plan eligibility, sufficient credits and expiration, and an active budget
+   guard. The frozen candidate is `t3.small` Linux in `sa-east-1`, 2 GiB RAM,
+   with a 30 GiB `gp3` volume. Lightsail is unavailable under this account's
+   Free Plan and must not be substituted silently.
 5. Require host preflight, signed observation, restart recovery, delivery
    recovery, 24-hour canary, and sanitized provider evidence.
 6. Stop on any unexplained critical failure. Do not create Observers B or C.

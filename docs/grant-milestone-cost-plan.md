@@ -34,11 +34,15 @@ themselves run our observer daemon or establish operational independence.
 
 ### Observer compute
 
-- AWS Lightsail: preferred first observer canary using the USD 12/month 2 GiB
-  public-IPv4 bundle only when the account console confirms current AWS Free
-  Tier credits and their expiration. AWS documents that the older Lightsail
-  short-term trials were replaced for new customers by the credit model. The
-  principal risks are account ineligibility and paid continuation after credits.
+- AWS EC2: first observer canary using `t3.small` Linux in São Paulo, with
+  2 GiB RAM and 30 GiB `gp3`. On 2026-08-31 the authenticated console verified
+  USD 100 remaining, USD 0 consumed, credit expiration on 2027-08-31, Free Tier
+  eligibility, and a Linux compute rate of USD 0.0336/hour. The account's Free
+  Plan access ends earlier, on 2027-02-28 or when credits are exhausted, and
+  acts as a hard stop unless the operator explicitly upgrades. That is about USD
+  0.81 for 24 hours or USD 11.29 for 14 days before storage/network. The new
+  account Free Plan does not support Lightsail, so EC2 is the positive,
+  contract-preserving replacement.
 - Google Cloud: third-party-independent observer candidate using one eligible
   `e2-micro`. It has 1 GiB memory, 30 GiB standard disk, and 1 GiB monthly
   external egress under the current Free Tier, so it must pass the same canary

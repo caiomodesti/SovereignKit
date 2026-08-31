@@ -48,8 +48,8 @@ SovereignKit adopts a zero-cost-first policy for Grant Milestones 1–3:
 
 ## Candidate zero-cost topology
 
-- Observer A: AWS Lightsail 2 GiB public-IPv4 bundle only when current Free Tier
-  credits and their expiration are verified in the account console;
+- Observer A: AWS EC2 `t3.small` Linux in São Paulo with 2 GiB RAM and a
+  30 GiB `gp3` volume, covered by verified Free Plan credits;
 - Observer B: Google Cloud Free Tier `e2-micro` with 1 GiB memory, 30 GiB
   standard disk, and 1 GiB monthly external egress allowance;
 - Observer C: Oracle Cloud Always Free Ampere A1 with 1 OCPU and 6 GiB memory;
@@ -63,6 +63,19 @@ possible reclamation of idle Always Free compute. Its two proposed instances
 together stay within the documented aggregate 2 OCPU, 12 GiB memory, and 200
 GiB block-volume allowances. ARM compatibility, disk, egress, clock
 synchronization, stable operation, and account eligibility must all be proved.
+
+## Implementation note — 2026-08-31
+
+The new AWS account experience concretely does not expose Lightsail under the
+Free Plan, while EC2 is available. The authenticated console verified USD 100
+remaining, USD 0 consumed, credit expiration on 2027-08-31, and marked
+`t3.small` as Free Tier eligible in `sa-east-1`. The account menu separately
+states that Free Plan service access ends on 2027-02-28 or when credits are
+exhausted, whichever happens first. The observed Linux compute rate was USD
+0.0336/hour. Observer A therefore moves from Lightsail to EC2 without changing
+provider, region, memory floor, independence semantics, or admission gates.
+The Free Plan hard stop is the active provider-side spend guard. Its earlier
+end date, not the later credit expiration, is the operational deadline.
 
 ## Consequences
 
@@ -91,6 +104,8 @@ fallback; it will not weaken an acceptance criterion to preserve zero cost.
 - Superteam member perks: https://superteam.fun/member-perks
 - Alchemy Solana Fund: https://www.alchemy.com/blog/introducing-alchemy-solana-fund
 - AWS Free Tier FAQ: https://aws.amazon.com/free/free-tier-faqs/
+- AWS services supported by the new account experience: https://docs.aws.amazon.com/accounts/latest/reference/supported-services-sign-up-new.html
+- Amazon EC2 on-demand pricing: https://aws.amazon.com/ec2/pricing/on-demand/
 - AWS Lightsail billing FAQ: https://docs.aws.amazon.com/lightsail/latest/userguide/amazon-lightsail-frequently-asked-questions-faq-billing-and-account-management.html
 - AWS Lightsail bundles: https://docs.aws.amazon.com/lightsail/latest/userguide/amazon-lightsail-bundles.html
 - Google Cloud Free Tier: https://docs.cloud.google.com/free/docs/free-cloud-features

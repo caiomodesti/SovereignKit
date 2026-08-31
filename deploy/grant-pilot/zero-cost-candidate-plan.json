@@ -1,7 +1,7 @@
 {
-  "schema_version": "GrantM1ZeroCostCandidatePlan@0.1.0",
-  "status": "RESEARCH_COMPLETE_ACCOUNT_VALIDATION_REQUIRED",
-  "researched_at": "2026-08-30T15:00:00.000Z",
+  "schema_version": "GrantM1ZeroCostCandidatePlan@0.2.0",
+  "status": "ACCOUNT_VALIDATION_IN_PROGRESS",
+  "researched_at": "2026-08-31T04:03:55.934Z",
   "cash_spend_authorized": false,
   "target_cash_monthly_usd": 0,
   "admission_policy": {
@@ -43,21 +43,33 @@
       ]
     },
     {
-      "component_id": "observer-aws-lightsail",
+      "component_id": "observer-aws-ec2",
       "role": "OBSERVER",
       "provider_id": "aws",
       "offer_model": "AWS_FREE_TIER_CREDITS",
       "offer_reference": "https://aws.amazon.com/free/free-tier-faqs/",
-      "account_eligibility": "UNVERIFIED",
+      "account_eligibility": "VERIFIED",
       "provisioned": false,
       "admitted": false,
       "expected_cash_monthly_usd": 0,
       "architecture": "x64",
+      "region": "sa-east-1",
+      "account_evidence": {
+        "verified_at": "2026-08-31T04:03:55.934Z",
+        "free_plan": true,
+        "credit_balance_usd": 100,
+        "credit_consumed_usd": 0,
+        "credit_expires_on": "2027-08-31",
+        "free_plan_ends_on": "2027-02-28",
+        "budget_guard_status": "FREE_PLAN_HARD_STOP_ACTIVE"
+      },
       "resource_target": {
-        "shape": "Linux public IPv4 USD 12 bundle",
+        "service": "EC2",
+        "shape": "t3.small Linux on-demand",
         "vcpu": 2,
         "memory_mib": 2048,
-        "storage_gib": 60
+        "storage_gib": 30,
+        "hourly_compute_usd": 0.0336
       },
       "required_gates": [
         "ACCOUNT_ELIGIBILITY_VERIFIED",
@@ -66,9 +78,8 @@
         "CANARY_24H_PASS"
       ],
       "risk_codes": [
-        "ACCOUNT_ELIGIBILITY_UNVERIFIED",
-        "CREDITS_ELIGIBILITY_UNVERIFIED",
-        "CREDITS_EXPIRY_AUTO_BILLING",
+        "FREE_PLAN_END_BEFORE_CREDIT_EXPIRY",
+        "FREE_PLAN_CREDIT_EXHAUSTION_STOPS_RESOURCES",
         "OFFER_MUTABILITY"
       ]
     },
@@ -137,7 +148,7 @@
   ],
   "provisioning_order": [
     "collector-oracle-home-region",
-    "observer-aws-lightsail",
+    "observer-aws-ec2",
     "observer-google-e2-micro",
     "observer-oracle-a1"
   ],

@@ -223,3 +223,23 @@ Its E4 preflight, replay, reboot, and soak claims are retracted. See the
   unit, active/enabled service state, loopback-only health, key mode `0600`,
   clock, identity, Node.js version, and disk. Observer A is not yet provisioned
   or admitted; Observers B/C and Milestone 2 remain blocked.
+
+## 2026-08-31 — AWS Observer A candidate verified
+
+- Verified the AWS Free Plan in the authenticated account without retaining an
+  account ID, payment data, credentials, or screenshots: USD 100 credit remains,
+  USD 0 has been consumed, and the displayed credit expiration is 2027-08-31.
+- Confirmed the stronger provider-side guard in the account menu: Free Plan
+  service access ends on 2027-02-28 or at credit exhaustion unless explicitly
+  upgraded. The earlier Free Plan date is the operational deadline.
+- Found a concrete incompatibility in the earlier candidate: Lightsail is not
+  supported by the new-account Free Plan. Replaced it with EC2 `t3.small` Linux
+  in São Paulo, preserving the 2 GiB memory floor and distinct AWS provider.
+- The live launch console marked `t3.small` Free Tier eligible and displayed
+  USD 0.0336/hour for Linux. Estimated compute is USD 0.81 for the 24-hour
+  canary and USD 11.29 for 14 days, before storage/network and covered by the
+  verified credits.
+- The separate AWS Budgets panel failed to load inside the embedded console,
+  but the verified Free Plan hard stop satisfies the no-overage guard without
+  an upgrade. No instance was launched. Observer A is not provisioned or
+  admitted; Observers B/C and Milestone 2 remain blocked.
