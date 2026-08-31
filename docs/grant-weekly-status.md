@@ -185,3 +185,19 @@ Its E4 preflight, replay, reboot, and soak claims are retracted. See the
   passed. Earliest completion is `2026-08-30T17:17:37.739Z`.
 - Retracted full-VM restart recovery pending a post-soak rerun. Status remains
   `PROVISIONED_CANARY_NOT_ADMITTED`; Milestone 2 has not started.
+
+## 2026-08-30 — E4 Collector admitted privately
+
+- Retrieved the true E4 summary and preserved the immutable 1,441-line JSONL
+  with SHA-256
+  `2b0c51ea7e78b28d7396c16451cef2afd0f13e086c632fe86613d6d6bcf2e548`.
+- Found and fixed a fail-closed evaluator defect: subtracting the first sample's
+  39 ms latency reduced a real 86,400.008-second run to 86,399 seconds after
+  flooring. A regression test now uses monotonic runner duration directly; the
+  unchanged evidence passes with 100% coverage/readiness and zero regressions.
+- Disabled the completed soak unit, rebooted the E4, and verified recovery of
+  SSH, the enabled Collector, loopback health, `storedCount=1`, evidence hash,
+  and mode-`0600` files. The post-reboot 124-file frozen-runtime preflight passed.
+- Status is `COLLECTOR_ADMITTED_PRIVATE`. This admits only the Collector host;
+  public TLS, three independent observers, Milestone 1 acceptance, and
+  Milestone 2 remain pending.

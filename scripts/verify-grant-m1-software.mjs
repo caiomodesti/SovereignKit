@@ -78,6 +78,7 @@ const requiredFiles = [
   "fixtures/grant-m1/local-readiness-20260825.json",
   "fixtures/grant-m1/alchemy-devnet-route-20260826.json",
   "fixtures/grant-m1/oracle-e4-preflight-replay-20260829.json",
+  "fixtures/grant-m1/oracle-e4-soak-20260830.json",
 ];
 
 const contents = new Map(await Promise.all(requiredFiles.map(async path => [path, await readFile(path, "utf8")])));
@@ -158,33 +159,48 @@ if (zeroCostPlan.schema_version !== "GrantM1ZeroCostCandidatePlan@0.1.0" ||
   throw new Error("zero-cost candidate plan must remain researched, unprovisioned, and unaccepted");
 }
 const oracleE4Canary = JSON.parse(contents.get("deploy/grant-pilot/oracle-e4-collector-canary-plan.json"));
-if (oracleE4Canary.schema_version !== "GrantM1OracleE4CollectorCanaryPlan@0.5.0" ||
-    oracleE4Canary.status !== "PROVISIONED_CANARY_NOT_ADMITTED" ||
+if (oracleE4Canary.schema_version !== "GrantM1OracleE4CollectorCanaryPlan@0.6.0" ||
+    oracleE4Canary.status !== "COLLECTOR_ADMITTED_PRIVATE" ||
     oracleE4Canary.scope !== "COLLECTOR_CANARY_ONLY" ||
     oracleE4Canary.billing_authorized_by_repository !== false ||
     oracleE4Canary.candidate?.provisioned !== true ||
-    oracleE4Canary.candidate?.admitted !== false ||
-    oracleE4Canary.admission_gates?.full_vm_restart_recovery_passed !== false ||
-    oracleE4Canary.admission_gates?.restart_recovery_passed !== false ||
+    oracleE4Canary.candidate?.admitted !== true ||
+    oracleE4Canary.admission_gates?.full_vm_restart_recovery_passed !== true ||
+    oracleE4Canary.admission_gates?.restart_recovery_passed !== true ||
+    oracleE4Canary.admission_gates?.post_reboot_versioned_host_preflight_passed !== true ||
     oracleE4Canary.admission_gates?.versioned_host_preflight_passed !== true ||
     oracleE4Canary.admission_gates?.collector_durable_replay_recovery_passed !== true ||
-    oracleE4Canary.admission_gates?.canary_soak_passed !== false ||
+    oracleE4Canary.admission_gates?.canary_soak_passed !== true ||
     oracleE4Canary.methodology_boundaries?.milestone_2_started !== false) {
-  throw new Error("Oracle E4 Collector canary plan must remain bounded, provisioned, and unaccepted");
+  throw new Error("Oracle E4 Collector plan must remain bounded, privately admitted, and unable to start Milestone 2");
 }
 const oracleE4Evidence = JSON.parse(contents.get("fixtures/grant-m1/oracle-e4-preflight-replay-20260829.json"));
 if (oracleE4Evidence.schema_version !== "GrantM1OracleE4CorrectedEvidenceAnchor@0.1.0" ||
-    oracleE4Evidence.status !== "PREFLIGHT_AND_DURABLE_REPLAY_PASSED_SOAK_IN_PROGRESS" ||
+    oracleE4Evidence.status !== "COLLECTOR_ADMITTED_PRIVATE" ||
     oracleE4Evidence.correction?.prior_target_was_rejected_e2 !== true ||
     oracleE4Evidence.correction?.prior_e4_soak_claim_retracted !== true ||
     oracleE4Evidence.preflight?.ready !== true ||
     oracleE4Evidence.preflight?.all_checks_passed !== true ||
     oracleE4Evidence.durable_replay?.passed !== true ||
-    oracleE4Evidence.soak?.passed !== false ||
+    oracleE4Evidence.soak?.passed !== true ||
+    oracleE4Evidence.post_reboot?.all_checks_passed !== true ||
+    oracleE4Evidence.claim_boundaries?.collector_admitted !== true ||
     oracleE4Evidence.claim_boundaries?.observer_independence !== false ||
     oracleE4Evidence.claim_boundaries?.milestone_1_accepted !== false ||
     oracleE4Evidence.claim_boundaries?.milestone_2_started !== false) {
   throw new Error("corrected Oracle E4 evidence anchor is incomplete or overclaims acceptance");
+}
+const oracleE4SoakEvidence = JSON.parse(contents.get("fixtures/grant-m1/oracle-e4-soak-20260830.json"));
+if (oracleE4SoakEvidence.schema_version !== "GrantM1OracleE4CollectorSoakEvidence@0.1.0" ||
+    oracleE4SoakEvidence.status !== "COLLECTOR_ADMITTED_PRIVATE" ||
+    oracleE4SoakEvidence.raw_evidence?.sample_count !== 1441 ||
+    oracleE4SoakEvidence.evaluation?.actual_duration_seconds !== 86400 ||
+    oracleE4SoakEvidence.evaluation?.admitted !== true ||
+    oracleE4SoakEvidence.evaluator_correction?.raw_evidence_modified !== false ||
+    oracleE4SoakEvidence.restart_recovery?.post_reboot_preflight_passed !== true ||
+    oracleE4SoakEvidence.claim_boundaries?.milestone_1_accepted !== false ||
+    oracleE4SoakEvidence.claim_boundaries?.milestone_2_started !== false) {
+  throw new Error("Oracle E4 soak evidence is incomplete or overclaims milestone acceptance");
 }
 const operatorReadiness = evaluateGrantM1OperatorReadiness(JSON.parse(contents.get("deploy/grant-pilot/operator-readiness.example.json")));
 if (operatorReadiness.status !== "ACTION_REQUIRED" || operatorReadiness.blockers.length === 0) {

@@ -1,0 +1,69 @@
+{
+  "schema_version": "GrantM1OracleE4CollectorSoakEvidence@0.1.0",
+  "component_id": "collector-oracle-e4-gru-canary",
+  "status": "COLLECTOR_ADMITTED_PRIVATE",
+  "host_attribution": {
+    "provider": "oracle",
+    "region": "sa-saopaulo-1",
+    "shape": "VM.Standard.E4.Flex",
+    "resource_identifiers_omitted": true
+  },
+  "raw_evidence": {
+    "schema_version": "GrantM1CollectorCanarySoakSample@0.1.0",
+    "sha256": "2b0c51ea7e78b28d7396c16451cef2afd0f13e086c632fe86613d6d6bcf2e548",
+    "sample_count": 1441,
+    "first_sample_index": 0,
+    "last_sample_index": 1440,
+    "first_elapsed_ms": 39,
+    "last_elapsed_ms": 86400008,
+    "started_at": "2026-08-29T17:17:37.739Z",
+    "completed_at": "2026-08-30T17:17:37.744Z",
+    "retained_on_host": true,
+    "public_raw_jsonl_omitted": true
+  },
+  "evaluation": {
+    "required_duration_seconds": 86400,
+    "actual_duration_seconds": 86400,
+    "interval_seconds": 60,
+    "expected_sample_count": 1441,
+    "ready_sample_count": 1441,
+    "coverage_ratio": 1,
+    "readiness_ratio": 1,
+    "storage_regression_count": 0,
+    "maximum_gap_ms": 60067,
+    "admitted": true,
+    "blockers": []
+  },
+  "evaluator_correction": {
+    "original_summary_admitted": false,
+    "original_summary_reported_duration_seconds": 86399,
+    "original_blocker": "duration_below_24_hours",
+    "root_cause": "The evaluator subtracted the first sample elapsed time from a monotonic elapsed value already measured from runner start.",
+    "raw_evidence_modified": false,
+    "regression_test_added": true
+  },
+  "permissions": {
+    "raw_jsonl_mode": "0600",
+    "owner": "sovereignkit",
+    "group": "sovereignkit"
+  },
+  "restart_recovery": {
+    "full_vm_restart_passed": true,
+    "collector_service_active": true,
+    "collector_service_enabled": true,
+    "soak_service_disabled": true,
+    "stored_count_after_reboot": 1,
+    "raw_jsonl_hash_preserved": true,
+    "post_reboot_preflight_passed": true,
+    "post_reboot_preflight_sha256": "d3820e884b89b0a89405b8c60fbef21de3da2b1077e6ae3f011474b765a35175"
+  },
+  "claim_boundaries": {
+    "collector_soak_only": true,
+    "full_vm_restart_recovery_pending": false,
+    "collector_admitted": true,
+    "solana_observation": false,
+    "observer_independence": false,
+    "milestone_1_accepted": false,
+    "milestone_2_started": false
+  }
+}

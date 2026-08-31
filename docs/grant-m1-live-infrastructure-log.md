@@ -202,3 +202,21 @@ the corrected E4 evidence follows in the next section.
 - Sanitized anchor: `fixtures/grant-m1/oracle-e4-preflight-replay-20260829.json`.
 - Admission remains `PROVISIONED_CANARY_NOT_ADMITTED`; Milestone 2 has not
   started.
+
+## 2026-08-30 — Corrected E4 Collector admission
+
+- The correctly attributed soak completed with 1,441 ready samples, 100%
+  coverage/readiness, no storage regression, and raw JSONL SHA-256
+  `2b0c51ea7e78b28d7396c16451cef2afd0f13e086c632fe86613d6d6bcf2e548`.
+- The raw evidence was not modified. A regression-tested evaluator correction
+  uses the final monotonic elapsed value from runner start and resolves the
+  original one-second false rejection.
+- After disabling the completed soak unit, a controlled full-VM reboot
+  recovered the enabled Collector, loopback health, `storedCount=1`, protected
+  evidence, and the same raw hash.
+- A post-reboot versioned host preflight passed all checks and produced
+  sanitized evidence SHA-256
+  `d3820e884b89b0a89405b8c60fbef21de3da2b1077e6ae3f011474b765a35175`.
+- Status is `COLLECTOR_ADMITTED_PRIVATE`. This is Collector-only evidence and
+  has no observer-independence effect. Public TLS and every observer remain
+  pending; Milestone 2 has not started.

@@ -2,7 +2,7 @@
   "schema_version": "GrantM1OracleE4CorrectedEvidenceAnchor@0.1.0",
   "component_id": "collector-oracle-e4-gru-canary",
   "captured_at": "2026-08-29T17:17:37.739Z",
-  "status": "PREFLIGHT_AND_DURABLE_REPLAY_PASSED_SOAK_IN_PROGRESS",
+  "status": "COLLECTOR_ADMITTED_PRIVATE",
   "host_attribution": {
     "provider": "oracle",
     "region": "sa-saopaulo-1",
@@ -12,7 +12,8 @@
   "correction": {
     "prior_target_was_rejected_e2": true,
     "prior_e4_soak_claim_retracted": true,
-    "full_vm_restart_recovery_retracted_pending_rerun": true
+    "prior_full_vm_restart_claim_retracted": true,
+    "corrected_full_vm_restart_recovery_passed": true
   },
   "preflight": {
     "captured_at": "2026-08-29T17:15:44.667Z",
@@ -35,14 +36,29 @@
   },
   "soak": {
     "started_at": "2026-08-29T17:17:37.739Z",
+    "completed_at": "2026-08-30T17:17:37.744Z",
     "minimum_duration_seconds": 86400,
     "first_sample_ready": true,
     "first_sample_http_status": 200,
     "first_sample_stored_count": 1,
-    "passed": false
+    "raw_jsonl_sha256": "2b0c51ea7e78b28d7396c16451cef2afd0f13e086c632fe86613d6d6bcf2e548",
+    "sample_count": 1441,
+    "readiness_ratio": 1,
+    "storage_regression_count": 0,
+    "passed": true
+  },
+  "post_reboot": {
+    "preflight_captured_at": "2026-08-31T00:35:38.160Z",
+    "preflight_sha256": "d3820e884b89b0a89405b8c60fbef21de3da2b1077e6ae3f011474b765a35175",
+    "runtime_commit": "d2e5e09c01d890c0f142b0cf22010280c38b366c",
+    "manifest_file_count": 124,
+    "stored_count": 1,
+    "all_checks_passed": true,
+    "evidence_mode_0600": true
   },
   "claim_boundaries": {
     "collector_only": true,
+    "collector_admitted": true,
     "solana_observation": false,
     "observer_independence": false,
     "milestone_1_accepted": false,

@@ -1,6 +1,6 @@
 {
-  "schema_version": "GrantM1OracleE4CollectorCanaryPlan@0.5.0",
-  "status": "PROVISIONED_CANARY_NOT_ADMITTED",
+  "schema_version": "GrantM1OracleE4CollectorCanaryPlan@0.6.0",
+  "status": "COLLECTOR_ADMITTED_PRIVATE",
   "scope": "COLLECTOR_CANARY_ONLY",
   "billing_authorized_by_repository": false,
   "operator_spend_authorization": "CONFIRMED_OUT_OF_BAND_WITH_DOCUMENTED_ESTIMATOR_LIMITATION",
@@ -21,7 +21,7 @@
     "burstable_baseline_fraction": 0.125,
     "boot_volume_gib": 50,
     "provisioned": true,
-    "admitted": false,
+    "admitted": true,
     "public_ingress_enabled": false,
     "health_loopback_only": true
   },
@@ -61,17 +61,18 @@
     "basic_live_preflight_passed": true,
     "versioned_host_preflight_passed": true,
     "service_restart_recovery_passed": true,
-    "full_vm_restart_recovery_passed": false,
-    "restart_recovery_passed": false,
+    "full_vm_restart_recovery_passed": true,
+    "restart_recovery_passed": true,
+    "post_reboot_versioned_host_preflight_passed": true,
     "collector_durable_replay_recovery_passed": true,
     "canary_soak_minimum_seconds": 86400,
-    "canary_soak_passed": false,
+    "canary_soak_passed": true,
     "sanitized_evidence_retained": true
   },
   "methodology_boundaries": {
     "collector_is_not_an_observer": true,
     "observer_independence_effect": "NONE",
-    "milestone_1_acceptance_effect_before_admission": "NONE",
+    "milestone_1_acceptance_effect": "COLLECTOR_COMPONENT_ONLY",
     "milestone_2_started": false
   }
 }

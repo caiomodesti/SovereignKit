@@ -87,13 +87,16 @@ export function evaluateGrantM1CanarySoak({ observerId, intervalSeconds, samples
     if (at <= previousAt) throw new Error("canary sample timestamps must be strictly increasing");
     if (sample.elapsed_ms <= previousElapsedMs) throw new Error("canary monotonic elapsed time must be strictly increasing");
     if (previousElapsedMs >= 0) maxGapMs = Math.max(maxGapMs, sample.elapsed_ms - previousElapsedMs);
+    else maxGapMs = sample.elapsed_ms;
     previousAt = at;
     previousElapsedMs = sample.elapsed_ms;
   }
 
   const startedAt = samples[0].captured_at;
   const completedAt = samples.at(-1).captured_at;
-  const actualDurationMs = samples.at(-1).elapsed_ms - samples[0].elapsed_ms;
+  // elapsed_ms is measured from the runner's monotonic start. The final value
+  // already includes the first readiness request and is the complete run time.
+  const actualDurationMs = samples.at(-1).elapsed_ms;
   const requiredDurationMs = requiredDurationSeconds * 1000;
   const expectedSamples = Math.floor(actualDurationMs / (intervalSeconds * 1000)) + 1;
   const coverageRatio = Math.min(1, samples.length / expectedSamples);

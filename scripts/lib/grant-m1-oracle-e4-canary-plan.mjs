@@ -1,12 +1,12 @@
-export const GRANT_M1_ORACLE_E4_CANARY_PLAN_VERSION = "GrantM1OracleE4CollectorCanaryPlan@0.5.0";
+export const GRANT_M1_ORACLE_E4_CANARY_PLAN_VERSION = "GrantM1OracleE4CollectorCanaryPlan@0.6.0";
 
 const nearlyEqual = (left, right) => Math.abs(left - right) <= 0.000001;
 
 export function validateGrantM1OracleE4CanaryPlan(plan) {
   if (plan === null || typeof plan !== "object") throw new Error("Oracle E4 canary plan must be an object");
   if (plan.schema_version !== GRANT_M1_ORACLE_E4_CANARY_PLAN_VERSION) throw new Error("Oracle E4 canary plan version is invalid");
-  if (plan.status !== "PROVISIONED_CANARY_NOT_ADMITTED" || plan.scope !== "COLLECTOR_CANARY_ONLY") {
-    throw new Error("Oracle E4 canary must remain a provisioned but unadmitted Collector-only canary");
+  if (plan.status !== "COLLECTOR_ADMITTED_PRIVATE" || plan.scope !== "COLLECTOR_CANARY_ONLY") {
+    throw new Error("Oracle E4 canary must remain an admitted private Collector-only component");
   }
   if (plan.billing_authorized_by_repository !== false ||
       plan.operator_spend_authorization !== "CONFIRMED_OUT_OF_BAND_WITH_DOCUMENTED_ESTIMATOR_LIMITATION") {
@@ -25,8 +25,8 @@ export function validateGrantM1OracleE4CanaryPlan(plan) {
   if (candidate.ocpu !== 1 || candidate.memory_gib !== 4 || candidate.burstable_baseline_fraction !== 0.125 || candidate.boot_volume_gib < 46) {
     throw new Error("Oracle E4 candidate resources drifted from the bounded canary");
   }
-  if (candidate.provisioned !== true || candidate.admitted !== false || candidate.public_ingress_enabled !== false || candidate.health_loopback_only !== true) {
-    throw new Error("Oracle canary must be provisioned without claiming admission or public exposure");
+  if (candidate.provisioned !== true || candidate.admitted !== true || candidate.public_ingress_enabled !== false || candidate.health_loopback_only !== true) {
+    throw new Error("Oracle Collector must be admitted without claiming public exposure");
   }
 
   const pricing = plan.pricing_snapshot ?? {};
@@ -64,20 +64,15 @@ export function validateGrantM1OracleE4CanaryPlan(plan) {
 
   const admission = plan.admission_gates ?? {};
   if (admission.canary_soak_minimum_seconds !== 86_400) throw new Error("Oracle E4 canary soak cannot be shorter than 24 hours");
-  for (const field of ["versioned_host_preflight_passed", "collector_durable_replay_recovery_passed"]) {
+  for (const field of ["versioned_host_preflight_passed", "collector_durable_replay_recovery_passed", "canary_soak_passed", "full_vm_restart_recovery_passed", "restart_recovery_passed", "post_reboot_versioned_host_preflight_passed"]) {
     if (admission[field] !== true) throw new Error(`observed Oracle E4 admission evidence ${field} must remain true`);
   }
-  if (admission.canary_soak_passed !== false) throw new Error("Oracle E4 soak must remain unpassed until a complete real-host summary exists");
   for (const field of ["basic_live_preflight_passed", "service_restart_recovery_passed", "sanitized_evidence_retained"]) {
     if (admission[field] !== true) throw new Error(`observed Oracle E4 evidence ${field} must remain true`);
   }
-  for (const field of ["full_vm_restart_recovery_passed", "restart_recovery_passed"]) {
-    if (admission[field] !== false) throw new Error(`unverified Oracle E4 evidence ${field} must remain false`);
-  }
-
   const boundaries = plan.methodology_boundaries ?? {};
   if (boundaries.collector_is_not_an_observer !== true || boundaries.observer_independence_effect !== "NONE" ||
-      boundaries.milestone_1_acceptance_effect_before_admission !== "NONE" || boundaries.milestone_2_started !== false) {
+      boundaries.milestone_1_acceptance_effect !== "COLLECTOR_COMPONENT_ONLY" || boundaries.milestone_2_started !== false) {
     throw new Error("Oracle E4 methodology boundary is invalid");
   }
 
@@ -87,6 +82,6 @@ export function validateGrantM1OracleE4CanaryPlan(plan) {
     estimatedComputeMonthlyBrl: computedMonthly,
     maximumConsoleEstimateMonthlyBrl: pricing.maximum_console_estimate_monthly_brl,
     provisioned: true,
-    admitted: false,
+    admitted: true,
   };
 }
