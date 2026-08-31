@@ -1,6 +1,6 @@
 # Grant Milestone 1 — Oracle E4 Collector canary
 
-Status: `COLLECTOR_ADMITTED_PRIVATE`.
+Status: `COLLECTOR_ADMITTED_PUBLIC_TLS`.
 
 This is a bounded replacement canary for the rejected Oracle E2 micro Collector.
 It does not replace the three-observer topology, establish observer independence,
@@ -14,7 +14,8 @@ start Milestone 2, or authorize the repository itself to create paid infrastruct
 - resources: 1 OCPU, 4 GiB memory, 12.5% burstable baseline;
 - operating system: Oracle Linux 9;
 - boot volume target: 50 GiB;
-- public ingestion: disabled during the host canary;
+- public ingestion: disabled during the host canary, then limited to
+  `POST /v0/probe-results` behind the admitted TLS edge;
 - health endpoint: loopback only.
 
 The public Oracle Brazil price snapshot produces an estimated burstable
@@ -70,9 +71,14 @@ blockers. The evidence and adjudication are retained at
 After the soak unit was disabled, the VM rebooted and returned with the
 Collector active and enabled, loopback health ready, `storedCount=1`, protected
 evidence and its hash preserved. A new post-reboot preflight verified the frozen
-124-file runtime and all host checks. This admits only the private Collector
-component. Public TLS, observer deployment, observer independence, Milestone 1
-acceptance, and Milestone 2 remain separate and unclaimed.
+124-file runtime and all host checks. This admitted the private Collector host.
+The subsequent controlled-DNS and TLS preflight admitted a Caddy edge with
+publicly trusted TLS 1.3, HTTP 308, private `/health`, wrong-method 404, and
+schema-validation 422. Its sanitized anchor is
+`fixtures/grant-m1/oracle-e4-tls-20260831.json`. This remains only a Collector
+component: successful signed Observer delivery, observer deployment, observer
+independence, Milestone 1 acceptance, and Milestone 2 remain separate and
+unclaimed.
 
 The Observer owns the delivery queue; the Collector does not. Its recovery gate
 therefore tests its actual responsibility: durable append-only storage and
@@ -89,6 +95,7 @@ node scripts/verify-grant-m1-oracle-e4-canary-plan.mjs
 node --test scripts/tests/grant-m1-oracle-e4-canary-plan.test.mjs
 node --test scripts/tests/grant-m1-collector-host-preflight.test.mjs
 node --test scripts/tests/grant-m1-collector-canary-soak.test.mjs
+node --test scripts/tests/grant-m1-collector-tls-preflight.test.mjs
 ```
 
 The live preflight and soak scripts intentionally run only on the target Linux

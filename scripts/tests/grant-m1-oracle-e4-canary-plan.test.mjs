@@ -6,7 +6,7 @@ import { validateGrantM1OracleE4CanaryPlan } from "../lib/grant-m1-oracle-e4-can
 
 const canonicalPlan = JSON.parse(await readFile("deploy/grant-pilot/oracle-e4-collector-canary-plan.json", "utf8"));
 
-test("accepts the bounded admitted private Oracle E4 Collector", () => {
+test("accepts the bounded admitted public-TLS Oracle E4 Collector", () => {
   const result = validateGrantM1OracleE4CanaryPlan(structuredClone(canonicalPlan));
   assert.equal(result.status, "PASS");
   assert.equal(result.provisioned, true);
@@ -21,7 +21,7 @@ test("rejects repository-side billing authorization or admission rollback", () =
 
   const unadmitted = structuredClone(canonicalPlan);
   unadmitted.candidate.admitted = false;
-  assert.throws(() => validateGrantM1OracleE4CanaryPlan(unadmitted), /must be admitted/u);
+  assert.throws(() => validateGrantM1OracleE4CanaryPlan(unadmitted), /public TLS boundary/u);
 });
 
 test("rejects cost or resource drift", () => {
@@ -62,4 +62,18 @@ test("requires verified full-VM and post-reboot recovery", () => {
   const postReboot = structuredClone(canonicalPlan);
   postReboot.admission_gates.post_reboot_versioned_host_preflight_passed = false;
   assert.throws(() => validateGrantM1OracleE4CanaryPlan(postReboot), /must remain true/u);
+});
+
+test("requires the narrow public TLS boundary and retained TLS gates", () => {
+  const route = structuredClone(canonicalPlan);
+  route.candidate.public_ingress_route = "GET /health";
+  assert.throws(() => validateGrantM1OracleE4CanaryPlan(route), /public TLS boundary/u);
+
+  const health = structuredClone(canonicalPlan);
+  health.candidate.public_health_exposed = true;
+  assert.throws(() => validateGrantM1OracleE4CanaryPlan(health), /public TLS boundary/u);
+
+  const tls = structuredClone(canonicalPlan);
+  tls.admission_gates.public_tls_preflight_passed = false;
+  assert.throws(() => validateGrantM1OracleE4CanaryPlan(tls), /TLS evidence/u);
 });

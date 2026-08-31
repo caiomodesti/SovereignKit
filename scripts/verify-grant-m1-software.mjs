@@ -84,6 +84,7 @@ const requiredFiles = [
   "fixtures/grant-m1/alchemy-devnet-route-20260826.json",
   "fixtures/grant-m1/oracle-e4-preflight-replay-20260829.json",
   "fixtures/grant-m1/oracle-e4-soak-20260830.json",
+  "fixtures/grant-m1/oracle-e4-tls-20260831.json",
 ];
 
 const contents = new Map(await Promise.all(requiredFiles.map(async path => [path, await readFile(path, "utf8")])));
@@ -173,20 +174,23 @@ if (zeroCostPlan.schema_version !== "GrantM1ZeroCostCandidatePlan@0.1.0" ||
   throw new Error("zero-cost candidate plan must remain researched, unprovisioned, and unaccepted");
 }
 const oracleE4Canary = JSON.parse(contents.get("deploy/grant-pilot/oracle-e4-collector-canary-plan.json"));
-if (oracleE4Canary.schema_version !== "GrantM1OracleE4CollectorCanaryPlan@0.6.0" ||
-    oracleE4Canary.status !== "COLLECTOR_ADMITTED_PRIVATE" ||
+if (oracleE4Canary.schema_version !== "GrantM1OracleE4CollectorCanaryPlan@0.7.0" ||
+    oracleE4Canary.status !== "COLLECTOR_ADMITTED_PUBLIC_TLS" ||
     oracleE4Canary.scope !== "COLLECTOR_CANARY_ONLY" ||
     oracleE4Canary.billing_authorized_by_repository !== false ||
     oracleE4Canary.candidate?.provisioned !== true ||
     oracleE4Canary.candidate?.admitted !== true ||
+    oracleE4Canary.candidate?.public_ingress_route !== "POST /v0/probe-results" ||
+    oracleE4Canary.candidate?.public_health_exposed !== false ||
     oracleE4Canary.admission_gates?.full_vm_restart_recovery_passed !== true ||
     oracleE4Canary.admission_gates?.restart_recovery_passed !== true ||
     oracleE4Canary.admission_gates?.post_reboot_versioned_host_preflight_passed !== true ||
     oracleE4Canary.admission_gates?.versioned_host_preflight_passed !== true ||
     oracleE4Canary.admission_gates?.collector_durable_replay_recovery_passed !== true ||
     oracleE4Canary.admission_gates?.canary_soak_passed !== true ||
+    oracleE4Canary.admission_gates?.public_tls_preflight_passed !== true ||
     oracleE4Canary.methodology_boundaries?.milestone_2_started !== false) {
-  throw new Error("Oracle E4 Collector plan must remain bounded, privately admitted, and unable to start Milestone 2");
+  throw new Error("Oracle E4 Collector plan must remain bounded, narrowly public over TLS, and unable to start Milestone 2");
 }
 const oracleE4Evidence = JSON.parse(contents.get("fixtures/grant-m1/oracle-e4-preflight-replay-20260829.json"));
 if (oracleE4Evidence.schema_version !== "GrantM1OracleE4CorrectedEvidenceAnchor@0.1.0" ||
@@ -215,6 +219,23 @@ if (oracleE4SoakEvidence.schema_version !== "GrantM1OracleE4CollectorSoakEvidenc
     oracleE4SoakEvidence.claim_boundaries?.milestone_1_accepted !== false ||
     oracleE4SoakEvidence.claim_boundaries?.milestone_2_started !== false) {
   throw new Error("Oracle E4 soak evidence is incomplete or overclaims milestone acceptance");
+}
+const oracleE4TlsEvidence = JSON.parse(contents.get("fixtures/grant-m1/oracle-e4-tls-20260831.json"));
+if (oracleE4TlsEvidence.schema_version !== "GrantM1CollectorTlsPreflight@0.1.0" ||
+    oracleE4TlsEvidence.scope !== "PRIVATE_COLLECTOR_TLS_EDGE_ONLY" ||
+    oracleE4TlsEvidence.collector_origin !== "https://collector.sovereignkit.org" ||
+    oracleE4TlsEvidence.expected_address_matched !== true ||
+    oracleE4TlsEvidence.expected_address_persisted !== false ||
+    oracleE4TlsEvidence.tls_authorized !== true ||
+    !["TLSv1.2", "TLSv1.3"].includes(oracleE4TlsEvidence.tls_protocol) ||
+    oracleE4TlsEvidence.http_redirect_status !== 308 ||
+    oracleE4TlsEvidence.public_health_status !== 404 ||
+    oracleE4TlsEvidence.wrong_method_status !== 404 ||
+    oracleE4TlsEvidence.invalid_payload_status !== 422 ||
+    oracleE4TlsEvidence.exposed_route !== "POST /v0/probe-results" ||
+    oracleE4TlsEvidence.observer_independence_established !== false ||
+    oracleE4TlsEvidence.milestone_acceptance_effect !== "NONE") {
+  throw new Error("Oracle E4 TLS evidence anchor is incomplete or overclaims acceptance");
 }
 const operatorReadiness = evaluateGrantM1OperatorReadiness(JSON.parse(contents.get("deploy/grant-pilot/operator-readiness.example.json")));
 if (operatorReadiness.status !== "ACTION_REQUIRED" || operatorReadiness.blockers.length === 0) {

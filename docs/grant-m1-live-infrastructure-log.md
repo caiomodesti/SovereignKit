@@ -220,3 +220,23 @@ the corrected E4 evidence follows in the next section.
 - Status is `COLLECTOR_ADMITTED_PRIVATE`. This is Collector-only evidence and
   has no observer-independence effect. Public TLS and every observer remain
   pending; Milestone 2 has not started.
+
+## 2026-08-31 — E4 Collector public TLS edge admitted
+
+- Registered a conventional project hostname and created one DNS A record for
+  the Collector. Registration cost was USD 7.98; the registrar displayed a
+  current renewal price of USD 11.84/year. No hosting or email add-on was
+  purchased.
+- Installed the official Caddy package for Oracle Linux, retained the Collector
+  on `127.0.0.1:8787`, and exposed only TCP 80/443 through the instance NSG and
+  guest firewall. Existing SSH restriction remained unchanged.
+- The fail-closed preflight matched DNS to the private expected-address file
+  without persisting that address, authorized a publicly trusted TLS 1.3
+  certificate, observed HTTP 308 redirect, kept `/health` and wrong methods at
+  404, and reached Collector schema validation with HTTP 422.
+- Sanitized evidence is retained at
+  `fixtures/grant-m1/oracle-e4-tls-20260831.json`; its capture SHA-256 is
+  `d44aaaba5c1456902a0a28f060b85ae7a760db8f4606ee86b0acdd640d7fa469`.
+- Status advances to `COLLECTOR_ADMITTED_PUBLIC_TLS`. This does not prove a
+  successful signed Observer delivery, observer independence, Milestone 1
+  acceptance, or any Milestone 2 work.

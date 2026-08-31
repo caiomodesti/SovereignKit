@@ -1,6 +1,6 @@
 {
-  "schema_version": "GrantM1OracleE4CollectorCanaryPlan@0.6.0",
-  "status": "COLLECTOR_ADMITTED_PRIVATE",
+  "schema_version": "GrantM1OracleE4CollectorCanaryPlan@0.7.0",
+  "status": "COLLECTOR_ADMITTED_PUBLIC_TLS",
   "scope": "COLLECTOR_CANARY_ONLY",
   "billing_authorized_by_repository": false,
   "operator_spend_authorization": "CONFIRMED_OUT_OF_BAND_WITH_DOCUMENTED_ESTIMATOR_LIMITATION",
@@ -22,7 +22,9 @@
     "boot_volume_gib": 50,
     "provisioned": true,
     "admitted": true,
-    "public_ingress_enabled": false,
+    "public_ingress_enabled": true,
+    "public_ingress_route": "POST /v0/probe-results",
+    "public_health_exposed": false,
     "health_loopback_only": true
   },
   "pricing_snapshot": {
@@ -67,7 +69,12 @@
     "collector_durable_replay_recovery_passed": true,
     "canary_soak_minimum_seconds": 86400,
     "canary_soak_passed": true,
-    "sanitized_evidence_retained": true
+    "sanitized_evidence_retained": true,
+    "controlled_dns_matched": true,
+    "public_tls_preflight_passed": true,
+    "tls_protocol": "TLSv1.3",
+    "plaintext_redirect_passed": true,
+    "schema_validating_ingress_reached": true
   },
   "methodology_boundaries": {
     "collector_is_not_an_observer": true,

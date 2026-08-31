@@ -54,11 +54,15 @@ Started: 2026-08-24
   regression-tested evaluator correction resolved a one-second false rejection
   without changing the immutable JSONL.
 - controlled full-VM reboot recovery and the post-reboot versioned preflight
-  passed on the corrected E4 host. The Collector is admitted privately; public
-  TLS, every observer, Milestone 1 acceptance, and Milestone 2 remain pending.
+  passed on the corrected E4 host. That admitted the private host; the following
+  DNS/TLS gate admitted its narrow public edge. Every observer, Milestone 1
+  acceptance, and Milestone 2 remain pending.
 - fail-closed Collector DNS/TLS preflight and hardened Caddy environment
-  templates are implemented. The live gate remains blocked only on selecting a
-  controlled hostname, creating its DNS record, and enabling ports 80/443.
+  templates are implemented and live-validated. The controlled hostname maps
+  to the admitted E4 target, Caddy serves publicly trusted TLS 1.3, plaintext
+  HTTP redirects, `/health` remains private, wrong methods fail closed, and an
+  invalid signed-result payload reaches schema validation with HTTP 422. The
+  sanitized anchor is `fixtures/grant-m1/oracle-e4-tls-20260831.json`.
 
 ## Not yet implemented or validated
 
@@ -67,7 +71,6 @@ Started: 2026-08-24
 - corroborated provider, instance, region, and ASN evidence;
 - cross-host real Solana observation;
 - external restart, delay, outage, malformed, unknown-observer, stale, disagreement, quorum-available, and quorum-unavailable evidence;
-- hosted Collector and TLS endpoint;
 - real-host recovery exercises and complete external hostile audit.
 
 The current runtime MUST NOT be described as a completed independent observation layer. The software and deployment path are implemented, locally integrated, and rehearsed against a real local validator, so the status remains `IMPLEMENTED_NOT_VALIDATED`. It remains below `ACCEPTED` until three real external deployments, real remote reader calls, failure/recovery exercises, and independence evidence are retained.
@@ -83,13 +86,14 @@ within the bounded check after a Console reboot. The canary is rejected and
 cannot replace the original A1 target. A1 remains blocked by observed capacity;
 the E4 replacement is now the active bounded Collector canary.
 
-The Oracle E4 host is admitted as the private Collector component but is not a
-hosted public Collector yet. Its basic guest checks, service restart,
+The Oracle E4 host is admitted as the hosted public-TLS Collector component.
+Its basic guest checks, service restart,
 frozen-runtime preflight, durable replay, complete 24-hour soak, controlled
-full-VM recovery, and post-reboot preflight passed on the corrected host. The
-replay used an explicitly synthetic signed fixture and does not prove Solana
-observation. No independent observer, public-TLS ingestion, complete
-Milestone 1, or Milestone 2 claim is made.
+full-VM recovery, post-reboot preflight, controlled DNS, and narrow TLS edge
+passed on the corrected host. The replay used an explicitly synthetic signed
+fixture and the TLS preflight used an invalid payload only; neither proves
+Solana observation or successful signed remote delivery. No independent
+observer, complete Milestone 1, or Milestone 2 claim is made.
 Observer queue recovery is a separate observer-host gate because the Collector
 has no delivery queue.
 

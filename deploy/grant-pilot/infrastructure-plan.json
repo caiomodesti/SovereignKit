@@ -96,7 +96,7 @@
     "known_failure_coupling": "Collector and Observer C share the Hetzner provider account and control plane; the Collector remains a central suppression and availability dependency."
   },
   "external_requirements": {
-    "controlled_collector_hostname": "REQUIRED_NOT_ACQUIRED",
+    "controlled_collector_hostname": "ACQUIRED_AND_TLS_VALIDATED",
     "provider_accounts": "REQUIRED_NOT_CREATED_OR_VERIFIED",
     "billing_method": "REQUIRED_NOT_AUTHORIZED",
     "secret_custody": "REQUIRED_ON_EACH_HOST"

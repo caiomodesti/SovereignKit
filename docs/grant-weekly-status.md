@@ -204,5 +204,10 @@ Its E4 preflight, replay, reboot, and soak claims are retracted. See the
 - Added a fail-closed DNS/TLS gate that retains no expected address, rejects
   direct-IP or reserved hostnames, verifies public certificate trust and
   lifetime, confirms DNS-to-E4 correlation, keeps `/health` private, and proves
-  that only schema-validating POST ingestion is routed. Live TLS remains blocked
-  on a controlled hostname and DNS record; no domain purchase was made.
+  that only schema-validating POST ingestion is routed.
+- Registered the controlled project hostname for USD 7.98, enabled registrar
+  MFA, configured the Collector DNS record, installed the official Caddy edge,
+  and opened only TCP 80/443 in the E4 NSG and guest firewall. The live gate
+  passed with TLS 1.3, HTTP 308, private `/health`, wrong-method 404, and
+  schema-validation 422. Observer A and every independence claim remain
+  pending; Milestone 2 has not started.

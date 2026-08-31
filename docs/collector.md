@@ -45,4 +45,11 @@ The committed integration test requests mode `0600` where the filesystem support
 
 ## Operational boundary
 
-The HTTP process binds explicitly to `127.0.0.1`. There is no TLS, remote authorization, rate-limit service, multi-writer coordination, revocation service, HSM, or external anchoring. Do not expose this endpoint outside the controlled host.
+The HTTP process binds explicitly to `127.0.0.1` and has no native TLS. The
+Milestone 1 deployment terminates publicly trusted TLS at a Caddy edge that
+forwards only `POST /v0/probe-results`; `/health` and every other path remain
+unrouted. The live Oracle E4 edge passed DNS correlation, TLS 1.3, HTTP redirect,
+private-health, wrong-method, and schema-validation gates. There is still no
+rate-limit service, multi-writer coordination, revocation service, HSM, or
+external anchoring. Never bind the Collector process itself to a public
+interface.
