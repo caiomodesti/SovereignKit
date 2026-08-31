@@ -201,3 +201,8 @@ Its E4 preflight, replay, reboot, and soak claims are retracted. See the
 - Status is `COLLECTOR_ADMITTED_PRIVATE`. This admits only the Collector host;
   public TLS, three independent observers, Milestone 1 acceptance, and
   Milestone 2 remain pending.
+- Added a fail-closed DNS/TLS gate that retains no expected address, rejects
+  direct-IP or reserved hostnames, verifies public certificate trust and
+  lifetime, confirms DNS-to-E4 correlation, keeps `/health` private, and proves
+  that only schema-validating POST ingestion is routed. Live TLS remains blocked
+  on a controlled hostname and DNS record; no domain purchase was made.

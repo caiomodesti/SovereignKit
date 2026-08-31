@@ -17,6 +17,8 @@ const requiredFiles = [
   "deploy/grant-pilot/oracle-e4-collector-canary-plan.json",
   "docs/grant-m1-oracle-e4-collector-canary.md",
   "deploy/grant-pilot/Caddyfile.example",
+  "deploy/grant-pilot/collector-tls.env.example",
+  "deploy/grant-pilot/systemd/caddy-sovereignkit.conf",
   "deploy/grant-pilot/observer-runtime.example.json",
   "deploy/grant-pilot/reader-registry.example.json",
   "deploy/grant-pilot/assignment-authorities.example.json",
@@ -60,6 +62,9 @@ const requiredFiles = [
   "scripts/lib/grant-m1-collector-host-preflight.mjs",
   "scripts/capture-grant-m1-collector-host-preflight.mjs",
   "scripts/tests/grant-m1-collector-host-preflight.test.mjs",
+  "scripts/lib/grant-m1-collector-tls-preflight.mjs",
+  "scripts/run-grant-m1-collector-tls-preflight.mjs",
+  "scripts/tests/grant-m1-collector-tls-preflight.test.mjs",
   "scripts/tests/grant-m1-rpc-route-preflight.test.mjs",
   "scripts/lib/grant-m1-infrastructure-plan.mjs",
   "scripts/verify-grant-m1-infrastructure-plan.mjs",
@@ -96,6 +101,15 @@ if (!contents.get("deploy/grant-pilot/systemd/sovereignkit-observer.service").in
     !contents.get("deploy/grant-pilot/systemd/sovereignkit-canary-soak@.service").includes("--duration-seconds 86400") ||
     !contents.get("deploy/grant-pilot/systemd/sovereignkit-collector-canary-soak.service").includes("--duration-seconds 86400")) {
   throw new Error("grant systemd templates are missing required hardening");
+}
+if (!contents.get("deploy/grant-pilot/Caddyfile.example").includes("{$SOVEREIGNKIT_COLLECTOR_HOSTNAME}") ||
+    !contents.get("deploy/grant-pilot/Caddyfile.example").includes("-Server") ||
+    !contents.get("deploy/grant-pilot/Caddyfile.example").includes("max_size 256KB") ||
+    contents.get("deploy/grant-pilot/Caddyfile.example").includes("reverse_proxy 0.0.0.0") ||
+    !contents.get("deploy/grant-pilot/systemd/caddy-sovereignkit.conf").includes("EnvironmentFile=/etc/caddy/sovereignkit.env") ||
+    !contents.get("scripts/lib/grant-m1-collector-tls-preflight.mjs").includes("GrantM1CollectorTlsPreflight@0.1.0") ||
+    !contents.get("scripts/lib/grant-m1-collector-tls-preflight.mjs").includes("expected_address_persisted: false")) {
+  throw new Error("Collector TLS edge template or fail-closed preflight is incomplete");
 }
 if (!contents.get("docs/grant-milestone-1-status.md").includes("Milestone 2 has not started")) {
   throw new Error("Milestone 1 status must preserve the Milestone 2 gate");

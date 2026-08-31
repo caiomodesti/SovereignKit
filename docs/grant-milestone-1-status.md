@@ -56,6 +56,9 @@ Started: 2026-08-24
 - controlled full-VM reboot recovery and the post-reboot versioned preflight
   passed on the corrected E4 host. The Collector is admitted privately; public
   TLS, every observer, Milestone 1 acceptance, and Milestone 2 remain pending.
+- fail-closed Collector DNS/TLS preflight and hardened Caddy environment
+  templates are implemented. The live gate remains blocked only on selecting a
+  controlled hostname, creating its DNS record, and enabling ports 80/443.
 
 ## Not yet implemented or validated
 
