@@ -13,15 +13,16 @@ claims without measuring the host that actually ran the observer.
 ## Decision
 
 Every external Milestone 1 observer must produce a
-`GrantM1HostPreflight@0.1.0` record on its own Linux host before its operational
+`GrantM1HostPreflight@0.2.0` record on its own Linux host before its operational
 evidence can be accepted. The command runs as the observer service account and
 fails closed unless all of the following are true:
 
 - `timedatectl` reports NTP synchronization;
-- the observer systemd service is active;
+- the observer systemd service is active and enabled;
+- the health port is bound exclusively to loopback;
 - the loopback-only `/ready` endpoint reports the expected observer identity;
-- the checked-out commit equals the frozen deployment commit and tracked files
-  are clean;
+- every deployed file matches the SHA-256 in the frozen Observer runtime
+  manifest and the installed systemd unit matches the staged unit;
 - the running Node.js version equals the frozen deployment runtime;
 - the observer key is a regular non-symlink file owned by the running service
   account, with no group or other access;
@@ -37,6 +38,7 @@ The readiness request cannot follow redirects or target a non-loopback host.
 - The resulting JSONL is directly usable as indexed `health_history` evidence.
 - The command is intentionally Linux-only; unit tests on Windows prove logic,
   not real-host state.
+- Deployment no longer depends on a mutable Git checkout on the observer host.
 - A passing preflight proves bounded local host conditions at one timestamp. It
   does not prove provider independence, ongoing health, truthful provider
   metadata, restart durability, network policy, backup, or complete evidence

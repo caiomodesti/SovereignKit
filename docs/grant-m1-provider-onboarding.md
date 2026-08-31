@@ -1,14 +1,14 @@
 # Grant Milestone 1 provider onboarding gate
 
-Status: `IN_PROGRESS` — the Oracle E4 Collector canary is provisioned but not
-admitted; no observer host has been provisioned.
+Status: `IN_PROGRESS` — the Oracle E4 Collector is admitted behind the controlled
+public TLS hostname; no observer host has been provisioned.
 
 ADR-023 added a prior zero-cost review. Oracle A1 capacity and E2 host fitness
 failed concretely, so the operator approved a bounded Pay As You Go E4 Collector
-canary. That canary passed frozen-runtime preflight and durable replay recovery;
-its 24-hour soak is running. Do not provision Observer A until the Collector soak
-has a complete passing summary, and do not provision Observers B or C until
-Observer A passes its own host and observation gates.
+canary. That canary passed frozen-runtime preflight, durable replay, a real
+24-hour soak, reboot recovery, and the public TLS gate. Observer A is now the
+only component eligible for the next provisioning attempt. Do not provision
+Observers B or C until Observer A passes its own host and observation gates.
 
 This runbook converts the operator-controlled prerequisites for Milestone 1
 into an explicit gate. It does not authorize billing, create accounts, buy a
@@ -88,8 +88,10 @@ resources automatically.
    the selected A1 shape and boot volume as Always Free eligible.
 3. Harden it, configure the loopback Collector plus TLS edge, and retain a
    sanitized deployment record.
-4. Create the AWS Lightsail Observer A canary only if the console confirms the
-   selected 2 GiB bundle is covered for the required window.
+4. Create the AWS Lightsail Observer A canary only if the console confirms that
+   the account has current AWS Free Tier credits sufficient for the selected
+   USD 12/month 2 GiB bundle and shows their expiration. The obsolete short-term
+   Lightsail trial must not be assumed.
 5. Require host preflight, signed observation, restart recovery, delivery
    recovery, 24-hour canary, and sanitized provider evidence.
 6. Stop on any unexplained critical failure. Do not create Observers B or C.

@@ -34,9 +34,11 @@ themselves run our observer daemon or establish operational independence.
 
 ### Observer compute
 
-- AWS Lightsail: preferred first observer canary using the 2 GiB public-IPv4
-  bundle when the account console confirms the current free-trial entitlement.
-  The principal risk is automatic paid continuation after the trial.
+- AWS Lightsail: preferred first observer canary using the USD 12/month 2 GiB
+  public-IPv4 bundle only when the account console confirms current AWS Free
+  Tier credits and their expiration. AWS documents that the older Lightsail
+  short-term trials were replaced for new customers by the credit model. The
+  principal risks are account ineligibility and paid continuation after credits.
 - Google Cloud: third-party-independent observer candidate using one eligible
   `e2-micro`. It has 1 GiB memory, 30 GiB standard disk, and 1 GiB monthly
   external egress under the current Free Tier, so it must pass the same canary
