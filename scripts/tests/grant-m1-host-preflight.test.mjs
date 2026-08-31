@@ -31,6 +31,8 @@ test("rejects unsafe observer key, clock, runtime, identity, or disk", () => {
 test("validates Observer runtime manifest paths, hashes, and uniqueness", () => {
   const manifest = { schema_version: "GrantM1ObserverRuntimeManifest@0.1.0", source_commit: "a".repeat(40), node_version: "22.17.0", files: [{ path: "package.json", sha256: "b".repeat(64) }] };
   assert.equal(validateObserverRuntimeManifest(manifest), manifest);
+  const systemdTemplate = { ...manifest, files: [{ path: "deploy/systemd/sovereignkit-canary-soak@.service", sha256: "c".repeat(64) }] };
+  assert.equal(validateObserverRuntimeManifest(systemdTemplate), systemdTemplate);
   assert.throws(() => validateObserverRuntimeManifest({ ...manifest, files: [{ path: "../secret", sha256: "b".repeat(64) }] }), /entry is invalid/u);
   assert.throws(() => validateObserverRuntimeManifest({ ...manifest, files: [manifest.files[0], manifest.files[0]] }), /duplicate paths/u);
 });
