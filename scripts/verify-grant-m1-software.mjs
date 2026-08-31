@@ -174,11 +174,11 @@ if (infrastructurePlan.schema_version !== "GrantM1InfrastructurePlan@0.1.0" ||
   throw new Error("grant infrastructure plan must remain versioned, unprovisioned, and unable to authorize billing");
 }
 const zeroCostPlan = JSON.parse(contents.get("deploy/grant-pilot/zero-cost-candidate-plan.json"));
-if (zeroCostPlan.schema_version !== "GrantM1ZeroCostCandidatePlan@0.1.0" ||
-    zeroCostPlan.status !== "RESEARCH_COMPLETE_ACCOUNT_VALIDATION_REQUIRED" ||
+if (zeroCostPlan.schema_version !== "GrantM1ZeroCostCandidatePlan@0.2.0" ||
+    zeroCostPlan.status !== "ACCOUNT_VALIDATION_IN_PROGRESS" ||
     zeroCostPlan.cash_spend_authorized !== false ||
     zeroCostPlan.components?.some(component => component.provisioned !== false || component.admitted !== false)) {
-  throw new Error("zero-cost candidate plan must remain researched, unprovisioned, and unaccepted");
+  throw new Error("zero-cost candidate plan must remain account-gated, unprovisioned, and unaccepted");
 }
 const oracleE4Canary = JSON.parse(contents.get("deploy/grant-pilot/oracle-e4-collector-canary-plan.json"));
 if (oracleE4Canary.schema_version !== "GrantM1OracleE4CollectorCanaryPlan@0.7.0" ||

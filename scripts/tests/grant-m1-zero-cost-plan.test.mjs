@@ -6,12 +6,24 @@ import { validateGrantM1ZeroCostPlan } from "../lib/grant-m1-zero-cost-plan.mjs"
 
 const canonicalPlan = JSON.parse(await readFile("deploy/grant-pilot/zero-cost-candidate-plan.json", "utf8"));
 
-test("accepts the researched but wholly unprovisioned zero-cost topology", () => {
+test("accepts the partially account-verified but wholly unprovisioned zero-cost topology", () => {
   const result = validateGrantM1ZeroCostPlan(structuredClone(canonicalPlan));
   assert.equal(result.observers, 3);
   assert.equal(result.distinctObserverProviders, 3);
   assert.equal(result.admittedComponents, 0);
   assert.equal(result.authorizedMonthlySpendUsd, 0);
+});
+
+test("pins the verified AWS EC2 candidate without claiming host admission", () => {
+  const plan = structuredClone(canonicalPlan);
+  const aws = plan.components.find(component => component.component_id === "observer-aws-ec2");
+  assert.equal(aws.account_eligibility, "VERIFIED");
+  assert.equal(aws.resource_target.shape, "t3.small Linux on-demand");
+  assert.equal(aws.account_evidence.budget_guard_status, "FREE_PLAN_HARD_STOP_ACTIVE");
+  assert.equal(aws.account_evidence.free_plan_ends_on, "2027-02-28");
+
+  aws.resource_target.shape = "Lightsail bundle";
+  assert.throws(() => validateGrantM1ZeroCostPlan(plan), /AWS EC2 candidate configuration/u);
 });
 
 test("rejects hidden spend or fake provider admission", () => {
@@ -21,7 +33,7 @@ test("rejects hidden spend or fake provider admission", () => {
 
   const fake = structuredClone(canonicalPlan);
   fake.components[1].admitted = true;
-  assert.throws(() => validateGrantM1ZeroCostPlan(fake), /cannot claim eligibility/u);
+  assert.throws(() => validateGrantM1ZeroCostPlan(fake), /eligibility, provisioning, or admission state/u);
 });
 
 test("rejects observer provider overlap and missing canary", () => {
