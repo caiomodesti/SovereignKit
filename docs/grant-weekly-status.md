@@ -243,3 +243,20 @@ Its E4 preflight, replay, reboot, and soak claims are retracted. See the
   but the verified Free Plan hard stop satisfies the no-overage guard without
   an upgrade. No instance was launched. Observer A is not provisioned or
   admitted; Observers B/C and Milestone 2 remain blocked.
+
+## 2026-09-01 — AWS Observer A host qualification passed
+
+- Completed the 86,400-second Observer A soak with 1,440 immutable samples,
+  99.93% coverage, 100% readiness, zero identity mismatches, and no excessive
+  gap. Independent recomputation matched the raw SHA-256.
+- Re-ran the frozen-runtime host preflight after the soak; all 180 manifest
+  files, key permissions, service state, clock, disk, systemd unit, identity,
+  and loopback-only binding passed.
+- Confirmed zero queued deliveries and a healthy Collector with unchanged
+  `storedCount=3`. The two delivery/recovery fixtures remain transport-only and
+  do not count toward the grant's real observation KPI.
+- Observer A advances to `OBSERVER_HOST_QUALIFIED`. Real Solana observation,
+  the full failure matrix, provider/ASN corroboration, Observers B/C, and
+  Milestone 1 acceptance remain pending. Milestone 2 has not started.
+- Prepared only the local fail-closed checklist for Google Cloud Observer B;
+  no external resource or spending action was taken.

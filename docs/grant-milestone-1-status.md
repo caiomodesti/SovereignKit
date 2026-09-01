@@ -70,11 +70,20 @@ Started: 2026-08-24
   HTTP redirects, `/health` remains private, wrong methods fail closed, and an
   invalid signed-result payload reaches schema validation with HTTP 422. The
   sanitized anchor is `fixtures/grant-m1/oracle-e4-tls-20260831.json`.
+- AWS Observer A now passes its immutable-runtime host preflight, signed
+  transport and recovery drills, and a complete 86,400-second host soak. The
+  independent verifier accepted 1,440 samples with 99.93% coverage, 100%
+  readiness, zero identity mismatches, and a maximum gap of 60,071 ms. A fresh
+  post-soak preflight reverified all 180 manifest files, key ownership/mode,
+  service state, clock, disk, systemd unit, and loopback-only binding. The
+  sanitized anchor is `fixtures/grant-m1/observer-aws-a-soak-20260901.json`.
 
 ## Not yet implemented or validated
 
-- three external observer deployments;
-- three external identities and merged public allowlist;
+- two remaining external observer deployments plus real observation work on
+  the host-qualified Observer A;
+- two remaining external identities and the final three-observer merged public
+  allowlist;
 - corroborated provider, instance, region, and ASN evidence;
 - cross-host real Solana observation;
 - external restart, delay, outage, malformed, unknown-observer, stale, disagreement, quorum-available, and quorum-unavailable evidence;
@@ -103,5 +112,12 @@ Solana observation or successful signed remote delivery. No independent
 observer, complete Milestone 1, or Milestone 2 claim is made.
 Observer queue recovery is a separate observer-host gate because the Collector
 has no delivery queue.
+
+AWS Observer A is `OBSERVER_HOST_QUALIFIED`, not a completed Milestone 1
+observer evidence entry. Its two retained transport fixtures prove signing,
+delivery, duplicate handling, outage retention, and recovery only; they are
+explicitly not ledger measurements. Real assignment-correlated Solana reader
+polls, the external failure matrix, provider/ASN corroboration, Observers B/C,
+and three-provider acceptance remain pending.
 
 Milestone 2 has not started.

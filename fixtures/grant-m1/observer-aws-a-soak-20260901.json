@@ -1,0 +1,85 @@
+{
+  "schema_version": "GrantM1ObserverHostSoakEvidence@0.1.0",
+  "observer_id": "observer-aws-a",
+  "status": "OBSERVER_HOST_QUALIFIED",
+  "host_attribution": {
+    "provider": "aws",
+    "region": "sa-east-1",
+    "service": "EC2",
+    "shape": "t3.small",
+    "resource_identifiers_omitted": true
+  },
+  "runtime": {
+    "source_commit": "72723c35f2eacbedeb7b4842b5a69629be634c64",
+    "node_version": "v22.17.0",
+    "manifest_file_count": 180
+  },
+  "raw_evidence": {
+    "schema_version": "GrantM1CanarySoakSample@0.1.0",
+    "sha256": "f8d4b8cd067da38337fe842ff08942138a5c2515c5d02635202b90f9a5767905",
+    "summary_sha256": "ec5737bc49304358cfb20182215aff726928164fd7ae2cb2aed64ae654449d43",
+    "sample_count": 1440,
+    "first_sample_index": 0,
+    "last_sample_index": 1439,
+    "first_elapsed_ms": 44,
+    "last_elapsed_ms": 86400051,
+    "started_at": "2026-08-31T04:48:08.256Z",
+    "completed_at": "2026-09-01T04:48:08.305Z",
+    "retained_on_host": true,
+    "retained_in_ignored_operator_artifacts": true,
+    "public_raw_jsonl_omitted": true
+  },
+  "independent_evaluation": {
+    "verifier": "GrantM1CanaryEvidenceVerification@0.1.0",
+    "required_duration_seconds": 86400,
+    "actual_duration_seconds": 86400,
+    "interval_seconds": 60,
+    "expected_sample_count": 1441,
+    "ready_sample_count": 1440,
+    "coverage_ratio": 0.9993060374739764,
+    "readiness_ratio": 1,
+    "identity_mismatch_count": 0,
+    "maximum_gap_ms": 60071,
+    "admitted": true,
+    "blockers": []
+  },
+  "post_soak_preflight": {
+    "captured_at": "2026-09-01T05:08:47.923Z",
+    "sha256": "ea8fee51c09e61983a55a6181409179bf5e352d31e22dbc33452becb5ead5d7d",
+    "ready": true,
+    "clock_synchronized": true,
+    "key_mode_0600": true,
+    "key_owner_matches_service_account": true,
+    "runtime_manifest_verified": true,
+    "all_manifest_files_verified": true,
+    "systemd_unit_verified": true,
+    "observer_service_active": true,
+    "observer_service_enabled": true,
+    "loopback_binding_exclusive": true,
+    "disk_threshold_met": true
+  },
+  "delivery_and_collector_boundary": {
+    "transport_canary_delivered_count": 2,
+    "observer_reported_queued_count": 0,
+    "collector_healthy": true,
+    "collector_stored_count_before_closure": 3,
+    "collector_stored_count_after_closure": 3,
+    "stored_count_regressed": false,
+    "transport_fixtures_are_ledger_measurements": false
+  },
+  "permissions": {
+    "raw_jsonl_mode": "0600",
+    "summary_mode": "0600",
+    "owner": "sovereignkit",
+    "group": "sovereignkit"
+  },
+  "claim_boundaries": {
+    "observer_host_qualified": true,
+    "observer_identity_qualified": true,
+    "real_solana_observation_completed": false,
+    "failure_matrix_completed": false,
+    "provider_independence_set_completed": false,
+    "milestone_1_accepted": false,
+    "milestone_2_started": false
+  }
+}

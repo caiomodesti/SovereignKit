@@ -240,3 +240,29 @@ the corrected E4 evidence follows in the next section.
 - Status advances to `COLLECTOR_ADMITTED_PUBLIC_TLS`. This does not prove a
   successful signed Observer delivery, observer independence, Milestone 1
   acceptance, or any Milestone 2 work.
+
+## 2026-09-01 — AWS Observer A host qualified
+
+- The immutable 24-hour soak ran from `2026-08-31T04:48:08.256Z` through
+  `2026-09-01T04:48:08.305Z`, reaching 86,400 seconds of monotonic runtime.
+- The independent verifier recomputed the immutable 1,440-line JSONL and
+  matched SHA-256
+  `f8d4b8cd067da38337fe842ff08942138a5c2515c5d02635202b90f9a5767905`.
+  Coverage was 99.93%, readiness was 100%, identity mismatches were zero, and
+  the maximum gap was 60,071 ms. The missing theoretical 1,441st sample is
+  within the frozen 95% coverage threshold and was not fabricated.
+- The post-soak preflight passed at runtime commit
+  `72723c35f2eacbedeb7b4842b5a69629be634c64`: all 180 manifest files, the
+  installed systemd unit, synchronized clock, key owner/mode `0600`, active and
+  enabled Observer, exclusive loopback binding, identity, Node version, and
+  disk threshold passed. Its public evidence SHA-256 is
+  `ea8fee51c09e61983a55a6181409179bf5e352d31e22dbc33452becb5ead5d7d`.
+- Observer readiness ended with two delivered transport fixtures and zero
+  queued deliveries. The Oracle Collector remained healthy at
+  `storedCount=3`, unchanged from the pre-closure baseline.
+- Status is `OBSERVER_HOST_QUALIFIED`. The transport fixtures are not Solana
+  ledger measurements. Real assignment-correlated observation, failure-matrix
+  evidence, provider/ASN corroboration, Observers B/C, Milestone 1 acceptance,
+  and Milestone 2 remain pending.
+- Prepared `docs/grant-m1-observer-b-readiness.md` locally. No Google account,
+  resource, purchase, VM, key, or deployment was created.
