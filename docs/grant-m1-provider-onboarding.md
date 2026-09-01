@@ -1,14 +1,16 @@
 # Grant Milestone 1 provider onboarding gate
 
 Status: `IN_PROGRESS` — the Oracle E4 Collector is admitted behind the controlled
-public TLS hostname; no observer host has been provisioned.
+public TLS hostname and AWS Observer A is host-qualified. Its real Solana
+observation and the complete failure matrix remain pending.
 
 ADR-023 added a prior zero-cost review. Oracle A1 capacity and E2 host fitness
 failed concretely, so the operator approved a bounded Pay As You Go E4 Collector
 canary. That canary passed frozen-runtime preflight, durable replay, a real
-24-hour soak, reboot recovery, and the public TLS gate. Observer A is now the
-only component eligible for the next provisioning attempt. Do not provision
-Observers B or C until Observer A passes its own host and observation gates.
+24-hour soak, reboot recovery, and the public TLS gate. Observer A passed its
+own host, delivery-recovery, restart, and 24-hour soak gates on 2026-09-01.
+Observer B planning is open, but no external action is authorized by this file.
+Observer C remains blocked until Observer B passes the same sequence.
 
 This runbook converts the operator-controlled prerequisites for Milestone 1
 into an explicit gate. It does not authorize billing, create accounts, buy a

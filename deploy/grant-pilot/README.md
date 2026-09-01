@@ -119,7 +119,7 @@ summary to the controlled evidence workspace and independently recompute every
 admission metric before publication:
 
 ```powershell
-corepack pnpm verify:grant:m1:observer-canary-evidence -- `
+corepack pnpm verify:grant:m1:observer-canary-evidence `
   --observer-id observer-provider-a `
   --raw artifacts/grant-m1/observer-a/canary.jsonl `
   --summary artifacts/grant-m1/observer-a/canary-summary.json

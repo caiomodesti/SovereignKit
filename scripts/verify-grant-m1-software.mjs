@@ -93,6 +93,8 @@ const requiredFiles = [
   "fixtures/grant-m1/oracle-e4-preflight-replay-20260829.json",
   "fixtures/grant-m1/oracle-e4-soak-20260830.json",
   "fixtures/grant-m1/oracle-e4-tls-20260831.json",
+  "fixtures/grant-m1/observer-aws-a-soak-20260901.json",
+  "docs/grant-m1-observer-b-readiness.md",
 ];
 
 const contents = new Map(await Promise.all(requiredFiles.map(async path => [path, await readFile(path, "utf8")])));
@@ -126,6 +128,28 @@ if (!contents.get("docs/grant-milestone-1-status.md").includes("Milestone 2 has 
 const readinessAnchor = JSON.parse(contents.get("fixtures/grant-m1/local-readiness-20260825.json"));
 if (readinessAnchor.evidence_scope !== "LOCAL_SOFTWARE_READINESS_ONLY" || readinessAnchor.infrastructure_independence !== false || readinessAnchor.private_key_retained !== false) {
   throw new Error("local readiness anchor must preserve its non-independent, secret-free claim boundary");
+}
+const observerASoak = JSON.parse(contents.get("fixtures/grant-m1/observer-aws-a-soak-20260901.json"));
+if (observerASoak.schema_version !== "GrantM1ObserverHostSoakEvidence@0.1.0" ||
+    observerASoak.observer_id !== "observer-aws-a" ||
+    observerASoak.status !== "OBSERVER_HOST_QUALIFIED" ||
+    observerASoak.raw_evidence?.sha256 !== "f8d4b8cd067da38337fe842ff08942138a5c2515c5d02635202b90f9a5767905" ||
+    observerASoak.independent_evaluation?.actual_duration_seconds !== 86_400 ||
+    observerASoak.independent_evaluation?.admitted !== true ||
+    observerASoak.independent_evaluation?.identity_mismatch_count !== 0 ||
+    observerASoak.post_soak_preflight?.runtime_manifest_verified !== true ||
+    observerASoak.delivery_and_collector_boundary?.observer_reported_queued_count !== 0 ||
+    observerASoak.delivery_and_collector_boundary?.stored_count_regressed !== false ||
+    observerASoak.claim_boundaries?.real_solana_observation_completed !== false ||
+    observerASoak.claim_boundaries?.provider_independence_set_completed !== false ||
+    observerASoak.claim_boundaries?.milestone_1_accepted !== false ||
+    observerASoak.claim_boundaries?.milestone_2_started !== false) {
+  throw new Error("Observer A host soak anchor is incomplete or overclaims grant acceptance");
+}
+if (!contents.get("docs/grant-m1-observer-b-readiness.md").includes("LOCAL_PREPARATION_ONLY") ||
+    !contents.get("docs/grant-m1-observer-b-readiness.md").includes("Observer C remains blocked") ||
+    !contents.get("docs/grant-m1-observer-b-readiness.md").includes("fresh operator checkpoint")) {
+  throw new Error("Observer B readiness must remain local, sequential, and operator-gated");
 }
 const rpcRouteAnchor = JSON.parse(contents.get("fixtures/grant-m1/alchemy-devnet-route-20260826.json"));
 if (rpcRouteAnchor.schema_version !== "GrantM1RpcRoutePreflight@0.1.0" ||
