@@ -39,6 +39,9 @@ const requiredFiles = [
   "scripts/lib/grant-m1-canary-soak.mjs",
   "scripts/run-grant-m1-canary-soak.mjs",
   "scripts/tests/grant-m1-canary-soak.test.mjs",
+  "scripts/lib/grant-m1-canary-evidence.mjs",
+  "scripts/verify-grant-m1-observer-canary-evidence.mjs",
+  "scripts/tests/grant-m1-canary-evidence.test.mjs",
   "scripts/lib/grant-m1-collector-canary-soak.mjs",
   "scripts/run-grant-m1-collector-canary-soak.mjs",
   "scripts/tests/grant-m1-collector-canary-soak.test.mjs",
@@ -154,6 +157,11 @@ if (!contents.get("scripts/lib/grant-m1-collector-canary-soak.mjs").includes("Gr
     !contents.get("scripts/lib/grant-m1-collector-canary-soak.mjs").includes("stored_count_regressed") ||
     !contents.get("scripts/run-grant-m1-collector-canary-soak.mjs").includes("output.sync()")) {
   throw new Error("Collector canary must retain versioning, storage-regression detection, and fsynced samples");
+}
+if (!contents.get("scripts/lib/grant-m1-canary-evidence.mjs").includes("GrantM1CanaryEvidenceVerification@0.1.0") ||
+    !contents.get("scripts/lib/grant-m1-canary-evidence.mjs").includes("isDeepStrictEqual") ||
+    !contents.get("scripts/verify-grant-m1-observer-canary-evidence.mjs").includes("regular non-symlink file")) {
+  throw new Error("Observer canary evidence verifier must independently recompute the summary from regular immutable inputs");
 }
 if (!contents.get("scripts/lib/grant-m1-collector-durable-replay.mjs").includes("GrantM1CollectorDurableReplay@0.1.0") ||
     !contents.get("scripts/run-grant-m1-collector-durable-replay-drill.mjs").includes("systemctl") ||

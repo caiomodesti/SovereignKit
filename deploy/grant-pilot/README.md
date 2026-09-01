@@ -114,6 +114,22 @@ mismatch, and no gap above three intervals. Failed and interrupted runs remain
 evidence and are never rewritten. A canary PASS qualifies one host; it does not
 establish three-provider independence or Milestone 1 acceptance.
 
+After the service has produced both files, copy the immutable raw JSONL and
+summary to the controlled evidence workspace and independently recompute every
+admission metric before publication:
+
+```powershell
+corepack pnpm verify:grant:m1:observer-canary-evidence -- `
+  --observer-id observer-provider-a `
+  --raw artifacts/grant-m1/observer-a/canary.jsonl `
+  --summary artifacts/grant-m1/observer-a/canary-summary.json
+```
+
+The verifier rejects symlinked inputs, partial JSONL records, digest or basename
+drift, malformed samples, and any summary that differs from a fresh evaluation
+of the raw records. An admitted verification qualifies only that Observer; it
+does not authorize provisioning B/C or claiming Milestone 1 acceptance.
+
 The signed assignment proves who authorized the job and that its submission metadata was not altered after authorization. It does not independently prove that the issuer's submission claim is true. Milestone 1 acceptance therefore also requires the local observation-worker command, its exclusive assignment-bound raw reader log, process/journal evidence, and cross-host validation. Precomputed or centrally fabricated unsigned results cannot satisfy acceptance.
 
 ## Collector and TLS
