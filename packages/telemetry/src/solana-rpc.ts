@@ -60,7 +60,10 @@ export class SolanaKitObservationReader implements ObservationReader {
 
   async getSignatureStatus(signature: string, abortSignal?: AbortSignal): Promise<SignatureStatusResult> {
     const rpc = createSolanaRpc(this.#endpoint);
-    const response = await rpc.getSignatureStatuses([signature as Signature]).send(
+    const response = await rpc.getSignatureStatuses(
+      [signature as Signature],
+      { searchTransactionHistory: true },
+    ).send(
       abortSignal === undefined ? undefined : { abortSignal },
     );
     const status = response.value[0];
