@@ -266,3 +266,39 @@ the corrected E4 evidence follows in the next section.
   and Milestone 2 remain pending.
 - Prepared `docs/grant-m1-observer-b-readiness.md` locally. No Google account,
   resource, purchase, VM, key, or deployment was created.
+
+## 2026-09-01 — First real AWS observation and runtime requalification
+
+- A controlled Devnet System Program transfer was accepted and finalized with
+  no Mainnet value. Three distinct logical reader routes were configured:
+  Solana public RPC, Alchemy, and OnFinality. Route diversity is recorded, but
+  operational independence is explicitly not inferred from provider labels or
+  URL origins.
+- The first assignment arrived after the blockhash window and was retained as
+  `EXPIRED`. A second job exposed a zero-tolerance issued-at boundary under
+  coordinator/observer clock skew. Re-signing with a bounded five-minute
+  validity overlap allowed execution, but the recent-cache-only status lookup
+  still returned `EXPIRED`. None of these failures was rewritten or counted as
+  a network finding.
+- The Solana reader was corrected to call `getSignatureStatuses` with
+  `searchTransactionHistory: true`. Typecheck, 23 focused tests, the complete
+  build, and the repository secret audit passed before deployment.
+- Runtime commit `883e01b726cbd8f71c884e7de74703f24364c3b0`
+  was installed through a 180-file SHA-256-verified candidate directory with
+  automatic rollback retained. The post-deploy host preflight passed every
+  check with evidence SHA-256
+  `ae17d9d664c526303c90d2b895e3a34d59b5312610b72476584168669143047e`.
+- A fresh assignment for the already-finalized transaction completed on AWS as
+  `FINALIZED`: two readers returned finalized claims, one reader returned an
+  explicit RPC error, quorum 2/3 passed, one raw poll was fsynced, and exactly
+  one matching result delivery was accepted by the Oracle Collector.
+- Sanitized evidence is
+  `fixtures/grant-m1/observer-aws-a-devnet-observation-20260901.json`. This is a
+  real remote ledger measurement, but not proof of reader operational
+  independence, the external failure matrix, three observers, or Milestone 1
+  acceptance.
+- Since the runtime commit changed after the earlier host qualification, its
+  previous soak remains preserved as evidence for the previous runtime and a
+  new 24-hour soak began at `2026-09-01T11:10:27.668Z`. It cannot qualify the
+  corrected runtime before `2026-09-02T11:10:27.668Z` and is currently
+  `IN_PROGRESS`. Milestone 2 has not started.

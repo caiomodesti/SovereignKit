@@ -94,6 +94,10 @@ const requiredFiles = [
   "fixtures/grant-m1/oracle-e4-soak-20260830.json",
   "fixtures/grant-m1/oracle-e4-tls-20260831.json",
   "fixtures/grant-m1/observer-aws-a-soak-20260901.json",
+  "fixtures/grant-m1/observer-aws-a-devnet-observation-20260901.json",
+  "fixtures/grant-m1/observer-aws-a-devnet-20260901/manifest.json",
+  "scripts/generate-grant-m1-devnet-evidence-bundle.mjs",
+  "scripts/verify-grant-m1-devnet-evidence-bundle.mjs",
   "docs/grant-m1-observer-b-readiness.md",
 ];
 
