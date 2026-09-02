@@ -266,3 +266,69 @@ the corrected E4 evidence follows in the next section.
   and Milestone 2 remain pending.
 - Prepared `docs/grant-m1-observer-b-readiness.md` locally. No Google account,
   resource, purchase, VM, key, or deployment was created.
+
+## 2026-09-01 — First real AWS observation and runtime requalification
+
+- A controlled Devnet System Program transfer was accepted and finalized with
+  no Mainnet value. Three distinct logical reader routes were configured:
+  Solana public RPC, Alchemy, and OnFinality. Route diversity is recorded, but
+  operational independence is explicitly not inferred from provider labels or
+  URL origins.
+- The first assignment arrived after the blockhash window and was retained as
+  `EXPIRED`. A second job exposed a zero-tolerance issued-at boundary under
+  coordinator/observer clock skew. Re-signing with a bounded five-minute
+  validity overlap allowed execution, but the recent-cache-only status lookup
+  still returned `EXPIRED`. None of these failures was rewritten or counted as
+  a network finding.
+- The Solana reader was corrected to call `getSignatureStatuses` with
+  `searchTransactionHistory: true`. Typecheck, 23 focused tests, the complete
+  build, and the repository secret audit passed before deployment.
+- Runtime commit `883e01b726cbd8f71c884e7de74703f24364c3b0`
+  was installed through a 180-file SHA-256-verified candidate directory with
+  automatic rollback retained. The post-deploy host preflight passed every
+  check with evidence SHA-256
+  `ae17d9d664c526303c90d2b895e3a34d59b5312610b72476584168669143047e`.
+- A fresh assignment for the already-finalized transaction completed on AWS as
+  `FINALIZED`: two readers returned finalized claims, one reader returned an
+  explicit RPC error, quorum 2/3 passed, one raw poll was fsynced, and exactly
+  one matching result delivery was accepted by the Oracle Collector.
+- Sanitized evidence is
+  `fixtures/grant-m1/observer-aws-a-devnet-observation-20260901.json`. This is a
+  real remote ledger measurement, but not proof of reader operational
+  independence, the external failure matrix, three observers, or Milestone 1
+  acceptance.
+- Since the runtime commit changed after the earlier host qualification, its
+  previous soak remains preserved as evidence for the previous runtime and a
+  new 24-hour soak began at `2026-09-01T11:10:27.668Z`. It cannot qualify the
+  corrected runtime before `2026-09-02T11:10:27.668Z` and is currently
+  `IN_PROGRESS`. Milestone 2 has not started.
+
+## 2026-09-02 — Observer A corrected runtime requalified
+
+- The replacement soak completed from `2026-09-01T11:10:27.668Z` through
+  `2026-09-02T11:10:27.718Z`, reaching 86,400 seconds of monotonic runtime.
+- The independent verifier recomputed all 1,440 immutable samples and matched
+  raw SHA-256
+  `6616b4bc4d7d7453c08c0572cdb9611ee69a1a5b3409e4fc63e7e66e1e7c065d`.
+  Coverage was 99.93%, readiness was 100%, identity mismatches were zero, and
+  the maximum gap was 60,071 ms.
+- Delivered count remained 5, queued count ended at zero, and the protected
+  raw, summary, and post-soak preflight files remained mode `0600`.
+- The post-soak preflight matched runtime commit
+  `883e01b726cbd8f71c884e7de74703f24364c3b0` and verified all 180 manifest
+  files, systemd unit, service state, clock, key ownership/mode, loopback-only
+  binding, and disk threshold.
+- Sanitized anchor:
+  `fixtures/grant-m1/observer-aws-a-runtime-requalification-20260902.json`.
+- Status is `RUNTIME_REQUALIFIED`. This closes Observer A's corrected-runtime
+  stability gate only. The external failure matrix, provider/ASN
+  corroboration, Observers B/C, Milestone 1 acceptance, and Milestone 2 remain
+  pending.
+- After the evidence commit was pushed, the GitHub production-dependency audit
+  began rejecting transitive `fast-uri` 3.1.5 under newly published high
+  severity advisories. The repository lock now overrides only that patch-level
+  dependency to 3.1.6, for which the same audit reports no known
+  vulnerabilities. This source-tree remediation has not been deployed to the
+  Observer. The completed requalification claim remains scoped exclusively to
+  runtime commit `883e01b726cbd8f71c884e7de74703f24364c3b0`; a future deployment
+  of the dependency patch requires its own runtime gate.

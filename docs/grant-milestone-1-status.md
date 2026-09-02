@@ -77,11 +77,25 @@ Started: 2026-08-24
   post-soak preflight reverified all 180 manifest files, key ownership/mode,
   service state, clock, disk, systemd unit, and loopback-only binding. The
   sanitized anchor is `fixtures/grant-m1/observer-aws-a-soak-20260901.json`.
+- AWS Observer A completed its first real assignment-correlated Solana Devnet
+  observation. One submission was acknowledged and independently resolved to
+  `FINALIZED` by a 2/3 quorum; the third logical reader returned an explicit RPC
+  error. The signed assignment, raw poll, unsigned result, observer delivery,
+  and Collector acceptance correlate to one result. The public boundary fixture
+  is `fixtures/grant-m1/observer-aws-a-devnet-observation-20260901.json`.
+- The live run exposed that recent-cache-only `getSignatureStatuses` lookups can
+  misclassify delayed evidence as expired. The reader now explicitly searches
+  transaction history. The corrected immutable runtime at commit
+  `883e01b726cbd8f71c884e7de74703f24364c3b0` completed a new 86,400-second
+  stability soak with 1,440/1,441 samples, 99.93% coverage, 100% readiness,
+  zero identity mismatches, no delivery-count regression, and zero queued
+  deliveries. Independent recomputation matched the raw JSONL SHA-256 and a
+  post-soak preflight reverified all 180 manifest files. The sanitized anchor
+  is `fixtures/grant-m1/observer-aws-a-runtime-requalification-20260902.json`.
 
 ## Not yet implemented or validated
 
-- two remaining external observer deployments plus real observation work on
-  the host-qualified Observer A;
+- two remaining external observer deployments;
 - two remaining external identities and the final three-observer merged public
   allowlist;
 - corroborated provider, instance, region, and ASN evidence;
@@ -113,11 +127,21 @@ observer, complete Milestone 1, or Milestone 2 claim is made.
 Observer queue recovery is a separate observer-host gate because the Collector
 has no delivery queue.
 
-AWS Observer A is `OBSERVER_HOST_QUALIFIED`, not a completed Milestone 1
-observer evidence entry. Its two retained transport fixtures prove signing,
-delivery, duplicate handling, outage retention, and recovery only; they are
-explicitly not ledger measurements. Real assignment-correlated Solana reader
-polls, the external failure matrix, provider/ASN corroboration, Observers B/C,
-and three-provider acceptance remain pending.
+AWS Observer A has a real assignment-correlated Solana Devnet measurement, but
+is not yet a completed Milestone 1 observer evidence entry. The successful run
+retains two finalized claims, one explicit reader RPC error, a signed assignment,
+one bound raw poll, a signed delivery, and Collector acceptance. Earlier
+`EXPIRED` and clock-boundary failures are preserved rather than overwritten.
+Because the historical-status correction changed the immutable runtime commit,
+the prior host soak remains valid evidence for the prior runtime while the new
+runtime is `RUNTIME_REQUALIFIED`. The external failure matrix,
+provider/ASN corroboration, Observers B/C, and three-provider acceptance remain
+pending.
+
+The repository also pins transitive `fast-uri` 3.1.6 after the GitHub
+production-dependency audit rejected 3.1.5 under newly published high severity
+advisories. That patch is not part of the admitted runtime commit above and has
+not been deployed. The existing requalification evidence is not reused for a
+future dependency-patched deployment.
 
 Milestone 2 has not started.

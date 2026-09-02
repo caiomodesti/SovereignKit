@@ -94,6 +94,11 @@ const requiredFiles = [
   "fixtures/grant-m1/oracle-e4-soak-20260830.json",
   "fixtures/grant-m1/oracle-e4-tls-20260831.json",
   "fixtures/grant-m1/observer-aws-a-soak-20260901.json",
+  "fixtures/grant-m1/observer-aws-a-runtime-requalification-20260902.json",
+  "fixtures/grant-m1/observer-aws-a-devnet-observation-20260901.json",
+  "fixtures/grant-m1/observer-aws-a-devnet-20260901/manifest.json",
+  "scripts/generate-grant-m1-devnet-evidence-bundle.mjs",
+  "scripts/verify-grant-m1-devnet-evidence-bundle.mjs",
   "docs/grant-m1-observer-b-readiness.md",
 ];
 
@@ -145,6 +150,25 @@ if (observerASoak.schema_version !== "GrantM1ObserverHostSoakEvidence@0.1.0" ||
     observerASoak.claim_boundaries?.milestone_1_accepted !== false ||
     observerASoak.claim_boundaries?.milestone_2_started !== false) {
   throw new Error("Observer A host soak anchor is incomplete or overclaims grant acceptance");
+}
+const observerARequalification = JSON.parse(contents.get("fixtures/grant-m1/observer-aws-a-runtime-requalification-20260902.json"));
+if (observerARequalification.schema_version !== "GrantM1ObserverRuntimeRequalificationEvidence@0.1.0" ||
+    observerARequalification.observer_id !== "observer-aws-a" ||
+    observerARequalification.status !== "RUNTIME_REQUALIFIED" ||
+    observerARequalification.runtime?.source_commit !== "883e01b726cbd8f71c884e7de74703f24364c3b0" ||
+    observerARequalification.raw_evidence?.sha256 !== "6616b4bc4d7d7453c08c0572cdb9611ee69a1a5b3409e4fc63e7e66e1e7c065d" ||
+    observerARequalification.independent_evaluation?.actual_duration_seconds !== 86_400 ||
+    observerARequalification.independent_evaluation?.admitted !== true ||
+    observerARequalification.independent_evaluation?.identity_mismatch_count !== 0 ||
+    observerARequalification.post_soak_preflight?.runtime_commit_matches !== true ||
+    observerARequalification.post_soak_preflight?.all_manifest_files_verified !== true ||
+    observerARequalification.delivery_boundary?.delivered_count_regressed !== false ||
+    observerARequalification.delivery_boundary?.observer_reported_queued_count !== 0 ||
+    observerARequalification.claim_boundaries?.corrected_runtime_requalified !== true ||
+    observerARequalification.claim_boundaries?.provider_independence_set_completed !== false ||
+    observerARequalification.claim_boundaries?.milestone_1_accepted !== false ||
+    observerARequalification.claim_boundaries?.milestone_2_started !== false) {
+  throw new Error("Observer A corrected-runtime requalification anchor is incomplete or overclaims grant acceptance");
 }
 if (!contents.get("docs/grant-m1-observer-b-readiness.md").includes("LOCAL_PREPARATION_ONLY") ||
     !contents.get("docs/grant-m1-observer-b-readiness.md").includes("Observer C remains blocked") ||
