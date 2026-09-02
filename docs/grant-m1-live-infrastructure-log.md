@@ -328,7 +328,8 @@ the corrected E4 evidence follows in the next section.
   began rejecting transitive `fast-uri` 3.1.5 under newly published high
   severity advisories. The repository lock now overrides only that patch-level
   dependency to 3.1.6, for which the same audit reports no known
-  vulnerabilities. This source-tree remediation has not been deployed to the
-  Observer. The completed requalification claim remains scoped exclusively to
-  runtime commit `883e01b726cbd8f71c884e7de74703f24364c3b0`; a future deployment
-  of the dependency patch requires its own runtime gate.
+  vulnerabilities. Read-only inspection confirmed that neither `fast-uri` nor
+  AJV exists in the separately locked minimal Observer runtime, so this
+  workspace-only patch does not change the deployed runtime and does not
+  invalidate its soak. The completed requalification remains scoped to runtime
+  commit `883e01b726cbd8f71c884e7de74703f24364c3b0`.

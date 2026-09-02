@@ -140,8 +140,10 @@ pending.
 
 The repository also pins transitive `fast-uri` 3.1.6 after the GitHub
 production-dependency audit rejected 3.1.5 under newly published high severity
-advisories. That patch is not part of the admitted runtime commit above and has
-not been deployed. The existing requalification evidence is not reused for a
-future dependency-patched deployment.
+advisories. The minimal Observer package has its own lockfile and contains
+neither `fast-uri` nor AJV; read-only inspection confirmed both are absent from
+the deployed runtime. The workspace lockfile patch therefore does not alter or
+invalidate the admitted Observer runtime. Any future change to the minimal
+runtime remains subject to a fresh gate.
 
 Milestone 2 has not started.
