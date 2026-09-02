@@ -324,3 +324,11 @@ the corrected E4 evidence follows in the next section.
   stability gate only. The external failure matrix, provider/ASN
   corroboration, Observers B/C, Milestone 1 acceptance, and Milestone 2 remain
   pending.
+- After the evidence commit was pushed, the GitHub production-dependency audit
+  began rejecting transitive `fast-uri` 3.1.5 under newly published high
+  severity advisories. The repository lock now overrides only that patch-level
+  dependency to 3.1.6, for which the same audit reports no known
+  vulnerabilities. This source-tree remediation has not been deployed to the
+  Observer. The completed requalification claim remains scoped exclusively to
+  runtime commit `883e01b726cbd8f71c884e7de74703f24364c3b0`; a future deployment
+  of the dependency patch requires its own runtime gate.

@@ -138,4 +138,10 @@ runtime is `RUNTIME_REQUALIFIED`. The external failure matrix,
 provider/ASN corroboration, Observers B/C, and three-provider acceptance remain
 pending.
 
+The repository also pins transitive `fast-uri` 3.1.6 after the GitHub
+production-dependency audit rejected 3.1.5 under newly published high severity
+advisories. That patch is not part of the admitted runtime commit above and has
+not been deployed. The existing requalification evidence is not reused for a
+future dependency-patched deployment.
+
 Milestone 2 has not started.
