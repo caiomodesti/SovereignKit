@@ -302,3 +302,25 @@ the corrected E4 evidence follows in the next section.
   new 24-hour soak began at `2026-09-01T11:10:27.668Z`. It cannot qualify the
   corrected runtime before `2026-09-02T11:10:27.668Z` and is currently
   `IN_PROGRESS`. Milestone 2 has not started.
+
+## 2026-09-02 — Observer A corrected runtime requalified
+
+- The replacement soak completed from `2026-09-01T11:10:27.668Z` through
+  `2026-09-02T11:10:27.718Z`, reaching 86,400 seconds of monotonic runtime.
+- The independent verifier recomputed all 1,440 immutable samples and matched
+  raw SHA-256
+  `6616b4bc4d7d7453c08c0572cdb9611ee69a1a5b3409e4fc63e7e66e1e7c065d`.
+  Coverage was 99.93%, readiness was 100%, identity mismatches were zero, and
+  the maximum gap was 60,071 ms.
+- Delivered count remained 5, queued count ended at zero, and the protected
+  raw, summary, and post-soak preflight files remained mode `0600`.
+- The post-soak preflight matched runtime commit
+  `883e01b726cbd8f71c884e7de74703f24364c3b0` and verified all 180 manifest
+  files, systemd unit, service state, clock, key ownership/mode, loopback-only
+  binding, and disk threshold.
+- Sanitized anchor:
+  `fixtures/grant-m1/observer-aws-a-runtime-requalification-20260902.json`.
+- Status is `RUNTIME_REQUALIFIED`. This closes Observer A's corrected-runtime
+  stability gate only. The external failure matrix, provider/ASN
+  corroboration, Observers B/C, Milestone 1 acceptance, and Milestone 2 remain
+  pending.

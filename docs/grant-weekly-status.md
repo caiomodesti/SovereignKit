@@ -260,3 +260,16 @@ Its E4 preflight, replay, reboot, and soak claims are retracted. See the
   Milestone 1 acceptance remain pending. Milestone 2 has not started.
 - Prepared only the local fail-closed checklist for Google Cloud Observer B;
   no external resource or spending action was taken.
+
+## 2026-09-02 — Observer A corrected runtime requalified
+
+- Completed the replacement 86,400-second soak for immutable runtime commit
+  `883e01b726cbd8f71c884e7de74703f24364c3b0` with 1,440 samples, 99.93%
+  coverage, 100% readiness, zero identity mismatches, no delivery-count
+  regression, zero queued deliveries, and a maximum gap of 60,071 ms.
+- Independent recomputation matched the protected raw JSONL SHA-256. The
+  post-soak preflight reverified all 180 manifest files plus service, clock,
+  key, disk, systemd, and loopback-binding gates.
+- Observer A is now `RUNTIME_REQUALIFIED`; Observers B/C, the external failure
+  matrix, provider/ASN corroboration, Milestone 1 acceptance, and Milestone 2
+  remain pending.

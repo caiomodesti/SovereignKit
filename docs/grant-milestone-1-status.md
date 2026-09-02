@@ -85,14 +85,16 @@ Started: 2026-08-24
   is `fixtures/grant-m1/observer-aws-a-devnet-observation-20260901.json`.
 - The live run exposed that recent-cache-only `getSignatureStatuses` lookups can
   misclassify delayed evidence as expired. The reader now explicitly searches
-  transaction history. The corrected immutable runtime passed all 180-file host
-  preflight checks and began a new 24-hour stability soak at
-  `2026-09-01T11:10:27.668Z`; runtime requalification is pending its completion.
+  transaction history. The corrected immutable runtime at commit
+  `883e01b726cbd8f71c884e7de74703f24364c3b0` completed a new 86,400-second
+  stability soak with 1,440/1,441 samples, 99.93% coverage, 100% readiness,
+  zero identity mismatches, no delivery-count regression, and zero queued
+  deliveries. Independent recomputation matched the raw JSONL SHA-256 and a
+  post-soak preflight reverified all 180 manifest files. The sanitized anchor
+  is `fixtures/grant-m1/observer-aws-a-runtime-requalification-20260902.json`.
 
 ## Not yet implemented or validated
 
-- completion and independent verification of Observer A's corrected-runtime
-  24-hour requalification soak;
 - two remaining external observer deployments;
 - two remaining external identities and the final three-observer merged public
   allowlist;
@@ -132,7 +134,7 @@ one bound raw poll, a signed delivery, and Collector acceptance. Earlier
 `EXPIRED` and clock-boundary failures are preserved rather than overwritten.
 Because the historical-status correction changed the immutable runtime commit,
 the prior host soak remains valid evidence for the prior runtime while the new
-runtime is `REQUALIFICATION_IN_PROGRESS`. The external failure matrix,
+runtime is `RUNTIME_REQUALIFIED`. The external failure matrix,
 provider/ASN corroboration, Observers B/C, and three-provider acceptance remain
 pending.
 

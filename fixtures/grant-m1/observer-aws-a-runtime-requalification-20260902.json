@@ -1,0 +1,76 @@
+{
+  "schema_version": "GrantM1ObserverRuntimeRequalificationEvidence@0.1.0",
+  "observer_id": "observer-aws-a",
+  "status": "RUNTIME_REQUALIFIED",
+  "runtime": {
+    "source_commit": "883e01b726cbd8f71c884e7de74703f24364c3b0",
+    "node_version": "v22.17.0",
+    "manifest_file_count": 180
+  },
+  "raw_evidence": {
+    "schema_version": "GrantM1CanarySoakSample@0.1.0",
+    "sha256": "6616b4bc4d7d7453c08c0572cdb9611ee69a1a5b3409e4fc63e7e66e1e7c065d",
+    "summary_sha256": "881b1bfbb32e38ebee8aa415cd1a537e87073d1c41532e29c4389fae66e85f2b",
+    "sample_count": 1440,
+    "first_sample_index": 0,
+    "last_sample_index": 1439,
+    "first_elapsed_ms": 45,
+    "last_elapsed_ms": 86400051,
+    "started_at": "2026-09-01T11:10:27.668Z",
+    "completed_at": "2026-09-02T11:10:27.718Z",
+    "retained_on_host": true,
+    "retained_in_ignored_operator_artifacts": true,
+    "public_raw_jsonl_omitted": true
+  },
+  "independent_evaluation": {
+    "verifier": "GrantM1CanaryEvidenceVerification@0.1.0",
+    "required_duration_seconds": 86400,
+    "actual_duration_seconds": 86400,
+    "interval_seconds": 60,
+    "expected_sample_count": 1441,
+    "ready_sample_count": 1440,
+    "coverage_ratio": 0.9993060374739764,
+    "readiness_ratio": 1,
+    "identity_mismatch_count": 0,
+    "maximum_gap_ms": 60071,
+    "admitted": true,
+    "blockers": []
+  },
+  "post_soak_preflight": {
+    "captured_at": "2026-09-02T22:39:09.053Z",
+    "sha256": "ae61509ba11198376f056dc38210303e87532d7395dd8010aa87989adcbb67c2",
+    "ready": true,
+    "clock_synchronized": true,
+    "key_mode_0600": true,
+    "key_owner_matches_service_account": true,
+    "runtime_commit_matches": true,
+    "runtime_manifest_verified": true,
+    "all_manifest_files_verified": true,
+    "systemd_unit_verified": true,
+    "observer_service_active": true,
+    "observer_service_enabled": true,
+    "loopback_binding_exclusive": true,
+    "disk_threshold_met": true
+  },
+  "delivery_boundary": {
+    "delivered_count_before_soak": 5,
+    "delivered_count_after_soak": 5,
+    "delivered_count_regressed": false,
+    "observer_reported_queued_count": 0
+  },
+  "permissions": {
+    "raw_jsonl_mode": "0600",
+    "summary_mode": "0600",
+    "post_soak_preflight_mode": "0600",
+    "owner": "sovereignkit",
+    "group": "sovereignkit"
+  },
+  "claim_boundaries": {
+    "corrected_runtime_requalified": true,
+    "real_solana_observation_completed": true,
+    "failure_matrix_completed": false,
+    "provider_independence_set_completed": false,
+    "milestone_1_accepted": false,
+    "milestone_2_started": false
+  }
+}
