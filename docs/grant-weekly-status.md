@@ -274,6 +274,8 @@ Its E4 preflight, replay, reboot, and soak claims are retracted. See the
   matrix, provider/ASN corroboration, Milestone 1 acceptance, and Milestone 2
   remain pending.
 - GitHub subsequently flagged transitive `fast-uri` 3.1.5. The lockfile now
-  pins the patched 3.1.6 release and the production audit is clean. This
-  repository-only remediation has not been deployed, and the completed soak
-  remains evidence only for runtime commit `883e01b726cbd8f71c884e7de74703f24364c3b0`.
+  pins the patched 3.1.6 release and the production audit is clean. The
+  separately locked minimal Observer runtime contains neither `fast-uri` nor
+  AJV, as confirmed on the live host, so the workspace-only remediation does
+  not require another deployment or soak. The completed soak remains evidence
+  only for runtime commit `883e01b726cbd8f71c884e7de74703f24364c3b0`.

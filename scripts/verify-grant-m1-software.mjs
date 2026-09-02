@@ -104,6 +104,11 @@ const requiredFiles = [
 
 const contents = new Map(await Promise.all(requiredFiles.map(async path => [path, await readFile(path, "utf8")])));
 const packageDocument = JSON.parse(await readFile("packages/collector/package.json", "utf8"));
+const observerRuntimeLock = JSON.parse(contents.get("deploy/grant-pilot/observer-runtime-package-lock.json"));
+const observerRuntimePackagePaths = Object.keys(observerRuntimeLock.packages ?? {});
+if (observerRuntimePackagePaths.some(path => /(?:^|\/)node_modules\/(?:ajv|ajv-formats|fast-uri)$/u.test(path))) {
+  throw new Error("minimal Observer runtime unexpectedly includes workspace-only schema-validation dependencies");
+}
 for (const executable of ["sovereignkit-observer-keygen", "sovereignkit-assignment-keygen", "sovereignkit-assignment-sign", "sovereignkit-observation-worker", "sovereignkit-observer-runtime", "sovereignkit-collector"]) {
   if (typeof packageDocument.bin?.[executable] !== "string") throw new Error(`collector package is missing ${executable}`);
 }
