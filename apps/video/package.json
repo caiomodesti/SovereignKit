@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "@remotion/noise": "4.0.512",
-    "@remotion/transitions": "4.0.512",
+    "@remotion/transitions": "4.0.518",
     "node-edge-tts": "1.2.10",
     "react": "19.2.8",
     "react-dom": "19.2.8",
