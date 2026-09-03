@@ -1,10 +1,13 @@
 # Grant Milestone 1 — Observer B readiness
 
-Status: `LOCAL_PREPARATION_ONLY`
+Status: `PROVISIONED_CANARY_IN_PROGRESS`
 
-Observer A passed its host preflight, delivery recovery, and 24-hour host soak.
-This opens planning for Observer B; it does not authorize an account, purchase,
-VM, key, deployment, or Milestone 2 activity.
+Observer A passed its host preflight, delivery recovery, corrected-runtime
+requalification, and 24-hour host soak. Observer B is now provisioned on the
+frozen Google candidate and has passed the pre-soak host, delivery, duplicate,
+queue-recovery, service-restart, and full-VM-recovery gates. Its 24-hour host
+canary is in progress. This does not admit Observer B or authorize Observer C
+or Milestone 2 activity.
 
 ## Frozen candidate
 
@@ -14,8 +17,9 @@ VM, key, deployment, or Milestone 2 activity.
   free tier;
 - minimum disk: 30 GiB standard persistent disk;
 - expected architecture: x64;
-- expected cash spend: USD 0 only if the authenticated console independently
-  confirms eligibility and a hard billing boundary.
+- billing boundary: the authenticated account has a configured budget alert;
+  this is monitoring rather than a hard spending cap, so the single bounded VM
+  remains the only authorized Google resource for this gate.
 
 The 1 GiB memory profile is a risk, not an accepted assumption. The runtime must
 pass a bounded installation rehearsal and memory-pressure check before the host

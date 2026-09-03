@@ -279,3 +279,26 @@ Its E4 preflight, replay, reboot, and soak claims are retracted. See the
   AJV, as confirmed on the live host, so the workspace-only remediation does
   not require another deployment or soak. The completed soak remains evidence
   only for runtime commit `883e01b726cbd8f71c884e7de74703f24364c3b0`.
+
+## 2026-09-03 — Google Observer B canary started
+
+- Provisioned exactly one Google Cloud `e2-micro` candidate in a US region,
+  separate from AWS Observer A and the Oracle Collector. No second Google VM
+  or Observer C was provisioned.
+- Installed the frozen 180-file Observer runtime from commit
+  `44031a66466e48fce5e1e93a86a7d48867edf134`; the production-only install,
+  clock, disk, physical memory, systemd, key-mode, identity, manifest, and
+  loopback-only preflight gates passed.
+- Proved one signed delivery, exact Collector duplicate suppression, retained
+  queue state during a controlled Collector outage, automatic delivery after
+  recovery, delivery-log persistence across Observer service restart, and
+  recovery after a full VM reboot. Two transport-only fixtures increased the
+  Collector durable count from 6 to 8 exactly once each; they are not Solana
+  ledger measurements and do not contribute to the grant observation KPI.
+- A post-reboot preflight passed before the canary began. The uninterrupted
+  24-hour canary started at `2026-09-03T10:24:53.541Z`; samples 0 and 1 were
+  ready, identity-matched, and approximately 60 seconds apart. Earliest
+  completion is `2026-09-04T10:24:53.541Z`.
+- Status is `PROVISIONED_CANARY_IN_PROGRESS`. Observer B is not admitted until
+  the immutable raw JSONL, final summary, independent recomputation, and
+  post-soak preflight pass. Observer C and Milestone 2 remain blocked.

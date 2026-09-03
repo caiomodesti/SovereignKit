@@ -175,10 +175,11 @@ if (observerARequalification.schema_version !== "GrantM1ObserverRuntimeRequalifi
     observerARequalification.claim_boundaries?.milestone_2_started !== false) {
   throw new Error("Observer A corrected-runtime requalification anchor is incomplete or overclaims grant acceptance");
 }
-if (!contents.get("docs/grant-m1-observer-b-readiness.md").includes("LOCAL_PREPARATION_ONLY") ||
+if (!contents.get("docs/grant-m1-observer-b-readiness.md").includes("PROVISIONED_CANARY_IN_PROGRESS") ||
+    !contents.get("docs/grant-m1-observer-b-readiness.md").includes("This does not admit Observer B") ||
     !contents.get("docs/grant-m1-observer-b-readiness.md").includes("Observer C remains blocked") ||
-    !contents.get("docs/grant-m1-observer-b-readiness.md").includes("fresh operator checkpoint")) {
-  throw new Error("Observer B readiness must remain local, sequential, and operator-gated");
+    !contents.get("docs/grant-m1-observer-b-readiness.md").includes("Milestone 2 remains `NOT_STARTED`")) {
+  throw new Error("Observer B readiness must remain canary-only, sequential, and fail closed before admission");
 }
 const rpcRouteAnchor = JSON.parse(contents.get("fixtures/grant-m1/alchemy-devnet-route-20260826.json"));
 if (rpcRouteAnchor.schema_version !== "GrantM1RpcRoutePreflight@0.1.0" ||

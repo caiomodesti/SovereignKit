@@ -333,3 +333,32 @@ the corrected E4 evidence follows in the next section.
   workspace-only patch does not change the deployed runtime and does not
   invalidate its soak. The completed requalification remains scoped to runtime
   commit `883e01b726cbd8f71c884e7de74703f24364c3b0`.
+
+## 2026-09-03 — Observer B pre-soak gates passed
+
+- Created a single Google Cloud Observer B candidate using the frozen
+  `e2-micro`, 30 GiB standard-disk topology. The host remains operationally
+  separate from AWS Observer A and the Oracle Collector; provider labels alone
+  are not treated as ASN or route-independence proof.
+- Built and staged the public repository at commit
+  `44031a66466e48fce5e1e93a86a7d48867edf134`. The exact runtime archive hash
+  matched before and after transfer, all 180 manifest entries were present,
+  and the production-only dependency install completed without swap or OOM
+  evidence.
+- Generated the active Ed25519 identity only on the Observer B host. The
+  private document remained unread and mode `0600`; only its public identity
+  was added atomically to the Collector allowlist. Collector restart preserved
+  readiness and durable storage.
+- The versioned host preflight passed before delivery testing. One signed
+  transport-only fixture was accepted, an exact replay returned `DUPLICATE`
+  without increasing storage, and a second transport-only fixture remained
+  queued while the Collector was stopped. It delivered automatically after
+  recovery. Observer service restart and full VM reboot preserved two delivery
+  records, zero queued work, correct identity, and loopback-only health.
+- A fresh post-reboot host preflight passed. The 24-hour canary began at
+  `2026-09-03T10:24:53.541Z`; the first two samples were HTTP 200,
+  identity-matched, ready, and approximately 60 seconds apart.
+- This is host-transport and stability evidence only. The fixtures are
+  explicitly not ledger observations, Observer B is not admitted before the
+  final independent verification, Observer C remains blocked, and Milestone 2
+  has not started.
