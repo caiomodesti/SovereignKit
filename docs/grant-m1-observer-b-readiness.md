@@ -1,10 +1,26 @@
 # Grant Milestone 1 — Observer B readiness
 
-Status: `LOCAL_PREPARATION_ONLY`
+Status: `OBSERVER_HOST_QUALIFIED`
 
-Observer A passed its host preflight, delivery recovery, and 24-hour host soak.
-This opens planning for Observer B; it does not authorize an account, purchase,
-VM, key, deployment, or Milestone 2 activity.
+Observer A passed its host preflight, delivery recovery, corrected-runtime
+requalification, and 24-hour host soak. Observer B is now provisioned on the
+frozen Google candidate and has passed the pre-soak host, delivery, duplicate,
+queue-recovery, service-restart, and full-VM-recovery gates. Its 24-hour host
+canary passed independent raw-evidence verification on 2026-09-04, followed
+by a successful post-soak host preflight. See
+[closure evidence](grant-m1-observer-b-soak-closure-20260904.md).
+The Devnet integration bundle passed signature and correlation validation and
+is published on the working PR under `fixtures/grant-m1/observer-google-b-devnet-20260904`.
+Network attribution was corroborated on 2026-09-04 through GCE metadata and
+RIPEstat: both returned ASNs (43515 and 15169) are retained in
+`fixtures/grant-m1/observer-google-b-network-20260904.json`. No single-origin
+claim is made. The host qualification review is complete; this record takes
+effect on merge of the reviewed PR. The RPC routes are shared with
+Observer A and must not be counted as independent upstream readers.
+This admits Observer B only as a qualified host for the M1 pilot preparation.
+This is not formal Milestone 1 acceptance, proof of independent RPC readers,
+or authorization to start Milestone 2. The complete failure matrix and
+three-observer acceptance package remain required for M1 acceptance.
 
 ## Frozen candidate
 
@@ -14,8 +30,9 @@ VM, key, deployment, or Milestone 2 activity.
   free tier;
 - minimum disk: 30 GiB standard persistent disk;
 - expected architecture: x64;
-- expected cash spend: USD 0 only if the authenticated console independently
-  confirms eligibility and a hard billing boundary.
+- billing boundary: the authenticated account has a configured budget alert;
+  this is monitoring rather than a hard spending cap, so the single bounded VM
+  remains the only authorized Google resource for this gate.
 
 The 1 GiB memory profile is a risk, not an accepted assumption. The runtime must
 pass a bounded installation rehearsal and memory-pressure check before the host
@@ -59,4 +76,6 @@ physical memory as sufficient.
   regression, unexplained restart failure, or incomplete soak;
 - pressure to provision Observer C before Observer B qualifies.
 
-Observer C remains blocked. Milestone 2 remains `NOT_STARTED`.
+Observer C provisioning remains blocked until this qualification record is
+merged and its provider/cost checkpoint is approved. Local preparation may
+continue. Milestone 2 remains `NOT_STARTED`.

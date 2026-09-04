@@ -1,0 +1,20 @@
+{
+  "schema_version": "ObserverNetworkAttribution@0.1.0",
+  "observer_id": "observer-google-e2-micro",
+  "captured_at": "2026-09-04T11:43:30.088Z",
+  "provider": "Google Cloud",
+  "region": "us-central1",
+  "source": "RIPE RIS via RIPEstat network-info",
+  "address_source": "GCE instance metadata external-ip",
+  "asns": [43515, 15169],
+  "asn_holders": [
+    {"asn": 43515, "holder": "YOUTUBE Google Ireland Limited", "announced": true},
+    {"asn": 15169, "holder": "GOOGLE - Google LLC", "announced": true}
+  ],
+  "holder_source": "RIPEstat as-overview",
+  "ip_omitted": true,
+  "prefix_omitted": true,
+  "single_origin_asserted": false,
+  "upstream_rpc_independence_proven": false,
+  "scope": "Current network announcement associated with the VM public address; not proof of independent operators or upstream RPC readers. Both returned ASNs are retained."
+}
