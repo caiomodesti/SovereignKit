@@ -1,6 +1,12 @@
 # Observer B — soak closure verification, 2026-09-04
 
-Status: `SOAK_AND_POSTFLIGHT_VERIFIED_PENDING_ADMISSION_RECORD`
+Status: `OBSERVER_HOST_QUALIFIED`
+
+Final host-qualification review: the documented pre-soak recovery gates,
+independently recomputed soak, post-soak preflight, signed historical Devnet
+integration bundle, and sanitized network attribution passed. Qualification
+takes effect on merge of this record. It is host admission only, not complete
+M1 acceptance. Earlier pending statements below are retained as chronology.
 
 This record documents live verification, not formal Milestone 1 acceptance.
 Observer C provisioning and Milestone 2 have not started in this operation.

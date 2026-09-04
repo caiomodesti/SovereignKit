@@ -1,6 +1,6 @@
 # Grant Milestone 1 — Observer B readiness
 
-Status: `SOAK_AND_POSTFLIGHT_VERIFIED_PENDING_ADMISSION_RECORD`
+Status: `OBSERVER_HOST_QUALIFIED`
 
 Observer A passed its host preflight, delivery recovery, corrected-runtime
 requalification, and 24-hour host soak. Observer B is now provisioned on the
@@ -14,10 +14,13 @@ is published on the working PR under `fixtures/grant-m1/observer-google-b-devnet
 Network attribution was corroborated on 2026-09-04 through GCE metadata and
 RIPEstat: both returned ASNs (43515 and 15169) are retained in
 `fixtures/grant-m1/observer-google-b-network-20260904.json`. No single-origin
-claim is made. Formal admission review and merge remain pending. The RPC routes are shared with
+claim is made. The host qualification review is complete; this record takes
+effect on merge of the reviewed PR. The RPC routes are shared with
 Observer A and must not be counted as independent upstream readers.
-This does not admit Observer B or authorize Observer C
-or Milestone 2 activity.
+This admits Observer B only as a qualified host for the M1 pilot preparation.
+This is not formal Milestone 1 acceptance, proof of independent RPC readers,
+or authorization to start Milestone 2. The complete failure matrix and
+three-observer acceptance package remain required for M1 acceptance.
 
 ## Frozen candidate
 
@@ -73,4 +76,6 @@ physical memory as sufficient.
   regression, unexplained restart failure, or incomplete soak;
 - pressure to provision Observer C before Observer B qualifies.
 
-Observer C remains blocked. Milestone 2 remains `NOT_STARTED`.
+Observer C provisioning remains blocked until this qualification record is
+merged and its provider/cost checkpoint is approved. Local preparation may
+continue. Milestone 2 remains `NOT_STARTED`.

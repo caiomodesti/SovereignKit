@@ -177,11 +177,11 @@ if (observerARequalification.schema_version !== "GrantM1ObserverRuntimeRequalifi
     observerARequalification.claim_boundaries?.milestone_2_started !== false) {
   throw new Error("Observer A corrected-runtime requalification anchor is incomplete or overclaims grant acceptance");
 }
-if (!contents.get("docs/grant-m1-observer-b-readiness.md").includes("SOAK_AND_POSTFLIGHT_VERIFIED_PENDING_ADMISSION_RECORD") ||
-    !contents.get("docs/grant-m1-observer-b-readiness.md").includes("This does not admit Observer B") ||
-    !contents.get("docs/grant-m1-observer-b-readiness.md").includes("Observer C remains blocked") ||
+if (!contents.get("docs/grant-m1-observer-b-readiness.md").includes("OBSERVER_HOST_QUALIFIED") ||
+    !contents.get("docs/grant-m1-observer-b-readiness.md").includes("This is not formal Milestone 1 acceptance") ||
+    !contents.get("docs/grant-m1-observer-b-readiness.md").includes("Observer C provisioning remains blocked") ||
     !contents.get("docs/grant-m1-observer-b-readiness.md").includes("Milestone 2 remains `NOT_STARTED`")) {
-  throw new Error("Observer B readiness must remain canary-only, sequential, and fail closed before admission");
+  throw new Error("Observer B host qualification must preserve sequential provisioning and M1/M2 claim boundaries");
 }
 const observerBNetwork = JSON.parse(contents.get("fixtures/grant-m1/observer-google-b-network-20260904.json"));
 if (observerBNetwork.schema_version !== "ObserverNetworkAttribution@0.1.0" ||
