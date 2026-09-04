@@ -1,5 +1,12 @@
 # SovereignKit grant weekly status
 
+Latest checkpoint (2026-09-04): Observer B's 24-hour soak and post-soak
+preflight passed. Independent recomputation verified 1,440 samples, 99.93%
+coverage, 100% readiness, and zero identity mismatches. Admission remains
+pending evidence export and topology reconciliation; Observer C remains
+blocked and Milestone 2 remains not started. See the
+[closure record](grant-m1-observer-b-soak-closure-20260904.md).
+
 This append-only human-readable status log supports the grant's weekly communication requirement. Detailed evidence remains in versioned artifacts and milestone acceptance indexes.
 
 Communication cadence and claim boundaries are defined in

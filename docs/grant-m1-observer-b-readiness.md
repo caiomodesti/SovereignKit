@@ -1,12 +1,16 @@
 # Grant Milestone 1 — Observer B readiness
 
-Status: `PROVISIONED_CANARY_IN_PROGRESS`
+Status: `SOAK_AND_POSTFLIGHT_VERIFIED_PENDING_ADMISSION_RECORD`
 
 Observer A passed its host preflight, delivery recovery, corrected-runtime
 requalification, and 24-hour host soak. Observer B is now provisioned on the
 frozen Google candidate and has passed the pre-soak host, delivery, duplicate,
 queue-recovery, service-restart, and full-VM-recovery gates. Its 24-hour host
-canary is in progress. This does not admit Observer B or authorize Observer C
+canary passed independent raw-evidence verification on 2026-09-04, followed
+by a successful post-soak host preflight. See
+[closure evidence](grant-m1-observer-b-soak-closure-20260904.md).
+The evidence export and provider/ASN/overlap reconciliation remain pending.
+This does not admit Observer B or authorize Observer C
 or Milestone 2 activity.
 
 ## Frozen candidate

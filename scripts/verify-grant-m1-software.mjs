@@ -100,6 +100,7 @@ const requiredFiles = [
   "scripts/generate-grant-m1-devnet-evidence-bundle.mjs",
   "scripts/verify-grant-m1-devnet-evidence-bundle.mjs",
   "docs/grant-m1-observer-b-readiness.md",
+  "docs/grant-m1-observer-b-soak-closure-20260904.md",
 ];
 
 const contents = new Map(await Promise.all(requiredFiles.map(async path => [path, await readFile(path, "utf8")])));
@@ -175,7 +176,7 @@ if (observerARequalification.schema_version !== "GrantM1ObserverRuntimeRequalifi
     observerARequalification.claim_boundaries?.milestone_2_started !== false) {
   throw new Error("Observer A corrected-runtime requalification anchor is incomplete or overclaims grant acceptance");
 }
-if (!contents.get("docs/grant-m1-observer-b-readiness.md").includes("PROVISIONED_CANARY_IN_PROGRESS") ||
+if (!contents.get("docs/grant-m1-observer-b-readiness.md").includes("SOAK_AND_POSTFLIGHT_VERIFIED_PENDING_ADMISSION_RECORD") ||
     !contents.get("docs/grant-m1-observer-b-readiness.md").includes("This does not admit Observer B") ||
     !contents.get("docs/grant-m1-observer-b-readiness.md").includes("Observer C remains blocked") ||
     !contents.get("docs/grant-m1-observer-b-readiness.md").includes("Milestone 2 remains `NOT_STARTED`")) {
