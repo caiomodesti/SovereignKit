@@ -36,3 +36,5 @@ jobs:
         run: pnpm verify:sprint-12
       - name: Audit production dependencies
         run: pnpm audit --prod --audit-level high
+      - name: Verify Observer B Devnet evidence
+        run: node scripts/verify-grant-m1-devnet-evidence-bundle.mjs fixtures/grant-m1/observer-google-b-devnet-20260904

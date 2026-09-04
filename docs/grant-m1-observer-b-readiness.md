@@ -9,7 +9,10 @@ queue-recovery, service-restart, and full-VM-recovery gates. Its 24-hour host
 canary passed independent raw-evidence verification on 2026-09-04, followed
 by a successful post-soak host preflight. See
 [closure evidence](grant-m1-observer-b-soak-closure-20260904.md).
-The evidence export and provider/ASN/overlap reconciliation remain pending.
+The Devnet integration bundle passed signature and correlation validation and
+is staged for publication under `fixtures/grant-m1/observer-google-b-devnet-20260904`.
+Provider/ASN reconciliation remains pending. The RPC routes are shared with
+Observer A and must not be counted as independent upstream readers.
 This does not admit Observer B or authorize Observer C
 or Milestone 2 activity.
 

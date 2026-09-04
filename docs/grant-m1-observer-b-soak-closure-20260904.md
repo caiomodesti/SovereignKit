@@ -43,7 +43,82 @@ samples, not signed Solana transaction observations for the grant KPI.
 
 ## Remaining admission work
 
-Preserve/export the evidence bundle, reconcile provider/region/ASN and upstream
+### Devnet integration checkpoint — 2026-09-04
+
+The approved Observer A reader configuration was transferred privately and
+installed on B with service-account ownership and mode 0600. These are shared
+logical RPC routes; no independent upstream-reader claim is made.
+
+A fresh, coordinator-signed short-lived assignment queried the historical
+Devnet transaction used for A's integration test. This is historical ledger
+integration evidence, not a fresh submission, comparative experimental unit,
+or new transaction-accessibility KPI sample.
+
+- Assignment: `b421d1da-7305-4da7-953d-3b005902ba0b`.
+- Result: `045388a2-717c-43b5-b203-97c8abc538af`.
+- Worker terminal state: `FINALIZED`.
+- Raw polls and unsigned result retained in the private host evidence directory.
+- Runtime signed and delivered the result through its existing durable spool.
+- Delivery: `2026-09-04T11:00:10.409Z`, Collector status `ACCEPTED`.
+- Result payload hash: `f5cf3e356961dd89209659bcc9c7f747fe16e507bfd6301f7ea3219bca5152e2`.
+- Readiness after delivery: ready, deliveredCount 3, queuedCount 0.
+- Runtime start time remained `2026-09-03T10:23:19.941Z`; no restart or
+  runtime replacement occurred.
+
+The original preparation command failed before writing its assignment due to
+command-string escaping; the corrected preparation then executed successfully.
+The retained result still requires bundle-level correlation/signature checking
+against the Collector's stored record before it is promoted to accepted evidence.
+
+Subsequent verification completed on 2026-09-04: the Collector record was
+exported read-only (sequence 8, collected at `2026-09-04T11:00:10.325Z`),
+and its observer signature passed against the Collector's public allowlist.
+Collector health reported storedCount 9. The local seven-file Devnet bundle
+passed `GRANT_M1_DEVNET_EVIDENCE_BUNDLE`, including coordinator signature,
+observer signature, assignment correlation, raw polls, quorum, and receipt.
+It is retained under `artifacts/grant-m1/observer-b/devnet-bundle-20260904`;
+it is not yet published. The third reader error remains in the evidence.
+
+Local import hashes were compared with the original VM files and matched:
+
+- raw observations: `c2adc95ee53cca2b02661b71daac8c23a3b79f9324aa12495df0b9a2cdc9226a`;
+- signed assignment: `919c519338709ebe830586463f9adb67affd6e8ccec725a323cd34b175e15e3b`.
+
+Remaining work is topology/ASN corroboration, explicit upstream overlap,
+final sanitized publication, and formal host admission. Full M1 acceptance
+still requires the complete three-observer acceptance package.
+
+### Export checkpoint
+
+On 2026-09-04, the three explicitly selected files (raw JSONL, summary,
+post-soak preflight) were copied from the VM to a private Cloud Shell directory.
+The archive is mode 0600; originals remain unchanged on the VM. The exported
+raw file contains 1,440 records and matches the raw hash above; the exported
+preflight also matches its recorded hash. Summary SHA-256:
+`0b1b18b78e31bdcd3968a56ac2cd5d67e3649d7fea4d835f23f9e00d78be67a6`.
+This is a second private copy, not yet a published or local-repository bundle.
+
+Authenticated control-plane inspection confirmed RUNNING, e2-micro,
+us-central1-a, creation timestamp `2026-09-02T18:20:48.581-07:00`.
+This confirms deployment metadata, not a corroborated network ASN or
+independent upstream RPC paths.
+
+The final M1 acceptance contract additionally requires per-observer signed
+FINALIZED results, matching signed assignment provenance, correlated raw
+reader polls, delivery/recovery evidence, provider evidence, and failure cases.
+The stability samples and two transport fixtures must not substitute for those
+transaction-evidence requirements.
+
+At `2026-09-04T10:52:01Z`, a bounded filename-only search found no reader
+configuration under `/etc/sovereignkit` (depth 2), nor assignment/observation
+artifacts under `/var/lib/sovereignkit` (depth 3). This is not a claim about
+all possible host locations. Readiness still reported ready, deliveredCount 2,
+queuedCount 0, and the original post-reboot start time. The next operational
+step is to locate/reuse the approved reader and public authority configuration,
+then run a fresh short-lived signed Devnet observation assignment on B and
+retain correlated polls/result/receipt. No such job was run in this check.
+
+Retain a local/public sanitized bundle, reconcile provider/region/ASN and upstream
 overlap limitations, update the admission contracts and status documents
 together, run the full verification and secret audit, and complete PR review/CI
 before formal admission and any Observer C provisioning. The successful soak
