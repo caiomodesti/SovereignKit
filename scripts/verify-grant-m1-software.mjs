@@ -100,6 +100,7 @@ const requiredFiles = [
   "scripts/generate-grant-m1-devnet-evidence-bundle.mjs",
   "scripts/verify-grant-m1-devnet-evidence-bundle.mjs",
   "docs/grant-m1-observer-b-readiness.md",
+  "fixtures/grant-m1/observer-google-b-network-20260904.json",
   "docs/grant-m1-observer-b-soak-closure-20260904.md",
 ];
 
@@ -181,6 +182,16 @@ if (!contents.get("docs/grant-m1-observer-b-readiness.md").includes("SOAK_AND_PO
     !contents.get("docs/grant-m1-observer-b-readiness.md").includes("Observer C remains blocked") ||
     !contents.get("docs/grant-m1-observer-b-readiness.md").includes("Milestone 2 remains `NOT_STARTED`")) {
   throw new Error("Observer B readiness must remain canary-only, sequential, and fail closed before admission");
+}
+const observerBNetwork = JSON.parse(contents.get("fixtures/grant-m1/observer-google-b-network-20260904.json"));
+if (observerBNetwork.schema_version !== "ObserverNetworkAttribution@0.1.0" ||
+    observerBNetwork.observer_id !== "observer-google-e2-micro" ||
+    JSON.stringify(observerBNetwork.asns) !== JSON.stringify([43515, 15169]) ||
+    observerBNetwork.ip_omitted !== true || observerBNetwork.prefix_omitted !== true ||
+    observerBNetwork.single_origin_asserted !== false ||
+    observerBNetwork.upstream_rpc_independence_proven !== false ||
+    observerBNetwork.provider !== "Google Cloud" || observerBNetwork.region !== "us-central1") {
+  throw new Error("Observer B network evidence must retain both observed ASNs and its privacy/independence boundaries");
 }
 const rpcRouteAnchor = JSON.parse(contents.get("fixtures/grant-m1/alchemy-devnet-route-20260826.json"));
 if (rpcRouteAnchor.schema_version !== "GrantM1RpcRoutePreflight@0.1.0" ||

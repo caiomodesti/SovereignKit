@@ -10,8 +10,11 @@ canary passed independent raw-evidence verification on 2026-09-04, followed
 by a successful post-soak host preflight. See
 [closure evidence](grant-m1-observer-b-soak-closure-20260904.md).
 The Devnet integration bundle passed signature and correlation validation and
-is staged for publication under `fixtures/grant-m1/observer-google-b-devnet-20260904`.
-Provider/ASN reconciliation remains pending. The RPC routes are shared with
+is published on the working PR under `fixtures/grant-m1/observer-google-b-devnet-20260904`.
+Network attribution was corroborated on 2026-09-04 through GCE metadata and
+RIPEstat: both returned ASNs (43515 and 15169) are retained in
+`fixtures/grant-m1/observer-google-b-network-20260904.json`. No single-origin
+claim is made. Formal admission review and merge remain pending. The RPC routes are shared with
 Observer A and must not be counted as independent upstream readers.
 This does not admit Observer B or authorize Observer C
 or Milestone 2 activity.

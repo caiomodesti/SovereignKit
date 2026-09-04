@@ -43,6 +43,14 @@ samples, not signed Solana transaction observations for the grant KPI.
 
 ## Remaining admission work
 
+Latest checkpoint: the network lookup completed at `2026-09-04T11:43:30.088Z`.
+The authorized query used the VM's metadata-derived public address only for
+RIPEstat lookup; no address or prefix is retained in public evidence.
+Both origins, AS43515 and AS15169, were returned and retained, with their
+RIPEstat holder labels. See `fixtures/grant-m1/observer-google-b-network-20260904.json`.
+This closes the network-attribution lookup, not full M1 acceptance or RPC
+independence. Historical pending statements below describe earlier checkpoints.
+
 ### Devnet integration checkpoint — 2026-09-04
 
 The approved Observer A reader configuration was transferred privately and
