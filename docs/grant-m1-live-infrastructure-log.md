@@ -362,3 +362,27 @@ the corrected E4 evidence follows in the next section.
   explicitly not ledger observations, Observer B is not admitted before the
   final independent verification, Observer C remains blocked, and Milestone 2
   has not started.
+
+## 2026-09-04 — Observer C pre-soak gates passed
+
+- Provisioned exactly one Oracle A1 Observer C candidate in Sao Paulo. Its
+  dedicated subnet has no inherited public ingress; its NSG exposes only TCP/22
+  from the current operator `/32`. No Collector port was copied.
+- Built and staged the public repository at commit
+  `49557b234b7e359dcd77ca198639b6e0a936dee2`. Node 22.17.0 and all 180 runtime
+  manifest entries passed the initial and post-reboot host preflights.
+- Generated the active Ed25519 identity only on the Observer C host. The private
+  document remains mode `0600`; only the public entry was merged atomically
+  into the Collector allowlist with backup and rollback protection.
+- Proved signed transport delivery, exact duplicate suppression, queue
+  retention during a confirmed Collector outage, automatic recovery delivery,
+  service-restart persistence and full-VM recovery. Three delivery receipts
+  remained durable with an empty queue. The fixtures are explicitly
+  transport-only and do not count toward the ledger-observation KPI.
+- A fresh 86400-second canary began at `2026-09-04T23:07:46.230Z`. Its first two
+  samples were ready and identity-matched, with a 60.129-second gap. Sanitized
+  pre-soak evidence is
+  `fixtures/grant-m1/observer-oracle-c-pre-soak-20260904.json`.
+- Status is `PROVISIONED_CANARY_IN_PROGRESS`. Observer C is not admitted before
+  the final summary, independent recomputation and post-soak preflight pass.
+  Milestone 2 has not started.
