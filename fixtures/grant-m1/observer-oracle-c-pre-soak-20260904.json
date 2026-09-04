@@ -1,0 +1,59 @@
+{
+  "schema_version": "GrantM1ObserverPreSoakEvidence@0.1.0",
+  "observer_id": "observer-oracle-a1",
+  "status": "PROVISIONED_CANARY_IN_PROGRESS",
+  "captured_at": "2026-09-04T23:08:46.359Z",
+  "provider": {
+    "cloud": "Oracle Cloud Infrastructure",
+    "region_label": "Sao Paulo",
+    "shape": "VM.Standard.A1.Flex",
+    "architecture": "aarch64",
+    "operating_system": "Oracle Linux 9.8"
+  },
+  "runtime": {
+    "source_commit": "49557b234b7e359dcd77ca198639b6e0a936dee2",
+    "node_version": "22.17.0",
+    "manifest_file_count": 180,
+    "local_archive_sha256": "2ea559731dc1756c693bbe3af6e90ca4e1119f2327d3b1b989f96d582d0d9e33"
+  },
+  "network": {
+    "ssh_source_scope": "current_operator_ipv4_32",
+    "observer_ingress_ports": [22],
+    "health_binding": "loopback_only"
+  },
+  "preflight": {
+    "initial_capture_sha256": "235135d89321067a8c02d74ea39f209f7bbd327853f0bcab035ac81ed0e83d67",
+    "post_reboot_capture_sha256": "441040abef4a3b0de5a88c4302c20e058918f58e4e07ff0f02c88471fb569ae2",
+    "initial": "PASS",
+    "post_reboot": "PASS"
+  },
+  "transport_gates": {
+    "signed_delivery": "PASS",
+    "exact_duplicate_suppression": "PASS",
+    "collector_outage_queue_retention": "PASS",
+    "automatic_delivery_after_recovery": "PASS",
+    "observer_service_restart_persistence": "PASS",
+    "full_vm_reboot_recovery": "PASS",
+    "delivery_receipt_count_after_reboot": 3,
+    "queued_count_after_reboot": 0,
+    "note": "Transport-only fixtures are not Solana ledger observations."
+  },
+  "canary": {
+    "required_duration_seconds": 86400,
+    "interval_seconds": 60,
+    "started_at": "2026-09-04T23:07:46.230Z",
+    "initial_sample_count": 2,
+    "initial_ready_rate": 1,
+    "initial_identity_match_rate": 1,
+    "initial_gap_seconds": 60.129,
+    "raw_file_mode": "0600",
+    "summary_present": false
+  },
+  "claim_limits": {
+    "observer_admitted": false,
+    "operational_independence_proven": false,
+    "ledger_observation_proven_by_transport_fixtures": false,
+    "milestone_1_accepted": false,
+    "milestone_2_started": false
+  }
+}

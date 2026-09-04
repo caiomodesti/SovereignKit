@@ -309,3 +309,20 @@ Its E4 preflight, replay, reboot, and soak claims are retracted. See the
 - Status is `PROVISIONED_CANARY_IN_PROGRESS`. Observer B is not admitted until
   the immutable raw JSONL, final summary, independent recomputation, and
   post-soak preflight pass. Observer C and Milestone 2 remain blocked.
+
+## 2026-09-04 — Oracle Observer C canary started
+
+- Provisioned one Oracle A1 Observer C candidate and retained a narrow
+  current-operator `/32` SSH rule with no public observer health endpoint.
+- Installed the 180-file runtime from commit
+  `49557b234b7e359dcd77ca198639b6e0a936dee2`; initial and post-reboot host
+  preflights passed on Node 22.17.0.
+- Proved signed transport delivery, exact duplicate suppression, controlled
+  Collector-outage queue retention and automatic recovery, service restart,
+  and full-VM reboot recovery. The three test deliveries are transport-only and
+  do not count as Solana ledger observations.
+- The 24-hour canary started at `2026-09-04T23:07:46.230Z`; samples 0 and 1 were
+  ready, identity-matched and 60.129 seconds apart. Earliest complete-duration
+  checkpoint is `2026-09-05T23:07:46.230Z`.
+- Status is `PROVISIONED_CANARY_IN_PROGRESS`. Observer C, Milestone 1 and
+  Milestone 2 remain unaccepted pending final evidence and formal gates.
