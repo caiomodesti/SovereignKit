@@ -1,5 +1,6 @@
 export * from "./builder.js";
 export * from "./canonical.js";
+export * from "./reader-quorum.js";
 export * from "./execution.js";
 export * from "./ingestion.js";
 export * from "./matching.js";

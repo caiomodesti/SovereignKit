@@ -111,6 +111,11 @@ The external acceptance command is intentionally impossible to pass without reta
 node scripts/verify-grant-m1-acceptance.mjs --evidence <sanitized-m1-evidence-directory>
 ```
 
+Run `corepack pnpm build` first: the acceptance verifier imports the compiled
+`packages/probes/dist/reader-quorum.js` evaluator shared with the worker.
+This shares terminal claim semantics, not the full telemetry/SDK lifecycle or
+independently verifiable deadline provenance; those remain separate gates.
+
 It requires at least three unique observer identities, providers, provider-account fingerprints, and sanitized instances; corroborated independence; matching allowlist identities; and existing signed-result, raw-observation, health, restart, provider, and failure-matrix evidence for every observer.
 
 The external evidence index uses `GrantM1EvidenceIndex@0.4.0`. Every artifact
