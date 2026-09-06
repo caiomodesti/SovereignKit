@@ -1,6 +1,10 @@
 # Grant M1 — Observer C preparation
 
-Status: `PROVISIONED_CANARY_IN_PROGRESS`
+Status: `HOST_SOAK_VERIFIED_ADMISSION_PENDING`
+
+The 24-hour soak and fresh post-soak preflight passed on 2026-09-06.
+See `grant-m1-observer-c-soak-closure-20260906.md` for independent verification
+and remaining admission requirements. The preparation chronology follows.
 
 ## Console checkpoint — 2026-09-04
 
@@ -85,11 +89,9 @@ until the process reaches the complete duration.
 
 ## Remaining qualification sequence
 
-1. Leave the running canary and runtime unchanged for at least 86400 seconds.
-2. Verify the complete summary and independently recompute duration, coverage,
-   spacing, readiness, identity and raw-file integrity.
-3. Perform a fresh post-soak host preflight.
-4. Publish sanitized qualification evidence and review admission separately.
+1. Preserve the verified completed canary and frozen runtime.
+2. Complete assignment-correlated Devnet evidence and network attribution.
+3. Review formal admission and the remaining three-observer M1 requirements.
 
 Oracle is distinct from AWS A and Google B, but shares the Collector provider
 and tenancy. This does not establish independent operators or upstream RPCs.
