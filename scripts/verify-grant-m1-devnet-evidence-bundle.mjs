@@ -4,6 +4,7 @@ import { resolve, sep } from "node:path";
 
 import { verifyObservationAssignment } from "../packages/collector/dist/observation-assignment.js";
 import { verifyProbeResult } from "../packages/probes/dist/signing.js";
+import { deriveGrantM1TerminalFromClaims } from "./lib/grant-m1-acceptance.mjs";
 
 const root = resolve(process.argv[2] ?? "fixtures/grant-m1/observer-aws-a-devnet-20260901");
 const manifest = await readJson("manifest.json");
@@ -35,6 +36,11 @@ if (rawPolls.length !== 1 || rawPolls.some(poll => poll.assignment_id !== assign
     poll.assignment_payload_hash !== assignment.payloadHash || poll.signature !== signedResult.signature || poll.observer_id !== signedResult.observer_id)) {
   throw new Error("bundle raw poll does not correlate");
 }
+const recomputed = deriveGrantM1TerminalFromClaims(rawPolls[0].claims, assignment.job.submission.last_valid_block_height);
+if (recomputed?.terminal !== signedResult.terminal_state || canonicalJson(rawPolls[0].claims) !== canonicalJson(signedResult.reader_claims) ||
+    canonicalJson(recomputed.supporting_claim_ids.slice(0, 2).sort()) !== canonicalJson([...signedResult.quorum_decisions[0].supporting_claim_ids].sort())) {
+  throw new Error("bundle raw-to-derived quorum does not match the signed result");
+}
 const finalized = signedResult.reader_claims.filter(claim => claim.signature_status === "finalized" && claim.execution_error === undefined);
 const errors = signedResult.reader_claims.filter(claim => claim.reader_error !== undefined);
 const decision = signedResult.quorum_decisions[0];
@@ -61,3 +67,9 @@ function parseJsonl(text) {
   return text.trimEnd().split(/\r?\n/u).map(line => JSON.parse(line));
 }
 function sha256(value) { return createHash("sha256").update(value).digest("hex"); }
+function canonicalJson(value) { return JSON.stringify(normalize(value)); }
+function normalize(value) {
+  if (Array.isArray(value)) return value.map(normalize);
+  if (value !== null && typeof value === "object") return Object.fromEntries(Object.entries(value).sort(([left], [right]) => left.localeCompare(right)).map(([key, entry]) => [key, normalize(entry)]));
+  return value;
+}

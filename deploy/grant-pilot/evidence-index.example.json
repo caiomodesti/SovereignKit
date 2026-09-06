@@ -1,9 +1,11 @@
 {
-  "schema_version": "GrantM1EvidenceIndex@0.3.0",
+  "schema_version": "GrantM1EvidenceIndex@0.4.0",
   "generated_at": "2026-08-25T00:00:00.000Z",
   "observers": [
     {
       "observer_id": "observer-provider-a",
+      "expected_unit_count": 1,
+      "expected_unit_ids_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
       "assignment_provenance": [{ "path": "observers/observer-provider-a/signed-assignments.jsonl", "sha256": "0000000000000000000000000000000000000000000000000000000000000000" }],
       "signed_results": [{ "path": "observers/observer-provider-a/signed-results.jsonl", "sha256": "0000000000000000000000000000000000000000000000000000000000000000" }],
       "raw_observations": [{ "path": "observers/observer-provider-a/raw-observations.jsonl", "sha256": "0000000000000000000000000000000000000000000000000000000000000000" }],
