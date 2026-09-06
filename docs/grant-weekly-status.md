@@ -339,7 +339,9 @@ Its E4 preflight, replay, reboot, and soak claims are retracted. See the
   logical readers supported finalization and the third reader RPC error remains
   visible. The seven-file public evidence bundle passes all signature, hash,
   correlation, quorum, and receipt checks.
-- Status remains `HOST_SOAK_VERIFIED_ADMISSION_PENDING` until sanitized network
-  attribution and the formal host-admission review pass. Shared logical RPC
-  routes are not claimed as independent infrastructure. Milestone 2 has not
-  started.
+- OCI metadata plus RIPEstat corroborated the VM region and announced Oracle
+  AS31898 without retaining the public address, prefix, or raw cloud IDs.
+- The complete host package admits Observer C as `OBSERVER_HOST_QUALIFIED` when
+  merged. Shared logical RPC routes are not claimed as independent upstream
+  infrastructure. Aggregate M1 acceptance remains pending and Milestone 2 has
+  not started.

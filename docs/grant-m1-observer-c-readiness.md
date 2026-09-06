@@ -1,6 +1,6 @@
 # Grant M1 — Observer C preparation
 
-Status: `HOST_SOAK_VERIFIED_ADMISSION_PENDING`
+Status: `OBSERVER_HOST_QUALIFIED`
 
 The 24-hour soak and fresh post-soak preflight passed on 2026-09-06.
 See `grant-m1-observer-c-soak-closure-20260906.md` for independent verification
@@ -95,10 +95,13 @@ until the process reaches the complete duration.
    the third reader error was retained, and the signed result was accepted by
    the Collector. The public bundle is
    `fixtures/grant-m1/observer-oracle-c-devnet-20260906`.
-3. Complete sanitized network attribution without retaining the VM address or
-   raw cloud identifiers.
-4. Review formal admission and the remaining three-observer M1 requirements.
+3. Sanitized network attribution completed on 2026-09-06: OCI metadata and
+   RIPEstat corroborated `sa-saopaulo-1`, announced AS31898, and Oracle as the
+   holder without retaining the VM address, prefix, or raw cloud identifiers.
+4. Formal host admission review passed. Qualification takes effect on merge;
+   the aggregate three-observer M1 acceptance requirements remain separate.
 
 Oracle is distinct from AWS A and Google B, but shares the Collector provider
 and tenancy. This does not establish independent operators or upstream RPCs.
-Milestone 1 formal acceptance remains pending; Milestone 2 remains not started.
+Observer C is admitted only as a qualified host for M1 preparation. Milestone 1
+formal acceptance remains pending; Milestone 2 remains not started.

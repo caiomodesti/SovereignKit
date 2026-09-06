@@ -105,6 +105,8 @@ const requiredFiles = [
   "docs/grant-m1-observer-c-readiness.md",
   "docs/grant-m1-observer-c-soak-closure-20260906.md",
   "fixtures/grant-m1/observer-oracle-c-devnet-20260906/manifest.json",
+  "fixtures/grant-m1/observer-oracle-c-network-20260906.json",
+  "fixtures/grant-m1/observer-oracle-c-soak-20260906.json",
 ];
 
 const contents = new Map(await Promise.all(requiredFiles.map(async path => [path, await readFile(path, "utf8")])));
@@ -202,9 +204,30 @@ if (observerCDevnet.schema_version !== "GrantM1DevnetEvidenceBundle@0.1.0" ||
     observerCDevnet.terminal_state !== "FINALIZED" ||
     observerCDevnet.finalized_claim_count !== 2 || observerCDevnet.reader_error_count !== 1 ||
     !observerCDevnet.claim_boundary.includes("not proof of reader operational independence") ||
-    !contents.get("docs/grant-m1-observer-c-soak-closure-20260906.md").includes("HOST_SOAK_VERIFIED_ADMISSION_PENDING") ||
+    !contents.get("docs/grant-m1-observer-c-soak-closure-20260906.md").includes("OBSERVER_HOST_QUALIFIED") ||
     !contents.get("docs/grant-m1-observer-c-soak-closure-20260906.md").includes("Milestone 2 has not started")) {
   throw new Error("Observer C Devnet evidence or admission boundary is incomplete");
+}
+const observerCNetwork = JSON.parse(contents.get("fixtures/grant-m1/observer-oracle-c-network-20260906.json"));
+const observerCSoak = JSON.parse(contents.get("fixtures/grant-m1/observer-oracle-c-soak-20260906.json"));
+if (observerCNetwork.schema_version !== "ObserverNetworkAttribution@0.1.0" ||
+    observerCNetwork.observer_id !== "observer-oracle-a1" ||
+    JSON.stringify(observerCNetwork.asns) !== JSON.stringify([31898]) ||
+    observerCNetwork.asn_holders?.[0]?.announced !== true ||
+    !observerCNetwork.asn_holders?.[0]?.holder.includes("Oracle Corporation") ||
+    observerCNetwork.ip_omitted !== true || observerCNetwork.prefix_omitted !== true ||
+    observerCNetwork.raw_instance_identifier_omitted !== true ||
+    observerCNetwork.upstream_rpc_independence_proven !== false ||
+    observerCSoak.status !== "OBSERVER_HOST_QUALIFIED" ||
+    observerCSoak.runtime?.source_commit !== "49557b234b7e359dcd77ca198639b6e0a936dee2" ||
+    observerCSoak.independent_evaluation?.actual_duration_seconds !== 86_400 ||
+    observerCSoak.independent_evaluation?.admitted !== true ||
+    observerCSoak.claim_boundaries?.real_solana_observation_completed !== true ||
+    observerCSoak.claim_boundaries?.network_attribution_completed !== true ||
+    observerCSoak.claim_boundaries?.upstream_rpc_independence_proven !== false ||
+    observerCSoak.claim_boundaries?.milestone_1_accepted !== false ||
+    observerCSoak.claim_boundaries?.milestone_2_started !== false) {
+  throw new Error("Observer C host admission evidence is incomplete or overclaims M1 acceptance");
 }
 const rpcRouteAnchor = JSON.parse(contents.get("fixtures/grant-m1/alchemy-devnet-route-20260826.json"));
 if (rpcRouteAnchor.schema_version !== "GrantM1RpcRoutePreflight@0.1.0" ||

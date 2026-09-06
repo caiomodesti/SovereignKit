@@ -1,6 +1,6 @@
 # Observer C soak closure — 2026-09-06
 
-Status: `HOST_SOAK_VERIFIED_ADMISSION_PENDING`.
+Status: `OBSERVER_HOST_QUALIFIED`.
 
 The Oracle Observer C canary completed successfully from
 `2026-09-04T23:07:46.230Z` through `2026-09-05T23:07:46.230Z`.
@@ -47,5 +47,20 @@ observer sequence 3 without changing or restarting the qualified runtime.
 
 This closes the real assignment-correlated Devnet gate for Observer C. It is
 one integration observation, not a matched comparative statistical unit and
-not proof of independent upstream RPC routes. Sanitized network attribution
-and formal admission review remain pending.
+not proof of independent upstream RPC routes.
+
+## Network attribution and admission
+
+On 2026-09-06, OCI metadata corroborated the provider and region while the
+RIPEstat `network-info` and `as-overview` APIs attributed the pinned VM address
+to announced AS31898, holder `ORACLE-BMC-31898 - Oracle Corporation`. Public
+evidence retains only the ASN, holder, region, and hashes of cloud identifiers;
+the address, prefix, availability-domain label, and raw instance identifier are
+omitted. See `fixtures/grant-m1/observer-oracle-c-network-20260906.json`.
+
+The completed host soak, post-soak preflight, real signed Devnet observation,
+Collector acceptance, and sanitized network attribution admit Observer C as a
+qualified M1 host when this record is merged. This is not complete Milestone 1
+acceptance. AWS, Google, and Oracle provider evidence must still be reconciled
+in the three-observer registry and hostile acceptance package. Shared logical
+RPC routes are not independent upstream readers. Milestone 2 has not started.
