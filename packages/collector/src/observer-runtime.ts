@@ -62,6 +62,7 @@ export class ObserverDeliveryRuntime {
   #lastHeartbeatAt: string | undefined;
   #lastError: string | undefined;
   #queuedCount = 0;
+  #hasCompletedScan = false;
   #running = false;
 
   private constructor(
@@ -93,8 +94,10 @@ export class ObserverDeliveryRuntime {
   }
 
   snapshot(): ObserverRuntimeSnapshot {
+    const initialScanError = this.#hasCompletedScan ? undefined : "initial spool scan has not completed";
+    const lastError = this.#lastError ?? initialScanError;
     return {
-      status: this.#lastError === undefined ? "ready" : "degraded",
+      status: lastError === undefined ? "ready" : "degraded",
       observerId: this.#keyPair.observerId,
       keyId: this.#keyPair.keyId,
       startedAt: this.#startedAt,
@@ -103,7 +106,7 @@ export class ObserverDeliveryRuntime {
       ...(this.#lastHeartbeatAt === undefined ? {} : { lastHeartbeatAt: this.#lastHeartbeatAt }),
       deliveredCount: this.#deliveredResultIds.size,
       queuedCount: this.#queuedCount,
-      ...(this.#lastError === undefined ? {} : { lastError: this.#lastError }),
+      ...(lastError === undefined ? {} : { lastError }),
     };
   }
 
@@ -178,6 +181,7 @@ export class ObserverDeliveryRuntime {
         cycleError = error instanceof Error ? error.message : "observer delivery failed";
       }
     }
+    this.#hasCompletedScan = true;
     this.#lastError = cycleError;
   }
 

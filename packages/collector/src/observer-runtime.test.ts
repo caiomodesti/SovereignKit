@@ -27,6 +27,108 @@ afterEach(async () => {
 });
 
 describe("deployable observer delivery runtime", () => {
+  test("remains unready until its first spool scan completes", async () => {
+    const directory = await mkdtemp(join(tmpdir(), "sovereignkit-observer-starting-"));
+    temporaryDirectories.push(directory);
+    const keyPair = generateObserverKeyPair("observer-provider-a", "key-1");
+    const keyPath = join(directory, "observer-private.json");
+    await writeFile(keyPath, JSON.stringify(exportObserverPrivateKey(keyPair)), { mode: 0o600 });
+    const runtime = await ObserverDeliveryRuntime.open(makeRuntimeConfig(directory, keyPath, "https://collector.example"));
+    try {
+      expect(runtime.snapshot()).toMatchObject({
+        status: "degraded",
+        deliveredCount: 0,
+        queuedCount: 0,
+        lastError: "initial spool scan has not completed",
+      });
+      await runtime.scanOnce();
+      expect(runtime.snapshot()).toMatchObject({ status: "ready", deliveredCount: 0, queuedCount: 0 });
+    } finally { await runtime.close(); }
+  });
+
+  test("retries a timed-out delivery on the next scan and clears degraded readiness", async () => {
+    const directory = await mkdtemp(join(tmpdir(), "sovereignkit-observer-timeout-"));
+    temporaryDirectories.push(directory);
+    const keyPair = generateObserverKeyPair("observer-provider-a", "key-1");
+    const keyPath = join(directory, "observer-private.json");
+    await writeFile(keyPath, JSON.stringify(exportObserverPrivateKey(keyPair)), { mode: 0o600 });
+    let requests = 0;
+    const server = createServer((request, response) => {
+      request.resume();
+      requests += 1;
+      if (requests === 1) {
+        setTimeout(() => response.destroy(), 1_100);
+        return;
+      }
+      response.writeHead(201, { "content-type": "application/json" });
+      response.end(JSON.stringify({ status: "ACCEPTED" }));
+    });
+    servers.push(server);
+    const port = await listen(server);
+    const runtime = await ObserverDeliveryRuntime.open(makeRuntimeConfig(directory, keyPath, `http://127.0.0.1:${port}`));
+    await writeFile(join(directory, "spool", "1.json"), JSON.stringify(makeUnsignedResult(keyPair.observerId, keyPair.keyId)));
+    try {
+      await runtime.scanOnce();
+      expect(runtime.snapshot()).toMatchObject({ status: "degraded", queuedCount: 1, deliveredCount: 0 });
+      await runtime.scanOnce();
+      expect(requests).toBe(2);
+      expect(runtime.snapshot()).toMatchObject({ status: "ready", queuedCount: 0, deliveredCount: 1 });
+    } finally { await runtime.close(); }
+  });
+
+  test("recovers after a durable Collector commit whose acknowledgement was lost", async () => {
+    const directory = await mkdtemp(join(tmpdir(), "sovereignkit-observer-lost-ack-"));
+    temporaryDirectories.push(directory);
+    const keyPair = generateObserverKeyPair("observer-provider-a", "key-1");
+    const keyPath = join(directory, "observer-private.json");
+    const acceptedLogPath = join(directory, "accepted.jsonl");
+    await writeFile(keyPath, JSON.stringify(exportObserverPrivateKey(keyPair)), { mode: 0o600 });
+    const allowlist: ObserverAllowlistEntry[] = [{
+      observerId: keyPair.observerId, keyId: keyPair.keyId, publicKeySpkiBase64: keyPair.publicKeySpkiBase64,
+      validFrom: "2026-01-01T00:00:00.000Z", validUntil: "2027-01-01T00:00:00.000Z",
+    }];
+    const collector = await DurableProbeResultCollector.open({ schema: await loadSchema(), allowlist, acceptedLogPath });
+    let requests = 0;
+    const server = createServer(async (request, response) => {
+      let body = "";
+      request.setEncoding("utf8");
+      for await (const chunk of request) body += chunk;
+      requests += 1;
+      const outcome = await collector.ingest(JSON.parse(body) as unknown);
+      if (requests === 1) {
+        response.destroy();
+        return;
+      }
+      response.writeHead(outcome.status === "DUPLICATE" ? 200 : 201, { "content-type": "application/json" });
+      response.end(JSON.stringify(outcome));
+    });
+    servers.push(server);
+    const port = await listen(server);
+    const config = makeRuntimeConfig(directory, keyPath, `http://127.0.0.1:${port}`);
+    const firstRuntime = await ObserverDeliveryRuntime.open(config);
+    await writeFile(join(directory, "spool", "1.json"), JSON.stringify(makeUnsignedResult(keyPair.observerId, keyPair.keyId)));
+    await firstRuntime.scanOnce();
+    expect(firstRuntime.snapshot()).toMatchObject({ status: "degraded", queuedCount: 1, deliveredCount: 0 });
+    expect(collector.storedCount()).toBe(1);
+    await firstRuntime.close();
+
+    const restartedRuntime = await ObserverDeliveryRuntime.open(config);
+    try {
+      expect(restartedRuntime.snapshot()).toMatchObject({ status: "degraded", deliveredCount: 0 });
+      await restartedRuntime.scanOnce();
+      expect(requests).toBe(2);
+      expect(collector.storedCount()).toBe(1);
+      expect(restartedRuntime.snapshot()).toMatchObject({ status: "ready", queuedCount: 0, deliveredCount: 1 });
+      const [record] = (await readFile(join(directory, "delivery.jsonl"), "utf8")).trimEnd().split("\n");
+      expect(JSON.parse(record!) as object).toMatchObject({ collector_status: "DUPLICATE", delivery_sequence: 0 });
+      await restartedRuntime.scanOnce();
+      expect(requests).toBe(2);
+    } finally {
+      await restartedRuntime.close();
+      await collector.close();
+    }
+  });
+
   test.each([503, 429, 408, 200, 400])("preserves delivery and readiness semantics after HTTP %s", async (failureStatus) => {
     const directory = await mkdtemp(join(tmpdir(), "sovereignkit-observer-retry-"));
     temporaryDirectories.push(directory);
@@ -155,6 +257,21 @@ describe("deployable observer delivery runtime", () => {
     await runtime.close();
   });
 });
+
+function makeRuntimeConfig(directory: string, privateKeyPath: string, collectorUrl: string): ObserverRuntimeConfig {
+  return {
+    schemaVersion: "ObserverRuntimeConfig@0.1.0",
+    privateKeyPath,
+    spoolDirectory: join(directory, "spool"),
+    deliveryLogPath: join(directory, "delivery.jsonl"),
+    collectorUrl,
+    pollIntervalMs: 250,
+    requestTimeoutMs: 1_000,
+    heartbeatIntervalMs: 1_000,
+    healthHost: "127.0.0.1",
+    healthPort: 0,
+  };
+}
 
 async function loadSchema(): Promise<object> {
   return JSON.parse(await readFile(new URL("../../../spec/probe-result.schema.json", import.meta.url), "utf8")) as object;
