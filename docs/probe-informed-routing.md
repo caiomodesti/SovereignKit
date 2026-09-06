@@ -49,9 +49,11 @@ terminal-state semantics remain intact.
 - `DEVELOPER_OVERRIDE`;
 - `FAIL_OPEN`, with a bounded reason.
 
-The client checks `generated_at <= routing_time < expires_at` again when the
-router requests a decision. This closes the gap where a snapshot was fresh at
-poll time but expired before a later transaction. Clock rollback, missing
+The client checks `generated_at <= routing_time < expires_at` and the age of
+every source `observed_at` again when the router requests a decision. Source
+age is bounded by `sourceMaxAgeMs` (five minutes by default), so republication
+does not refresh old evidence. This closes the gap where a snapshot or its
+inputs were fresh at poll time but stale before a later transaction. Clock rollback, missing
 route/class entries, unavailable feed, invalid adapters, and exceptions return
 to local policy.
 

@@ -8,6 +8,7 @@ const addFormats = addFormatsModule.default as unknown as (ajv: Ajv2020) => Ajv2
 export const INTELLIGENCE_SCHEMA_VERSION = "0.1.0" as const;
 export const INTELLIGENCE_POLICY_ID = "ClassificationPolicyV0Experimental@0.1.0" as const;
 export const INTELLIGENCE_GENERATOR_VERSION = "IntelligenceSnapshotGenerator@0.1.0" as const;
+export const DEFAULT_SOURCE_MAX_AGE_MS = 300_000;
 
 export type IntelligenceTransactionClass = "MATCHED_CONTROL" | "PROGRAM_X";
 export type IntelligenceClassification = "HEALTHY" | "DEGRADED" | "ASYMMETRIC" | "INSUFFICIENT_DATA" | "UNKNOWN";
@@ -213,6 +214,7 @@ interface HysteresisState {
 export class IntelligenceSnapshotClient {
   readonly #fetchSnapshot: (signal: AbortSignal) => Promise<unknown>;
   readonly #pollTimeoutMs: number;
+  readonly #sourceMaxAgeMs: number;
   readonly #developerOverride: ((routeId: string, transactionClass: IntelligenceTransactionClass) => IntelligenceDeveloperOverride) | undefined;
   readonly #validate: ValidateFunction;
   readonly #states = new Map<string, HysteresisState>();
@@ -220,17 +222,22 @@ export class IntelligenceSnapshotClient {
   #lastSnapshotHash: string | undefined;
   #activeSnapshotGeneratedAtMs: number | undefined;
   #activeSnapshotExpiresAtMs: number | undefined;
+  #activeOldestSourceObservedAtMs: number | undefined;
   #lastFailOpenReason = "intelligence feed has not been polled";
   #feedAvailable = false;
 
   constructor(options: {
     readonly fetchSnapshot: (signal: AbortSignal) => Promise<unknown>;
     readonly pollTimeoutMs: number;
+    readonly sourceMaxAgeMs?: number;
     readonly developerOverride?: (routeId: string, transactionClass: IntelligenceTransactionClass) => IntelligenceDeveloperOverride;
   }) {
     if (!Number.isSafeInteger(options.pollTimeoutMs) || options.pollTimeoutMs <= 0) throw new Error("pollTimeoutMs must be a positive safe integer");
+    const sourceMaxAgeMs = options.sourceMaxAgeMs ?? DEFAULT_SOURCE_MAX_AGE_MS;
+    if (!Number.isSafeInteger(sourceMaxAgeMs) || sourceMaxAgeMs <= 0) throw new Error("sourceMaxAgeMs must be a positive safe integer");
     this.#fetchSnapshot = options.fetchSnapshot;
     this.#pollTimeoutMs = options.pollTimeoutMs;
+    this.#sourceMaxAgeMs = sourceMaxAgeMs;
     this.#developerOverride = options.developerOverride;
     this.#validate = createSnapshotValidator();
   }
@@ -240,7 +247,7 @@ export class IntelligenceSnapshotClient {
       const snapshot = await withTimeout(this.#fetchSnapshot, this.#pollTimeoutMs);
       if (!this.#validate(snapshot)) return this.#failOpen(`schema validation failed: ${formatErrors(this.#validate.errors)}`);
       const typed = snapshot as IntelligenceSnapshot;
-      const temporalError = validateTemporalAndIdentitySemantics(typed, now);
+      const temporalError = validateTemporalAndIdentitySemantics(typed, now, this.#sourceMaxAgeMs);
       if (temporalError !== undefined) return this.#failOpen(temporalError);
       if (typed.version < this.#lastVersion) return this.#failOpen("snapshot version rollback");
       const snapshotHash = sha256Hex(canonicalJson(typed));
@@ -248,6 +255,7 @@ export class IntelligenceSnapshotClient {
         if (snapshotHash !== this.#lastSnapshotHash) return this.#failOpen("snapshot version equivocation");
         this.#activeSnapshotGeneratedAtMs = Date.parse(typed.generated_at);
         this.#activeSnapshotExpiresAtMs = Date.parse(typed.expires_at);
+        this.#activeOldestSourceObservedAtMs = oldestSourceObservedAt(typed);
         this.#feedAvailable = true;
         return { status: "UNCHANGED", version: typed.version };
       }
@@ -256,6 +264,7 @@ export class IntelligenceSnapshotClient {
       this.#apply(typed);
       this.#activeSnapshotGeneratedAtMs = Date.parse(typed.generated_at);
       this.#activeSnapshotExpiresAtMs = Date.parse(typed.expires_at);
+      this.#activeOldestSourceObservedAtMs = oldestSourceObservedAt(typed);
       this.#feedAvailable = true;
       return { status: "APPLIED", version: typed.version };
     } catch (error) {
@@ -287,6 +296,11 @@ export class IntelligenceSnapshotClient {
     if (this.#activeSnapshotExpiresAtMs === undefined || nowMs >= this.#activeSnapshotExpiresAtMs) {
       this.#feedAvailable = false;
       this.#lastFailOpenReason = "snapshot became stale before routing decision";
+      return { disposition: "LOCAL_PRIMARY_FALLBACK", source: "FAIL_OPEN", reason: this.#lastFailOpenReason };
+    }
+    if (this.#activeOldestSourceObservedAtMs === undefined || nowMs - this.#activeOldestSourceObservedAtMs > this.#sourceMaxAgeMs) {
+      this.#feedAvailable = false;
+      this.#lastFailOpenReason = "source evidence became stale before routing decision";
       return { disposition: "LOCAL_PRIMARY_FALLBACK", source: "FAIL_OPEN", reason: this.#lastFailOpenReason };
     }
     const state = this.#states.get(intelligenceKey(routeId, transactionClass));
@@ -364,7 +378,7 @@ function entriesFromSummary(summary: IntelligenceSummaryInput, snapshotGenerated
   }));
 }
 
-function validateTemporalAndIdentitySemantics(snapshot: IntelligenceSnapshot, now: Date): string | undefined {
+function validateTemporalAndIdentitySemantics(snapshot: IntelligenceSnapshot, now: Date, sourceMaxAgeMs: number): string | undefined {
   const generatedAt = Date.parse(snapshot.generated_at);
   const expiresAt = Date.parse(snapshot.expires_at);
   const nowMs = now.getTime();
@@ -373,8 +387,16 @@ function validateTemporalAndIdentitySemantics(snapshot: IntelligenceSnapshot, no
   if (nowMs >= expiresAt) return "snapshot is stale";
   const keys = snapshot.route_intelligence.map(value => intelligenceKey(value.route_id, value.transaction_class));
   if (new Set(keys).size !== keys.length) return "duplicate route/class intelligence";
-  if (snapshot.route_intelligence.some(value => Date.parse(value.observed_at) > generatedAt)) return "route intelligence observed_at exceeds generated_at";
+  const observedTimes = snapshot.route_intelligence.map(value => Date.parse(value.observed_at));
+  if (observedTimes.some(value => !Number.isFinite(value))) return "route intelligence observed_at is invalid";
+  if (observedTimes.some(value => value > generatedAt)) return "route intelligence observed_at exceeds generated_at";
+  if (observedTimes.some(value => nowMs - value > sourceMaxAgeMs)) return "source evidence is stale";
   return undefined;
+}
+
+function oldestSourceObservedAt(snapshot: IntelligenceSnapshot): number | undefined {
+  const values = snapshot.route_intelligence.map(value => Date.parse(value.observed_at));
+  return values.length === 0 ? undefined : Math.min(...values);
 }
 
 async function withTimeout(operation: (signal: AbortSignal) => Promise<unknown>, timeoutMs: number): Promise<unknown> {

@@ -45,6 +45,23 @@ describe("versioned intelligence snapshot generation", () => {
 });
 
 describe("polling, TTL, hysteresis, override, and fail-open", () => {
+  test("fails open when a fresh publication republishes stale source evidence", async () => {
+    const republished = buildSnapshot(1, "ASYMMETRIC");
+    republished.route_intelligence.forEach(entry => { (entry as { observed_at: string }).observed_at = "2026-08-13T22:00:00.000Z"; });
+    const client = new IntelligenceSnapshotClient({ pollTimeoutMs: 50, sourceMaxAgeMs: 120_000, fetchSnapshot: async () => republished });
+    expect(await client.poll(now())).toEqual({ status: "FAIL_OPEN", reason: "source evidence is stale" });
+    expect(client.decision("route-a", "PROGRAM_X", now())).toMatchObject({ disposition: "LOCAL_PRIMARY_FALLBACK", source: "FAIL_OPEN" });
+  });
+
+  test("rechecks source age at routing time while publication TTL is still valid", async () => {
+    const snapshot = buildIntelligenceSnapshot({ version: 1, generatedAt, ttlMs: 600_000, summaries: [summary("ASYMMETRIC")] });
+    const client = new IntelligenceSnapshotClient({ pollTimeoutMs: 50, sourceMaxAgeMs: 120_000, fetchSnapshot: async () => snapshot });
+    expect(await client.poll(now())).toEqual({ status: "APPLIED", version: 1 });
+    expect(client.decision("route-a", "PROGRAM_X", new Date("2026-08-14T00:02:01.000Z"))).toEqual({
+      disposition: "LOCAL_PRIMARY_FALLBACK", source: "FAIL_OPEN", reason: "source evidence became stale before routing decision",
+    });
+  });
+
   test("requires two distinct avoid snapshots and does not count a repeated version twice", async () => {
     const v1 = buildSnapshot(1, "ASYMMETRIC");
     const v2 = buildSnapshot(2, "ASYMMETRIC");
