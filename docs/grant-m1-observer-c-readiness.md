@@ -90,8 +90,14 @@ until the process reaches the complete duration.
 ## Remaining qualification sequence
 
 1. Preserve the verified completed canary and frozen runtime.
-2. Complete assignment-correlated Devnet evidence and network attribution.
-3. Review formal admission and the remaining three-observer M1 requirements.
+2. Assignment-correlated Devnet evidence completed on 2026-09-06: a fresh
+   transaction reached `FINALIZED`, two logical readers supported the quorum,
+   the third reader error was retained, and the signed result was accepted by
+   the Collector. The public bundle is
+   `fixtures/grant-m1/observer-oracle-c-devnet-20260906`.
+3. Complete sanitized network attribution without retaining the VM address or
+   raw cloud identifiers.
+4. Review formal admission and the remaining three-observer M1 requirements.
 
 Oracle is distinct from AWS A and Google B, but shares the Collector provider
 and tenancy. This does not establish independent operators or upstream RPCs.

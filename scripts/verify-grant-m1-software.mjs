@@ -102,6 +102,9 @@ const requiredFiles = [
   "docs/grant-m1-observer-b-readiness.md",
   "fixtures/grant-m1/observer-google-b-network-20260904.json",
   "docs/grant-m1-observer-b-soak-closure-20260904.md",
+  "docs/grant-m1-observer-c-readiness.md",
+  "docs/grant-m1-observer-c-soak-closure-20260906.md",
+  "fixtures/grant-m1/observer-oracle-c-devnet-20260906/manifest.json",
 ];
 
 const contents = new Map(await Promise.all(requiredFiles.map(async path => [path, await readFile(path, "utf8")])));
@@ -192,6 +195,16 @@ if (observerBNetwork.schema_version !== "ObserverNetworkAttribution@0.1.0" ||
     observerBNetwork.upstream_rpc_independence_proven !== false ||
     observerBNetwork.provider !== "Google Cloud" || observerBNetwork.region !== "us-central1") {
   throw new Error("Observer B network evidence must retain both observed ASNs and its privacy/independence boundaries");
+}
+const observerCDevnet = JSON.parse(contents.get("fixtures/grant-m1/observer-oracle-c-devnet-20260906/manifest.json"));
+if (observerCDevnet.schema_version !== "GrantM1DevnetEvidenceBundle@0.1.0" ||
+    observerCDevnet.observer_id !== "observer-oracle-a1" ||
+    observerCDevnet.terminal_state !== "FINALIZED" ||
+    observerCDevnet.finalized_claim_count !== 2 || observerCDevnet.reader_error_count !== 1 ||
+    !observerCDevnet.claim_boundary.includes("not proof of reader operational independence") ||
+    !contents.get("docs/grant-m1-observer-c-soak-closure-20260906.md").includes("HOST_SOAK_VERIFIED_ADMISSION_PENDING") ||
+    !contents.get("docs/grant-m1-observer-c-soak-closure-20260906.md").includes("Milestone 2 has not started")) {
+  throw new Error("Observer C Devnet evidence or admission boundary is incomplete");
 }
 const rpcRouteAnchor = JSON.parse(contents.get("fixtures/grant-m1/alchemy-devnet-route-20260826.json"));
 if (rpcRouteAnchor.schema_version !== "GrantM1RpcRoutePreflight@0.1.0" ||

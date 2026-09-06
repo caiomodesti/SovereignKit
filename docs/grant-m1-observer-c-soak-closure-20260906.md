@@ -25,7 +25,27 @@ review. The sampler does not record delivery counters, so a continuous
 no-regression claim for those counters cannot be derived from these samples;
 the post-reboot and current snapshots both show three delivered and zero queued.
 
-The successful soak closes the host stability gate. Real assignment-correlated
-Devnet evidence, network attribution and remaining M1 acceptance requirements
-must still be checked before formal Observer C admission. Transport fixtures
-remain excluded from the ledger-observation KPI. Milestone 2 has not started.
+The successful soak closes the host stability gate. Transport fixtures remain
+excluded from the ledger-observation KPI. Milestone 2 has not started.
+
+## Devnet assignment checkpoint — 2026-09-06
+
+A fresh disposable transaction completed a real finalized Devnet lifecycle.
+The coordinator then issued a short-lived signed assignment for Observer C at
+observer sequence 3 without changing or restarting the qualified runtime.
+
+- Result: `b9f10559-86f4-4598-bc91-9d2482e6458b`.
+- Worker terminal state: `FINALIZED`.
+- Two logical readers returned successful finalized claims; the third reader's
+  explicit RPC error is retained.
+- The Observer signed and delivered the result; the Collector accepted it as
+  sequence 12.
+- Post-delivery readiness: ready, four delivered, zero queued.
+- The seven-file public bundle passed coordinator-signature, Observer-signature,
+  raw-poll, assignment, quorum, delivery, and Collector correlation checks at
+  `fixtures/grant-m1/observer-oracle-c-devnet-20260906`.
+
+This closes the real assignment-correlated Devnet gate for Observer C. It is
+one integration observation, not a matched comparative statistical unit and
+not proof of independent upstream RPC routes. Sanitized network attribution
+and formal admission review remain pending.
