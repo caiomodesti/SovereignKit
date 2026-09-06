@@ -53,14 +53,15 @@ export function evaluateObservationQuorum(input: {
   }
 
   const finalStatus = statusSnapshot(latestStatusByReader, required);
-  const latestHeightByReader = latestByReader(input.blockHeightEvents);
+  const pairedHeightEvents = input.blockHeightEvents.filter(height => hasPairedNegative(height, statusEvents));
+  const latestHeightByReader = latestByReader(pairedHeightEvents);
   const hasAnyLedgerObservation = statusEvents.some(event => event.data.status !== null);
   const expiredHeights = hasAnyLedgerObservation
     ? []
     : [...latestHeightByReader.values()].filter(
         event => BigInt(event.data.blockHeight) > input.lastValidBlockHeight,
       );
-  const expiredAt = findExpirationEvent(input.blockHeightEvents, input.lastValidBlockHeight, required, hasAnyLedgerObservation);
+  const expiredAt = findExpirationEvent(pairedHeightEvents, input.lastValidBlockHeight, required, hasAnyLedgerObservation);
 
   return {
     support: {
@@ -80,6 +81,16 @@ export function evaluateObservationQuorum(input: {
     ...(finalizedAt === undefined ? {} : { finalizedAt }),
     ...(expiredAt === undefined ? {} : { expiredAt }),
   };
+}
+
+function hasPairedNegative(height: ReaderBlockHeightEvent, statuses: readonly ReaderSignatureStatusEvent[]): boolean {
+  if (!height.data.observationId.endsWith(":height")) return false;
+  const statusId = `${height.data.observationId.slice(0, -7)}:status`;
+  return statuses.some(status => status.data.readerId === height.data.readerId &&
+    status.data.observationId === statusId && status.data.status === null &&
+    status.data.executionError === undefined && status.attemptId === height.attemptId &&
+    status.transactionId === height.transactionId && status.observerId === height.observerId &&
+    status.sequence < height.sequence);
 }
 
 function statusSnapshot(latest: ReadonlyMap<string, ReaderSignatureStatusEvent>, required: number): {
