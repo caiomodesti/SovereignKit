@@ -136,7 +136,10 @@ export class ObserverDeliveryRuntime {
           throw new Error("spool result observer identity does not match runtime key");
         }
         const signed = signProbeResult(unsigned, this.#keyPair);
-        if (this.#failedContent.get(entry.name) === signed.payload_hash) continue;
+        if (this.#failedContent.get(entry.name) === signed.payload_hash) {
+          cycleError = "collector rejection remains unresolved in the spool";
+          continue;
+        }
         const response = await fetch(new URL("/v0/probe-results", this.#config.collectorUrl), {
           method: "POST",
           headers: { "content-type": "application/json", "user-agent": "SovereignKit-Observer/0.1" },
@@ -146,7 +149,11 @@ export class ObserverDeliveryRuntime {
         const responseText = await response.text();
         const responseValue = parseCollectorResponse(responseText);
         if (!response.ok || (responseValue.status !== "ACCEPTED" && responseValue.status !== "DUPLICATE")) {
-          this.#failedContent.set(entry.name, signed.payload_hash);
+          // Retry transient failures on the next configured polling cycle.
+          // Only cache permanent client rejections, and keep them degraded.
+          if (response.status >= 400 && response.status < 500 && response.status !== 408 && response.status !== 429) {
+            this.#failedContent.set(entry.name, signed.payload_hash);
+          }
           throw new Error(`collector rejected ${entry.name} with HTTP ${response.status}: ${bounded(responseText)}`);
         }
         const deliveredAt = new Date().toISOString();
