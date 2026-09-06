@@ -23,6 +23,27 @@ afterEach(async () => {
 });
 
 describe("independent observation worker", () => {
+  test.each(["status-error", "conflicting-slots", "conflicting-errors", "prior-observation"])("does not overclaim with %s", async scenario => {
+    const directory = await temporaryDirectory();
+    const job = { ...makeJob(), observationDeadlineMs: 100 };
+    const readers: ObservationReader[] = [0, 1, 2].map(index => {
+      let calls = 0;
+      return {
+        readerId: `reader-${index}`,
+        getBlockHeight: async () => 101n,
+        getSignatureStatus: async () => {
+          calls += 1;
+          if (scenario === "status-error") throw new TypeError("unavailable");
+          if (scenario === "prior-observation") return calls === 1 && index === 0 ? { status: "processed", slot: 12n } : { status: null };
+          return { status: "finalized", slot: scenario === "conflicting-slots" ? BigInt(12 + index) : 12n,
+            ...(scenario === "conflicting-errors" ? { executionError: { code: index } } : {}) };
+        },
+      };
+    });
+    const result = await executeObservationAssignment({ ...assigned(job), readers, rawLogPath: join(directory, "raw.jsonl") });
+    expect(result.terminal_state).toBe("OBSERVATION_INCONCLUSIVE");
+  });
+
   test("derives FINALIZED from two real reader responses and produces schema-valid signable evidence", async () => {
     const directory = await temporaryDirectory();
     const job = makeJob();
