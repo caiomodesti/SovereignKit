@@ -1,0 +1,15 @@
+{
+  "schema_version": "GrantM1ExperimentPlan@0.1.0",
+  "plan_id": "00000000-0000-4000-8000-000000000000",
+  "issuer_id": "grant-coordinator",
+  "issuer_key_id": "assignment-key-1",
+  "issued_at": "2026-08-25T00:00:00.000Z",
+  "experiment_definition_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+  "observers": [
+    { "observer_id": "observer-provider-a", "expected_unit_ids": ["0000000000000000000000000000000000000000000000000000000000000000"] },
+    { "observer_id": "observer-provider-b", "expected_unit_ids": ["0000000000000000000000000000000000000000000000000000000000000000"] },
+    { "observer_id": "observer-provider-c", "expected_unit_ids": ["0000000000000000000000000000000000000000000000000000000000000000"] }
+  ],
+  "payload_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+  "issuer_signature": "replace-with-ed25519-signature-before-any-assignment-is-issued"
+}
