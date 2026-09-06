@@ -209,11 +209,17 @@ the endpoint origin. It never writes the credential-bearing path. The output is
 explicitly `SINGLE_LOGICAL_RPC_ROUTE_PREFLIGHT_ONLY`; it establishes neither an
 independent observer nor Milestone 1 acceptance.
 
+Before issuing any assignment, build `experiment-plan.json` from
+`experiment-plan.example.json` and sign it with the allowlisted assignment
+authority using `signGrantM1ExperimentPlan`. Keep the authority private key
+outside the evidence directory and repository. The immutable plan commits the
+experiment-definition hash and every expected unit ID per observer.
+
 Build `evidence-index.json` from `evidence-index.example.json` only after the
 files are final. Replace every zero hash with the SHA-256 of the referenced
 artifact and add one complete entry per observer. The acceptance verifier
 requires version `GrantM1EvidenceIndex@0.4.0`, observer-scoped paths, a committed
-expected unit count and sorted-unit-ID hash, valid
+expected unit count and sorted-unit-ID hash matching the signed plan, valid
 assignment and observer signatures, assignment-correlated raw polls,
 non-placeholder operational evidence, and no private-key markers.
 

@@ -127,7 +127,16 @@ test("rejects a truncated result set against its expected-unit commitment", asyn
   const index = JSON.parse(await readFile(path, "utf8"));
   index.observers[0].expected_unit_count = 2;
   await writeJson(path, index);
-  await assert.rejects(() => verifyGrantM1Acceptance(fixture.root), /does not match the expected-unit commitment/u);
+  await assert.rejects(() => verifyGrantM1Acceptance(fixture.root), /does not match the signed experiment plan/u);
+});
+
+test("rejects rewriting the signed experiment plan with the evidence index", async () => {
+  const fixture = await makeFixture();
+  const path = join(fixture.root, "experiment-plan.json");
+  const plan = JSON.parse(await readFile(path, "utf8"));
+  plan.observers[0].expected_unit_ids[0] = "f".repeat(64);
+  await writeJson(path, plan);
+  await assert.rejects(() => verifyGrantM1Acceptance(fixture.root), /plan payload hash is invalid/u);
 });
 
 async function makeFixture(options = {}) {
@@ -136,6 +145,7 @@ async function makeFixture(options = {}) {
   const observers = [];
   const allowlist = [];
   const indexEntries = [];
+  const planEntries = [];
   const assignmentAuthority = generateKeyPairSync("ed25519");
   const sharedObserverIdentity = options.reuseObserverKey ? generateKeyPairSync("ed25519") : undefined;
   const assignmentAuthorityEntry = {
@@ -180,6 +190,7 @@ async function makeFixture(options = {}) {
       probe_index: 0,
     };
     const unitId = sha256Hex([unit.experiment_id, unit.experiment_version, unit.phase, unit.observer_id, unit.route_id, unit.transaction_class, String(unit.probe_index)].join("\u001f"));
+    planEntries.push({ observer_id: observerId, expected_unit_ids: [unitId] });
     const terminalState = "FINALIZED";
     const claims = ["a", "b", "c"].map(reader => ({
       claim_id: `${observerId}-claim-${reader}`,
@@ -275,10 +286,22 @@ async function makeFixture(options = {}) {
     }
     indexEntries.push(indexEntry);
   }
+  const planUnsigned = {
+    schema_version: "GrantM1ExperimentPlan@0.1.0",
+    plan_id: "20000000-0000-4000-8000-000000000000",
+    issuer_id: assignmentAuthorityEntry.issuerId,
+    issuer_key_id: assignmentAuthorityEntry.keyId,
+    issued_at: "2026-08-25T00:58:00.000Z",
+    experiment_definition_hash: sha256Hex("experiment"),
+    observers: planEntries,
+  };
+  const planPayloadHash = sha256Hex(canonicalJson(planUnsigned));
+  const experimentPlan = { ...planUnsigned, payload_hash: planPayloadHash, issuer_signature: sign(null, Buffer.from(canonicalJson({ ...planUnsigned, payload_hash: planPayloadHash })), assignmentAuthority.privateKey).toString("base64url") };
   await Promise.all([
     writeJson(join(root, "observer-registry.json"), { schema_version: "GrantObserverRegistry@0.1.0", generated_at: "2026-08-25T01:00:00.000Z", observers }),
     writeJson(join(root, "allowlist.json"), allowlist),
     writeJson(join(root, "assignment-authorities.json"), [assignmentAuthorityEntry]),
+    writeJson(join(root, "experiment-plan.json"), experimentPlan),
     writeJson(join(root, "evidence-index.json"), { schema_version: "GrantM1EvidenceIndex@0.4.0", generated_at: "2026-08-25T01:00:00.000Z", observers: indexEntries }),
   ]);
   return { root };

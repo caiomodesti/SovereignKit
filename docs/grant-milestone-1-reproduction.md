@@ -126,6 +126,14 @@ ProbeResults against their public allowlists, correlates raw polls to both, and
 validates the minimum health, provider, restart, and failure-matrix content.
 Placeholder files cannot satisfy the gate.
 
+Acceptance also requires `experiment-plan.json`, signed by an allowlisted
+assignment authority before the first assignment is issued. It commits the
+experiment-definition hash and the complete unit-ID set for each observer.
+Assignments, results, and the evidence-index count/digest must all match this
+precommitment; rewriting the index together with a truncated result set cannot
+replace the authority signature. The example file is deliberately unsigned and
+cannot pass acceptance.
+
 ### Partial semantic hardening (not M1 acceptance)
 
 The verifier rejects shared Ed25519 keys, duplicated units, mismatched raw and

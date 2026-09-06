@@ -2,6 +2,7 @@ import { createHash, createPublicKey, verify } from "node:crypto";
 import { lstat, readFile, realpath } from "node:fs/promises";
 import { isAbsolute, relative, resolve, sep } from "node:path";
 import { evaluateReaderClaimQuorum } from "../../packages/probes/dist/reader-quorum.js";
+import { verifyGrantM1ExperimentPlan } from "../../packages/collector/dist/grant-m1-experiment-plan.js";
 
 const EVIDENCE_FIELDS = ["assignment_provenance", "signed_results", "raw_observations", "health_history", "restart_evidence", "provider_evidence", "failure_matrix"];
 const PRIVATE_MARKERS = ["privateKeyPkcs8Base64", "ObserverPrivateKey@", "AssignmentAuthorityPrivateKey@", "BEGIN PRIVATE KEY"];
@@ -13,6 +14,7 @@ export async function verifyGrantM1Acceptance(evidenceRootText) {
   const registry = await readJson(resolveInside("observer-registry.json"), "observer registry", evidenceRootReal);
   const allowlist = await readJson(resolveInside("allowlist.json"), "allowlist", evidenceRootReal);
   const assignmentAuthorities = await readJson(resolveInside("assignment-authorities.json"), "assignment authority allowlist", evidenceRootReal);
+  const experimentPlan = await readJson(resolveInside("experiment-plan.json"), "signed experiment plan", evidenceRootReal);
   const evidenceIndex = await readJson(resolveInside("evidence-index.json"), "evidence index", evidenceRootReal);
 
   if (registry.schema_version !== "GrantObserverRegistry@0.1.0" || !Array.isArray(registry.observers) || registry.observers.length < 3) throw new Error("Milestone 1 requires at least three registry observers");
@@ -49,6 +51,7 @@ export async function verifyGrantM1Acceptance(evidenceRootText) {
   if (!Array.isArray(assignmentAuthorities) || assignmentAuthorities.length === 0) throw new Error("assignment-authorities.json must contain at least one public authority");
   requireUnique(assignmentAuthorities.map(entry => `${entry.issuerId}\u001f${entry.keyId}`), "assignment authority issuer/key");
   const assignmentAuthoritiesByIdentity = new Map(assignmentAuthorities.map(entry => [`${entry.issuerId}\u001f${entry.keyId}`, validateAssignmentAuthorityEntry(entry)]));
+  const plannedUnitsByObserver = validateSignedExperimentPlan(experimentPlan, assignmentAuthoritiesByIdentity, observers);
 
   if (evidenceIndex.schema_version !== "GrantM1EvidenceIndex@0.4.0" || !Array.isArray(evidenceIndex.observers) || evidenceIndex.observers.length !== observers.length) throw new Error("evidence-index.json must use GrantM1EvidenceIndex@0.4.0 with exactly one entry per observer");
   requireUnique(evidenceIndex.observers.map(value => value.observer_id), "evidence index observer_id");
@@ -61,6 +64,10 @@ export async function verifyGrantM1Acceptance(evidenceRootText) {
     if (entry === undefined) throw new Error(`${observer.observer_id} has no evidence index entry`);
     if (!Number.isSafeInteger(entry.expected_unit_count) || entry.expected_unit_count < 1 || !/^[a-f0-9]{64}$/u.test(entry.expected_unit_ids_sha256)) {
       throw new Error(`${observer.observer_id} expected-unit commitment is invalid`);
+    }
+    const plannedUnitIds = plannedUnitsByObserver.get(observer.observer_id);
+    if (plannedUnitIds === undefined || entry.expected_unit_count !== plannedUnitIds.length || entry.expected_unit_ids_sha256 !== expectedUnitIdsHash(plannedUnitIds)) {
+      throw new Error(`${observer.observer_id} evidence index does not match the signed experiment plan`);
     }
     const expectedPrefix = `observers/${observer.observer_id}/`;
     const evidenceByField = new Map();
@@ -101,6 +108,9 @@ export async function verifyGrantM1Acceptance(evidenceRootText) {
       const authority = assignmentAuthoritiesByIdentity.get(`${assignment?.issuerId}\u001f${assignment?.issuerKeyId}`);
       if (authority === undefined) throw new Error(`${observer.observer_id} assignment authority is not allowlisted`);
       validateAssignment(assignment, observer, authority);
+      if (Date.parse(assignment.issuedAt) < Date.parse(experimentPlan.issued_at) || assignment.job.experimentDefinitionHash !== experimentPlan.experiment_definition_hash || !plannedUnitIds.includes(assignment.job.unit.unit_id)) {
+        throw new Error(`${observer.observer_id} assignment is outside the signed experiment plan`);
+      }
       if (assignmentsByResult.has(assignment.job.resultId)) throw new Error(`${observer.observer_id} has duplicate assignments for result ${assignment.job.resultId}`);
       assignmentsByResult.set(assignment.job.resultId, assignment);
       assignmentCount += 1;
@@ -152,6 +162,22 @@ function validateAssignment(assignment, observer, authority) {
   try { publicKey = createPublicKey({ key: Buffer.from(authority.publicKeySpkiBase64, "base64"), type: "spki", format: "der" }); }
   catch { throw new Error(`${observer.observer_id} assignment authority public key encoding is invalid`); }
   if (!verify(null, Buffer.from(canonicalJson({ ...unsigned, payloadHash })), publicKey, Buffer.from(issuerSignature, "base64url"))) throw new Error(`${observer.observer_id} assignment signature is invalid`);
+}
+
+function validateSignedExperimentPlan(plan, authorities, observers) {
+  const authority = authorities.get(`${plan?.issuer_id}\u001f${plan?.issuer_key_id}`);
+  if (authority === undefined) throw new Error("signed experiment plan authority is not allowlisted");
+  verifyGrantM1ExperimentPlan(plan, authority);
+  if (plan.observers.length !== observers.length) throw new Error("signed experiment plan must contain exactly the registry observers");
+  requireUnique(plan.observers.map(entry => entry?.observer_id), "experiment plan observer_id");
+  const registryIds = new Set(observers.map(observer => observer.observer_id));
+  const unitsByObserver = new Map();
+  for (const entry of plan.observers) {
+    if (!registryIds.has(entry.observer_id) || !Array.isArray(entry.expected_unit_ids) || entry.expected_unit_ids.length === 0 || entry.expected_unit_ids.some(id => !/^[a-f0-9]{64}$/u.test(id))) throw new Error("signed experiment plan observer units are invalid");
+    requireUnique(entry.expected_unit_ids, `${entry.observer_id} planned unit_id`);
+    unitsByObserver.set(entry.observer_id, [...entry.expected_unit_ids].sort());
+  }
+  return unitsByObserver;
 }
 
 function assignmentMatchesResult(assignment, result) {
