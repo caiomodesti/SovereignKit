@@ -17,7 +17,9 @@ Observatory outages do not become transaction outages. Intelligence takes effect
 
 - Snapshot versions are positive and monotonically increasing per feed. Repeating identical content at the same version is not a new hysteresis vote; different content at the same version is equivocation and fails open.
 - `generated_at` is feed generation time. Each entry's `observed_at` is explicit source-evidence time and must not be replaced by generation time.
-- A snapshot is fresh only while `generated_at <= now < expires_at`.
+- A snapshot is fresh only while `generated_at <= now < expires_at` and every
+  source `observed_at` remains inside the client's positive `sourceMaxAgeMs`
+  bound (five minutes by default). Publication time never refreshes source age.
 - Default hysteresis is two distinct avoid snapshots and three distinct healthy restore snapshots. Thresholds are explicit required fields, not schema defaults.
 - `ASYMMETRIC` avoids only `PROGRAM_X`; `DEGRADED` signals avoidance for both declared classes; `INSUFFICIENT_DATA` and `UNKNOWN` return to local policy.
 - Unavailable, timed-out, malformed, stale, future-dated, rolled-back, equivocated, unsupported, or missing intelligence yields `LOCAL_PRIMARY_FALLBACK`.

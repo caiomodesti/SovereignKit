@@ -10,6 +10,7 @@ Every snapshot carries:
 
 - schema and monotonic snapshot versions;
 - `generated_at` and `expires_at`;
+- each entry's independent source-evidence time in `observed_at`;
 - experimental classification policy and generator versions;
 - a hash over canonically ordered source summaries;
 - route/class intelligence with experiment, observer, window, configuration, source-input hash, sample count, source `observed_at`, evidence strength, and explicit hysteresis thresholds.
@@ -27,7 +28,13 @@ local policy -- 2 avoid versions --> avoid
 avoid        -- 3 healthy versions --> local policy
 ```
 
-The thresholds are carried by every entry and bounded to 1–100. Re-polling the same identical version restores feed availability after a transient transport failure but never increments a counter. Same-version different content, rollback, stale/future time, invalid schema, timeout, HTTP error, oversized payload, unknown route/class absence, or neutral evidence returns the disposition to local primary/fallback.
+The thresholds are carried by every entry and bounded to 1–100. The client also
+enforces `sourceMaxAgeMs` (five minutes by default) against every `observed_at`
+both when polling and when routing. A newly published snapshot therefore cannot
+make old source evidence fresh again. Applications may configure a shorter
+positive bound for their risk profile.
+
+Re-polling the same identical version restores feed availability after a transient transport failure but never increments a counter. Same-version different content, rollback, stale publication, stale source evidence, future time, invalid schema, timeout, HTTP error, oversized payload, unknown route/class absence, or neutral evidence returns the disposition to local primary/fallback.
 
 Fail-open affects the current disposition; prior counters remain in process memory so an identical still-fresh version can recover without fabricating an extra vote. Client restart loses those counters and starts from local policy.
 
