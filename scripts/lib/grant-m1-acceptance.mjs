@@ -1,6 +1,7 @@
 import { createHash, createPublicKey, verify } from "node:crypto";
 import { lstat, readFile, realpath } from "node:fs/promises";
 import { isAbsolute, relative, resolve, sep } from "node:path";
+import { evaluateReaderClaimQuorum } from "../../packages/probes/dist/reader-quorum.js";
 
 const EVIDENCE_FIELDS = ["assignment_provenance", "signed_results", "raw_observations", "health_history", "restart_evidence", "provider_evidence", "failure_matrix"];
 const PRIVATE_MARKERS = ["privateKeyPkcs8Base64", "ObserverPrivateKey@", "AssignmentAuthorityPrivateKey@", "BEGIN PRIVATE KEY"];
@@ -260,24 +261,8 @@ function validateRawClaims(claims, observerId) {
 
 export function deriveGrantM1TerminalFromClaims(claims, lastValidBlockHeight) {
   validateRawClaims(claims, "quorum");
-  const failedByError = new Map();
-  for (const claim of claims.filter(value => value.signature_status !== null && value.execution_error !== undefined)) {
-    if (!Number.isSafeInteger(claim.transaction_slot) || claim.transaction_slot < 0) continue;
-    const key = canonicalJson([claim.transaction_slot, claim.execution_error]);
-    const group = failedByError.get(key) ?? [];
-    group.push(claim);
-    failedByError.set(key, group);
-  }
-  const matchingFailures = [...failedByError.values()].find(group => group.length >= 2);
-  if (matchingFailures) return { terminal: "OBSERVED_EXECUTION_FAILED", supporting_claim_ids: matchingFailures.map(claim => claim.claim_id) };
-  const finalizedCandidates = claims.filter(claim => claim.signature_status === "finalized" && claim.execution_error === undefined && Number.isSafeInteger(claim.transaction_slot) && claim.transaction_slot >= 0);
-  const finalized = finalizedCandidates.find(claim => finalizedCandidates.filter(other => other.transaction_slot === claim.transaction_slot).length >= 2);
-  if (finalized) return { terminal: "FINALIZED", supporting_claim_ids: finalizedCandidates.filter(claim => claim.transaction_slot === finalized.transaction_slot).map(claim => claim.claim_id) };
-  if (Number.isSafeInteger(lastValidBlockHeight) && lastValidBlockHeight >= 0 && claims.every(claim => claim.signature_status === null)) {
-    const expired = claims.filter(claim => claim.signature_status === null && claim.reader_error === undefined && Number.isSafeInteger(claim.observed_block_height) && claim.observed_block_height > lastValidBlockHeight);
-    if (expired.length >= 2) return { terminal: "EXPIRED", supporting_claim_ids: expired.map(claim => claim.claim_id) };
-  }
-  return undefined;
+  const decision = evaluateReaderClaimQuorum(claims, lastValidBlockHeight);
+  return decision.terminal === undefined ? undefined : { terminal: decision.terminal, supporting_claim_ids: decision.supportingClaims.map(claim => claim.claim_id) };
 }
 
 function validateAllowlistEntry(entry) {

@@ -2,7 +2,7 @@ import { open, type FileHandle } from "node:fs/promises";
 
 import type { ObservationReader, SignatureStatusResult } from "@sovereignkit/telemetry";
 import type { ProbeResultUnit, ProbeSubmission, ReaderClaim, UnsignedProbeResult } from "@sovereignkit/probes";
-import { deriveIdempotencyKey, sha256Hex } from "@sovereignkit/probes";
+import { compatibleReaderClaims, evaluateReaderClaimQuorum, deriveIdempotencyKey, sha256Hex } from "@sovereignkit/probes";
 
 import {
   verifyObservationAssignment,
@@ -57,6 +57,7 @@ export async function executeObservationAssignment(input: {
   let latestClaims: readonly ReaderClaim[] = [];
   let terminal: UnsignedProbeResult["terminal_state"] | undefined;
   let supportingClaims: readonly ReaderClaim[] = [];
+  let hasLedgerObservation = false;
   try {
     while (terminal === undefined) {
       const observedAt = now().toISOString();
@@ -72,14 +73,15 @@ export async function executeObservationAssignment(input: {
         claims: latestClaims,
       };
       await appendAndSync(rawHandle, poll);
-      const decision = decide(latestClaims, job.submission.last_valid_block_height);
+      hasLedgerObservation ||= latestClaims.some(claim => claim.signature_status !== null);
+      const decision = evaluateReaderClaimQuorum(latestClaims, job.submission.last_valid_block_height, hasLedgerObservation);
       terminal = decision.terminal;
       supportingClaims = decision.supportingClaims;
       if (terminal !== undefined) break;
       if (Date.now() - startedAt >= job.observationDeadlineMs) {
-        const confirmed = latestClaims.filter(claim =>
+        const confirmed = compatibleReaderClaims(latestClaims.filter(claim =>
           (claim.signature_status === "confirmed" || claim.signature_status === "finalized") && claim.execution_error === undefined,
-        );
+        ));
         terminal = confirmed.length >= 2 ? "CONFIRMED" : "OBSERVATION_INCONCLUSIVE";
         supportingClaims = (confirmed.length >= 2 ? confirmed : latestClaims).slice(0, 2);
         break;
@@ -150,20 +152,6 @@ async function observeReader(reader: ObservationReader, job: ObservationJob, pol
     ...(height.ok ? { observed_block_height: Number(height.value) } : {}),
     ...(!status.ok || !height.ok ? { reader_error: [status.ok ? undefined : status.error, height.ok ? undefined : height.error].filter(Boolean).join("+") } : {}),
   };
-}
-
-function decide(claims: readonly ReaderClaim[], lastValidBlockHeight: number): {
-  readonly terminal?: UnsignedProbeResult["terminal_state"];
-  readonly supportingClaims: readonly ReaderClaim[];
-} {
-  const failed = claims.filter(claim => claim.signature_status !== null && claim.execution_error !== undefined);
-  if (failed.length >= 2) return { terminal: "OBSERVED_EXECUTION_FAILED", supportingClaims: failed.slice(0, 2) };
-  const finalized = claims.filter(claim => claim.signature_status === "finalized" && claim.execution_error === undefined);
-  if (finalized.length >= 2) return { terminal: "FINALIZED", supportingClaims: finalized.slice(0, 2) };
-  const hasLedgerObservation = claims.some(claim => claim.signature_status !== null);
-  const expired = claims.filter(claim => claim.observed_block_height !== undefined && claim.observed_block_height > lastValidBlockHeight);
-  if (!hasLedgerObservation && expired.length >= 2) return { terminal: "EXPIRED", supportingClaims: expired.slice(0, 2) };
-  return { supportingClaims: [] };
 }
 
 type CaptureResult<Value> = { readonly ok: true; readonly value: Value } | { readonly ok: false; readonly error: string };
