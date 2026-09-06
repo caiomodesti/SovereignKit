@@ -18,6 +18,9 @@ Started: 2026-08-24
 - hardened Linux systemd templates and loopback Collector TLS-edge pattern;
 - versioned observer topology registry contract;
 - tests for delivery, replay avoidance, health, plaintext rejection, and identity mismatch.
+- deterministic recovery tests for transport timeout and a lost HTTP
+  acknowledgement after durable Collector commit; restart converges through an
+  idempotent `DUPLICATE` response, while pre-scan readiness now fails closed.
 - local end-to-end software test from reader evidence through signing, delivery, validation, and durable collection;
 - hardened oneshot observation-job service feeding the long-running signing/delivery runtime.
 - retained local readiness run against Agave 4.0.0 at runtime commit `450eb90576307b1975ed525c8365406c25749913`: a real System Program transaction reached `FINALIZED`, produced 280 raw polls, was signed and durably collected, and survived Collector replay;

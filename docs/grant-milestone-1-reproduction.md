@@ -145,8 +145,10 @@ are rejected until an independently verifiable deadline contract is available.
 The expected-unit count and digest detect truncation against an unchanged index;
 they are not an independently authenticated experiment plan. Provider assertions
 and signed evidence alone do not prove operational independence or RPC truth.
-Runtime quorum unification, delivery retry validation, independently anchored
-completeness, and the final real-provider failure matrix remain separate gates.
+Runtime quorum unification, authenticated-plan completeness, source-age
+validation, and local delivery recovery are now implemented and covered by
+deterministic tests. Public anchoring and the final real-provider failure matrix
+remain separate gates.
 Passing these local tests must not be reported as formal M1 acceptance.
 
 ## Current validation record
