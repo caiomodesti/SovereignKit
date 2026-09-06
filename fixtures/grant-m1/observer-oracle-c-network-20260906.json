@@ -1,0 +1,28 @@
+{
+  "schema_version": "ObserverNetworkAttribution@0.1.0",
+  "observer_id": "observer-oracle-a1",
+  "captured_at": "2026-09-06T12:43:03.711Z",
+  "provider": "Oracle Cloud Infrastructure",
+  "region": "sa-saopaulo-1",
+  "availability_domain_hash_sha256": "963a9169406bd5ed21329fc285ad2a1c8db605b6604037fa97c66da5563cb3b5",
+  "instance_fingerprint_sha256": "4114e15e2751b8c3749e2576c7f947126695c2b401c4b04ff882be6cee83077e",
+  "source": "RIPE RIS via RIPEstat network-info",
+  "address_source": "pinned SSH known-host entry",
+  "asns": [
+    31898
+  ],
+  "asn_holders": [
+    {
+      "asn": 31898,
+      "holder": "ORACLE-BMC-31898 - Oracle Corporation",
+      "announced": true
+    }
+  ],
+  "holder_source": "RIPEstat as-overview",
+  "ip_omitted": true,
+  "prefix_omitted": true,
+  "raw_instance_identifier_omitted": true,
+  "single_origin_asserted": true,
+  "upstream_rpc_independence_proven": false,
+  "scope": "Current network announcement associated with the VM public address and hashed OCI metadata; not proof of independent operators or upstream RPC readers. Every returned ASN is retained."
+}

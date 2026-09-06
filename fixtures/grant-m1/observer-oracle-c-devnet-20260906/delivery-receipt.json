@@ -1,0 +1,10 @@
+{
+  "delivery_sequence": 3,
+  "delivered_at": "2026-09-06T12:33:17.999Z",
+  "result_id": "b9f10559-86f4-4598-bc91-9d2482e6458b",
+  "idempotency_key": "63f8e1e02f42c69a477ae2dad862720d02b2b3caddc11e4d07cb669bf5aa588d",
+  "payload_hash": "36132eb962f8a0375962baf2822c28812b3fce749b4e96b28521c8861a6634d2",
+  "observer_signature": "9Qrwrg6Y5D_43ZPkz4f1tfTHNtrPM9QOvmZtOSyVgV9DicyBpoGHZ0TEczdumphYn5U5o44gRqE-CCSOn1N_DQ",
+  "collector_status": "ACCEPTED",
+  "collector_origin": "https://collector.sovereignkit.org"
+}

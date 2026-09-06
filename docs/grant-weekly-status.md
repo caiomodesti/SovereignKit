@@ -326,3 +326,22 @@ Its E4 preflight, replay, reboot, and soak claims are retracted. See the
   checkpoint is `2026-09-05T23:07:46.230Z`.
 - Status is `PROVISIONED_CANARY_IN_PROGRESS`. Observer C, Milestone 1 and
   Milestone 2 remain unaccepted pending final evidence and formal gates.
+
+## 2026-09-06 — Observer C soak and Devnet gates passed
+
+- Independently recomputed the completed 86,400-second Oracle Observer C soak:
+  1,441/1,441 samples, 100% coverage/readiness, zero identity mismatches, and a
+  maximum 60,074 ms gap. The post-soak frozen-runtime preflight also passed.
+- Sent a fresh disposable Devnet transaction and retained its complete
+  finalized lifecycle. A short-lived coordinator assignment was executed by
+  Observer C at sequence 3 without replacing or restarting its runtime.
+- The Collector accepted the signed `FINALIZED` result exactly once. Two
+  logical readers supported finalization and the third reader RPC error remains
+  visible. The seven-file public evidence bundle passes all signature, hash,
+  correlation, quorum, and receipt checks.
+- OCI metadata plus RIPEstat corroborated the VM region and announced Oracle
+  AS31898 without retaining the public address, prefix, or raw cloud IDs.
+- The complete host package admits Observer C as `OBSERVER_HOST_QUALIFIED` when
+  merged. Shared logical RPC routes are not claimed as independent upstream
+  infrastructure. Aggregate M1 acceptance remains pending and Milestone 2 has
+  not started.

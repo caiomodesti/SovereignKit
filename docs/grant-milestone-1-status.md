@@ -1,6 +1,6 @@
 # Grant Milestone 1 status
 
-Status: `IMPLEMENTED_NOT_VALIDATED`
+Status: `THREE_HOSTS_QUALIFIED_M1_ACCEPTANCE_PENDING`
 Milestone: Independent Observation Layer
 Started: 2026-08-24
 
@@ -92,18 +92,30 @@ Started: 2026-08-24
   deliveries. Independent recomputation matched the raw JSONL SHA-256 and a
   post-soak preflight reverified all 180 manifest files. The sanitized anchor
   is `fixtures/grant-m1/observer-aws-a-runtime-requalification-20260902.json`.
+- Google Observer B passed its frozen-runtime preflight and recovery drills,
+  complete 24-hour host soak, real signed Devnet assignment, Collector
+  acceptance, and sanitized provider/region/ASN attribution. It is qualified as
+  an M1 host; shared RPC routes remain explicitly non-independent upstreams.
+- Oracle Observer C passed the same host, recovery, soak, signed Devnet, and
+  Collector gates on its frozen runtime. OCI metadata plus RIPEstat corroborate
+  region `sa-saopaulo-1` and announced Oracle AS31898 without retaining its
+  address or raw resource identifiers. It is qualified as an M1 host when the
+  reviewed evidence record is merged.
 
 ## Not yet implemented or validated
 
-- two remaining external observer deployments;
-- two remaining external identities and the final three-observer merged public
-  allowlist;
-- corroborated provider, instance, region, and ASN evidence;
-- cross-host real Solana observation;
-- external restart, delay, outage, malformed, unknown-observer, stale, disagreement, quorum-available, and quorum-unavailable evidence;
-- real-host recovery exercises and complete external hostile audit.
+- reconcile all three host identities and provider evidence into the versioned
+  observer registry and hashed evidence index;
+- complete AWS provider/region/ASN corroboration in the same sanitized format;
+- recompute raw-to-derived results and close the semantic failure-matrix gaps,
+  including authoritative expiration and quorum-available/unavailable cases;
+- run the final external hostile audit and fail-closed M1 acceptance verifier.
 
-The current runtime MUST NOT be described as a completed independent observation layer. The software and deployment path are implemented, locally integrated, and rehearsed against a real local validator, so the status remains `IMPLEMENTED_NOT_VALIDATED`. It remains below `ACCEPTED` until three real external deployments, real remote reader calls, failure/recovery exercises, and independence evidence are retained.
+The three observer hosts are deployed and qualified, but the current system
+MUST NOT yet be described as a completed independent observation layer. It
+remains below `ACCEPTED` until the aggregate registry/evidence package,
+provider corroboration, semantic failure matrix, and hostile acceptance review
+all pass.
 
 The Alchemy preflight proves that one external logical Devnet RPC route is usable
 from the operator environment. It is neither an observer host nor independence
