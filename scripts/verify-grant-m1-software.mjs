@@ -238,7 +238,8 @@ if (rpcRouteAnchor.schema_version !== "GrantM1RpcRoutePreflight@0.1.0" ||
     rpcRouteAnchor.milestone_acceptance_effect !== "NONE") {
   throw new Error("Alchemy Devnet route anchor must remain sanitized and make no observer-independence claim");
 }
-if (!contents.get("scripts/lib/grant-m1-acceptance.mjs").includes("GrantM1EvidenceIndex@0.3.0") ||
+if (!contents.get("scripts/lib/grant-m1-acceptance.mjs").includes("GrantM1EvidenceIndex@0.4.0") ||
+    !contents.get("scripts/lib/grant-m1-acceptance.mjs").includes("expected-unit commitment") ||
     !contents.get("scripts/lib/grant-m1-acceptance.mjs").includes("assignment signature is invalid") ||
     !contents.get("scripts/lib/grant-m1-acceptance.mjs").includes("signed result signature is invalid")) {
   throw new Error("grant acceptance verifier must enforce the hashed v0.3 evidence contract plus assignment and observer signatures");

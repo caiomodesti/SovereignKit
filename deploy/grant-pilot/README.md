@@ -212,7 +212,8 @@ independent observer nor Milestone 1 acceptance.
 Build `evidence-index.json` from `evidence-index.example.json` only after the
 files are final. Replace every zero hash with the SHA-256 of the referenced
 artifact and add one complete entry per observer. The acceptance verifier
-requires version `GrantM1EvidenceIndex@0.3.0`, observer-scoped paths, valid
+requires version `GrantM1EvidenceIndex@0.4.0`, observer-scoped paths, a committed
+expected unit count and sorted-unit-ID hash, valid
 assignment and observer signatures, assignment-correlated raw polls,
 non-placeholder operational evidence, and no private-key markers.
 

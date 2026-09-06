@@ -113,13 +113,28 @@ node scripts/verify-grant-m1-acceptance.mjs --evidence <sanitized-m1-evidence-di
 
 It requires at least three unique observer identities, providers, provider-account fingerprints, and sanitized instances; corroborated independence; matching allowlist identities; and existing signed-result, raw-observation, health, restart, provider, and failure-matrix evidence for every observer.
 
-The external evidence index uses `GrantM1EvidenceIndex@0.3.0`. Every artifact
+The external evidence index uses `GrantM1EvidenceIndex@0.4.0`. Every artifact
 reference contains a relative observer-scoped path and a lowercase SHA-256.
 Acceptance recomputes each hash, rejects empty or oversized files, searches for
 private-key markers, cryptographically verifies signed assignments and
 ProbeResults against their public allowlists, correlates raw polls to both, and
 validates the minimum health, provider, restart, and failure-matrix content.
 Placeholder files cannot satisfy the gate.
+
+### Partial semantic hardening (not M1 acceptance)
+
+The verifier rejects shared Ed25519 keys, duplicated units, mismatched raw and
+signed claims, discontinuous poll indices, and incompatible transaction slots.
+Expiration requires two successful negative reads beyond the validity height
+and no ledger observation in the retained poll history. Deadline-only results
+are rejected until an independently verifiable deadline contract is available.
+
+The expected-unit count and digest detect truncation against an unchanged index;
+they are not an independently authenticated experiment plan. Provider assertions
+and signed evidence alone do not prove operational independence or RPC truth.
+Runtime quorum unification, delivery retry validation, independently anchored
+completeness, and the final real-provider failure matrix remain separate gates.
+Passing these local tests must not be reported as formal M1 acceptance.
 
 ## Current validation record
 

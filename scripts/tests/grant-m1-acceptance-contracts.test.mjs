@@ -5,7 +5,7 @@ import { dirname, join } from "node:path";
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { verifyGrantM1Acceptance } from "../lib/grant-m1-acceptance.mjs";
+import { deriveGrantM1TerminalFromClaims, verifyGrantM1Acceptance } from "../lib/grant-m1-acceptance.mjs";
 
 test("accepts three cryptographically valid and content-correlated observers", async () => {
   const fixture = await makeFixture();
@@ -74,13 +74,70 @@ test("rejects private observer key material even with a valid file hash", async 
   await assert.rejects(() => verifyGrantM1Acceptance(fixture.root), /forbidden private key material/u);
 });
 
-async function makeFixture() {
+test("rejects three observer identities backed by one actual public key", async () => {
+  const fixture = await makeFixture({ reuseObserverKey: true });
+  await assert.rejects(() => verifyGrantM1Acceptance(fixture.root), /observer public key values must be non-empty and unique/u);
+});
+
+test("rejects a signed terminal state that is not recomputed from raw polls", async () => {
+  const fixture = await makeFixture();
+  const path = "observers/observer-a/raw-observations.jsonl";
+  const poll = JSON.parse((await readFile(join(fixture.root, path), "utf8")).trim());
+  poll.claims = poll.claims.map(claim => ({ ...claim, signature_status: null, observed_block_height: 1 }));
+  await writeJsonl(join(fixture.root, path), [poll]);
+  await updateReferenceHash(fixture.root, path);
+  await assert.rejects(() => verifyGrantM1Acceptance(fixture.root), /raw-to-derived terminal state/u);
+});
+
+test("rejects EXPIRED when negative status lookups contain reader errors", async () => {
+  const claims = ["a", "b", "c"].map(reader => ({
+    claim_id: `claim-${reader}`,
+    reader_id: `reader-${reader}`,
+    observed_at: "2026-08-25T01:00:00.000Z",
+    signature_status: null,
+    observed_block_height: 2_000,
+    reader_error: "RPC",
+  }));
+  assert.equal(deriveGrantM1TerminalFromClaims(claims, 1_500), undefined);
+  const clean = claims.map(({ reader_error: _readerError, ...claim }) => claim);
+  assert.equal(deriveGrantM1TerminalFromClaims(clean, 1_500)?.terminal, "EXPIRED");
+  const conflicting = clean.map((claim, index) => index === 2 ? { ...claim, signature_status: "processed" } : claim);
+  assert.equal(deriveGrantM1TerminalFromClaims(conflicting, 1_500), undefined);
+  assert.throws(() => deriveGrantM1TerminalFromClaims([clean[0], clean[0], clean[2]], 1_500), /unique reader claims/u);
+});
+
+test("requires compatible slots and equivalent execution errors for terminal quorum", () => {
+  const claims = [0, 1, 2].map(index => ({
+    claim_id: `claim-${index}`, reader_id: `reader-${index}`,
+    observed_at: "2026-08-25T01:00:00.000Z",
+    signature_status: "finalized", transaction_slot: 900 + index,
+  }));
+  assert.equal(deriveGrantM1TerminalFromClaims(claims, 1500), undefined);
+  const aligned = claims.map(claim => ({ ...claim, transaction_slot: 900 }));
+  assert.equal(deriveGrantM1TerminalFromClaims(aligned, 1500)?.terminal, "FINALIZED");
+  const failures = aligned.map((claim, index) => ({ ...claim, execution_error: { code: index } }));
+  assert.equal(deriveGrantM1TerminalFromClaims(failures, 1500), undefined);
+  failures[1].execution_error = { code: 0 };
+  assert.equal(deriveGrantM1TerminalFromClaims(failures, 1500)?.terminal, "OBSERVED_EXECUTION_FAILED");
+});
+
+test("rejects a truncated result set against its expected-unit commitment", async () => {
+  const fixture = await makeFixture();
+  const path = join(fixture.root, "evidence-index.json");
+  const index = JSON.parse(await readFile(path, "utf8"));
+  index.observers[0].expected_unit_count = 2;
+  await writeJson(path, index);
+  await assert.rejects(() => verifyGrantM1Acceptance(fixture.root), /does not match the expected-unit commitment/u);
+});
+
+async function makeFixture(options = {}) {
   const root = await mkdtemp(join(tmpdir(), "sovereignkit-m1-acceptance-"));
   const runtimeCommit = "a".repeat(40);
   const observers = [];
   const allowlist = [];
   const indexEntries = [];
   const assignmentAuthority = generateKeyPairSync("ed25519");
+  const sharedObserverIdentity = options.reuseObserverKey ? generateKeyPairSync("ed25519") : undefined;
   const assignmentAuthorityEntry = {
     issuerId: "grant-coordinator",
     keyId: "assignment-key-1",
@@ -94,7 +151,7 @@ async function makeFixture() {
     const providerLabel = `Provider ${suffix.toUpperCase()}`;
     const region = `region-${suffix}`;
     const asn = 64_500 + position;
-    const identity = generateKeyPairSync("ed25519");
+    const identity = sharedObserverIdentity ?? generateKeyPairSync("ed25519");
     const publicKeySpkiBase64 = identity.publicKey.export({ type: "spki", format: "der" }).toString("base64");
     const providerPath = `observers/${observerId}/provider.json`;
     observers.push({
@@ -123,7 +180,27 @@ async function makeFixture() {
       probe_index: 0,
     };
     const unitId = sha256Hex([unit.experiment_id, unit.experiment_version, unit.phase, unit.observer_id, unit.route_id, unit.transaction_class, String(unit.probe_index)].join("\u001f"));
-    const claims = ["a", "b", "c"].map(reader => ({ claim_id: `${observerId}-claim-${reader}`, reader_id: `reader-${reader}` }));
+    const terminalState = "FINALIZED";
+    const claims = ["a", "b", "c"].map(reader => ({
+      claim_id: `${observerId}-claim-${reader}`,
+      reader_id: `reader-${reader}`,
+      observed_at: "2026-08-25T01:00:00.000Z",
+      signature_status: "finalized",
+      transaction_slot: 900,
+      observed_block_height: 1_000,
+    }));
+    const submission = {
+      attempt_id: sha256Hex(`${observerId}-attempt-1`),
+      attempt_number: 1,
+      outcome: "RPC_ACKNOWLEDGED",
+      blockhash: "1".repeat(32),
+      blockhash_context_slot: 1,
+      last_valid_block_height: 1_500,
+      serialized_size_bytes: 215,
+      created_at: "2026-08-25T00:59:30.000Z",
+      submitted_at: "2026-08-25T00:59:31.000Z",
+      response_at: "2026-08-25T00:59:32.000Z",
+    };
     const unsigned = {
       schema_version: "0.1.0",
       result_id: `00000000-0000-4000-8000-00000000000${position}`,
@@ -134,10 +211,10 @@ async function makeFixture() {
       unit: { ...unit, unit_id: unitId },
       experiment_definition_hash: sha256Hex("experiment"),
       signature: transactionSignature,
-      submission: { attempt_number: 1, outcome: "RPC_ACKNOWLEDGED" },
+      submission,
       reader_claims: claims,
-      quorum_decisions: [{ decision_type: "FINALIZED", supporting_claim_ids: claims.slice(0, 2).map(claim => claim.claim_id), quorum_rule_version: "ObservationQuorum@0.1.0" }],
-      terminal_state: "FINALIZED",
+      quorum_decisions: [{ decision_type: terminalState, supporting_claim_ids: claims.slice(0, 2).map(claim => claim.claim_id), quorum_rule_version: "ObservationQuorum@0.1.0" }],
+      terminal_state: terminalState,
       observer_wall_time: "2026-08-25T01:00:00.000Z",
     };
     const payloadHash = sha256Hex(canonicalJson(unsigned));
@@ -178,14 +255,18 @@ async function makeFixture() {
         observed_at: "2026-08-25T01:00:00.000Z",
         observer_id: observerId,
         signature: transactionSignature,
-        claims: ["a", "b", "c"].map(reader => ({ reader_id: `reader-${reader}` })),
+        claims,
       }], true],
       health_history: [`observers/${observerId}/health.json`, { observer_id: observerId, ready: true, clock_synchronized: true, key_permissions_verified: true }, false],
       restart_evidence: [`observers/${observerId}/restart.json`, { observer_id: observerId, restart_succeeded: true, recovered_records: 1 }, false],
       provider_evidence: [providerPath, { observer_id: observerId, provider_label: providerLabel, region, network_asn: asn, corroborated: true }, false],
       failure_matrix: [`observers/${observerId}/failure-matrix.json`, { observer_id: observerId, cases: { HEALTHY: "PASS", DELAYED: "PASS", ONE_READER_UNAVAILABLE: "PASS", TWO_READERS_UNAVAILABLE: "PASS", DISAGREEMENT: "PASS" } }, false],
     };
-    const indexEntry = { observer_id: observerId };
+    const indexEntry = {
+      observer_id: observerId,
+      expected_unit_count: 1,
+      expected_unit_ids_sha256: sha256Hex(unitId),
+    };
     for (const [field, [path, value, jsonl]] of Object.entries(files)) {
       await mkdir(dirname(join(root, path)), { recursive: true });
       if (jsonl) await writeJsonl(join(root, path), value);
@@ -198,7 +279,7 @@ async function makeFixture() {
     writeJson(join(root, "observer-registry.json"), { schema_version: "GrantObserverRegistry@0.1.0", generated_at: "2026-08-25T01:00:00.000Z", observers }),
     writeJson(join(root, "allowlist.json"), allowlist),
     writeJson(join(root, "assignment-authorities.json"), [assignmentAuthorityEntry]),
-    writeJson(join(root, "evidence-index.json"), { schema_version: "GrantM1EvidenceIndex@0.3.0", generated_at: "2026-08-25T01:00:00.000Z", observers: indexEntries }),
+    writeJson(join(root, "evidence-index.json"), { schema_version: "GrantM1EvidenceIndex@0.4.0", generated_at: "2026-08-25T01:00:00.000Z", observers: indexEntries }),
   ]);
   return { root };
 }

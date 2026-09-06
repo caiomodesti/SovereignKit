@@ -41,6 +41,7 @@ export async function verifyGrantM1Acceptance(evidenceRootText) {
 
   if (!Array.isArray(allowlist) || allowlist.length !== observers.length) throw new Error("allowlist.json must contain exactly one identity for every registry observer");
   requireUnique(allowlist.map(entry => `${entry.observerId}\u001f${entry.keyId}`), "allowlist observer/key");
+  requireUnique(allowlist.map(entry => publicKeyFingerprint(entry, "observer allowlist")), "observer public key");
   const allowlistByIdentity = new Map(allowlist.map(entry => [`${entry.observerId}\u001f${entry.keyId}`, validateAllowlistEntry(entry)]));
   for (const observer of observers) if (!allowlistByIdentity.has(`${observer.observer_id}\u001f${observer.key_id}`)) throw new Error(`${observer.observer_id} has no matching public allowlist identity`);
 
@@ -48,7 +49,7 @@ export async function verifyGrantM1Acceptance(evidenceRootText) {
   requireUnique(assignmentAuthorities.map(entry => `${entry.issuerId}\u001f${entry.keyId}`), "assignment authority issuer/key");
   const assignmentAuthoritiesByIdentity = new Map(assignmentAuthorities.map(entry => [`${entry.issuerId}\u001f${entry.keyId}`, validateAssignmentAuthorityEntry(entry)]));
 
-  if (evidenceIndex.schema_version !== "GrantM1EvidenceIndex@0.3.0" || !Array.isArray(evidenceIndex.observers) || evidenceIndex.observers.length !== observers.length) throw new Error("evidence-index.json must use GrantM1EvidenceIndex@0.3.0 with exactly one entry per observer");
+  if (evidenceIndex.schema_version !== "GrantM1EvidenceIndex@0.4.0" || !Array.isArray(evidenceIndex.observers) || evidenceIndex.observers.length !== observers.length) throw new Error("evidence-index.json must use GrantM1EvidenceIndex@0.4.0 with exactly one entry per observer");
   requireUnique(evidenceIndex.observers.map(value => value.observer_id), "evidence index observer_id");
   const seenPaths = new Set();
   let signedResultCount = 0;
@@ -57,6 +58,9 @@ export async function verifyGrantM1Acceptance(evidenceRootText) {
   for (const observer of observers) {
     const entry = evidenceIndex.observers.find(value => value.observer_id === observer.observer_id);
     if (entry === undefined) throw new Error(`${observer.observer_id} has no evidence index entry`);
+    if (!Number.isSafeInteger(entry.expected_unit_count) || entry.expected_unit_count < 1 || !/^[a-f0-9]{64}$/u.test(entry.expected_unit_ids_sha256)) {
+      throw new Error(`${observer.observer_id} expected-unit commitment is invalid`);
+    }
     const expectedPrefix = `observers/${observer.observer_id}/`;
     const evidenceByField = new Map();
     for (const field of EVIDENCE_FIELDS) {
@@ -77,10 +81,18 @@ export async function verifyGrantM1Acceptance(evidenceRootText) {
     const signedResults = evidenceByField.get("signed_results").flatMap(artifact => artifact.records.map(record => unwrapSignedResult(record, artifact.reference.path)));
     if (!signedResults.some(result => result.terminal_state === "FINALIZED")) throw new Error(`${observer.observer_id} has no FINALIZED signed result`);
     const resultSignatures = new Set();
+    const resultIds = new Set();
+    const unitIds = new Set();
     for (const result of signedResults) {
       validateSignedResult(result, observer, allowlistEntry);
+      if (resultIds.has(result.result_id) || unitIds.has(result.unit.unit_id)) throw new Error(`${observer.observer_id} contains duplicate result or unit IDs`);
+      resultIds.add(result.result_id);
+      unitIds.add(result.unit.unit_id);
       resultSignatures.add(result.signature);
       signedResultCount += 1;
+    }
+    if (unitIds.size !== entry.expected_unit_count || expectedUnitIdsHash(unitIds) !== entry.expected_unit_ids_sha256) {
+      throw new Error(`${observer.observer_id} signed result set does not match the expected-unit commitment`);
     }
     const assignments = evidenceByField.get("assignment_provenance").flatMap(artifact => artifact.records);
     const assignmentsByResult = new Map();
@@ -99,13 +111,24 @@ export async function verifyGrantM1Acceptance(evidenceRootText) {
       if (observedAt < Date.parse(assignment.issuedAt) || observedAt > Date.parse(assignment.expiresAt)) throw new Error(`${observer.observer_id} result was produced outside its assignment window`);
     }
     const rawRecords = evidenceByField.get("raw_observations").flatMap(artifact => artifact.records);
+    const rawByAssignment = new Map();
     for (const poll of rawRecords) {
       const assignment = assignments.find(value => value.assignmentId === poll?.assignment_id && value.payloadHash === poll?.assignment_payload_hash);
       if (poll?.schema_version !== "RawObservationPoll@0.2.0" || assignment === undefined || poll.observer_id !== observer.observer_id || !resultSignatures.has(poll.signature) || assignment.job.signature !== poll.signature) throw new Error(`${observer.observer_id} raw observation is not correlated to an indexed signed assignment and result`);
       if (!Array.isArray(poll.claims) || new Set(poll.claims.map(claim => claim?.reader_id)).size !== 3) throw new Error(`${observer.observer_id} raw observation must contain three unique logical readers`);
+      const group = rawByAssignment.get(assignment.assignmentId) ?? [];
+      group.push(poll);
+      rawByAssignment.set(assignment.assignmentId, group);
       rawPollCount += 1;
     }
     if (rawRecords.length === 0) throw new Error(`${observer.observer_id} has no raw observation polls`);
+    if (assignments.length !== signedResults.length) throw new Error(`${observer.observer_id} assignments and signed results are not one-to-one`);
+    for (const result of signedResults) {
+      const assignment = assignmentsByResult.get(result.result_id);
+      const polls = rawByAssignment.get(assignment.assignmentId);
+      if (!Array.isArray(polls) || polls.length === 0) throw new Error(`${observer.observer_id} signed result has no assignment-correlated raw polls`);
+      validateRawToDerived(assignment, polls, result, observer.observer_id);
+    }
     validateObserverScopedRecords(evidenceByField, observer);
   }
   return { status: "PASS", gate: "GRANT_M1_ACCEPTANCE", observers: observers.length, runtimeCommit: [...runtimeCommits][0], assignments: assignmentCount, signedResults: signedResultCount, rawPolls: rawPollCount, evidenceRoot };
@@ -187,6 +210,76 @@ function validateSignedResultStructure(result, observerId) {
   if (supportingReaders.size < 2 || terminal.supporting_claim_ids.some(id => !claims.has(id))) throw new Error(`${observerId} signed result does not contain a valid 2/3 quorum`);
 }
 
+function validateRawToDerived(assignment, rawPolls, result, observerId) {
+  const polls = [...rawPolls].sort((left, right) => left.poll_index - right.poll_index);
+  let previousObservedAt = Number.NEGATIVE_INFINITY;
+  let terminal;
+  let terminalClaims;
+  let hasLedgerObservation = false;
+  for (let index = 0; index < polls.length; index += 1) {
+    const poll = polls[index];
+    if (poll.poll_index !== index) throw new Error(`${observerId} raw-to-derived poll sequence is incomplete or duplicated`);
+    const observedAt = Date.parse(poll.observed_at);
+    if (!Number.isFinite(observedAt) || observedAt < previousObservedAt || observedAt < Date.parse(assignment.issuedAt) || observedAt > Date.parse(assignment.expiresAt)) {
+      throw new Error(`${observerId} raw-to-derived poll time is invalid`);
+    }
+    previousObservedAt = observedAt;
+    validateRawClaims(poll.claims, observerId);
+    hasLedgerObservation ||= poll.claims.some(claim => claim.signature_status !== null);
+    const decision = deriveGrantM1TerminalFromClaims(poll.claims, assignment.job.submission?.last_valid_block_height);
+    if (decision?.terminal === "EXPIRED" && hasLedgerObservation) throw new Error(`${observerId} expiration contradicts an earlier ledger observation`);
+    if (decision !== undefined) {
+      if (index !== polls.length - 1) throw new Error(`${observerId} raw-to-derived evidence continues after a terminal quorum`);
+      terminal = decision;
+      terminalClaims = poll.claims;
+    }
+  }
+  const finalClaims = terminalClaims ?? polls.at(-1).claims;
+  if (terminal === undefined) throw new Error(`${observerId} raw-to-derived terminal state lacks a terminal quorum; deadline-only evidence is not supported`);
+  const derived = terminal;
+  if (derived.terminal !== result.terminal_state || canonicalJson(finalClaims) !== canonicalJson(result.reader_claims)) {
+    throw new Error(`${observerId} raw-to-derived terminal state or final claims do not match the signed result`);
+  }
+  if (!Array.isArray(result.quorum_decisions) || result.quorum_decisions.length !== 1) throw new Error(`${observerId} raw-to-derived result must contain exactly one quorum decision`);
+  const recordedSupport = [...result.quorum_decisions[0].supporting_claim_ids].sort();
+  const derivedSupport = derived.supporting_claim_ids.slice(0, 2).sort();
+  if (canonicalJson(recordedSupport) !== canonicalJson(derivedSupport)) throw new Error(`${observerId} raw-to-derived supporting claims do not match the recomputed quorum`);
+}
+
+function validateRawClaims(claims, observerId) {
+  if (!Array.isArray(claims) || claims.length !== 3 || new Set(claims.map(claim => claim?.reader_id)).size !== 3 || new Set(claims.map(claim => claim?.claim_id)).size !== 3) {
+    throw new Error(`${observerId} raw-to-derived poll must contain three unique reader claims and claim IDs`);
+  }
+  for (const claim of claims) {
+    if (typeof claim.claim_id !== "string" || !claim.claim_id.trim() || typeof claim.reader_id !== "string" || !claim.reader_id.trim() || ![null, "processed", "confirmed", "finalized"].includes(claim.signature_status)) {
+      throw new Error(`${observerId} raw-to-derived reader claim is malformed`);
+    }
+    if (!Number.isFinite(Date.parse(claim.observed_at))) throw new Error(`${observerId} raw-to-derived reader claim time is invalid`);
+  }
+}
+
+export function deriveGrantM1TerminalFromClaims(claims, lastValidBlockHeight) {
+  validateRawClaims(claims, "quorum");
+  const failedByError = new Map();
+  for (const claim of claims.filter(value => value.signature_status !== null && value.execution_error !== undefined)) {
+    if (!Number.isSafeInteger(claim.transaction_slot) || claim.transaction_slot < 0) continue;
+    const key = canonicalJson([claim.transaction_slot, claim.execution_error]);
+    const group = failedByError.get(key) ?? [];
+    group.push(claim);
+    failedByError.set(key, group);
+  }
+  const matchingFailures = [...failedByError.values()].find(group => group.length >= 2);
+  if (matchingFailures) return { terminal: "OBSERVED_EXECUTION_FAILED", supporting_claim_ids: matchingFailures.map(claim => claim.claim_id) };
+  const finalizedCandidates = claims.filter(claim => claim.signature_status === "finalized" && claim.execution_error === undefined && Number.isSafeInteger(claim.transaction_slot) && claim.transaction_slot >= 0);
+  const finalized = finalizedCandidates.find(claim => finalizedCandidates.filter(other => other.transaction_slot === claim.transaction_slot).length >= 2);
+  if (finalized) return { terminal: "FINALIZED", supporting_claim_ids: finalizedCandidates.filter(claim => claim.transaction_slot === finalized.transaction_slot).map(claim => claim.claim_id) };
+  if (Number.isSafeInteger(lastValidBlockHeight) && lastValidBlockHeight >= 0 && claims.every(claim => claim.signature_status === null)) {
+    const expired = claims.filter(claim => claim.signature_status === null && claim.reader_error === undefined && Number.isSafeInteger(claim.observed_block_height) && claim.observed_block_height > lastValidBlockHeight);
+    if (expired.length >= 2) return { terminal: "EXPIRED", supporting_claim_ids: expired.map(claim => claim.claim_id) };
+  }
+  return undefined;
+}
+
 function validateAllowlistEntry(entry) {
   requireIdentifier(entry?.observerId, "allowlist observerId");
   requireIdentifier(entry?.keyId, "allowlist keyId");
@@ -195,6 +288,16 @@ function validateAllowlistEntry(entry) {
   const validUntilMs = entry.validUntil === undefined ? Number.POSITIVE_INFINITY : Date.parse(entry.validUntil);
   if (!Number.isFinite(validFromMs) || Number.isNaN(validUntilMs) || validUntilMs <= validFromMs) throw new Error(`${entry.observerId} allowlist validity interval is invalid`);
   return { ...entry, validFromMs, validUntilMs };
+}
+
+function publicKeyFingerprint(entry, label) {
+  try {
+    const publicKey = createPublicKey({ key: Buffer.from(entry?.publicKeySpkiBase64 ?? "", "base64"), type: "spki", format: "der" });
+    if (publicKey.asymmetricKeyType !== "ed25519") throw new Error("Ed25519 required");
+    return sha256Hex(publicKey.export({ type: "spki", format: "der" }));
+  } catch {
+    throw new Error(`${label} public key encoding is invalid`);
+  }
 }
 
 function validateAssignmentAuthorityEntry(entry) {
@@ -263,3 +366,4 @@ function requireSanitizedFingerprint(value, label) { if (typeof value !== "strin
 function rejectPlaceholder(value, label) { if (typeof value !== "string" || value.length === 0 || /replace|redacted|example|invalid|unknown|tbd/iu.test(value)) throw new Error(`${label} contains a placeholder`); }
 function normalized(value) { return typeof value === "string" ? value.trim().toLowerCase() : ""; }
 function sha256Hex(value) { return createHash("sha256").update(value).digest("hex"); }
+function expectedUnitIdsHash(unitIds) { return sha256Hex([...unitIds].sort().join("\n")); }
