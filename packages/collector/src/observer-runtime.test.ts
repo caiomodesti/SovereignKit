@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { createServer } from "node:http";
 import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -26,6 +27,50 @@ afterEach(async () => {
 });
 
 describe("deployable observer delivery runtime", () => {
+  test.each([503, 429, 408, 200, 400])("preserves delivery and readiness semantics after HTTP %s", async (failureStatus) => {
+    const directory = await mkdtemp(join(tmpdir(), "sovereignkit-observer-retry-"));
+    temporaryDirectories.push(directory);
+    const keyPair = generateObserverKeyPair("observer-provider-a", "key-1");
+    const keyPath = join(directory, "observer-private.json");
+    const spoolDirectory = join(directory, "spool");
+    const deliveryLogPath = join(directory, "delivery.jsonl");
+    await writeFile(keyPath, JSON.stringify(exportObserverPrivateKey(keyPair)), { mode: 0o600 });
+    let requests = 0;
+    const server = createServer((request, response) => {
+      request.resume();
+      requests += 1;
+      response.writeHead(requests < 3 ? failureStatus : 200, { "content-type": "application/json" });
+      response.end(requests < 3 ? (failureStatus === 200 ? "invalid json" : JSON.stringify({ status: "UNAVAILABLE" })) : JSON.stringify({ status: "ACCEPTED" }));
+    });
+    servers.push(server);
+    const port = await listen(server);
+    const runtime = await ObserverDeliveryRuntime.open({
+      schemaVersion: "ObserverRuntimeConfig@0.1.0", privateKeyPath: keyPath,
+      spoolDirectory, deliveryLogPath, collectorUrl: `http://127.0.0.1:${port}`,
+      pollIntervalMs: 250, requestTimeoutMs: 1000, heartbeatIntervalMs: 1000,
+      healthHost: "127.0.0.1", healthPort: 0,
+    });
+    try {
+      await writeFile(join(spoolDirectory, "1.json"), JSON.stringify(makeUnsignedResult(keyPair.observerId, keyPair.keyId)));
+      for (let index = 0; index < 2; index += 1) {
+        await runtime.scanOnce();
+        expect(runtime.snapshot()).toMatchObject({ status: "degraded", queuedCount: 1, deliveredCount: 0 });
+      }
+      await runtime.scanOnce();
+      if (failureStatus === 400) {
+        expect(requests).toBe(1);
+        expect(runtime.snapshot()).toMatchObject({ status: "degraded", queuedCount: 1, deliveredCount: 0 });
+        expect(await readFile(deliveryLogPath, "utf8")).toBe("");
+        return;
+      }
+      expect(requests).toBe(3);
+      expect(runtime.snapshot()).toMatchObject({ status: "ready", queuedCount: 0, deliveredCount: 1 });
+      await runtime.scanOnce();
+      expect(requests).toBe(3);
+      expect((await readFile(deliveryLogPath, "utf8")).trim().split("\n")).toHaveLength(1);
+    } finally { await runtime.close(); }
+  });
+
   test("signs a queued result, durably records delivery, exposes health, and does not redeliver it", async () => {
     const directory = await mkdtemp(join(tmpdir(), "sovereignkit-observer-runtime-"));
     temporaryDirectories.push(directory);
