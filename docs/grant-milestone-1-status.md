@@ -24,6 +24,10 @@ Started: 2026-08-24
 - Ed25519-authenticated intelligence envelopes for hosted HTTP consumption;
   the SDK requires an explicit publisher allowlist and rejects altered content,
   unknown or ambiguous keys, invalid signatures, and key-window violations.
+- a common Observer runtime candidate built from reviewed `main`, with all 192
+  manifest hashes recomputed, lockfile installation verified, and packaged
+  runtime modules loaded locally. It is not deployed or host-qualified; see
+  `docs/grant-m1-common-observer-runtime-20260906.md`.
 - local end-to-end software test from reader evidence through signing, delivery, validation, and durable collection;
 - hardened oneshot observation-job service feeding the long-running signing/delivery runtime.
 - retained local readiness run against Agave 4.0.0 at runtime commit `450eb90576307b1975ed525c8365406c25749913`: a real System Program transaction reached `FINALIZED`, produced 280 raw polls, was signed and durably collected, and survived Collector replay;
