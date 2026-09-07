@@ -6,6 +6,7 @@ const requiredFiles = [
   "docs/project-master-plan.md",
   "docs/grant-pilot-plan.md",
   "docs/grant-milestone-1-status.md",
+  "docs/grant-m1-common-observer-runtime-20260906.md",
   "docs/adr/ADR-021-fail-closed-host-preflight.md",
   "docs/adr/ADR-022-grant-pilot-infrastructure-topology.md",
   "docs/adr/ADR-023-zero-cost-first-grant-pilot.md",
