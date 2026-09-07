@@ -40,7 +40,7 @@ Fail-open affects the current disposition; prior counters remain in process memo
 
 ## HTTP boundary
 
-`createHttpSnapshotFetcher` performs bounded `GET` polling, requires JSON content, disables caching/redirects, streams with a 512 KiB default cap, and uses the client's abort timeout. Plain HTTP is restricted to loopback; other hosts require HTTPS. Transport security does not authenticate snapshot authorship by itself, and signed snapshots are not implemented in v0.1.
+`createHttpSnapshotFetcher` performs bounded `GET` polling, requires JSON content, disables caching/redirects, streams with a 512 KiB default cap, and uses the client's abort timeout. Plain HTTP is restricted to loopback; other hosts require HTTPS. The HTTP adapter requires a non-empty publisher allowlist and accepts only an Ed25519-signed envelope whose canonical snapshot hash, publisher identity, key identity, signature, and key-validity interval all verify. Direct custom fetch functions remain an explicit application trust boundary and must not be described as authenticated transport.
 
 ## Routing boundary
 

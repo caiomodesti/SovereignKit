@@ -3,6 +3,8 @@ import { createHash } from "node:crypto";
 import { Ajv2020, type ErrorObject, type ValidateFunction } from "ajv/dist/2020.js";
 import * as addFormatsModule from "ajv-formats";
 
+import { verifySignedIntelligenceSnapshot, type IntelligencePublisherAllowlistEntry } from "./intelligence-signing.js";
+
 const addFormats = addFormatsModule.default as unknown as (ajv: Ajv2020) => Ajv2020;
 
 export const INTELLIGENCE_SCHEMA_VERSION = "0.1.0" as const;
@@ -156,7 +158,10 @@ export interface SnapshotPollResult {
   readonly reason?: string;
 }
 
-export function createHttpSnapshotFetcher(url: string, options: { readonly maxBodyBytes?: number } = {}): (signal: AbortSignal) => Promise<unknown> {
+export function createHttpSnapshotFetcher(url: string, options: {
+  readonly trustedPublishers: readonly IntelligencePublisherAllowlistEntry[];
+  readonly maxBodyBytes?: number;
+}): (signal: AbortSignal) => Promise<unknown> {
   const endpoint = new URL(url);
   if (endpoint.protocol !== "http:" && endpoint.protocol !== "https:") throw new Error("snapshot URL must use HTTP or HTTPS");
   if (endpoint.username.length > 0 || endpoint.password.length > 0) throw new Error("snapshot URL must not contain credentials");
@@ -165,6 +170,7 @@ export function createHttpSnapshotFetcher(url: string, options: { readonly maxBo
   }
   const maxBodyBytes = options.maxBodyBytes ?? 512 * 1024;
   if (!Number.isSafeInteger(maxBodyBytes) || maxBodyBytes < 1) throw new Error("maxBodyBytes must be a positive safe integer");
+  if (options.trustedPublishers.length === 0) throw new Error("trustedPublishers must not be empty");
   return async signal => {
     const response = await fetch(endpoint, {
       method: "GET",
@@ -198,7 +204,7 @@ export function createHttpSnapshotFetcher(url: string, options: { readonly maxBo
       offset += chunk.byteLength;
     }
     try {
-      return JSON.parse(new TextDecoder().decode(bytes)) as unknown;
+      return verifySignedIntelligenceSnapshot(JSON.parse(new TextDecoder().decode(bytes)) as unknown, options.trustedPublishers);
     } catch {
       throw new Error("snapshot endpoint returned invalid JSON");
     }

@@ -21,6 +21,10 @@ Observatory outages do not become transaction outages. Intelligence takes effect
   source `observed_at` remains inside the client's positive `sourceMaxAgeMs`
   bound (five minutes by default). Publication time never refreshes source age.
 - Default hysteresis is two distinct avoid snapshots and three distinct healthy restore snapshots. Thresholds are explicit required fields, not schema defaults.
+- Hosted HTTP snapshots use `SignedIntelligenceSnapshot@0.1.0`: the SDK
+  verifies an Ed25519 publisher signature over the canonical snapshot hash
+  against an explicit allowlist and requires the complete snapshot lifetime to
+  fit inside the publisher key-validity interval.
 - `ASYMMETRIC` avoids only `PROGRAM_X`; `DEGRADED` signals avoidance for both declared classes; `INSUFFICIENT_DATA` and `UNKNOWN` return to local policy.
 - Unavailable, timed-out, malformed, stale, future-dated, rolled-back, equivocated, unsupported, or missing intelligence yields `LOCAL_PRIMARY_FALLBACK`.
 - A developer override may explicitly select `AVOID` or `LOCAL_PRIMARY_FALLBACK`; a throwing override fails open.

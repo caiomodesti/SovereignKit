@@ -13,11 +13,33 @@ import {
   type IntelligenceSnapshot,
   type IntelligenceSummaryInput,
 } from "./intelligence.js";
+import { generateIntelligencePublisherKeyPair, signIntelligenceSnapshot, verifySignedIntelligenceSnapshot } from "./intelligence-signing.js";
 
 const addFormats = addFormatsModule.default as unknown as (ajv: Ajv2020) => Ajv2020;
 const generatedAt = new Date("2026-08-14T00:00:00.000Z");
+const publisher = generateIntelligencePublisherKeyPair("sovereignkit-feed", "key-1");
+const trustedPublishers = [{
+  publisherId: publisher.publisherId,
+  keyId: publisher.keyId,
+  publicKeySpkiBase64: publisher.publicKeySpkiBase64,
+  validFrom: "2026-01-01T00:00:00.000Z",
+  validUntil: "2027-01-01T00:00:00.000Z",
+}];
 
 describe("versioned intelligence snapshot generation", () => {
+  test("authenticates snapshot authorship and rejects tampering, unknown keys, and invalid key windows", () => {
+    const snapshot = buildSnapshot(1, "HEALTHY");
+    const signed = signIntelligenceSnapshot(snapshot, publisher);
+    expect(verifySignedIntelligenceSnapshot(signed, trustedPublishers)).toEqual(snapshot);
+    expect(() => verifySignedIntelligenceSnapshot({ ...signed, snapshot: { ...snapshot, input_hash: "f".repeat(64) } }, trustedPublishers)).toThrow(/hash mismatch/);
+    const impostor = generateIntelligencePublisherKeyPair(publisher.publisherId, publisher.keyId);
+    expect(() => verifySignedIntelligenceSnapshot(signed, [{ ...trustedPublishers[0]!, publicKeySpkiBase64: impostor.publicKeySpkiBase64 }])).toThrow(/signature is invalid/);
+    expect(() => verifySignedIntelligenceSnapshot(signed, [{ ...trustedPublishers[0]!, validUntil: "2026-08-14T00:00:30.000Z" }])).toThrow(/key validity/);
+    expect(() => verifySignedIntelligenceSnapshot({ ...signed, unexpected: true }, trustedPublishers)).toThrow(/envelope is invalid/);
+    expect(() => verifySignedIntelligenceSnapshot(signed, [...trustedPublishers, ...trustedPublishers])).toThrow(/allowlist is ambiguous/);
+    expect(() => createHttpSnapshotFetcher("https://example.com/snapshot", { trustedPublishers: [] })).toThrow(/must not be empty/);
+  });
+
   test("is deterministic, provenance-complete, and valid against the committed schema", async () => {
     const first = buildSnapshot(1, "ASYMMETRIC");
     const second = buildSnapshot(1, "ASYMMETRIC");
@@ -38,8 +60,8 @@ describe("versioned intelligence snapshot generation", () => {
     expect(() => buildIntelligenceSnapshot({ version: 1, generatedAt, ttlMs: 0, summaries: [summary("HEALTHY")] })).toThrow(/ttlMs/);
     expect(() => buildIntelligenceSnapshot({ version: 1, generatedAt, ttlMs: 60_000, summaries: [summary("HEALTHY")], avoidAfterConsecutiveSnapshots: 0 })).toThrow(/threshold/);
     expect(() => buildIntelligenceSnapshot({ version: 1, generatedAt, ttlMs: 60_000, summaries: [summary("HEALTHY"), summary("HEALTHY")] })).toThrow(/duplicate/);
-    expect(() => createHttpSnapshotFetcher("http://example.com/snapshot")).toThrow(/HTTPS/);
-    expect(() => createHttpSnapshotFetcher("https://user:secret@example.com/snapshot")).toThrow(/credentials/);
+    expect(() => createHttpSnapshotFetcher("http://example.com/snapshot", { trustedPublishers })).toThrow(/HTTPS/);
+    expect(() => createHttpSnapshotFetcher("https://user:secret@example.com/snapshot", { trustedPublishers })).toThrow(/credentials/);
     expect(() => buildIntelligenceSnapshot({ version: 1, generatedAt, ttlMs: 60_000, summaries: [{ ...summary("HEALTHY"), cells: [{ routeId: "route-a", transactionClass: "MATCHED_CONTROL", completeCount: -1 }, summary("HEALTHY").cells[1]!] }] })).toThrow(/generated snapshot is invalid/);
   });
 });
@@ -196,7 +218,7 @@ describe("polling, TTL, hysteresis, override, and fail-open", () => {
   });
 
   test("polls a bounded JSON snapshot over HTTP", async () => {
-    const snapshot = buildSnapshot(1, "HEALTHY");
+    const snapshot = signIntelligenceSnapshot(buildSnapshot(1, "HEALTHY"), publisher);
     const server = createServer((request, response) => {
       expect(request.method).toBe("GET");
       expect(request.headers.accept).toBe("application/json");
@@ -207,7 +229,7 @@ describe("polling, TTL, hysteresis, override, and fail-open", () => {
     const address = server.address();
     if (address === null || typeof address === "string") throw new Error("test server did not bind TCP");
     try {
-      const client = new IntelligenceSnapshotClient({ pollTimeoutMs: 1_000, fetchSnapshot: createHttpSnapshotFetcher(`http://127.0.0.1:${address.port}/snapshot`) });
+      const client = new IntelligenceSnapshotClient({ pollTimeoutMs: 1_000, fetchSnapshot: createHttpSnapshotFetcher(`http://127.0.0.1:${address.port}/snapshot`, { trustedPublishers }) });
       expect(await client.poll(now())).toEqual({ status: "APPLIED", version: 1 });
     } finally {
       await new Promise<void>((resolveClose, reject) => server.close(error => error === undefined ? resolveClose() : reject(error)));
@@ -223,7 +245,7 @@ describe("polling, TTL, hysteresis, override, and fail-open", () => {
     const address = server.address();
     if (address === null || typeof address === "string") throw new Error("test server did not bind TCP");
     try {
-      const client = new IntelligenceSnapshotClient({ pollTimeoutMs: 1_000, fetchSnapshot: createHttpSnapshotFetcher(`http://127.0.0.1:${address.port}/snapshot`, { maxBodyBytes: 10 }) });
+      const client = new IntelligenceSnapshotClient({ pollTimeoutMs: 1_000, fetchSnapshot: createHttpSnapshotFetcher(`http://127.0.0.1:${address.port}/snapshot`, { maxBodyBytes: 10, trustedPublishers }) });
       expect(await client.poll(now())).toMatchObject({ status: "FAIL_OPEN", reason: /body limit/ });
     } finally {
       await new Promise<void>((resolveClose, reject) => server.close(error => error === undefined ? resolveClose() : reject(error)));

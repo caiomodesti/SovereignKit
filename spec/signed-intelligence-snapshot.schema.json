@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sovereignkit.org/spec/signed-intelligence-snapshot.schema.json",
+  "title": "SovereignKit Signed Intelligence Snapshot v0.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["envelope_version", "publisher_id", "publisher_key_id", "snapshot_hash", "publisher_signature", "snapshot"],
+  "properties": {
+    "envelope_version": { "const": "SignedIntelligenceSnapshot@0.1.0" },
+    "publisher_id": { "type": "string", "minLength": 1, "maxLength": 160 },
+    "publisher_key_id": { "type": "string", "minLength": 1, "maxLength": 160 },
+    "snapshot_hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "publisher_signature": { "type": "string", "minLength": 1 },
+    "snapshot": { "$ref": "intelligence-snapshot.schema.json" }
+  }
+}
