@@ -51,6 +51,8 @@ const requiredFiles = [
   "spec/grant-observer-registry.schema.json",
   "spec/grant-m1-evidence-index.schema.json",
   "spec/grant-m1-experiment-plan.schema.json",
+  "spec/signed-intelligence-snapshot.schema.json",
+  "packages/sdk/src/intelligence-signing.ts",
   "packages/collector/src/observation-worker.ts",
   "packages/collector/src/observation-assignment.ts",
   "packages/collector/src/observer-runtime.ts",

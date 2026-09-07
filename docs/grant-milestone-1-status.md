@@ -21,6 +21,9 @@ Started: 2026-08-24
 - deterministic recovery tests for transport timeout and a lost HTTP
   acknowledgement after durable Collector commit; restart converges through an
   idempotent `DUPLICATE` response, while pre-scan readiness now fails closed.
+- Ed25519-authenticated intelligence envelopes for hosted HTTP consumption;
+  the SDK requires an explicit publisher allowlist and rejects altered content,
+  unknown or ambiguous keys, invalid signatures, and key-window violations.
 - local end-to-end software test from reader evidence through signing, delivery, validation, and durable collection;
 - hardened oneshot observation-job service feeding the long-running signing/delivery runtime.
 - retained local readiness run against Agave 4.0.0 at runtime commit `450eb90576307b1975ed525c8365406c25749913`: a real System Program transaction reached `FINALIZED`, produced 280 raw polls, was signed and durably collected, and survived Collector replay;
