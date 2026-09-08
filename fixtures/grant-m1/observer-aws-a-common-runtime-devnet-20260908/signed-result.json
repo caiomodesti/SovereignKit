@@ -1,0 +1,77 @@
+{
+  "schema_version": "0.1.0",
+  "result_id": "1be24e26-8697-470b-a09e-184304726c9e",
+  "idempotency_key": "6b0fc6123bb2577d4835a7b9eb1a0bf7e3d80a48bd543e901083dd10f2757cef",
+  "observer_id": "observer-aws-a",
+  "observer_key_id": "aws-a-key-2026-08-31",
+  "observer_sequence": 2026090601,
+  "unit": {
+    "experiment_id": "grant-m1-devnet-observer-qualification",
+    "experiment_version": "1",
+    "phase": "healthy",
+    "observer_id": "observer-aws-a",
+    "route_id": "alchemy-solana-devnet",
+    "transaction_class": "MATCHED_CONTROL",
+    "probe_index": 20260906,
+    "unit_id": "517bf36a754b794e1952b414363ac73c5be5c56361edd04cde4ace096a016c84"
+  },
+  "experiment_definition_hash": "a4ebe30dede4cbf15d204da37d6c2fb477bcc5c057eff9ed2f6616fe473606f9",
+  "signature": "2qtGtgSQ9DQ3kCgcoY6AXoeiGpzbhKLxyA5CPqZd2Zuw1kD6JbmHCRJ8UkLD5xDArtf1CbvLS7e4VxbYh5paeHRf",
+  "submission": {
+    "attempt_id": "563c40ebfb837703adb587f30a0cc4254ef8871e7892f33ca1c7ff5824c6a2c1",
+    "attempt_number": 1,
+    "outcome": "RPC_ACKNOWLEDGED",
+    "blockhash": "3Gm1GsZABjbr77jb9Z61hJaubxKmDis1bbFvyR1EF6LD",
+    "blockhash_context_slot": 494325784,
+    "last_valid_block_height": 482103248,
+    "serialized_size_bytes": 215,
+    "created_at": "2026-09-07T00:36:10.339Z",
+    "submitted_at": "2026-09-07T00:36:10.340Z",
+    "response_at": "2026-09-07T00:36:10.481Z"
+  },
+  "reader_claims": [
+    {
+      "claim_id": "517bf36a754b794e1952b414363ac73c5be5c56361edd04cde4ace096a016c84:poll-0:grant-m1-reader-1",
+      "reader_id": "grant-m1-reader-1",
+      "observed_at": "2026-09-07T00:40:18.276Z",
+      "signature_status": "finalized",
+      "rpc_context_slot": 494327278,
+      "transaction_slot": 494325788,
+      "observed_block_height": 482104577
+    },
+    {
+      "claim_id": "517bf36a754b794e1952b414363ac73c5be5c56361edd04cde4ace096a016c84:poll-0:grant-m1-reader-2",
+      "reader_id": "grant-m1-reader-2",
+      "observed_at": "2026-09-07T00:40:18.276Z",
+      "signature_status": "finalized",
+      "rpc_context_slot": 494327277,
+      "transaction_slot": 494325788,
+      "observed_block_height": 482104577
+    },
+    {
+      "claim_id": "517bf36a754b794e1952b414363ac73c5be5c56361edd04cde4ace096a016c84:poll-0:grant-m1-reader-3",
+      "reader_id": "grant-m1-reader-3",
+      "observed_at": "2026-09-07T00:40:18.276Z",
+      "signature_status": "finalized",
+      "rpc_context_slot": 494327277,
+      "transaction_slot": 494325788,
+      "reader_error": "RPC"
+    }
+  ],
+  "quorum_decisions": [
+    {
+      "decision_id": "bd16456fb85e0c50bc3d3652e2a107ae156f4080a11b2b66b9bcca393816dfe4",
+      "decision_type": "FINALIZED",
+      "supporting_claim_ids": [
+        "517bf36a754b794e1952b414363ac73c5be5c56361edd04cde4ace096a016c84:poll-0:grant-m1-reader-1",
+        "517bf36a754b794e1952b414363ac73c5be5c56361edd04cde4ace096a016c84:poll-0:grant-m1-reader-2"
+      ],
+      "decided_at": "2026-09-07T00:40:19.014Z",
+      "quorum_rule_version": "ObservationQuorum@0.1.0"
+    }
+  ],
+  "terminal_state": "FINALIZED",
+  "observer_wall_time": "2026-09-07T00:40:19.014Z",
+  "payload_hash": "9dc9bc24fb4ef55c2d5bcd43837ca855b8d5888b6b601b7324835ff23d4c5210",
+  "observer_signature": "1Y_hvciE2RMplEfpH2cRpZzp6aEX3gNJuKR5OIRBJLjBiI9ru1DmJlUe-mEGymdM7LB3ZYwKO3ambXBiwnkqBQ"
+}

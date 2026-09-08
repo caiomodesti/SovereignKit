@@ -1,0 +1,7 @@
+{
+  "observerId": "observer-aws-a",
+  "keyId": "aws-a-key-2026-08-31",
+  "publicKeySpkiBase64": "MCowBQYDK2VwAyEArtqzDn772nGSAcsUBO7MP31LiFP6c7+Skzx5Ra7EJGU=",
+  "validFrom": "2026-08-31T00:00:00Z",
+  "validUntil": "2027-02-28T23:59:59.999Z"
+}
