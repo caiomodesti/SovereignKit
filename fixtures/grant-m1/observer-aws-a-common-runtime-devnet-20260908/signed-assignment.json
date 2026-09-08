@@ -1,0 +1,44 @@
+{
+  "schemaVersion": "ObservationAssignment@0.1.0",
+  "assignmentId": "dab9be7c-8021-487f-85a0-483201555ba0",
+  "issuerId": "grant-coordinator",
+  "issuerKeyId": "assignment-key-2026-09",
+  "issuedAt": "2026-09-07T00:32:05.6892851Z",
+  "expiresAt": "2026-09-07T00:57:05.6990804Z",
+  "job": {
+    "schemaVersion": "ObservationJob@0.1.0",
+    "resultId": "1be24e26-8697-470b-a09e-184304726c9e",
+    "observerId": "observer-aws-a",
+    "observerKeyId": "aws-a-key-2026-08-31",
+    "observerSequence": 2026090601,
+    "unit": {
+      "experiment_id": "grant-m1-devnet-observer-qualification",
+      "experiment_version": "1",
+      "phase": "healthy",
+      "observer_id": "observer-aws-a",
+      "route_id": "alchemy-solana-devnet",
+      "transaction_class": "MATCHED_CONTROL",
+      "probe_index": 20260906,
+      "unit_id": "517bf36a754b794e1952b414363ac73c5be5c56361edd04cde4ace096a016c84"
+    },
+    "experimentDefinitionHash": "a4ebe30dede4cbf15d204da37d6c2fb477bcc5c057eff9ed2f6616fe473606f9",
+    "signature": "2qtGtgSQ9DQ3kCgcoY6AXoeiGpzbhKLxyA5CPqZd2Zuw1kD6JbmHCRJ8UkLD5xDArtf1CbvLS7e4VxbYh5paeHRf",
+    "submission": {
+      "attempt_id": "563c40ebfb837703adb587f30a0cc4254ef8871e7892f33ca1c7ff5824c6a2c1",
+      "attempt_number": 1,
+      "outcome": "RPC_ACKNOWLEDGED",
+      "blockhash": "3Gm1GsZABjbr77jb9Z61hJaubxKmDis1bbFvyR1EF6LD",
+      "blockhash_context_slot": 494325784,
+      "last_valid_block_height": 482103248,
+      "serialized_size_bytes": 215,
+      "created_at": "2026-09-07T00:36:10.339Z",
+      "submitted_at": "2026-09-07T00:36:10.340Z",
+      "response_at": "2026-09-07T00:36:10.481Z"
+    },
+    "pollIntervalMs": 5000,
+    "observationDeadlineMs": 120000,
+    "readerRequestTimeoutMs": 10000
+  },
+  "payloadHash": "1f92b16db104706f6f0da1ed53e0c7135c313f357db246f4abd7a90b3f99c98c",
+  "issuerSignature": "9n2twQ02zZQy8AXy9mLT37yocdr8Hv77UoJzAp3jsDjAUJECQBB4q1RUsQhdsoQ7BeyZPWQWj5LAvHXRC4SpAQ"
+}

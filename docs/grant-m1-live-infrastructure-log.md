@@ -386,3 +386,27 @@ the corrected E4 evidence follows in the next section.
 - Status is `PROVISIONED_CANARY_IN_PROGRESS`. Observer C is not admitted before
   the final summary, independent recomputation and post-soak preflight pass.
   Milestone 2 has not started.
+
+## 2026-09-08 — Observer A common runtime requalified
+
+- Only AWS Observer A was upgraded to reviewed runtime commit
+  `f4c70ea10198e5313eec0467f6a7b9222ff9e8f3`; Google B and Oracle C were not
+  changed.
+- A fresh signed assignment-correlated Devnet result reached `FINALIZED` and
+  was accepted exactly once by the Collector. Its seven-file public bundle
+  passed assignment signature, Observer signature, raw correlation, quorum,
+  receipt, and Collector-record verification.
+- The immutable soak ran from `2026-09-07T00:42:05.162Z` through
+  `2026-09-08T00:42:05.211Z`. Independent recomputation matched its SHA-256;
+  duration was 86,400 seconds, coverage was 99.93%, readiness was 100%,
+  identity mismatches were zero, and maximum gap was 60,073 ms.
+- A new valid transport-only fixture proved an explicit degraded/queued state,
+  unchanged payload across retry, automatic recovery, exactly one accepted
+  delivery, and final ready/queue-zero state. The earlier malformed fixture is
+  retained only as negative schema-validation evidence.
+- Post-soak preflight passed all 14 checks against all 192 manifest files.
+  Sanitized evidence is
+  `fixtures/grant-m1/observer-aws-a-common-runtime-requalification-20260908.json`.
+- Status is `RUNTIME_REQUALIFIED` for Observer A on the common candidate. This
+  is not three-observer common-runtime qualification, formal Milestone 1
+  acceptance, or the start of Milestone 2.

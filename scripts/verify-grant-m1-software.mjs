@@ -7,6 +7,7 @@ const requiredFiles = [
   "docs/grant-pilot-plan.md",
   "docs/grant-milestone-1-status.md",
   "docs/grant-m1-common-observer-runtime-20260906.md",
+  "docs/grant-m1-observer-a-common-runtime-closure-20260908.md",
   "docs/adr/ADR-021-fail-closed-host-preflight.md",
   "docs/adr/ADR-022-grant-pilot-infrastructure-topology.md",
   "docs/adr/ADR-023-zero-cost-first-grant-pilot.md",
@@ -100,6 +101,8 @@ const requiredFiles = [
   "fixtures/grant-m1/oracle-e4-tls-20260831.json",
   "fixtures/grant-m1/observer-aws-a-soak-20260901.json",
   "fixtures/grant-m1/observer-aws-a-runtime-requalification-20260902.json",
+  "fixtures/grant-m1/observer-aws-a-common-runtime-requalification-20260908.json",
+  "fixtures/grant-m1/observer-aws-a-common-runtime-devnet-20260908/manifest.json",
   "fixtures/grant-m1/observer-aws-a-devnet-observation-20260901.json",
   "fixtures/grant-m1/observer-aws-a-devnet-20260901/manifest.json",
   "scripts/generate-grant-m1-devnet-evidence-bundle.mjs",
@@ -186,6 +189,34 @@ if (observerARequalification.schema_version !== "GrantM1ObserverRuntimeRequalifi
     observerARequalification.claim_boundaries?.milestone_1_accepted !== false ||
     observerARequalification.claim_boundaries?.milestone_2_started !== false) {
   throw new Error("Observer A corrected-runtime requalification anchor is incomplete or overclaims grant acceptance");
+}
+const observerACommon = JSON.parse(contents.get("fixtures/grant-m1/observer-aws-a-common-runtime-requalification-20260908.json"));
+const observerACommonDevnet = JSON.parse(contents.get("fixtures/grant-m1/observer-aws-a-common-runtime-devnet-20260908/manifest.json"));
+if (observerACommon.schema_version !== "GrantM1ObserverRuntimeRequalificationEvidence@0.2.0" ||
+    observerACommon.observer_id !== "observer-aws-a" ||
+    observerACommon.status !== "RUNTIME_REQUALIFIED" ||
+    observerACommon.runtime?.source_commit !== "f4c70ea10198e5313eec0467f6a7b9222ff9e8f3" ||
+    observerACommon.runtime?.manifest_file_count !== 192 ||
+    observerACommon.raw_evidence?.sha256 !== "cdf491991855d1ee2cebe42ba7a0b23cc3a2ee4a5437f3109a01860d7e38c28b" ||
+    observerACommon.independent_evaluation?.actual_duration_seconds !== 86_400 ||
+    observerACommon.independent_evaluation?.admitted !== true ||
+    observerACommon.independent_evaluation?.readiness_ratio !== 1 ||
+    observerACommon.independent_evaluation?.identity_mismatch_count !== 0 ||
+    observerACommon.post_soak_preflight?.all_manifest_files_verified !== true ||
+    observerACommon.recovery_gate?.degraded_observed !== true ||
+    observerACommon.recovery_gate?.automatic_delivery !== true ||
+    observerACommon.recovery_gate?.matching_delivery_count !== 1 ||
+    observerACommon.recovery_gate?.payload_unchanged_across_retry !== true ||
+    observerACommon.recovery_gate?.fixture_class !== "transport-only-not-kpi" ||
+    observerACommon.devnet_assignment?.bundle_verified !== true ||
+    observerACommonDevnet.terminal_state !== "FINALIZED" ||
+    !observerACommonDevnet.claim_boundary.includes("not proof of reader operational independence") ||
+    observerACommon.claim_boundaries?.observers_b_or_c_updated !== false ||
+    observerACommon.claim_boundaries?.three_observers_on_common_runtime !== false ||
+    observerACommon.claim_boundaries?.milestone_1_accepted !== false ||
+    observerACommon.claim_boundaries?.milestone_2_started !== false ||
+    !contents.get("docs/grant-m1-observer-a-common-runtime-closure-20260908.md").includes("This is not formal Milestone 1 acceptance")) {
+  throw new Error("Observer A common-runtime requalification evidence is incomplete or overclaims acceptance");
 }
 if (!contents.get("docs/grant-m1-observer-b-readiness.md").includes("OBSERVER_HOST_QUALIFIED") ||
     !contents.get("docs/grant-m1-observer-b-readiness.md").includes("This is not formal Milestone 1 acceptance") ||

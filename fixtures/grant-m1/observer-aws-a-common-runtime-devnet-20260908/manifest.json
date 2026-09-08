@@ -1,0 +1,21 @@
+{
+  "schema_version": "GrantM1DevnetEvidenceBundle@0.1.0",
+  "observer_id": "observer-aws-a",
+  "observer_key_id": "aws-a-key-2026-08-31",
+  "result_id": "1be24e26-8697-470b-a09e-184304726c9e",
+  "transaction_signature": "2qtGtgSQ9DQ3kCgcoY6AXoeiGpzbhKLxyA5CPqZd2Zuw1kD6JbmHCRJ8UkLD5xDArtf1CbvLS7e4VxbYh5paeHRf",
+  "terminal_state": "FINALIZED",
+  "finalized_claim_count": 3,
+  "reader_error_count": 1,
+  "collector_sequence": 14,
+  "collected_at": "2026-09-07T00:40:19.943Z",
+  "files": {
+    "assignment-authority.json": "f5763c18e1f479013baef6993fab798b9b977c48b298e8d8e9ffd7d8d942d9db",
+    "observer-allowlist-entry.json": "98c1a650bec5339c30dc82b9906e4702a776ba3885ecfd2dac06c8847df7f847",
+    "signed-assignment.json": "65b3fb1779e5770407e5cf378197895d4cd93c95c295256cad02cd08792a5a12",
+    "raw-observations.jsonl": "9db957749c45ca19cbd7b67ac95690e526bbf3f4a284ef0533aa69ab97d4cf80",
+    "signed-result.json": "faa63cc7426af7a3a86bf3af59270f1f677c27d327d06599e5a84f97ab423bd2",
+    "delivery-receipt.json": "9c8a74c3951c410d467996b46ac61fe23b356d1c2a0d637c260c34a9c0af7048"
+  },
+  "claim_boundary": "One real assignment-correlated Solana Devnet observation; not proof of reader operational independence or Milestone 1 acceptance."
+}

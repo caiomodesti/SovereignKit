@@ -102,6 +102,16 @@ Started: 2026-08-24
   deliveries. Independent recomputation matched the raw JSONL SHA-256 and a
   post-soak preflight reverified all 180 manifest files. The sanitized anchor
   is `fixtures/grant-m1/observer-aws-a-runtime-requalification-20260902.json`.
+- AWS Observer A is now requalified on the reviewed common runtime commit
+  `f4c70ea10198e5313eec0467f6a7b9222ff9e8f3`. Its new 86,400-second soak
+  independently passed with 1,440 samples, 99.93% coverage, 100% readiness,
+  zero identity mismatches, and a 60,073 ms maximum gap. A clean isolated
+  recovery fixture proved queue preservation, degraded readiness, unchanged
+  payload, automatic single delivery, and final queue zero. A fresh signed
+  Devnet bundle and a 192-file post-soak preflight also passed. Evidence is
+  anchored at
+  `fixtures/grant-m1/observer-aws-a-common-runtime-requalification-20260908.json`.
+  B/C remain on their prior qualified commits and were not changed.
 - Google Observer B passed its frozen-runtime preflight and recovery drills,
   complete 24-hour host soak, real signed Devnet assignment, Collector
   acceptance, and sanitized provider/region/ASN attribution. It is qualified as
