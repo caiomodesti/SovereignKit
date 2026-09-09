@@ -8,6 +8,8 @@ const requiredFiles = [
   "docs/grant-milestone-1-status.md",
   "docs/grant-m1-common-observer-runtime-20260906.md",
   "docs/grant-m1-observer-a-common-runtime-closure-20260908.md",
+  "docs/grant-m1-observer-b-common-runtime-closure-20260909.md",
+  "docs/grant-soak-and-pilot-continuity.md",
   "docs/adr/ADR-021-fail-closed-host-preflight.md",
   "docs/adr/ADR-022-grant-pilot-infrastructure-topology.md",
   "docs/adr/ADR-023-zero-cost-first-grant-pilot.md",
@@ -103,6 +105,8 @@ const requiredFiles = [
   "fixtures/grant-m1/observer-aws-a-runtime-requalification-20260902.json",
   "fixtures/grant-m1/observer-aws-a-common-runtime-requalification-20260908.json",
   "fixtures/grant-m1/observer-aws-a-common-runtime-devnet-20260908/manifest.json",
+  "fixtures/grant-m1/observer-google-b-common-runtime-requalification-20260909.json",
+  "fixtures/grant-m1/observer-google-b-common-runtime-devnet-20260909/manifest.json",
   "fixtures/grant-m1/observer-aws-a-devnet-observation-20260901.json",
   "fixtures/grant-m1/observer-aws-a-devnet-20260901/manifest.json",
   "scripts/generate-grant-m1-devnet-evidence-bundle.mjs",
@@ -223,6 +227,38 @@ if (!contents.get("docs/grant-m1-observer-b-readiness.md").includes("OBSERVER_HO
     !contents.get("docs/grant-m1-observer-b-readiness.md").includes("Observer C provisioning remains blocked") ||
     !contents.get("docs/grant-m1-observer-b-readiness.md").includes("Milestone 2 remains `NOT_STARTED`")) {
   throw new Error("Observer B host qualification must preserve sequential provisioning and M1/M2 claim boundaries");
+}
+const observerBCommon = JSON.parse(contents.get("fixtures/grant-m1/observer-google-b-common-runtime-requalification-20260909.json"));
+const observerBCommonDevnet = JSON.parse(contents.get("fixtures/grant-m1/observer-google-b-common-runtime-devnet-20260909/manifest.json"));
+if (observerBCommon.schema_version !== "GrantM1ObserverRuntimeRequalificationEvidence@0.2.0" ||
+    observerBCommon.observer_id !== "observer-google-e2-micro" ||
+    observerBCommon.status !== "RUNTIME_REQUALIFIED" ||
+    observerBCommon.runtime?.source_commit !== "f4c70ea10198e5313eec0467f6a7b9222ff9e8f3" ||
+    observerBCommon.runtime?.manifest_file_count !== 192 ||
+    observerBCommon.raw_evidence?.sha256 !== "f38c85a42c780352cc44f324d3350603d7a667080589e1d60eaaa3808fc857fc" ||
+    observerBCommon.independent_evaluation?.actual_duration_seconds !== 86_400 ||
+    observerBCommon.independent_evaluation?.admitted !== true ||
+    observerBCommon.independent_evaluation?.readiness_ratio !== 1 ||
+    observerBCommon.independent_evaluation?.identity_mismatch_count !== 0 ||
+    observerBCommon.post_soak_preflight?.all_manifest_files_verified !== true ||
+    observerBCommon.recovery_gate?.degraded_observed !== true ||
+    observerBCommon.recovery_gate?.automatic_delivery !== true ||
+    observerBCommon.recovery_gate?.matching_delivery_count !== 1 ||
+    observerBCommon.recovery_gate?.payload_unchanged_across_retry !== true ||
+    observerBCommon.recovery_gate?.fixture_class !== "transport-only-not-kpi" ||
+    observerBCommon.devnet_assignment?.bundle_verified !== true ||
+    observerBCommonDevnet.terminal_state !== "FINALIZED" ||
+    observerBCommonDevnet.finalized_claim_count !== 3 ||
+    !observerBCommonDevnet.claim_boundary.includes("not proof of reader operational independence") ||
+    observerBCommon.delivery_boundary?.delivered_count_regressed !== false ||
+    observerBCommon.delivery_boundary?.observer_reported_queued_count !== 0 ||
+    observerBCommon.claim_boundaries?.observer_c_updated_or_repeated !== false ||
+    observerBCommon.claim_boundaries?.three_observers_on_common_runtime !== false ||
+    observerBCommon.claim_boundaries?.milestone_1_accepted !== false ||
+    observerBCommon.claim_boundaries?.milestone_2_started !== false ||
+    !contents.get("docs/grant-m1-observer-b-common-runtime-closure-20260909.md").includes("This is not formal Milestone 1") ||
+    !contents.get("docs/grant-soak-and-pilot-continuity.md").includes("no automatic update or rerun")) {
+  throw new Error("Observer B common-runtime requalification evidence is incomplete or overclaims acceptance");
 }
 const observerBNetwork = JSON.parse(contents.get("fixtures/grant-m1/observer-google-b-network-20260904.json"));
 if (observerBNetwork.schema_version !== "ObserverNetworkAttribution@0.1.0" ||

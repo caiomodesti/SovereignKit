@@ -116,6 +116,13 @@ Started: 2026-08-24
   complete 24-hour host soak, real signed Devnet assignment, Collector
   acceptance, and sanitized provider/region/ASN attribution. It is qualified as
   an M1 host; shared RPC routes remain explicitly non-independent upstreams.
+- Google Observer B is also requalified on the reviewed common runtime commit
+  `f4c70ea10198e5313eec0467f6a7b9222ff9e8f3`. Its single retained 86,400-second
+  run passed independent recomputation with 1,440 samples, 99.93% coverage,
+  100% readiness, zero identity mismatches, and a maximum 60,380 ms gap. The
+  post-soak 192-file preflight, isolated recovery and fresh signed Devnet bundle
+  passed. Observer C was not updated or rerun; aggregate M1 acceptance review
+  is next.
 - Oracle Observer C passed the same host, recovery, soak, signed Devnet, and
   Collector gates on its frozen runtime. OCI metadata plus RIPEstat corroborate
   region `sa-saopaulo-1` and announced Oracle AS31898 without retaining its

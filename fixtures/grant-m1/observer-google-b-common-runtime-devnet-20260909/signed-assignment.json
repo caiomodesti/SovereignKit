@@ -1,0 +1,44 @@
+{
+  "schemaVersion": "ObservationAssignment@0.1.0",
+  "assignmentId": "b3e0fc1c-1a73-4a51-858c-8a4f6e937685",
+  "issuerId": "grant-coordinator",
+  "issuerKeyId": "assignment-key-2026-09",
+  "issuedAt": "2026-09-08T01:56:17.1789719Z",
+  "expiresAt": "2026-09-08T02:21:17.1846982Z",
+  "job": {
+    "schemaVersion": "ObservationJob@0.1.0",
+    "resultId": "e988e51a-eaab-4283-bfa6-91bc79868c8e",
+    "observerId": "observer-google-e2-micro",
+    "observerKeyId": "observer-google-e2-micro-2026-09-03",
+    "observerSequence": 2026090802,
+    "unit": {
+      "experiment_id": "grant-m1-devnet-observer-qualification",
+      "experiment_version": "1",
+      "phase": "healthy",
+      "observer_id": "observer-google-e2-micro",
+      "route_id": "alchemy-solana-devnet",
+      "transaction_class": "MATCHED_CONTROL",
+      "probe_index": 20260908,
+      "unit_id": "923fae25fad17eb4c17846651ed6a4637f29b513db4160dde4b7b289df340710"
+    },
+    "experimentDefinitionHash": "a4ebe30dede4cbf15d204da37d6c2fb477bcc5c057eff9ed2f6616fe473606f9",
+    "signature": "31raXKRvLqkBMK6ouaDPvULYqaUAzQAqQMkQG5NijW6F6JUn672ewj7S6Zh5KTJeyXiWnEnN1YkincbA22rY8XBV",
+    "submission": {
+      "attempt_id": "b2fa12c3b0603478c93d6d7dfd16f06abe7806b7032611f92153d2ac8322dbe0",
+      "attempt_number": 1,
+      "outcome": "RPC_ACKNOWLEDGED",
+      "blockhash": "AL6fXHxucrn7jHKvkJ8eUurocpj1TNZrQRJzPhkFmYTd",
+      "blockhash_context_slot": 494877067,
+      "last_valid_block_height": 482651918,
+      "serialized_size_bytes": 215,
+      "created_at": "2026-09-08T02:00:33.334Z",
+      "submitted_at": "2026-09-08T02:00:33.335Z",
+      "response_at": "2026-09-08T02:00:33.509Z"
+    },
+    "pollIntervalMs": 5000,
+    "observationDeadlineMs": 120000,
+    "readerRequestTimeoutMs": 10000
+  },
+  "payloadHash": "df99e53e66385a3cad80c712c9c6b7219d63624a2e94c5450344a4c645f39321",
+  "issuerSignature": "GdLFRXmifCBTdkPH6UUTsfwB-oyGttN8-xNcB2JeQ-PKg9r5vO7wZhgRV72yCRuvQNnh7CLCqZvfRd1wHcVGDQ"
+}
