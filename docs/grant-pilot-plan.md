@@ -97,6 +97,10 @@ Milestone 1 may be `IMPLEMENTED_NOT_VALIDATED` when software and deployment tool
 
 ## Milestone 2 — Public Evidence Pilot
 
+Before opening the official window, complete the preparation and evidence
+recovery checks in `grant-soak-and-pilot-continuity.md`. Those checks prepare
+the pilot; they do not start Milestone 2 or replace formal M1 acceptance.
+
 ### Objective
 
 Run the accepted observer topology for at least 14 days across multiple frozen routes and collect at least 3,000 qualifying signed observations.

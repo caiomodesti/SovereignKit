@@ -1,0 +1,21 @@
+{
+  "schema_version": "GrantM1DevnetEvidenceBundle@0.1.0",
+  "observer_id": "observer-google-e2-micro",
+  "observer_key_id": "observer-google-e2-micro-2026-09-03",
+  "result_id": "e988e51a-eaab-4283-bfa6-91bc79868c8e",
+  "transaction_signature": "31raXKRvLqkBMK6ouaDPvULYqaUAzQAqQMkQG5NijW6F6JUn672ewj7S6Zh5KTJeyXiWnEnN1YkincbA22rY8XBV",
+  "terminal_state": "FINALIZED",
+  "finalized_claim_count": 3,
+  "reader_error_count": 1,
+  "collector_sequence": 16,
+  "collected_at": "2026-09-08T02:06:52.105Z",
+  "files": {
+    "assignment-authority.json": "f5763c18e1f479013baef6993fab798b9b977c48b298e8d8e9ffd7d8d942d9db",
+    "observer-allowlist-entry.json": "9e3c777e48af3c081fdb2b45d763bad0d82df38dc3f2f40864ee0b2ef8202bb7",
+    "signed-assignment.json": "4782753a2f55f102a01699a9c10838f16231b337c3c8d612f581dc8f7a97ea75",
+    "raw-observations.jsonl": "f04e04439ed1441c8dc95dc4f6c503450b44ac53d97bd97ee3b198da613e00f7",
+    "signed-result.json": "f217be6feac1b4a924d4b005c13e3963f6fa749a5d0dae91545378011af75012",
+    "delivery-receipt.json": "7bd662c60ed08e39b2001c5d84d82d5b5b4fbd9c02d5317c04edb7d5993e1617"
+  },
+  "claim_boundary": "One real assignment-correlated Solana Devnet observation; not proof of reader operational independence or Milestone 1 acceptance."
+}

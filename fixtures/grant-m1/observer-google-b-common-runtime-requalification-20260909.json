@@ -1,0 +1,128 @@
+{
+  "schema_version": "GrantM1ObserverRuntimeRequalificationEvidence@0.2.0",
+  "observer_id": "observer-google-e2-micro",
+  "status": "RUNTIME_REQUALIFIED",
+  "runtime": {
+    "source_commit": "f4c70ea10198e5313eec0467f6a7b9222ff9e8f3",
+    "node_version": "v22.17.0",
+    "manifest_file_count": 192,
+    "manifest_sha256": "5088e46578192885e58a30a52937478dfa6796b279b115eac7af56dad2eb697b"
+  },
+  "raw_evidence": {
+    "schema_version": "GrantM1CanarySoakSample@0.1.0",
+    "sha256": "f38c85a42c780352cc44f324d3350603d7a667080589e1d60eaaa3808fc857fc",
+    "summary_sha256": "c12e1a9053f0e3a1d65ac2f881c5da8d0c1ea1da6ac06684284c0c1897225dad",
+    "sample_count": 1440,
+    "first_sample_index": 0,
+    "last_sample_index": 1439,
+    "first_elapsed_ms": 51,
+    "last_elapsed_ms": 86400139,
+    "started_at": "2026-09-08T02:13:58.332Z",
+    "completed_at": "2026-09-09T02:13:58.468Z",
+    "retained_on_host": true,
+    "retained_in_ignored_operator_artifacts": true,
+    "public_raw_jsonl_omitted": true
+  },
+  "independent_evaluation": {
+    "verifier": "GrantM1CanaryEvidenceVerification@0.1.0",
+    "required_duration_seconds": 86400,
+    "actual_duration_seconds": 86400,
+    "interval_seconds": 60,
+    "expected_sample_count": 1441,
+    "ready_sample_count": 1440,
+    "coverage_ratio": 0.9993060374739764,
+    "readiness_ratio": 1,
+    "identity_mismatch_count": 0,
+    "maximum_gap_ms": 60380,
+    "admitted": true,
+    "blockers": []
+  },
+  "post_soak_preflight": {
+    "captured_at": "2026-09-09T02:21:26.795Z",
+    "sha256": "ae792ebca6c16dfb1476502d10a8cc4d7f65b5d7e5e3098ed5a79dfb6fb5ce6b",
+    "ready": true,
+    "clock_synchronized": true,
+    "key_mode_0600": true,
+    "key_owner_matches_service_account": true,
+    "runtime_commit_matches": true,
+    "runtime_manifest_verified": true,
+    "all_manifest_files_verified": true,
+    "systemd_unit_verified": true,
+    "observer_service_active": true,
+    "observer_service_enabled": true,
+    "loopback_binding_exclusive": true,
+    "disk_threshold_met": true
+  },
+  "recovery_gate": {
+    "captured_at": "2026-09-08T02:08:52.759Z",
+    "sha256": "219212fd1c9ccc994803ebc7ecd40a7889c4deb2b0663fad8f5f0f1d996d9b8a",
+    "isolated_to_observer_b": true,
+    "collector_unchanged": true,
+    "observers_a_or_c_changed": false,
+    "degraded_observed": true,
+    "queued_count_observed": 1,
+    "automatic_delivery": true,
+    "collector_status": "ACCEPTED",
+    "matching_delivery_count": 1,
+    "delivered_count_increment": 1,
+    "payload_unchanged_across_retry": true,
+    "final_queued_count": 0,
+    "final_ready": true,
+    "fixture_class": "transport-only-not-kpi"
+  },
+  "devnet_assignment": {
+    "bundle": "observer-google-b-common-runtime-devnet-20260909/manifest.json",
+    "bundle_verified": true,
+    "terminal_state": "FINALIZED",
+    "finalized_claim_count": 3,
+    "reader_error_count": 1,
+    "collector_sequence": 16,
+    "collected_at": "2026-09-08T02:06:52.105Z",
+    "matching_delivery_count": 1
+  },
+  "delivery_boundary": {
+    "delivered_count_before_common_devnet_and_recovery": 3,
+    "delivered_count_after_common_devnet_and_recovery": 5,
+    "delivered_count_after_soak": 5,
+    "delivery_receipt_count_after_soak": 5,
+    "accepted_delivery_receipt_count_after_soak": 5,
+    "delivered_count_regressed": false,
+    "observer_reported_queued_count": 0,
+    "continuous_delivery_count_not_sampled_by_soak": true
+  },
+  "permissions": {
+    "raw_jsonl_mode": "0600",
+    "summary_mode": "0600",
+    "post_soak_preflight_mode": "0600",
+    "recovery_evidence_mode": "0600",
+    "owner": "sovereignkit",
+    "group": "sovereignkit"
+  },
+  "pre_soak_setup_history": [
+    {
+      "outcome": "ROLLED_BACK_BEFORE_SOAK",
+      "cause": "upgrade helper could not stat private evidence as the administrative user",
+      "collection_started": false,
+      "retained_run_affected": false
+    },
+    {
+      "outcome": "STOPPED_BEFORE_OBSERVATION",
+      "cause": "worker templates and public configuration paths were not installed yet",
+      "collection_started": false,
+      "retained_run_affected": false
+    }
+  ],
+  "claim_boundaries": {
+    "common_runtime_requalified_on_observer_b": true,
+    "real_assignment_correlated_devnet_observation_completed": true,
+    "transport_fixture_is_solana_ledger_observation": false,
+    "transport_fixture_is_grant_kpi_observation": false,
+    "observers_a_and_b_on_common_runtime": true,
+    "observer_c_updated_or_repeated": false,
+    "three_observers_on_common_runtime": false,
+    "upstream_rpc_independence_proven": false,
+    "aggregate_acceptance_review_completed": false,
+    "milestone_1_accepted": false,
+    "milestone_2_started": false
+  }
+}
