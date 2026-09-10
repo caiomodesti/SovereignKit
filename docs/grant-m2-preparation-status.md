@@ -12,6 +12,11 @@ authorization blockers stay visible.
 
 ## Reader deployment checkpoint (2026-09-10)
 
+Local scheduler preparation now exists in `scripts/lib/grant-m2-scheduler.mjs`.
+It tests the proposed offsets with a persistent, exclusive dry-run journal,
+explicit missing slots and restart checks. It has no live dispatch adapter or
+timer. See `docs/grant-m2-scheduler-dry-run.md` for the scope and reproduction.
+
 The approved reader replacement is installed on AWS, Oracle and Google.
 All three registry hashes match; previous registries are retained as private
 on-host backups and services remained active. Evidence is recorded separately
