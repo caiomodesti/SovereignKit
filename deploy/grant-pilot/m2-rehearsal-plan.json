@@ -10,6 +10,10 @@
     "alert_policy": {
       "path": "deploy/grant-pilot/m2-alert-policy.json",
       "sha256": "8d69d8ff01a3d43b56f2b18921a7724b47b39bdcac7e821a85a0c392d7ae949f"
+    },
+    "backup_destination_evidence": {
+      "path": "fixtures/grant-m2/aws-backup-destination-20260909.json",
+      "sha256": "f1ac35c34caf0c967cff56a4e6f5326a457c5ad273e66c114bde4399f3ff47a8"
     }
   },
   "schedule": {
@@ -54,7 +58,7 @@
     "unresolved_integrity_incidents": 0
   },
   "external_requirements": {
-    "backup_destination": "AWS_OBSERVER_HOST_APPROVED_NOT_CONFIGURED",
+    "backup_destination": "AWS_OBSERVER_HOST_CONFIGURED_TRANSFER_NOT_TESTED",
     "notification_destination": "TELEGRAM_PRIVATE_OPERATOR_CONFIGURED_AND_TESTED",
     "offline_responder": "PRIMARY_OPERATOR_ASSIGNED",
     "resource_and_quota_approval": "ZERO_INCREMENTAL_SPEND_APPROVED_QUOTA_PENDING"
@@ -71,7 +75,7 @@
     "proves_notification_delivery_before_execution": false
   },
   "blockers": [
-    "backup_destination_not_configured",
+    "backup_transfer_and_restore_not_proven",
     "resource_and_quota_approval_pending",
     "rehearsal_not_authorized"
   ],
