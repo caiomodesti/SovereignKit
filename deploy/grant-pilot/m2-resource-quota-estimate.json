@@ -1,0 +1,88 @@
+{
+  "schema_version": "GrantM2ResourceQuotaEstimate@0.1.0",
+  "status": "ESTIMATED_NOT_APPROVED",
+  "scope": "FOURTEEN_DAY_M2_PREPARATION",
+  "captured_date": "2026-09-09",
+  "frozen_workload": {
+    "planned_units": 4032,
+    "alchemy_submission_units": 2016,
+    "observation_deadline_seconds": 120,
+    "poll_interval_seconds": 5,
+    "maximum_polls_per_unit": 25,
+    "health_check_days": 14,
+    "health_checks_per_minute_per_observer": 1,
+    "observers": 3
+  },
+  "alchemy_plan_snapshot": {
+    "monthly_compute_unit_limit": 30000000,
+    "compute_units_used_at_capture": 2340,
+    "throughput_limit_cu_per_second": 300,
+    "observed_peak_cu_per_second": 4.8,
+    "source": "AUTHENTICATED_ALCHEMY_DASHBOARD_READ_ONLY"
+  },
+  "alchemy_method_costs": {
+    "getSignatureStatuses": 20,
+    "getBlockHeight": 20,
+    "getLatestBlockhash": 20,
+    "sendTransaction": 20,
+    "getHealth": 20,
+    "source": "ALCHEMY_OFFICIAL_COMPUTE_UNIT_COSTS"
+  },
+  "alchemy_upper_estimate": {
+    "reader_poll_compute_units": 4032000,
+    "submission_compute_units": 40320,
+    "latest_blockhash_compute_units": 40320,
+    "health_check_compute_units": 1209600,
+    "total_compute_units": 5322240,
+    "total_with_ten_percent_contingency": 5854464,
+    "used_plus_contingency": 5856804,
+    "remaining_headroom_compute_units": 24143196
+  },
+  "deterministic_cycle_offsets": [
+    {
+      "offset_seconds": 0,
+      "observer_id": "observer-aws-a",
+      "route_id": "alchemy-solana-devnet"
+    },
+    {
+      "offset_seconds": 20,
+      "observer_id": "observer-google-e2-micro",
+      "route_id": "solana-public-devnet"
+    },
+    {
+      "offset_seconds": 40,
+      "observer_id": "observer-oracle-a1",
+      "route_id": "alchemy-solana-devnet"
+    },
+    {
+      "offset_seconds": 60,
+      "observer_id": "observer-aws-a",
+      "route_id": "solana-public-devnet"
+    },
+    {
+      "offset_seconds": 80,
+      "observer_id": "observer-google-e2-micro",
+      "route_id": "alchemy-solana-devnet"
+    },
+    {
+      "offset_seconds": 100,
+      "observer_id": "observer-oracle-a1",
+      "route_id": "solana-public-devnet"
+    }
+  ],
+  "burst_bounds": {
+    "alchemy_max_compute_units_per_second": 240,
+    "alchemy_limit_compute_units_per_second": 300,
+    "solana_public_max_requests_per_second": 26,
+    "solana_public_observed_header_limit_requests_per_second": 250,
+    "requires_deterministic_offsets": true
+  },
+  "decision": {
+    "zero_incremental_spend_estimate_fits_current_plan": true,
+    "quota_approval": "PENDING_READER_TOPOLOGY_DECISION_AND_OPERATOR_APPROVAL",
+    "authorizes_spend": false,
+    "authorizes_rehearsal": false,
+    "authorizes_official_window": false
+  },
+  "milestone_2_started": false
+}
