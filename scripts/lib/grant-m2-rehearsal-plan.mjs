@@ -2,7 +2,6 @@ import { createHash } from "node:crypto";
 
 export const GRANT_M2_REHEARSAL_PLAN_VERSION = "GrantM2RehearsalPlan@0.1.0";
 const EXPECTED_BLOCKERS = [
-  "backup_transfer_and_restore_not_proven",
   "resource_and_quota_approval_pending",
   "rehearsal_not_authorized",
 ];
@@ -22,8 +21,13 @@ export function validateGrantM2RehearsalPlan(plan, artifacts) {
       backupEvidence.destination_provider !== "AWS" || backupEvidence.destination_host_role !== "observer-aws-a" ||
       backupEvidence.access_restricted_to_service_identity !== true || backupEvidence.available_bytes_above_alert_floor !== true ||
       backupEvidence.observer_service_active !== true || backupEvidence.observer_service_enabled !== true ||
-      backupEvidence.destination_created !== true || backupEvidence.transfer_tested !== false || backupEvidence.restore_tested !== false ||
-      backupEvidence.separate_provider_from_source !== true || backupEvidence.separate_location_proven !== false ||
+      backupEvidence.destination_created !== true || backupEvidence.transfer_tested !== true || backupEvidence.restore_tested !== true ||
+      backupEvidence.separate_provider_from_source !== true || backupEvidence.separate_location_proven !== true ||
+      !/^[0-9a-f]{64}$/u.test(backupEvidence.source_sha256) || backupEvidence.source_sha256 !== backupEvidence.restored_sha256 ||
+      !Number.isSafeInteger(backupEvidence.byte_length) || backupEvidence.byte_length <= 0 ||
+      !Number.isSafeInteger(backupEvidence.record_count) || backupEvidence.record_count <= 0 ||
+      backupEvidence.byte_identical_restore !== true || backupEvidence.destination_copy_retained !== true ||
+      backupEvidence.temporary_copies_removed !== true ||
       backupEvidence.rehearsal_started !== false || backupEvidence.milestone_2_started !== false) {
     throw new Error("M2 backup destination evidence is incomplete or overclaims readiness");
   }
@@ -33,7 +37,7 @@ export function validateGrantM2RehearsalPlan(plan, artifacts) {
   if (!Array.isArray(plan.required_evidence) || plan.required_evidence.length !== 15 || new Set(plan.required_evidence).size !== 15) throw new Error("M2 rehearsal evidence inventory is incomplete");
   const criteria = plan.pass_criteria ?? {};
   if (criteria.elapsed_seconds_at_least !== 3600 || criteria.all_expected_units_accounted_for !== true || criteria.duplicate_kpi_units !== 0 || criteria.unexplained_collector_results !== 0 || criteria.signature_or_schema_failures !== 0 || criteria.raw_to_derived_mismatches !== 0 || criteria.backup_restore_byte_identical !== true || criteria.backup_location_separate !== true || criteria.notification_delivery_verified !== true || criteria.unresolved_integrity_incidents !== 0) throw new Error("M2 rehearsal pass criteria are weakened");
-  if (JSON.stringify(plan.external_requirements) !== JSON.stringify({ backup_destination: "AWS_OBSERVER_HOST_CONFIGURED_TRANSFER_NOT_TESTED", notification_destination: "TELEGRAM_PRIVATE_OPERATOR_CONFIGURED_AND_TESTED", offline_responder: "PRIMARY_OPERATOR_ASSIGNED", resource_and_quota_approval: "ZERO_INCREMENTAL_SPEND_APPROVED_QUOTA_PENDING" })) throw new Error("M2 rehearsal external readiness record is invalid");
+  if (JSON.stringify(plan.external_requirements) !== JSON.stringify({ backup_destination: "AWS_OBSERVER_HOST_PREFLIGHT_BACKUP_RESTORE_PROVEN", notification_destination: "TELEGRAM_PRIVATE_OPERATOR_CONFIGURED_AND_TESTED", offline_responder: "PRIMARY_OPERATOR_ASSIGNED", resource_and_quota_approval: "ZERO_INCREMENTAL_SPEND_APPROVED_QUOTA_PENDING" })) throw new Error("M2 rehearsal external readiness record is invalid");
   if (plan.authorization?.rehearsal_authorized !== false || plan.authorization?.authorized_at !== null || plan.authorization?.authorized_by !== null || Object.values(plan.claims ?? {}).some(Boolean) || JSON.stringify(plan.blockers) !== JSON.stringify(EXPECTED_BLOCKERS) || plan.milestone_2_started !== false) throw new Error("M2 rehearsal plan cannot authorize execution or start M2");
-  return { status: "PASS", gate: "GRANT_M2_REHEARSAL_PLAN", durationSeconds: 3600, expectedUnits: 12, blockers: 3, rehearsalAuthorized: false, milestone2Started: false };
+  return { status: "PASS", gate: "GRANT_M2_REHEARSAL_PLAN", durationSeconds: 3600, expectedUnits: 12, blockers: 2, rehearsalAuthorized: false, milestone2Started: false };
 }
