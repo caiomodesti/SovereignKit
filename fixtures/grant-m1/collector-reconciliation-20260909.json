@@ -1,0 +1,32 @@
+{
+  "schema_version": "GrantM1CollectorReconciliation@0.1.0",
+  "captured_at": "2026-09-10T00:18:47.418Z",
+  "collector_origin": "https://collector.sovereignkit.org",
+  "expected_response": "DUPLICATE",
+  "reconciled": [
+    {
+      "observer_id": "observer-aws-a",
+      "result_id": "9bb8a8aa-6cc5-44b1-a2f0-924e0dfd484c",
+      "http_status": 200,
+      "collector_status": "DUPLICATE",
+      "stored_count_at_reconciliation": 21
+    },
+    {
+      "observer_id": "observer-google-e2-micro",
+      "result_id": "4668f1c9-d6dd-4b4f-b6ff-c6420d7471b2",
+      "http_status": 200,
+      "collector_status": "DUPLICATE",
+      "stored_count_at_reconciliation": 21
+    },
+    {
+      "observer_id": "observer-oracle-a1",
+      "result_id": "d9ec6c62-ff97-4dbe-9631-7862ec433fe7",
+      "http_status": 200,
+      "collector_status": "DUPLICATE",
+      "stored_count_at_reconciliation": 21
+    }
+  ],
+  "all_previously_durable_at_current_endpoint": true,
+  "public_health_endpoint_used": false,
+  "scope": "Replays the three exact signed M1 results over public TLS and requires idempotent DUPLICATE responses. It does not expose the private Collector health route or raw network addresses."
+}

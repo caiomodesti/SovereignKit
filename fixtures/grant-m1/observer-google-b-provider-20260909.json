@@ -1,0 +1,28 @@
+{
+  "schema_version": "ObserverProviderAttribution@0.2.0",
+  "observer_id": "observer-google-e2-micro",
+  "captured_at": "2026-09-09T03:29:00.000Z",
+  "provider": "Google Cloud Platform",
+  "region": "us-central1",
+  "zone": "us-central1-a",
+  "provider_account_fingerprint_sha256": "82dc6ae5978fbfa4beabfbbf0c3fc00277a1038f609579ec68c2724294db7a41",
+  "provider_account_scope_kind": "gcp_project",
+  "instance_fingerprint_sha256": "0df8331ae8655f49f280595e0d40cf56e5a696b95703fad453e9217a05e06d31",
+  "network_asns": [
+    43515,
+    15169
+  ],
+  "sources": [
+    "GCE instance and project metadata authenticated with the Metadata-Flavor header",
+    "RIPE RIS via the previously retained sanitized network attribution"
+  ],
+  "metadata_authenticated": true,
+  "single_origin_asserted": false,
+  "corroborated": true,
+  "ip_omitted": true,
+  "prefix_omitted": true,
+  "raw_account_identifier_omitted": true,
+  "raw_instance_identifier_omitted": true,
+  "upstream_rpc_independence_proven": false,
+  "scope": "Corroborates the GCP project-scoped account fingerprint, instance, us-central1 region, zone, and both previously observed announced ASNs without retaining raw identifiers or network addresses. It does not prove independent operators or upstream RPC readers."
+}

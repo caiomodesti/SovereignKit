@@ -1,0 +1,10 @@
+{
+  "schema_version": "GrantM1NormalizedHealth@0.1.0",
+  "observer_id": "observer-oracle-a1",
+  "captured_at": "2026-09-06T12:24:28.508Z",
+  "ready": true,
+  "clock_synchronized": true,
+  "key_permissions_verified": true,
+  "source_artifact": "fixtures/grant-m1/observer-oracle-c-soak-20260906.json",
+  "source_sha256": "7e6be87388d359f790d050888f59cc72174821b7b7feee174aebfd50991ddb8e"
+}

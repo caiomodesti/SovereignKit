@@ -17,6 +17,18 @@ test("accepts three cryptographically valid and content-correlated observers", a
   assert.equal(result.rawPolls, 3);
 });
 
+test("accepts reviewed mixed runtimes that implement one verified evidence protocol", async () => {
+  const fixture = await makeFixture({ mixedRuntime: true, reviewedCompatible: true });
+  const result = await verifyGrantM1Acceptance(fixture.root);
+  assert.equal(result.runtimeCommits.length, 3);
+  assert.equal(result.evidenceProtocolVersion, "GrantM1EvidenceProtocol@0.1.0");
+});
+
+test("rejects mixed runtimes without explicit compatibility qualification", async () => {
+  const fixture = await makeFixture({ mixedRuntime: true, reviewedCompatible: false });
+  await assert.rejects(() => verifyGrantM1Acceptance(fixture.root), /mixed runtime commits require REVIEWED_COMPATIBLE/u);
+});
+
 test("rejects an indexed but empty evidence artifact", async () => {
   const fixture = await makeFixture();
   const path = "observers/observer-a/health.json";
@@ -33,6 +45,16 @@ test("rejects tampered signed results even when the index hash is updated", asyn
   await writeJsonl(join(fixture.root, path), [result]);
   await updateReferenceHash(fixture.root, path);
   await assert.rejects(() => verifyGrantM1Acceptance(fixture.root), /payload hash is invalid/u);
+});
+
+test("rejects a Collector receipt that does not bind the signed result", async () => {
+  const fixture = await makeFixture();
+  const path = "observers/observer-a/delivery-receipts.jsonl";
+  const receipt = JSON.parse((await readFile(join(fixture.root, path), "utf8")).trim());
+  receipt.payload_hash = "f".repeat(64);
+  await writeJsonl(join(fixture.root, path), [receipt]);
+  await updateReferenceHash(fixture.root, path);
+  await assert.rejects(() => verifyGrantM1Acceptance(fixture.root), /lacks one matching Collector delivery receipt/u);
 });
 
 test("rejects tampered assignment provenance even when the evidence hash is updated", async () => {
@@ -141,7 +163,6 @@ test("rejects rewriting the signed experiment plan with the evidence index", asy
 
 async function makeFixture(options = {}) {
   const root = await mkdtemp(join(tmpdir(), "sovereignkit-m1-acceptance-"));
-  const runtimeCommit = "a".repeat(40);
   const observers = [];
   const allowlist = [];
   const indexEntries = [];
@@ -161,6 +182,7 @@ async function makeFixture(options = {}) {
     const providerLabel = `Provider ${suffix.toUpperCase()}`;
     const region = `region-${suffix}`;
     const asn = 64_500 + position;
+    const runtimeCommit = options.mixedRuntime ? suffix.repeat(40) : "a".repeat(40);
     const identity = sharedObserverIdentity ?? generateKeyPairSync("ed25519");
     const publicKeySpkiBase64 = identity.publicKey.export({ type: "spki", format: "der" }).toString("base64");
     const providerPath = `observers/${observerId}/provider.json`;
@@ -172,8 +194,10 @@ async function makeFixture(options = {}) {
       instance_id_sanitized: sha256Hex(`instance-${suffix}`),
       region,
       country_code: "US",
-      network_asn: asn,
+      network_asns: [asn],
       runtime_commit: runtimeCommit,
+      runtime_compatibility_status: options.mixedRuntime && options.reviewedCompatible !== true ? "EXACT_RUNTIME" : options.mixedRuntime ? "REVIEWED_COMPATIBLE" : "EXACT_RUNTIME",
+      evidence_protocol_version: "GrantM1EvidenceProtocol@0.1.0",
       provisioned_at: "2026-08-25T00:00:00.000Z",
       independence_status: "CORROBORATED",
       evidence_refs: [providerPath],
@@ -258,6 +282,16 @@ async function makeFixture(options = {}) {
     const files = {
       assignment_provenance: [`observers/${observerId}/signed-assignments.jsonl`, [signedAssignment], true],
       signed_results: [`observers/${observerId}/signed-results.jsonl`, [signedResult], true],
+      delivery_receipts: [`observers/${observerId}/delivery-receipts.jsonl`, [{
+        delivery_sequence: 0,
+        delivered_at: "2026-08-25T01:00:01.000Z",
+        result_id: signedResult.result_id,
+        idempotency_key: signedResult.idempotency_key,
+        payload_hash: signedResult.payload_hash,
+        observer_signature: signedResult.observer_signature,
+        collector_status: "ACCEPTED",
+        collector_origin: "https://collector.sovereignkit.org",
+      }], true],
       raw_observations: [`observers/${observerId}/raw-observations.jsonl`, [{
         schema_version: "RawObservationPoll@0.2.0",
         assignment_id: signedAssignment.assignmentId,
@@ -270,8 +304,8 @@ async function makeFixture(options = {}) {
       }], true],
       health_history: [`observers/${observerId}/health.json`, { observer_id: observerId, ready: true, clock_synchronized: true, key_permissions_verified: true }, false],
       restart_evidence: [`observers/${observerId}/restart.json`, { observer_id: observerId, restart_succeeded: true, recovered_records: 1 }, false],
-      provider_evidence: [providerPath, { observer_id: observerId, provider_label: providerLabel, region, network_asn: asn, corroborated: true }, false],
-      failure_matrix: [`observers/${observerId}/failure-matrix.json`, { observer_id: observerId, cases: { HEALTHY: "PASS", DELAYED: "PASS", ONE_READER_UNAVAILABLE: "PASS", TWO_READERS_UNAVAILABLE: "PASS", DISAGREEMENT: "PASS" } }, false],
+      provider_evidence: [providerPath, { observer_id: observerId, provider_label: providerLabel, region, network_asns: [asn], corroborated: true }, false],
+      runtime_qualification: [`observers/${observerId}/runtime-qualification.json`, { observer_id: observerId, runtime_commit: runtimeCommit, evidence_protocol_version: "GrantM1EvidenceProtocol@0.1.0", status: "QUALIFIED", host_stability_admitted: true, semantic_recomputation_supported: true, source_anchor_sha256: sha256Hex(`runtime-anchor-${suffix}`) }, false],
     };
     const indexEntry = {
       observer_id: observerId,
@@ -297,12 +331,20 @@ async function makeFixture(options = {}) {
   };
   const planPayloadHash = sha256Hex(canonicalJson(planUnsigned));
   const experimentPlan = { ...planUnsigned, payload_hash: planPayloadHash, issuer_signature: sign(null, Buffer.from(canonicalJson({ ...planUnsigned, payload_hash: planPayloadHash })), assignmentAuthority.privateKey).toString("base64url") };
+  const semanticMatrixPath = "shared/semantic-failure-matrix.json";
+  await mkdir(dirname(join(root, semanticMatrixPath)), { recursive: true });
+  await writeJson(join(root, semanticMatrixPath), {
+    schema_version: "GrantM1SemanticFailureMatrix@0.1.0",
+    evidence_protocol_version: "GrantM1EvidenceProtocol@0.1.0",
+    runtime_commit_under_test: "f".repeat(40),
+    cases: { HEALTHY: "PASS", DELAYED: "PASS", ONE_READER_UNAVAILABLE: "PASS", TWO_READERS_UNAVAILABLE: "PASS", DISAGREEMENT: "PASS", EXPIRED_CLEAN_NEGATIVE: "PASS", EXPIRY_WITH_READER_ERROR_INCONCLUSIVE: "PASS", QUORUM_UNAVAILABLE_INCONCLUSIVE: "PASS" },
+  });
   await Promise.all([
-    writeJson(join(root, "observer-registry.json"), { schema_version: "GrantObserverRegistry@0.1.0", generated_at: "2026-08-25T01:00:00.000Z", observers }),
+    writeJson(join(root, "observer-registry.json"), { schema_version: "GrantObserverRegistry@0.3.0", generated_at: "2026-08-25T01:00:00.000Z", observers }),
     writeJson(join(root, "allowlist.json"), allowlist),
     writeJson(join(root, "assignment-authorities.json"), [assignmentAuthorityEntry]),
     writeJson(join(root, "experiment-plan.json"), experimentPlan),
-    writeJson(join(root, "evidence-index.json"), { schema_version: "GrantM1EvidenceIndex@0.4.0", generated_at: "2026-08-25T01:00:00.000Z", observers: indexEntries }),
+    writeJson(join(root, "evidence-index.json"), { schema_version: "GrantM1EvidenceIndex@0.6.0", generated_at: "2026-08-25T01:00:00.000Z", semantic_failure_matrix: [{ path: semanticMatrixPath, sha256: sha256Hex(await readFile(join(root, semanticMatrixPath))) }], observers: indexEntries }),
   ]);
   return { root };
 }
@@ -311,10 +353,11 @@ async function updateReferenceHash(root, path) {
   const indexPath = join(root, "evidence-index.json");
   const index = JSON.parse(await readFile(indexPath, "utf8"));
   for (const observer of index.observers) {
-    for (const field of ["assignment_provenance", "signed_results", "raw_observations", "health_history", "restart_evidence", "provider_evidence", "failure_matrix"]) {
+    for (const field of ["assignment_provenance", "signed_results", "delivery_receipts", "raw_observations", "health_history", "restart_evidence", "provider_evidence", "runtime_qualification"]) {
       for (const reference of observer[field]) if (reference.path === path) reference.sha256 = sha256Hex(await readFile(join(root, path)));
     }
   }
+  for (const reference of index.semantic_failure_matrix) if (reference.path === path) reference.sha256 = sha256Hex(await readFile(join(root, path)));
   await writeJson(indexPath, index);
 }
 

@@ -1,6 +1,6 @@
 # Grant Milestone 1 status
 
-Status: `THREE_HOSTS_QUALIFIED_M1_ACCEPTANCE_PENDING`
+Status: `ACCEPTED`
 Milestone: Independent Observation Layer
 Started: 2026-08-24
 
@@ -72,11 +72,11 @@ Started: 2026-08-24
   without changing the immutable JSONL.
 - controlled full-VM reboot recovery and the post-reboot versioned preflight
   passed on the corrected E4 host. That admitted the private host; the following
-  DNS/TLS gate admitted its narrow public edge. Every observer, Milestone 1
-  acceptance, and Milestone 2 remain pending.
+  DNS/TLS gate admitted its narrow public edge at the 2026-08-31 checkpoint.
 - fail-closed Collector DNS/TLS preflight and hardened Caddy environment
-  templates are implemented and live-validated. The controlled hostname maps
-  to the admitted E4 target, Caddy serves publicly trusted TLS 1.3, plaintext
+  templates are implemented and were live-validated. At capture time the
+  controlled hostname mapped to the admitted E4 target, Caddy served publicly
+  trusted TLS 1.3, plaintext
   HTTP redirects, `/health` remains private, wrong methods fail closed, and an
   invalid signed-result payload reaches schema validation with HTTP 422. The
   sanitized anchor is `fixtures/grant-m1/oracle-e4-tls-20260831.json`.
@@ -128,21 +128,32 @@ Started: 2026-08-24
   region `sa-saopaulo-1` and announced Oracle AS31898 without retaining its
   address or raw resource identifiers. It is qualified as an M1 host when the
   reviewed evidence record is merged.
+- The final aggregate package at
+  `fixtures/grant-m1/final-acceptance-20260909` binds three distinct Observer
+  identities, provider/account/instance evidence, a signed experiment plan,
+  three signed assignments, three assignment-correlated raw observations,
+  three `FINALIZED` results, and one matching Collector delivery receipt per
+  result. The fail-closed verifier independently checks Observer and assignment
+  signatures, expected-unit commitments, raw-to-derived quorum decisions,
+  mixed-runtime compatibility declarations, evidence hashes, and the shared
+  eight-case semantic failure matrix. It returns `GRANT_M1_ACCEPTANCE: PASS`.
 
-## Not yet implemented or validated
+## Milestone 1 acceptance
 
-- reconcile all three host identities and provider evidence into the versioned
-  observer registry and hashed evidence index;
-- complete AWS provider/region/ASN corroboration in the same sanitized format;
-- recompute raw-to-derived results and close the semantic failure-matrix gaps,
-  including authoritative expiration and quorum-available/unavailable cases;
-- run the final external hostile audit and fail-closed M1 acceptance verifier.
+The evidence package passes the repository's hostile, fail-closed acceptance
+contract with three independent cloud-provider hosts. Milestone 1 is accepted
+as of 2026-09-09. This acceptance is scoped to the retained Devnet experiment
+and `GrantM1EvidenceProtocol@0.1.0`; it does not establish independence among
+the shared logical RPC readers or authorize Mainnet activity.
 
-The three observer hosts are deployed and qualified, but the current system
-MUST NOT yet be described as a completed independent observation layer. It
-remains below `ACCEPTED` until the aggregate registry/evidence package,
-provider corroboration, semantic failure matrix, and hostile acceptance review
-all pass.
+Before Milestone 2 starts, reconcile the Collector hostname with the current
+administrative host binding and restore direct operator access to the active
+durable accepted log. The three retained Observer receipts record `ACCEPTED`
+and are cryptographically bound to the signed results. A fresh public replay of
+all three signed results returned `DUPLICATE` with durable count at least three,
+confirming current endpoint state. The prior SSH target no longer matches the
+hostname's current DNS address, so direct administrative log access remains an
+operational follow-up and does not retroactively change the accepted package.
 
 The Alchemy preflight proves that one external logical Devnet RPC route is usable
 from the operator environment. It is neither an observer host nor independence
@@ -166,16 +177,15 @@ observer, complete Milestone 1, or Milestone 2 claim is made.
 Observer queue recovery is a separate observer-host gate because the Collector
 has no delivery queue.
 
-AWS Observer A has a real assignment-correlated Solana Devnet measurement, but
-is not yet a completed Milestone 1 observer evidence entry. The successful run
+AWS Observer A has real assignment-correlated Solana Devnet measurements and is
+merged into the final Milestone 1 evidence package. The earlier successful run
 retains two finalized claims, one explicit reader RPC error, a signed assignment,
 one bound raw poll, a signed delivery, and Collector acceptance. Earlier
 `EXPIRED` and clock-boundary failures are preserved rather than overwritten.
 Because the historical-status correction changed the immutable runtime commit,
 the prior host soak remains valid evidence for the prior runtime while the new
-runtime is `RUNTIME_REQUALIFIED`. The external failure matrix,
-provider/ASN corroboration, Observers B/C, and three-provider acceptance remain
-pending.
+runtime is `RUNTIME_REQUALIFIED` and included in the reviewed compatible-runtime
+set.
 
 The repository also pins transitive `fast-uri` 3.1.6 after the GitHub
 production-dependency audit rejected 3.1.5 under newly published high severity

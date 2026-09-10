@@ -1,0 +1,171 @@
+{
+  "schema_version": "GrantM1EvidenceIndex@0.6.0",
+  "generated_at": "2026-09-10T00:12:21.939Z",
+  "semantic_failure_matrix": [
+    {
+      "path": "shared/semantic-failure-matrix.json",
+      "sha256": "3b354dfd614d70080bd087373a77a965c647b19b98686bf8b0072d257c38ce7d"
+    }
+  ],
+  "observers": [
+    {
+      "observer_id": "observer-aws-a",
+      "expected_unit_count": 1,
+      "expected_unit_ids_sha256": "9df83a0d183fc13ff41bf1db7b573908ea12b8861c870dbbc7bad7efab0a5cae",
+      "assignment_provenance": [
+        {
+          "path": "observers/observer-aws-a/signed-assignment.json",
+          "sha256": "5343a6bf7ecf04f52e564b0046c0e34fda02bfb1866c1ba54e9b1f297e724636"
+        }
+      ],
+      "signed_results": [
+        {
+          "path": "observers/observer-aws-a/signed-result.json",
+          "sha256": "1f14c6cbea499dc5e3729673a288a7a8b41302761d947088bab136510ab390d8"
+        }
+      ],
+      "delivery_receipts": [
+        {
+          "path": "observers/observer-aws-a/delivery-receipt.json",
+          "sha256": "a18493d4f422bd5d8d1c68f377c04c1870cc2ac9d13dac04165c118e6efefc5b"
+        }
+      ],
+      "raw_observations": [
+        {
+          "path": "observers/observer-aws-a/raw-observations.jsonl",
+          "sha256": "429f5c561013d12f13bd3d40b9224cf2332be03b06e1bbf64174666ce43a3d68"
+        }
+      ],
+      "health_history": [
+        {
+          "path": "observers/observer-aws-a/health.json",
+          "sha256": "a5a1c1999eb4dbc82607f214333146e34a62191f9a05e654d960560b027b0fa8"
+        }
+      ],
+      "restart_evidence": [
+        {
+          "path": "observers/observer-aws-a/restart.json",
+          "sha256": "a99d18e7452b685d393c14fddc885712d336ba9c57360fc806644bed344bcc99"
+        }
+      ],
+      "provider_evidence": [
+        {
+          "path": "observers/observer-aws-a/provider.json",
+          "sha256": "26b23c133d655613a80b2e67e763530a5a3b04ba49dff3a642b5d4a1a25d7817"
+        }
+      ],
+      "runtime_qualification": [
+        {
+          "path": "observers/observer-aws-a/runtime-qualification.json",
+          "sha256": "bf4afdfea91c5952653c6f74b3078defcb5d5a5bd880dabb666555897da0831c"
+        }
+      ]
+    },
+    {
+      "observer_id": "observer-google-e2-micro",
+      "expected_unit_count": 1,
+      "expected_unit_ids_sha256": "f7f16018c92f5308872b8e91ea6bde74bbf5340429de8d4146dd953bb1f54db4",
+      "assignment_provenance": [
+        {
+          "path": "observers/observer-google-e2-micro/signed-assignment.json",
+          "sha256": "5e88259e6d66d96748ae7a00cda305397f173e396802b887f17d1b6894526242"
+        }
+      ],
+      "signed_results": [
+        {
+          "path": "observers/observer-google-e2-micro/signed-result.json",
+          "sha256": "f80669790085f53fa1e4ecd9236e48a4a034d2ecaed19715ccae278d082629d2"
+        }
+      ],
+      "delivery_receipts": [
+        {
+          "path": "observers/observer-google-e2-micro/delivery-receipt.json",
+          "sha256": "27e2152f486e404e06ae60989bcb5f24f2f4320f3f709f52779d1d7f05997bad"
+        }
+      ],
+      "raw_observations": [
+        {
+          "path": "observers/observer-google-e2-micro/raw-observations.jsonl",
+          "sha256": "731f0aa746ba7fa2c3e67964e7c887c14b7b5c25443c30dbb80d9e8347a730f6"
+        }
+      ],
+      "health_history": [
+        {
+          "path": "observers/observer-google-e2-micro/health.json",
+          "sha256": "c963202d421192b869176683c19fed836b722520271da39e74d8a1e22e9f355b"
+        }
+      ],
+      "restart_evidence": [
+        {
+          "path": "observers/observer-google-e2-micro/restart.json",
+          "sha256": "2571284cfe950165d4e6fe89f58c95479de88a884501bd5ba3ace22737cf1f7b"
+        }
+      ],
+      "provider_evidence": [
+        {
+          "path": "observers/observer-google-e2-micro/provider.json",
+          "sha256": "8c8cedefc44a41dd2f4b93097c54ba615501dbfa0f401562fab73e22f3e3adf8"
+        }
+      ],
+      "runtime_qualification": [
+        {
+          "path": "observers/observer-google-e2-micro/runtime-qualification.json",
+          "sha256": "41525fe288dd50ea55b533458b69f713772ba36eb87a12e249213416afd1c1c9"
+        }
+      ]
+    },
+    {
+      "observer_id": "observer-oracle-a1",
+      "expected_unit_count": 1,
+      "expected_unit_ids_sha256": "77beeed36ac1cff281b104d08cbba34c0477ed58f8bf1296a98ae95288653bdf",
+      "assignment_provenance": [
+        {
+          "path": "observers/observer-oracle-a1/signed-assignment.json",
+          "sha256": "dedeca74eff678ea832686d29ad0c874e351ba2168fe4e5d7a8e41187b5efc8c"
+        }
+      ],
+      "signed_results": [
+        {
+          "path": "observers/observer-oracle-a1/signed-result.json",
+          "sha256": "8d07c16c7e7c3ef6d3343a588c38371989275d3bf0f8c03445a4cf810f33f850"
+        }
+      ],
+      "delivery_receipts": [
+        {
+          "path": "observers/observer-oracle-a1/delivery-receipt.json",
+          "sha256": "1a17748bba5729b75d6eba1adf7ead48d6b8e757117eab870cd13196d8d7b84e"
+        }
+      ],
+      "raw_observations": [
+        {
+          "path": "observers/observer-oracle-a1/raw-observations.jsonl",
+          "sha256": "352bcdb3b1eedd0f9a5a4146e9f5a899bbc09120d633b85c303267850498a630"
+        }
+      ],
+      "health_history": [
+        {
+          "path": "observers/observer-oracle-a1/health.json",
+          "sha256": "3a38bf6f2692be58a47db92c85b66202b0d01c713574b8dc50ef5a870d95a326"
+        }
+      ],
+      "restart_evidence": [
+        {
+          "path": "observers/observer-oracle-a1/restart.json",
+          "sha256": "4d5fdfaa930d8cc4169a5f880492894aecad34458ff73c5d4c78d610b5bc14db"
+        }
+      ],
+      "provider_evidence": [
+        {
+          "path": "observers/observer-oracle-a1/provider.json",
+          "sha256": "9d435b4b034e9c5e86de264904dcf67e89b1a244b8daab048b80212327dacff1"
+        }
+      ],
+      "runtime_qualification": [
+        {
+          "path": "observers/observer-oracle-a1/runtime-qualification.json",
+          "sha256": "257ba86877269d7091250393bf3dda129812eaa9472f75bc6fd507f761eb8058"
+        }
+      ]
+    }
+  ]
+}

@@ -118,7 +118,7 @@ independently verifiable deadline provenance; those remain separate gates.
 
 It requires at least three unique observer identities, providers, provider-account fingerprints, and sanitized instances; corroborated independence; matching allowlist identities; and existing signed-result, raw-observation, health, restart, provider, and failure-matrix evidence for every observer.
 
-The external evidence index uses `GrantM1EvidenceIndex@0.4.0`. Every artifact
+The external evidence index uses `GrantM1EvidenceIndex@0.6.0`. Every artifact
 reference contains a relative observer-scoped path and a lowercase SHA-256.
 Acceptance recomputes each hash, rejects empty or oversized files, searches for
 private-key markers, cryptographically verifies signed assignments and

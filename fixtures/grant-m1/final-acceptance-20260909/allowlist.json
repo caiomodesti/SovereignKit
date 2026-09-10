@@ -1,0 +1,23 @@
+[
+  {
+    "observerId": "observer-aws-a",
+    "keyId": "aws-a-key-2026-08-31",
+    "publicKeySpkiBase64": "MCowBQYDK2VwAyEArtqzDn772nGSAcsUBO7MP31LiFP6c7+Skzx5Ra7EJGU=",
+    "validFrom": "2026-08-31T00:00:00Z",
+    "validUntil": "2027-02-28T23:59:59.999Z"
+  },
+  {
+    "observerId": "observer-google-e2-micro",
+    "keyId": "observer-google-e2-micro-2026-09-03",
+    "publicKeySpkiBase64": "MCowBQYDK2VwAyEAW8r5nJM03MqzxiswMf4Os5pjg/XmyTp+XRK1ZON1egQ=",
+    "validFrom": "2026-09-03T01:00:00.000Z",
+    "validUntil": "2027-09-03T01:00:00.000Z"
+  },
+  {
+    "observerId": "observer-oracle-a1",
+    "keyId": "observer-oracle-a1-2026-09-04",
+    "publicKeySpkiBase64": "MCowBQYDK2VwAyEAkj5xFtAtaehrSyuyOlMUI0CY55X9BquR+ONqR3MNnI4=",
+    "validFrom": "2026-09-04T00:00:00.000Z",
+    "validUntil": "2027-09-04T23:59:59.999Z"
+  }
+]

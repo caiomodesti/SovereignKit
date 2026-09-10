@@ -1,0 +1,12 @@
+{
+  "schema_version": "GrantM1RuntimeCompatibilityQualification@0.1.0",
+  "observer_id": "observer-oracle-a1",
+  "runtime_commit": "49557b234b7e359dcd77ca198639b6e0a936dee2",
+  "evidence_protocol_version": "GrantM1EvidenceProtocol@0.1.0",
+  "status": "QUALIFIED",
+  "compatibility_status": "REVIEWED_COMPATIBLE",
+  "host_stability_admitted": true,
+  "semantic_recomputation_supported": true,
+  "source_artifact": "fixtures/grant-m1/observer-oracle-c-soak-20260906.json",
+  "source_anchor_sha256": "7e6be87388d359f790d050888f59cc72174821b7b7feee174aebfd50991ddb8e"
+}

@@ -1,6 +1,7 @@
 {
-  "schema_version": "GrantM1EvidenceIndex@0.4.0",
+  "schema_version": "GrantM1EvidenceIndex@0.6.0",
   "generated_at": "2026-08-25T00:00:00.000Z",
+  "semantic_failure_matrix": [{ "path": "shared/semantic-failure-matrix.json", "sha256": "0000000000000000000000000000000000000000000000000000000000000000" }],
   "observers": [
     {
       "observer_id": "observer-provider-a",
@@ -8,11 +9,12 @@
       "expected_unit_ids_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
       "assignment_provenance": [{ "path": "observers/observer-provider-a/signed-assignments.jsonl", "sha256": "0000000000000000000000000000000000000000000000000000000000000000" }],
       "signed_results": [{ "path": "observers/observer-provider-a/signed-results.jsonl", "sha256": "0000000000000000000000000000000000000000000000000000000000000000" }],
+      "delivery_receipts": [{ "path": "observers/observer-provider-a/delivery-receipts.jsonl", "sha256": "0000000000000000000000000000000000000000000000000000000000000000" }],
       "raw_observations": [{ "path": "observers/observer-provider-a/raw-observations.jsonl", "sha256": "0000000000000000000000000000000000000000000000000000000000000000" }],
       "health_history": [{ "path": "observers/observer-provider-a/health.jsonl", "sha256": "0000000000000000000000000000000000000000000000000000000000000000" }],
       "restart_evidence": [{ "path": "observers/observer-provider-a/restart.json", "sha256": "0000000000000000000000000000000000000000000000000000000000000000" }],
       "provider_evidence": [{ "path": "observers/observer-provider-a/provider.json", "sha256": "0000000000000000000000000000000000000000000000000000000000000000" }],
-      "failure_matrix": [{ "path": "observers/observer-provider-a/failure-matrix.json", "sha256": "0000000000000000000000000000000000000000000000000000000000000000" }]
+      "runtime_qualification": [{ "path": "observers/observer-provider-a/runtime-qualification.json", "sha256": "0000000000000000000000000000000000000000000000000000000000000000" }]
     }
   ]
 }

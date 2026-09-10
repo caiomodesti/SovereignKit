@@ -1,0 +1,15 @@
+{
+  "schema_version": "GrantM1NormalizedProviderEvidence@0.1.0",
+  "observer_id": "observer-oracle-a1",
+  "provider_label": "Oracle Cloud Infrastructure",
+  "region": "sa-saopaulo-1",
+  "country_code": "BR",
+  "network_asns": [
+    31898
+  ],
+  "provider_account_fingerprint": "82bfcf375fcec48b25d13f80ee6707f95f841e1517da19f901952d896cc3b828",
+  "instance_id_sanitized": "6f67fa632c7a3e54992c9f436b1f75a0bcd91f9cd06b5e8fc7e4d741da8f0c0e",
+  "corroborated": true,
+  "source_artifact": "fixtures/grant-m1/observer-oracle-c-provider-20260909.json",
+  "source_sha256": "500d9cbb42c0fad4c57c77e8ae48f7e2238910753616b2605d63f4717f888464"
+}

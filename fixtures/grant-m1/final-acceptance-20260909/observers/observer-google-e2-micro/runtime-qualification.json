@@ -1,0 +1,12 @@
+{
+  "schema_version": "GrantM1RuntimeCompatibilityQualification@0.1.0",
+  "observer_id": "observer-google-e2-micro",
+  "runtime_commit": "f4c70ea10198e5313eec0467f6a7b9222ff9e8f3",
+  "evidence_protocol_version": "GrantM1EvidenceProtocol@0.1.0",
+  "status": "QUALIFIED",
+  "compatibility_status": "REVIEWED_COMPATIBLE",
+  "host_stability_admitted": true,
+  "semantic_recomputation_supported": true,
+  "source_artifact": "fixtures/grant-m1/observer-google-b-common-runtime-requalification-20260909.json",
+  "source_anchor_sha256": "610c188530f68b1599dc8989ab8cf7b4cbf0615ae5fb9469c72582d80d0d94e0"
+}

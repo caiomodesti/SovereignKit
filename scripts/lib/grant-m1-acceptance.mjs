@@ -4,7 +4,8 @@ import { isAbsolute, relative, resolve, sep } from "node:path";
 import { evaluateReaderClaimQuorum } from "../../packages/probes/dist/reader-quorum.js";
 import { verifyGrantM1ExperimentPlan } from "../../packages/collector/dist/grant-m1-experiment-plan.js";
 
-const EVIDENCE_FIELDS = ["assignment_provenance", "signed_results", "raw_observations", "health_history", "restart_evidence", "provider_evidence", "failure_matrix"];
+const EVIDENCE_FIELDS = ["assignment_provenance", "signed_results", "delivery_receipts", "raw_observations", "health_history", "restart_evidence", "provider_evidence", "runtime_qualification"];
+const EVIDENCE_PROTOCOL_VERSION = "GrantM1EvidenceProtocol@0.1.0";
 const PRIVATE_MARKERS = ["privateKeyPkcs8Base64", "ObserverPrivateKey@", "AssignmentAuthorityPrivateKey@", "BEGIN PRIVATE KEY"];
 
 export async function verifyGrantM1Acceptance(evidenceRootText) {
@@ -17,7 +18,7 @@ export async function verifyGrantM1Acceptance(evidenceRootText) {
   const experimentPlan = await readJson(resolveInside("experiment-plan.json"), "signed experiment plan", evidenceRootReal);
   const evidenceIndex = await readJson(resolveInside("evidence-index.json"), "evidence index", evidenceRootReal);
 
-  if (registry.schema_version !== "GrantObserverRegistry@0.1.0" || !Array.isArray(registry.observers) || registry.observers.length < 3) throw new Error("Milestone 1 requires at least three registry observers");
+  if (registry.schema_version !== "GrantObserverRegistry@0.3.0" || !Array.isArray(registry.observers) || registry.observers.length < 3) throw new Error("Milestone 1 requires a GrantObserverRegistry@0.3.0 with at least three observers");
   const observers = registry.observers;
   requireUnique(observers.map(value => value.observer_id), "observer_id");
   requireUnique(observers.map(value => value.key_id), "key_id");
@@ -32,7 +33,13 @@ export async function verifyGrantM1Acceptance(evidenceRootText) {
     if (observer.independence_status !== "CORROBORATED") throw new Error(`${observer.observer_id} independence is not CORROBORATED`);
     if (!/^[a-f0-9]{40}$/u.test(observer.runtime_commit)) throw new Error(`${observer.observer_id} runtime_commit is invalid`);
     runtimeCommits.add(observer.runtime_commit);
-    if (!Number.isSafeInteger(observer.network_asn) || observer.network_asn <= 0) throw new Error(`${observer.observer_id} network_asn must be corroborated and non-zero`);
+    if (observer.evidence_protocol_version !== EVIDENCE_PROTOCOL_VERSION) throw new Error(`${observer.observer_id} evidence protocol is unsupported`);
+    if (!["EXACT_RUNTIME", "REVIEWED_COMPATIBLE"].includes(observer.runtime_compatibility_status)) throw new Error(`${observer.observer_id} runtime compatibility status is invalid`);
+    if (!Array.isArray(observer.network_asns) || observer.network_asns.length === 0 ||
+        observer.network_asns.some(asn => !Number.isSafeInteger(asn) || asn <= 0) ||
+        new Set(observer.network_asns).size !== observer.network_asns.length) {
+      throw new Error(`${observer.observer_id} network_asns must be a non-empty unique list of corroborated ASNs`);
+    }
     if (!/^[A-Z]{2}$/u.test(observer.country_code)) throw new Error(`${observer.observer_id} country_code is invalid`);
     requireSanitizedFingerprint(observer.provider_account_fingerprint, `${observer.observer_id} provider_account_fingerprint`);
     requireSanitizedFingerprint(observer.instance_id_sanitized, `${observer.observer_id} instance_id_sanitized`);
@@ -40,7 +47,9 @@ export async function verifyGrantM1Acceptance(evidenceRootText) {
     rejectPlaceholder(observer.region, `${observer.observer_id} region`);
     if (!Array.isArray(observer.evidence_refs) || observer.evidence_refs.length === 0) throw new Error(`${observer.observer_id} has no independence evidence references`);
   }
-  if (runtimeCommits.size !== 1) throw new Error("all observers must run the same reviewed runtime_commit");
+  if (runtimeCommits.size > 1 && observers.some(observer => observer.runtime_compatibility_status !== "REVIEWED_COMPATIBLE")) {
+    throw new Error("mixed runtime commits require REVIEWED_COMPATIBLE evidence-protocol qualification for every observer");
+  }
 
   if (!Array.isArray(allowlist) || allowlist.length !== observers.length) throw new Error("allowlist.json must contain exactly one identity for every registry observer");
   requireUnique(allowlist.map(entry => `${entry.observerId}\u001f${entry.keyId}`), "allowlist observer/key");
@@ -53,7 +62,9 @@ export async function verifyGrantM1Acceptance(evidenceRootText) {
   const assignmentAuthoritiesByIdentity = new Map(assignmentAuthorities.map(entry => [`${entry.issuerId}\u001f${entry.keyId}`, validateAssignmentAuthorityEntry(entry)]));
   const plannedUnitsByObserver = validateSignedExperimentPlan(experimentPlan, assignmentAuthoritiesByIdentity, observers);
 
-  if (evidenceIndex.schema_version !== "GrantM1EvidenceIndex@0.4.0" || !Array.isArray(evidenceIndex.observers) || evidenceIndex.observers.length !== observers.length) throw new Error("evidence-index.json must use GrantM1EvidenceIndex@0.4.0 with exactly one entry per observer");
+  if (evidenceIndex.schema_version !== "GrantM1EvidenceIndex@0.6.0" || !Array.isArray(evidenceIndex.observers) || evidenceIndex.observers.length !== observers.length) throw new Error("evidence-index.json must use GrantM1EvidenceIndex@0.6.0 with exactly one entry per observer");
+  const semanticFailureMatrix = await readSharedEvidence(evidenceIndex.semantic_failure_matrix, "semantic_failure_matrix", resolveInside, evidenceRootReal);
+  validateSemanticFailureMatrix(semanticFailureMatrix);
   requireUnique(evidenceIndex.observers.map(value => value.observer_id), "evidence index observer_id");
   const seenPaths = new Set();
   let signedResultCount = 0;
@@ -102,6 +113,14 @@ export async function verifyGrantM1Acceptance(evidenceRootText) {
     if (unitIds.size !== entry.expected_unit_count || expectedUnitIdsHash(unitIds) !== entry.expected_unit_ids_sha256) {
       throw new Error(`${observer.observer_id} signed result set does not match the expected-unit commitment`);
     }
+    const deliveryReceipts = evidenceByField.get("delivery_receipts").flatMap(artifact => artifact.records);
+    for (const result of signedResults) {
+      const matches = deliveryReceipts.filter(receipt => receipt?.result_id === result.result_id && receipt.idempotency_key === result.idempotency_key &&
+        receipt.payload_hash === result.payload_hash && receipt.observer_signature === result.observer_signature &&
+        ["ACCEPTED", "DUPLICATE"].includes(receipt.collector_status) && receipt.collector_origin === "https://collector.sovereignkit.org");
+      if (matches.length !== 1) throw new Error(`${observer.observer_id} signed result lacks one matching Collector delivery receipt`);
+    }
+    if (deliveryReceipts.length !== signedResults.length) throw new Error(`${observer.observer_id} delivery receipts and signed results are not one-to-one`);
     const assignments = evidenceByField.get("assignment_provenance").flatMap(artifact => artifact.records);
     const assignmentsByResult = new Map();
     for (const assignment of assignments) {
@@ -142,7 +161,7 @@ export async function verifyGrantM1Acceptance(evidenceRootText) {
     }
     validateObserverScopedRecords(evidenceByField, observer);
   }
-  return { status: "PASS", gate: "GRANT_M1_ACCEPTANCE", observers: observers.length, runtimeCommit: [...runtimeCommits][0], assignments: assignmentCount, signedResults: signedResultCount, rawPolls: rawPollCount, evidenceRoot };
+  return { status: "PASS", gate: "GRANT_M1_ACCEPTANCE", observers: observers.length, runtimeCommits: [...runtimeCommits].sort(), evidenceProtocolVersion: EVIDENCE_PROTOCOL_VERSION, assignments: assignmentCount, signedResults: signedResultCount, rawPolls: rawPollCount, evidenceRoot };
 }
 
 function validateAssignment(assignment, observer, authority) {
@@ -188,17 +207,36 @@ function assignmentMatchesResult(assignment, result) {
 }
 
 function validateObserverScopedRecords(evidenceByField, observer) {
-  for (const field of ["health_history", "restart_evidence", "provider_evidence", "failure_matrix"]) {
+  for (const field of ["health_history", "restart_evidence", "provider_evidence", "runtime_qualification"]) {
     const records = evidenceByField.get(field).flatMap(artifact => artifact.records);
     if (records.some(record => record?.observer_id !== observer.observer_id)) throw new Error(`${observer.observer_id} ${field} contains unscoped or mismatched records`);
-    if (field === "provider_evidence" && !records.some(record => record.provider_label === observer.provider_label && record.region === observer.region && record.network_asn === observer.network_asn && record.corroborated === true)) throw new Error(`${observer.observer_id} provider evidence does not corroborate the registry`);
+    if (field === "provider_evidence" && !records.some(record => record.provider_label === observer.provider_label && record.region === observer.region && canonicalJson(record.network_asns) === canonicalJson(observer.network_asns) && record.corroborated === true)) throw new Error(`${observer.observer_id} provider evidence does not corroborate the registry`);
     if (field === "health_history" && !records.some(record => record.ready === true && record.clock_synchronized === true && record.key_permissions_verified === true)) throw new Error(`${observer.observer_id} health evidence lacks ready, synchronized-clock, and key-permission proof`);
     if (field === "restart_evidence" && !records.some(record => record.restart_succeeded === true && Number.isSafeInteger(record.recovered_records) && record.recovered_records >= 1)) throw new Error(`${observer.observer_id} restart evidence does not prove durable recovery`);
-    if (field === "failure_matrix") {
-      const required = ["HEALTHY", "DELAYED", "ONE_READER_UNAVAILABLE", "TWO_READERS_UNAVAILABLE", "DISAGREEMENT"];
-      if (!records.some(record => required.every(name => record.cases?.[name] === "PASS"))) throw new Error(`${observer.observer_id} failure matrix is incomplete`);
-    }
+    if (field === "runtime_qualification" && !records.some(record => record.runtime_commit === observer.runtime_commit && record.evidence_protocol_version === observer.evidence_protocol_version && record.status === "QUALIFIED" && record.host_stability_admitted === true && record.semantic_recomputation_supported === true && /^[a-f0-9]{64}$/u.test(record.source_anchor_sha256))) throw new Error(`${observer.observer_id} runtime qualification does not support the declared evidence protocol`);
   }
+}
+
+function validateSemanticFailureMatrix(records) {
+  const required = ["HEALTHY", "DELAYED", "ONE_READER_UNAVAILABLE", "TWO_READERS_UNAVAILABLE", "DISAGREEMENT", "EXPIRED_CLEAN_NEGATIVE", "EXPIRY_WITH_READER_ERROR_INCONCLUSIVE", "QUORUM_UNAVAILABLE_INCONCLUSIVE"];
+  if (!records.some(record => record?.schema_version === "GrantM1SemanticFailureMatrix@0.1.0" && record.evidence_protocol_version === EVIDENCE_PROTOCOL_VERSION && /^[a-f0-9]{40}$/u.test(record.runtime_commit_under_test) && required.every(name => record.cases?.[name] === "PASS"))) {
+    throw new Error("shared semantic failure matrix is incomplete");
+  }
+}
+
+async function readSharedEvidence(references, label, resolveInside, evidenceRootReal) {
+  if (!Array.isArray(references) || references.length === 0) throw new Error(`evidence-index.json is missing ${label}`);
+  const seen = new Set();
+  const records = [];
+  for (const reference of references) {
+    if (reference === null || typeof reference !== "object" || Array.isArray(reference) || typeof reference.path !== "string" || !reference.path.startsWith("shared/") || !/^[a-f0-9]{64}$/u.test(reference.sha256) || seen.has(reference.path)) throw new Error(`${label} references are invalid`);
+    seen.add(reference.path);
+    const bytes = await readNonEmpty(resolveInside(reference.path), reference.path, evidenceRootReal);
+    if (sha256Hex(bytes) !== reference.sha256) throw new Error(`${reference.path} SHA-256 does not match evidence-index.json`);
+    rejectPrivateMaterial(bytes, reference.path);
+    records.push(...parseEvidenceRecords(bytes, reference.path));
+  }
+  return records;
 }
 
 function validateSignedResult(result, observer, allowlistEntry) {

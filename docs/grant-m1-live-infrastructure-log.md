@@ -410,3 +410,26 @@ the corrected E4 evidence follows in the next section.
 - Status is `RUNTIME_REQUALIFIED` for Observer A on the common candidate. This
   is not three-observer common-runtime qualification, formal Milestone 1
   acceptance, or the start of Milestone 2.
+
+## 2026-09-09 — Aggregate M1 experiment and acceptance passed
+
+- A single coordinator-signed experiment plan committed one expected unit for
+  each of AWS A, Google B, and Oracle C. The three short-lived assignments were
+  executed without replacing or restarting the qualified Observer runtimes.
+- All three results reached `FINALIZED`, retained assignment-correlated raw
+  polls, valid Observer signatures, and matching Collector delivery receipts
+  with status `ACCEPTED`.
+- Provider metadata was sanitized into account- and instance-scoped SHA-256
+  fingerprints. AWS reports AS16509, Google retains both observed AS43515 and
+  AS15169, and Oracle reports AS31898; raw cloud IDs and network addresses were
+  omitted.
+- The aggregate `GrantM1EvidenceIndex@0.6.0` package passes semantic
+  raw-to-derived recomputation, signed-plan unit commitments, unique identity
+  and provider checks, mixed-runtime compatibility review, the shared
+  eight-case failure matrix, and delivery-receipt binding.
+- Status advances to `ACCEPTED` for Grant Milestone 1. Milestone 2 has not
+  started. Direct administrative access to the active Collector log must be
+  rebound because the current DNS address differs from the retained SSH target;
+  this is tracked as an operational follow-up before M2. A subsequent public
+  replay of all three signed results returned HTTP 200 `DUPLICATE` and a durable
+  count of at least three for every response.
