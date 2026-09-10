@@ -39,7 +39,7 @@ synthetic alert to an approved responder destination.
 ## Current blockers
 
 1. Obtain explicit authorization and run the bounded rehearsal.
-2. Prove daily backup/restore to a separate location.
+2. Transfer and restore an export through the configured AWS destination.
 3. Prove cumulative/per-route counts and the append-only incident log.
 4. Deploy the alert evaluator and Telegram delivery adapter on the live hosts.
 5. Revalidate the 14-day resource estimate and obtain any required cost
@@ -52,6 +52,12 @@ Their status is `IMPLEMENTED_NOT_PROVEN`: local byte equality does not prove a
 separate backup location, and synthetic ledgers/incidents do not prove the live
 deployment. Those controls move to proven only after the authorized rehearsal
 retains external evidence.
+
+The restricted AWS destination now exists with service-identity-only access.
+At capture its available storage was above the frozen alert floor and the
+existing Observer remained active and enabled. This proves destination configuration,
+not export transfer, byte-identical restore, retention, or rehearsal readiness.
+The sanitized host evidence is hash-bound from the rehearsal plan.
 
 The frozen alert thresholds and deterministic evaluator are in
 `deploy/grant-pilot/m2-alert-policy.json` and

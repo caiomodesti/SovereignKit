@@ -1,0 +1,18 @@
+{
+  "schema_version": "GrantM2BackupDestinationEvidence@0.1.0",
+  "captured_at": "2026-09-10T02:16:06.127Z",
+  "source_role": "oracle-collector",
+  "destination_provider": "AWS",
+  "destination_host_role": "observer-aws-a",
+  "access_restricted_to_service_identity": true,
+  "available_bytes_above_alert_floor": true,
+  "observer_service_active": true,
+  "observer_service_enabled": true,
+  "destination_created": true,
+  "transfer_tested": false,
+  "restore_tested": false,
+  "separate_provider_from_source": true,
+  "separate_location_proven": false,
+  "rehearsal_started": false,
+  "milestone_2_started": false
+}
