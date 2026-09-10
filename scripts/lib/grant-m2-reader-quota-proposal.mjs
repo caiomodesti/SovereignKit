@@ -3,6 +3,23 @@ export const GRANT_M2_RESOURCE_QUOTA_ESTIMATE_VERSION = "GrantM2ResourceQuotaEst
 
 const OBSERVERS = ["observer-aws-a", "observer-google-e2-micro", "observer-oracle-a1"];
 const ROUTES = ["alchemy-solana-devnet", "solana-public-devnet"];
+const M2_READER_IDS = ["grant-m2-reader-public-a", "grant-m2-reader-alchemy", "grant-m2-reader-public-b"];
+
+export function createGrantM2ReaderRegistry(endpoints) {
+  if (!Array.isArray(endpoints) || endpoints.length !== 3) throw new Error("M2 reader registry requires exactly three endpoints");
+  const urls = endpoints.map(value => new URL(value));
+  if (urls.some(url => url.protocol !== "https:")) throw new Error("M2 remote reader endpoints must use HTTPS");
+  if (urls[0].origin !== "https://api.devnet.solana.com" || urls[2].origin !== urls[0].origin ||
+      urls[1].origin !== "https://solana-devnet.g.alchemy.com") {
+    throw new Error("M2 reader endpoint order or origin is invalid");
+  }
+  return {
+    schemaVersion: "ObservationReaderRegistry@0.1.0",
+    readers: urls.map((url, index) => ({ readerId: M2_READER_IDS[index], endpoint: url.toString() })),
+    independence: "LOGICAL_REDUNDANCY_WITH_CORRELATED_PUBLIC_UPSTREAM",
+    limitation: "Readers public-a and public-b are distinct logical clients over the same Solana Public Devnet upstream and are not independent witnesses.",
+  };
+}
 
 export function validateGrantM2ReaderTopologyProposal(plan) {
   if (plan?.schema_version !== GRANT_M2_READER_TOPOLOGY_PROPOSAL_VERSION ||

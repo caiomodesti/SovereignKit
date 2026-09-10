@@ -1,0 +1,21 @@
+{
+  "schema_version": "GrantM2ReaderDeploymentEvidence@0.1.0",
+  "status": "INSTALLED_THREE_HOSTS_RPC_PREFLIGHT_PASSED",
+  "installed_registry_sha256": "78ac9aaeb88bfca779383ba3183215fa5e3c103d80b7c4d836c1ada0ac5f7147",
+  "previous_registry_sha256": "9fd54f802aa0afc894c833958110a5afe421c0b0f6871a2ec47e3b387f90aa03",
+  "observers": [
+    {"observer_id":"observer-aws-a","captured_at":"2026-09-10T15:15:56.332Z","status":"INSTALLED_HASH_VERIFIED","mode":"0640","backup_retained":true,"service_active":true,"rpc_preflight_at":"2026-09-10T15:20:29.928Z","rpc_methods_passed":12},
+    {"observer_id":"observer-oracle-a1","captured_at":"2026-09-10T15:17:05.041Z","status":"INSTALLED_HASH_VERIFIED","mode":"0600","backup_retained":true,"service_active":true,"rpc_preflight_at":"2026-09-10T15:20:31.108Z","rpc_methods_passed":12},
+    {"observer_id":"observer-google-e2-micro","captured_at":"2026-09-10T15:19:30.348Z","status":"INSTALLED_HASH_VERIFIED","mode":"0600","backup_retained":true,"service_active":true,"rpc_preflight_at":"2026-09-10T15:21:02.844Z","rpc_methods_passed":12}
+  ],
+  "shared_public_upstream": true,
+  "independent_reader_infrastructure_proven": false,
+  "remote_rpc_preflight_proven": true,
+  "rpc_preflight_identity": "sovereignkit",
+  "rpc_methods": ["getHealth","getGenesisHash","getBlockHeight","getSignatureStatuses"],
+  "rpc_preflight_http_status": 200,
+  "rpc_scope": "METHOD_AVAILABILITY_ONLY_NOT_LEDGER_OBSERVATION",
+  "offsets_activated": false,
+  "rehearsal_started": false,
+  "milestone_2_started": false
+}

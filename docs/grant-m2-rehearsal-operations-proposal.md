@@ -78,3 +78,14 @@ After these decisions, configure and verify the destinations, finish the
 resource worksheet, and present the exact run manifest for rehearsal approval.
 Keep the existing frozen JSON contracts and their hashes unchanged during this
 proposal stage; record actual deployment evidence separately.
+
+Operator approval for the recommended reader topology was received on
+2026-09-10. `scripts/build-grant-m2-reader-registry.mjs` creates the private
+runtime registry only from endpoint files already held below `.secrets`, uses
+three fixed logical IDs, and retains the correlated-public-upstream disclosure.
+Deployment evidence is retained separately in
+`fixtures/grant-m2/reader-deployment-20260910.json`: all three hosts have the
+approved registry, previous configurations are backed up, and existing service
+permissions were preserved. No credential needed to be copied between hosts.
+The proposed offsets have not been installed or activated in a scheduler.
+Rehearsal authorization remains pending.
