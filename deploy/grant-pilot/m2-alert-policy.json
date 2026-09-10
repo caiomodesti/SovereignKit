@@ -1,0 +1,43 @@
+{
+  "schema_version": "GrantM2AlertPolicy@0.1.0",
+  "status": "FROZEN_IMPLEMENTED_NOT_PROVEN",
+  "sample_interval_seconds": 60,
+  "thresholds": {
+    "disk_free_bytes": {
+      "warning_below": 5368709120,
+      "critical_below": 2147483648
+    },
+    "clock_absolute_offset_ms": {
+      "warning_above": 1000,
+      "critical_above": 5000
+    },
+    "service_or_readiness": {
+      "critical_after_consecutive_failures": 2
+    },
+    "delivery_backlog": {
+      "warning_count_at_or_above": 12,
+      "critical_count_at_or_above": 18,
+      "critical_oldest_age_seconds_above": 3600
+    },
+    "rpc_quota": {
+      "warning_remaining_percent_at_or_below": 20,
+      "critical_remaining_percent_at_or_below": 10,
+      "warning_on_http_429": true,
+      "critical_after_consecutive_http_429": 3
+    }
+  },
+  "delivery": {
+    "destination": "NOT_CONFIGURED",
+    "offline_responder": "NOT_ASSIGNED",
+    "synthetic_delivery_test": "NOT_RUN",
+    "notification_delivery_proven": false
+  },
+  "actions": {
+    "automatic_window_reset": false,
+    "automatic_evidence_deletion": false,
+    "automatic_threshold_relaxation": false,
+    "open_append_only_incident_on_critical": true,
+    "manual_response_required": true
+  },
+  "milestone_2_started": false
+}

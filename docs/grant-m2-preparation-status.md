@@ -53,6 +53,14 @@ separate backup location, and synthetic ledgers/incidents do not prove the live
 deployment. Those controls move to proven only after the authorized rehearsal
 retains external evidence.
 
+The frozen alert thresholds and deterministic evaluator are in
+`deploy/grant-pilot/m2-alert-policy.json` and
+`scripts/lib/grant-m2-alert-policy.mjs`. Disk, clock, service/readiness,
+delivery backlog and RPC quota detection are `IMPLEMENTED_NOT_PROVEN`.
+Notification delivery remains `NOT_PROVEN`, the destination is not configured,
+and an offline responder is not assigned. No test notification is sent by the
+preparation gate.
+
 Preparation verification:
 
 ```powershell
