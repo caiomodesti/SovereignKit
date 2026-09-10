@@ -60,9 +60,9 @@ export function validateGrantM2PilotReadiness(plan, precommitmentContent) {
 
   const controls = plan.operational_controls ?? {};
   const expectedControls = {
-    daily_backup_restore: "NOT_PROVEN",
-    daily_cumulative_counts: "NOT_PROVEN",
-    append_only_incident_log: "NOT_PROVEN",
+    daily_backup_restore: "IMPLEMENTED_NOT_PROVEN",
+    daily_cumulative_counts: "IMPLEMENTED_NOT_PROVEN",
+    append_only_incident_log: "IMPLEMENTED_NOT_PROVEN",
     disk_alert: "NOT_PROVEN",
     clock_drift_alert: "NOT_PROVEN",
     service_readiness_alert: "NOT_PROVEN",
