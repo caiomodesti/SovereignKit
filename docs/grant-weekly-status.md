@@ -364,9 +364,9 @@ Its E4 preflight, replay, reboot, and soak claims are retracted. See the
 - `GRANT_M1_ACCEPTANCE`, the complete Grant M1 software gate, and the repository
   secret audit pass. Milestone 1 status is `ACCEPTED`; Milestone 2 has not
   started.
-- Operational follow-up before M2: the Collector hostname's current DNS address
-  no longer matches the retained SSH target, so direct access to the active
-  durable log must be re-established. A fresh HTTPS replay of all three signed
-  results returned `DUPLICATE` with stored count at least three, independently
-  reconciling the endpoint's current idempotency state with the retained
-  Observer receipts.
+- Closed the Collector administrative-binding follow-up through the Oracle
+  control plane and strict SSH host-key verification. The expected E4 guest,
+  Collector, and Caddy were active; the durable log contained 21 records and
+  each final result ID occurred exactly once. The sanitized reconciliation is
+  `fixtures/grant-m1/collector-admin-reconciliation-20260909.json`. Milestone 2
+  remains not started.

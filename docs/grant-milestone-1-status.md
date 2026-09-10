@@ -146,14 +146,15 @@ as of 2026-09-09. This acceptance is scoped to the retained Devnet experiment
 and `GrantM1EvidenceProtocol@0.1.0`; it does not establish independence among
 the shared logical RPC readers or authorize Mainnet activity.
 
-Before Milestone 2 starts, reconcile the Collector hostname with the current
-administrative host binding and restore direct operator access to the active
-durable accepted log. The three retained Observer receipts record `ACCEPTED`
-and are cryptographically bound to the signed results. A fresh public replay of
-all three signed results returned `DUPLICATE` with durable count at least three,
-confirming current endpoint state. The prior SSH target no longer matches the
-hostname's current DNS address, so direct administrative log access remains an
-operational follow-up and does not retroactively change the accepted package.
+The post-acceptance Collector administrative reconciliation passed. The Oracle
+control plane identified the running E4 canary and its assigned public address
+matched the Collector hostname. Strict host-key verification then reached the
+expected guest; Collector and Caddy were active, the Collector was enabled, and
+the durable log contained 21 records. Each of the three final result IDs
+occurred exactly once. The sanitized evidence is
+`fixtures/grant-m1/collector-admin-reconciliation-20260909.json`. This closes
+the SSH-binding follow-up without changing the accepted package or starting
+Milestone 2.
 
 The Alchemy preflight proves that one external logical Devnet RPC route is usable
 from the operator environment. It is neither an observer host nor independence
