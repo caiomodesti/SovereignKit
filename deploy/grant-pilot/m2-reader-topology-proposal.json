@@ -1,0 +1,65 @@
+{
+  "schema_version": "GrantM2ReaderTopologyProposal@0.1.0",
+  "status": "OPERATOR_DECISION_REQUIRED",
+  "scope": "PRE_M2_REHEARSAL_ONLY",
+  "deployment_status": "NOT_DEPLOYED",
+  "observation_contract": {
+    "logical_readers": 3,
+    "quorum": 2,
+    "reader_client_must_differ_from_submission_client_instance": true
+  },
+  "current_topology": [
+    {
+      "reader_id": "grant-m1-reader-1",
+      "upstream": "SOLANA_PUBLIC_DEVNET",
+      "essential_signature_status_method": "HEALTHY"
+    },
+    {
+      "reader_id": "grant-m1-reader-2",
+      "upstream": "ALCHEMY_SOLANA_DEVNET",
+      "essential_signature_status_method": "HEALTHY"
+    },
+    {
+      "reader_id": "grant-m1-reader-3",
+      "upstream": "ONFINALITY_SOLANA_DEVNET",
+      "essential_signature_status_method": "HTTP_429"
+    }
+  ],
+  "recommended_topology": [
+    {
+      "reader_id": "grant-m2-reader-public-a",
+      "client_identity": "m2-observation-public-client-a",
+      "upstream": "SOLANA_PUBLIC_DEVNET"
+    },
+    {
+      "reader_id": "grant-m2-reader-alchemy",
+      "client_identity": "m2-observation-alchemy-client",
+      "upstream": "ALCHEMY_SOLANA_DEVNET"
+    },
+    {
+      "reader_id": "grant-m2-reader-public-b",
+      "client_identity": "m2-observation-public-client-b",
+      "upstream": "SOLANA_PUBLIC_DEVNET"
+    }
+  ],
+  "deployment_targets": [
+    "observer-aws-a",
+    "observer-google-e2-micro",
+    "observer-oracle-a1"
+  ],
+  "limitations": {
+    "public_reader_clients_share_upstream": true,
+    "public_reader_failures_are_correlated": true,
+    "proves_three_independent_rpc_providers": false,
+    "proves_independent_validators": false,
+    "claim_boundary": "Three distinct logical reader IDs and client instances with a 2-of-3 quorum; two clients share the Solana Public Devnet upstream and are not independent witnesses."
+  },
+  "operator_decision": {
+    "recommended_option": "REPLACE_ONFINALITY_WITH_SECOND_LOGICAL_SOLANA_PUBLIC_CLIENT",
+    "authorized": false,
+    "authorized_at": null,
+    "authorized_by": null
+  },
+  "rehearsal_started": false,
+  "milestone_2_started": false
+}

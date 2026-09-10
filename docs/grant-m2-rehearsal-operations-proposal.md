@@ -65,9 +65,14 @@ and measure the snapshot strategy before asserting storage sufficiency.
 
 ## Decisions needed to configure the rehearsal
 
+- Approve or reject the undeployed reader-topology proposal. The recommended
+  zero-cost option replaces the rate-limited OnFinality reader with a second
+  distinct logical Solana Public client while explicitly retaining the shared
+  upstream and correlated-failure limitation.
 - Repeat the proven transfer and restore flow for the rehearsal export.
 - Deploy the Telegram delivery adapter with the alert evaluator on live hosts.
-- Verify actual account quotas under the approved zero-incremental-spend ceiling.
+- Approve the validated zero-incremental-spend quota estimate and deterministic
+  20-second unit offsets.
 
 After these decisions, configure and verify the destinations, finish the
 resource worksheet, and present the exact run manifest for rehearsal approval.

@@ -46,6 +46,23 @@ synthetic alert to an approved responder destination.
    approval.
 6. Obtain explicit authorization for the official window.
 
+The quota revalidation now has a conservative reviewable estimate at
+`deploy/grant-pilot/m2-resource-quota-estimate.json`. It budgets all 4,032
+units at the maximum 25 reader polls, three per-observer minute health checks,
+Alchemy submission/blockhash calls and a 10% contingency. The resulting
+5,854,464 CU estimate plus current usage remains below the observed 30,000,000
+CU account ceiling. Fixed 20-second unit offsets keep the computed Alchemy
+burst at 240 CU/s below the observed 300 CU/s ceiling. This is an estimate and
+does not approve quota, spending, the rehearsal or the official window.
+
+The remaining configuration decision is recorded without deployment at
+`deploy/grant-pilot/m2-reader-topology-proposal.json`. OnFinality currently
+returns HTTP 429 for the essential signature-status method. The recommended
+zero-cost replacement uses a second distinct logical Solana Public reader
+client. The two public clients share one upstream and therefore have correlated
+failure; they are not two independent witnesses. No observer configuration has
+been changed.
+
 Backup integrity, daily count reconciliation and append-only incident-log
 validation are implemented in `scripts/lib/grant-m2-operational-controls.mjs`.
 Their status is `IMPLEMENTED_NOT_PROVEN`: local byte equality does not prove a
