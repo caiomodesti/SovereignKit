@@ -1,0 +1,30 @@
+{
+  "schema_version": "GrantM1ExperimentPlan@0.1.0",
+  "plan_id": "3b3af3b0-decd-48d3-b110-c120efaa66dc",
+  "issuer_id": "grant-coordinator",
+  "issuer_key_id": "assignment-key-2026-09",
+  "issued_at": "2026-09-09T02:55:50.052Z",
+  "experiment_definition_hash": "a4ebe30dede4cbf15d204da37d6c2fb477bcc5c057eff9ed2f6616fe473606f9",
+  "observers": [
+    {
+      "observer_id": "observer-aws-a",
+      "expected_unit_ids": [
+        "9c130fb9c05cf1a6a5e8aa7d6b12e480242c5a1e9eb096fe43c5ea0bd0d7d158"
+      ]
+    },
+    {
+      "observer_id": "observer-google-e2-micro",
+      "expected_unit_ids": [
+        "3d0895e65011f5509d9c856735ee247039386ed790ba7ed17eaef67b9449bc0e"
+      ]
+    },
+    {
+      "observer_id": "observer-oracle-a1",
+      "expected_unit_ids": [
+        "247e133978adfc2f01d905bea759790fd7bebe5c4b03a0b4c2adf937ddb8aeb5"
+      ]
+    }
+  ],
+  "payload_hash": "f38139f74571f5b95faa33c2b0d8808009d90cfea9e85ccc000ce0642f7ca9ce",
+  "issuer_signature": "l8LlrRH2lg1eiR81e39fNxPLA9Tygajzkh6124TqJYNoEnbQcBfMvzNgzZd9nEZSMt1j-P7MRI2I8TRU42OGBQ"
+}

@@ -1,0 +1,10 @@
+{
+  "schema_version": "GrantM1NormalizedHealth@0.1.0",
+  "observer_id": "observer-google-e2-micro",
+  "captured_at": "2026-09-09T02:21:26.795Z",
+  "ready": true,
+  "clock_synchronized": true,
+  "key_permissions_verified": true,
+  "source_artifact": "fixtures/grant-m1/observer-google-b-common-runtime-requalification-20260909.json",
+  "source_sha256": "610c188530f68b1599dc8989ab8cf7b4cbf0615ae5fb9469c72582d80d0d94e0"
+}

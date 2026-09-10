@@ -1,0 +1,8 @@
+{
+  "schema_version": "GrantM1NormalizedRestartEvidence@0.1.0",
+  "observer_id": "observer-aws-a",
+  "restart_succeeded": true,
+  "recovered_records": 1,
+  "source_artifact": "fixtures/grant-m1/observer-aws-a-common-runtime-requalification-20260908.json",
+  "source_sha256": "a3a5806d5e23fb2adfdd2a0f80a55022896bdc1072fc1a81c4d71f4ea5704a9d"
+}

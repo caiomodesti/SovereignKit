@@ -1,5 +1,5 @@
 {
-  "schema_version": "GrantObserverRegistry@0.1.0",
+  "schema_version": "GrantObserverRegistry@0.3.0",
   "generated_at": "2026-08-24T00:00:00.000Z",
   "observers": [
     {
@@ -10,8 +10,10 @@
       "instance_id_sanitized": "REDACTED_STABLE_INSTANCE_ID",
       "region": "REPLACE_WITH_REGION",
       "country_code": "ZZ",
-      "network_asn": 0,
+      "network_asns": [64500],
       "runtime_commit": "0000000000000000000000000000000000000000",
+      "runtime_compatibility_status": "REVIEWED_COMPATIBLE",
+      "evidence_protocol_version": "GrantM1EvidenceProtocol@0.1.0",
       "provisioned_at": "2026-08-24T00:00:00.000Z",
       "independence_status": "ASSERTED",
       "evidence_refs": ["private/provider-console-screenshot-redacted"]

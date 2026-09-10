@@ -1,0 +1,15 @@
+{
+  "schema_version": "GrantM1NormalizedProviderEvidence@0.1.0",
+  "observer_id": "observer-aws-a",
+  "provider_label": "Amazon Web Services",
+  "region": "sa-east-1",
+  "country_code": "BR",
+  "network_asns": [
+    16509
+  ],
+  "provider_account_fingerprint": "93c059082fee6d9c9077dabd6a0ca00879b51beb9486f8babe6fa83c5bc7c1df",
+  "instance_id_sanitized": "9efbfaf6294f1589f8fef311b7192de38af79f3612472028460f4c82f21fb2c4",
+  "corroborated": true,
+  "source_artifact": "fixtures/grant-m1/observer-aws-a-network-20260909.json",
+  "source_sha256": "26e449b30a72d1bd7c3cd42c39740b9ee44db1042446556fea85cf548b3da368"
+}

@@ -1,0 +1,12 @@
+{
+  "schema_version": "GrantM1RuntimeCompatibilityQualification@0.1.0",
+  "observer_id": "observer-aws-a",
+  "runtime_commit": "f4c70ea10198e5313eec0467f6a7b9222ff9e8f3",
+  "evidence_protocol_version": "GrantM1EvidenceProtocol@0.1.0",
+  "status": "QUALIFIED",
+  "compatibility_status": "REVIEWED_COMPATIBLE",
+  "host_stability_admitted": true,
+  "semantic_recomputation_supported": true,
+  "source_artifact": "fixtures/grant-m1/observer-aws-a-common-runtime-requalification-20260908.json",
+  "source_anchor_sha256": "a3a5806d5e23fb2adfdd2a0f80a55022896bdc1072fc1a81c4d71f4ea5704a9d"
+}

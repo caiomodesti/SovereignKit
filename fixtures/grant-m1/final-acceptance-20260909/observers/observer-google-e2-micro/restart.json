@@ -1,0 +1,8 @@
+{
+  "schema_version": "GrantM1NormalizedRestartEvidence@0.1.0",
+  "observer_id": "observer-google-e2-micro",
+  "restart_succeeded": true,
+  "recovered_records": 1,
+  "source_artifact": "fixtures/grant-m1/observer-google-b-common-runtime-requalification-20260909.json",
+  "source_sha256": "610c188530f68b1599dc8989ab8cf7b4cbf0615ae5fb9469c72582d80d0d94e0"
+}

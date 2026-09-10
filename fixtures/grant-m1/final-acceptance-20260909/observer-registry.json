@@ -1,0 +1,67 @@
+{
+  "schema_version": "GrantObserverRegistry@0.3.0",
+  "generated_at": "2026-09-10T00:12:21.939Z",
+  "observers": [
+    {
+      "observer_id": "observer-aws-a",
+      "key_id": "aws-a-key-2026-08-31",
+      "provider_label": "Amazon Web Services",
+      "provider_account_fingerprint": "93c059082fee6d9c9077dabd6a0ca00879b51beb9486f8babe6fa83c5bc7c1df",
+      "instance_id_sanitized": "9efbfaf6294f1589f8fef311b7192de38af79f3612472028460f4c82f21fb2c4",
+      "region": "sa-east-1",
+      "country_code": "BR",
+      "network_asns": [
+        16509
+      ],
+      "runtime_commit": "f4c70ea10198e5313eec0467f6a7b9222ff9e8f3",
+      "runtime_compatibility_status": "REVIEWED_COMPATIBLE",
+      "evidence_protocol_version": "GrantM1EvidenceProtocol@0.1.0",
+      "provisioned_at": "2026-08-31T00:00:00.000Z",
+      "independence_status": "CORROBORATED",
+      "evidence_refs": [
+        "observers/observer-aws-a/provider.json"
+      ]
+    },
+    {
+      "observer_id": "observer-google-e2-micro",
+      "key_id": "observer-google-e2-micro-2026-09-03",
+      "provider_label": "Google Cloud Platform",
+      "provider_account_fingerprint": "82dc6ae5978fbfa4beabfbbf0c3fc00277a1038f609579ec68c2724294db7a41",
+      "instance_id_sanitized": "0df8331ae8655f49f280595e0d40cf56e5a696b95703fad453e9217a05e06d31",
+      "region": "us-central1",
+      "country_code": "US",
+      "network_asns": [
+        43515,
+        15169
+      ],
+      "runtime_commit": "f4c70ea10198e5313eec0467f6a7b9222ff9e8f3",
+      "runtime_compatibility_status": "REVIEWED_COMPATIBLE",
+      "evidence_protocol_version": "GrantM1EvidenceProtocol@0.1.0",
+      "provisioned_at": "2026-09-03T01:00:00.000Z",
+      "independence_status": "CORROBORATED",
+      "evidence_refs": [
+        "observers/observer-google-e2-micro/provider.json"
+      ]
+    },
+    {
+      "observer_id": "observer-oracle-a1",
+      "key_id": "observer-oracle-a1-2026-09-04",
+      "provider_label": "Oracle Cloud Infrastructure",
+      "provider_account_fingerprint": "82bfcf375fcec48b25d13f80ee6707f95f841e1517da19f901952d896cc3b828",
+      "instance_id_sanitized": "6f67fa632c7a3e54992c9f436b1f75a0bcd91f9cd06b5e8fc7e4d741da8f0c0e",
+      "region": "sa-saopaulo-1",
+      "country_code": "BR",
+      "network_asns": [
+        31898
+      ],
+      "runtime_commit": "49557b234b7e359dcd77ca198639b6e0a936dee2",
+      "runtime_compatibility_status": "REVIEWED_COMPATIBLE",
+      "evidence_protocol_version": "GrantM1EvidenceProtocol@0.1.0",
+      "provisioned_at": "2026-09-04T00:00:00.000Z",
+      "independence_status": "CORROBORATED",
+      "evidence_refs": [
+        "observers/observer-oracle-a1/provider.json"
+      ]
+    }
+  ]
+}

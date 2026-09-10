@@ -1,4 +1,5 @@
 import { readFile } from "node:fs/promises";
+import { verifyGrantM1Acceptance } from "./lib/grant-m1-acceptance.mjs";
 import { evaluateGrantM1OperatorReadiness } from "./lib/grant-m1-operator-readiness.mjs";
 import { evaluateGrantM1ZeroCostAccountReadiness } from "./lib/grant-m1-zero-cost-account-readiness.mjs";
 
@@ -67,6 +68,10 @@ const requiredFiles = [
   "scripts/verify-grant-m1-recovery-drill.mjs",
   "scripts/verify-grant-m1-acceptance.mjs",
   "scripts/lib/grant-m1-acceptance.mjs",
+  "scripts/prepare-grant-m1-experiment-plan.mjs",
+  "scripts/generate-grant-m1-semantic-failure-matrix.mjs",
+  "scripts/assemble-grant-m1-final-acceptance.mjs",
+  "scripts/reconcile-grant-m1-collector.mjs",
   "scripts/lib/grant-m1-host-preflight.mjs",
   "scripts/lib/grant-m1-rpc-route-preflight.mjs",
   "scripts/capture-grant-m1-host-preflight.mjs",
@@ -119,6 +124,11 @@ const requiredFiles = [
   "fixtures/grant-m1/observer-oracle-c-devnet-20260906/manifest.json",
   "fixtures/grant-m1/observer-oracle-c-network-20260906.json",
   "fixtures/grant-m1/observer-oracle-c-soak-20260906.json",
+  "fixtures/grant-m1/observer-aws-a-network-20260909.json",
+  "fixtures/grant-m1/observer-google-b-provider-20260909.json",
+  "fixtures/grant-m1/observer-oracle-c-provider-20260909.json",
+  "fixtures/grant-m1/final-acceptance-20260909/evidence-index.json",
+  "fixtures/grant-m1/collector-reconciliation-20260909.json",
 ];
 
 const contents = new Map(await Promise.all(requiredFiles.map(async path => [path, await readFile(path, "utf8")])));
@@ -310,11 +320,11 @@ if (rpcRouteAnchor.schema_version !== "GrantM1RpcRoutePreflight@0.1.0" ||
     rpcRouteAnchor.milestone_acceptance_effect !== "NONE") {
   throw new Error("Alchemy Devnet route anchor must remain sanitized and make no observer-independence claim");
 }
-if (!contents.get("scripts/lib/grant-m1-acceptance.mjs").includes("GrantM1EvidenceIndex@0.4.0") ||
+if (!contents.get("scripts/lib/grant-m1-acceptance.mjs").includes("GrantM1EvidenceIndex@0.6.0") ||
     !contents.get("scripts/lib/grant-m1-acceptance.mjs").includes("expected-unit commitment") ||
     !contents.get("scripts/lib/grant-m1-acceptance.mjs").includes("assignment signature is invalid") ||
     !contents.get("scripts/lib/grant-m1-acceptance.mjs").includes("signed result signature is invalid")) {
-  throw new Error("grant acceptance verifier must enforce the hashed v0.3 evidence contract plus assignment and observer signatures");
+  throw new Error("grant acceptance verifier must enforce the hashed v0.6 evidence contract plus assignment, observer, and delivery evidence");
 }
 if (!contents.get("scripts/lib/grant-m1-host-preflight.mjs").includes("GrantM1HostPreflight@0.2.0") ||
     !contents.get("scripts/lib/grant-m1-host-preflight.mjs").includes("GrantM1ObserverRuntimeManifest@0.1.0") ||
@@ -435,4 +445,16 @@ const zeroCostAccountReadiness = evaluateGrantM1ZeroCostAccountReadiness(JSON.pa
 if (zeroCostAccountReadiness.status !== "ACTION_REQUIRED" || zeroCostAccountReadiness.blockers.length === 0) {
   throw new Error("checked-in zero-cost account readiness example must remain blocked and secret-free");
 }
-process.stdout.write(`${JSON.stringify({ status: "PASS", gate: "GRANT_M1_SOFTWARE", requiredFiles: requiredFiles.length })}\n`);
+const finalAcceptance = await verifyGrantM1Acceptance("fixtures/grant-m1/final-acceptance-20260909");
+if (finalAcceptance.status !== "PASS" || finalAcceptance.observers !== 3 || finalAcceptance.signedResults !== 3) {
+  throw new Error("checked-in Grant M1 final acceptance package must pass the fail-closed verifier");
+}
+const collectorReconciliation = JSON.parse(contents.get("fixtures/grant-m1/collector-reconciliation-20260909.json"));
+if (collectorReconciliation.schema_version !== "GrantM1CollectorReconciliation@0.1.0" ||
+    collectorReconciliation.collector_origin !== "https://collector.sovereignkit.org" ||
+    collectorReconciliation.all_previously_durable_at_current_endpoint !== true ||
+    collectorReconciliation.reconciled?.length !== 3 ||
+    collectorReconciliation.reconciled.some(result => result.http_status !== 200 || result.collector_status !== "DUPLICATE" || result.stored_count_at_reconciliation < 3)) {
+  throw new Error("final Collector reconciliation must retain three successful idempotent duplicate responses");
+}
+process.stdout.write(`${JSON.stringify({ status: "PASS", gate: "GRANT_M1_SOFTWARE", requiredFiles: requiredFiles.length, finalAcceptance: finalAcceptance.status })}\n`);

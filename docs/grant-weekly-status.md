@@ -345,3 +345,28 @@ Its E4 preflight, replay, reboot, and soak claims are retracted. See the
   merged. Shared logical RPC routes are not claimed as independent upstream
   infrastructure. Aggregate M1 acceptance remains pending and Milestone 2 has
   not started.
+
+## 2026-09-09 — Grant Milestone 1 accepted
+
+- Executed one signed experiment plan across AWS Observer A, Google Observer B,
+  and Oracle Observer C. Each assignment produced one raw observation and one
+  signed `FINALIZED` result; each result has exactly one matching Observer-side
+  Collector receipt with status `ACCEPTED`.
+- Published the self-contained aggregate evidence package at
+  `fixtures/grant-m1/final-acceptance-20260909`. It contains three distinct
+  public keys, provider-account and instance fingerprints, unique regions,
+  corroborated ASN sets, host/recovery evidence, and reviewed compatibility for
+  the two retained runtime commits under one evidence protocol.
+- Hardened the acceptance contract to recompute terminal quorum from raw polls,
+  reject one-key/three-identity packages, bind expected units to the signed
+  experiment plan, require a shared eight-case semantic failure matrix, and
+  require one hash/signature-bound Collector delivery receipt per result.
+- `GRANT_M1_ACCEPTANCE`, the complete Grant M1 software gate, and the repository
+  secret audit pass. Milestone 1 status is `ACCEPTED`; Milestone 2 has not
+  started.
+- Operational follow-up before M2: the Collector hostname's current DNS address
+  no longer matches the retained SSH target, so direct access to the active
+  durable log must be re-established. A fresh HTTPS replay of all three signed
+  results returned `DUPLICATE` with stored count at least three, independently
+  reconciling the endpoint's current idempotency state with the retained
+  Observer receipts.

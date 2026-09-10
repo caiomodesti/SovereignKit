@@ -1,12 +1,12 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://sovereignkit.org/spec/grant-observer-registry.schema.json",
-  "title": "SovereignKit Grant Observer Registry v0.1",
+  "title": "SovereignKit Grant Observer Registry v0.3",
   "type": "object",
   "additionalProperties": false,
   "required": ["schema_version", "generated_at", "observers"],
   "properties": {
-    "schema_version": { "const": "GrantObserverRegistry@0.1.0" },
+    "schema_version": { "const": "GrantObserverRegistry@0.3.0" },
     "generated_at": { "type": "string", "format": "date-time" },
     "observers": {
       "type": "array",
@@ -19,7 +19,7 @@
     "observer": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["observer_id", "key_id", "provider_label", "provider_account_fingerprint", "instance_id_sanitized", "region", "country_code", "network_asn", "runtime_commit", "provisioned_at", "independence_status", "evidence_refs"],
+      "required": ["observer_id", "key_id", "provider_label", "provider_account_fingerprint", "instance_id_sanitized", "region", "country_code", "network_asns", "runtime_commit", "runtime_compatibility_status", "evidence_protocol_version", "provisioned_at", "independence_status", "evidence_refs"],
       "properties": {
         "observer_id": { "$ref": "#/$defs/identifier" },
         "key_id": { "$ref": "#/$defs/identifier" },
@@ -28,8 +28,15 @@
         "instance_id_sanitized": { "type": "string", "minLength": 8, "maxLength": 256 },
         "region": { "type": "string", "minLength": 1, "maxLength": 160 },
         "country_code": { "type": "string", "pattern": "^[A-Z]{2}$" },
-        "network_asn": { "type": "integer", "minimum": 0, "maximum": 4294967295 },
+        "network_asns": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "type": "integer", "minimum": 1, "maximum": 4294967295 }
+        },
         "runtime_commit": { "type": "string", "pattern": "^[a-f0-9]{40}$" },
+        "runtime_compatibility_status": { "enum": ["EXACT_RUNTIME", "REVIEWED_COMPATIBLE"] },
+        "evidence_protocol_version": { "const": "GrantM1EvidenceProtocol@0.1.0" },
         "provisioned_at": { "type": "string", "format": "date-time" },
         "independence_status": { "enum": ["ASSERTED", "CORROBORATED", "DISPUTED"] },
         "evidence_refs": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "type": "string", "minLength": 1, "maxLength": 512 } }

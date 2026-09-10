@@ -1,0 +1,25 @@
+{
+  "schema_version": "ObserverProviderAttribution@0.2.0",
+  "observer_id": "observer-oracle-a1",
+  "captured_at": "2026-09-09T02:57:00.000Z",
+  "provider": "Oracle Cloud Infrastructure",
+  "region": "sa-saopaulo-1",
+  "provider_account_fingerprint_sha256": "82bfcf375fcec48b25d13f80ee6707f95f841e1517da19f901952d896cc3b828",
+  "provider_account_scope_kind": "oci_compartment",
+  "instance_fingerprint_sha256": "6f67fa632c7a3e54992c9f436b1f75a0bcd91f9cd06b5e8fc7e4d741da8f0c0e",
+  "network_asns": [
+    31898
+  ],
+  "sources": [
+    "OCI instance metadata v2 authenticated with the Oracle bearer header",
+    "RIPE RIS via the previously retained sanitized network attribution"
+  ],
+  "metadata_authenticated": true,
+  "corroborated": true,
+  "ip_omitted": true,
+  "prefix_omitted": true,
+  "raw_account_identifier_omitted": true,
+  "raw_instance_identifier_omitted": true,
+  "upstream_rpc_independence_proven": false,
+  "scope": "Corroborates the OCI compartment-scoped account fingerprint, instance, Sao Paulo region, and announced Oracle AS31898 without retaining raw identifiers or network addresses. It does not prove independent operators or upstream RPC readers."
+}

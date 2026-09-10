@@ -1,0 +1,27 @@
+{
+  "schema_version": "ObserverNetworkAttribution@0.2.0",
+  "observer_id": "observer-aws-a",
+  "captured_at": "2026-09-09T02:51:01.730Z",
+  "provider": "Amazon Web Services",
+  "region": "sa-east-1",
+  "provider_account_fingerprint_sha256": "93c059082fee6d9c9077dabd6a0ca00879b51beb9486f8babe6fa83c5bc7c1df",
+  "instance_fingerprint_sha256": "9efbfaf6294f1589f8fef311b7192de38af79f3612472028460f4c82f21fb2c4",
+  "official_prefix_fingerprint_sha256": "76a31f301fc2ae3e1c98ff59e4c25bb161642b795168cd3522fd2dcc8e87821a",
+  "sources": [
+    "AWS EC2 instance identity document authenticated with IMDSv2",
+    "AWS current official ip-ranges.json",
+    "RIPE RIS via RIPEstat network-info queried with the matched public AWS CIDR, never the instance address"
+  ],
+  "network_asns": [
+    16509
+  ],
+  "metadata_authenticated_with_imdsv2": true,
+  "matched_current_official_aws_range": true,
+  "corroborated": true,
+  "ip_omitted": true,
+  "prefix_omitted": true,
+  "raw_account_identifier_omitted": true,
+  "raw_instance_identifier_omitted": true,
+  "upstream_rpc_independence_proven": false,
+  "scope": "Corroborates the AWS provider account, instance, sa-east-1 region, current AWS-owned public range, and announced AS16509 without retaining raw identifiers or network addresses. It does not prove independent operators or upstream RPC readers."
+}

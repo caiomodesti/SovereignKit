@@ -218,10 +218,11 @@ experiment-definition hash and every expected unit ID per observer.
 Build `evidence-index.json` from `evidence-index.example.json` only after the
 files are final. Replace every zero hash with the SHA-256 of the referenced
 artifact and add one complete entry per observer. The acceptance verifier
-requires version `GrantM1EvidenceIndex@0.4.0`, observer-scoped paths, a committed
+requires version `GrantM1EvidenceIndex@0.6.0`, observer-scoped paths, a committed
 expected unit count and sorted-unit-ID hash matching the signed plan, valid
 assignment and observer signatures, assignment-correlated raw polls,
-non-placeholder operational evidence, and no private-key markers.
+matching Collector delivery receipts, non-placeholder operational evidence,
+and no private-key markers.
 
 The content contracts for each observer are:
 
@@ -231,12 +232,15 @@ The content contracts for each observer are:
 - `restart_evidence`: at least one matching record with
   `restart_succeeded: true` and `recovered_records >= 1`;
 - `provider_evidence`: a matching `observer_id`, provider label, region, and
-  non-zero ASN plus `corroborated: true`;
-- `failure_matrix`: one matching record whose `cases` marks `HEALTHY`,
+  non-empty unique ASN list plus `corroborated: true`;
+- `semantic_failure_matrix`: one shared record whose `cases` marks `HEALTHY`,
   `DELAYED`, `ONE_READER_UNAVAILABLE`, `TWO_READERS_UNAVAILABLE`, and
   `DISAGREEMENT` as `PASS`;
 - `signed_results`: at least one cryptographically valid `FINALIZED`
   ProbeResult with a valid 2/3 decision;
+- `delivery_receipts`: exactly one matching `ACCEPTED` or `DUPLICATE`
+  receipt for every signed result, including its payload hash and Observer
+  signature;
 - `assignment_provenance`: at least one valid short-lived signed assignment
   whose job exactly matches an indexed ProbeResult;
 - `raw_observations`: parseable `RawObservationPoll@0.2.0` JSONL correlated to

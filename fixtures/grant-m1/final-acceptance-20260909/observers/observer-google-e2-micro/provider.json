@@ -1,0 +1,16 @@
+{
+  "schema_version": "GrantM1NormalizedProviderEvidence@0.1.0",
+  "observer_id": "observer-google-e2-micro",
+  "provider_label": "Google Cloud Platform",
+  "region": "us-central1",
+  "country_code": "US",
+  "network_asns": [
+    43515,
+    15169
+  ],
+  "provider_account_fingerprint": "82dc6ae5978fbfa4beabfbbf0c3fc00277a1038f609579ec68c2724294db7a41",
+  "instance_id_sanitized": "0df8331ae8655f49f280595e0d40cf56e5a696b95703fad453e9217a05e06d31",
+  "corroborated": true,
+  "source_artifact": "fixtures/grant-m1/observer-google-b-provider-20260909.json",
+  "source_sha256": "2d3774cb021e948f859a31973bbbba0777f323893a9d579d3cef8dbf458e13ed"
+}

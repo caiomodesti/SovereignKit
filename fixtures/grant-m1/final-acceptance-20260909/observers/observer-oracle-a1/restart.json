@@ -1,0 +1,8 @@
+{
+  "schema_version": "GrantM1NormalizedRestartEvidence@0.1.0",
+  "observer_id": "observer-oracle-a1",
+  "restart_succeeded": true,
+  "recovered_records": 3,
+  "source_artifact": "fixtures/grant-m1/observer-oracle-c-pre-soak-20260904.json",
+  "source_sha256": "3bf44ee05cbf6efb21ef2c041574e69a53c3d9b438b6cbfd3911b59ead2eca25"
+}

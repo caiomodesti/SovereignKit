@@ -1,0 +1,19 @@
+{
+  "schema_version": "GrantM1SemanticFailureMatrix@0.1.0",
+  "evidence_protocol_version": "GrantM1EvidenceProtocol@0.1.0",
+  "generated_at": "2026-09-10T00:12:19.424Z",
+  "runtime_commit_under_test": "6adf8e1a36f07f1dc873f82351c3f206759f26d2",
+  "derivation_module": "scripts/lib/grant-m1-acceptance.mjs",
+  "derivation_module_sha256": "ff540f837423df392bcd45bedbe0872c7c59cb4af768168421b3d7e9e50bd3f8",
+  "cases": {
+    "HEALTHY": "PASS",
+    "DELAYED": "PASS",
+    "ONE_READER_UNAVAILABLE": "PASS",
+    "TWO_READERS_UNAVAILABLE": "PASS",
+    "DISAGREEMENT": "PASS",
+    "EXPIRED_CLEAN_NEGATIVE": "PASS",
+    "EXPIRY_WITH_READER_ERROR_INCONCLUSIVE": "PASS",
+    "QUORUM_UNAVAILABLE_INCONCLUSIVE": "PASS"
+  },
+  "scope": "Deterministic semantic recomputation of terminal quorum and fail-closed inconclusive cases; not a live network observation."
+}

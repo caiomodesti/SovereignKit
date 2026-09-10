@@ -1,13 +1,14 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://sovereignkit.org/spec/grant-m1-evidence-index.schema.json",
-  "title": "SovereignKit Grant Milestone 1 Evidence Index v0.4",
+  "title": "SovereignKit Grant Milestone 1 Evidence Index v0.6",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema_version", "generated_at", "observers"],
+  "required": ["schema_version", "generated_at", "semantic_failure_matrix", "observers"],
   "properties": {
-    "schema_version": { "const": "GrantM1EvidenceIndex@0.4.0" },
+    "schema_version": { "const": "GrantM1EvidenceIndex@0.6.0" },
     "generated_at": { "type": "string", "format": "date-time" },
+    "semantic_failure_matrix": { "$ref": "#/$defs/sharedReferenceList" },
     "observers": {
       "type": "array",
       "minItems": 3,
@@ -27,21 +28,36 @@
       }
     },
     "referenceList": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "$ref": "#/$defs/evidenceReference" } },
+    "sharedReferenceList": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["path", "sha256"],
+        "properties": {
+          "path": { "type": "string", "minLength": 1, "maxLength": 512, "pattern": "^shared/.+" },
+          "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+        }
+      }
+    },
     "observerEvidence": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["observer_id", "expected_unit_count", "expected_unit_ids_sha256", "assignment_provenance", "signed_results", "raw_observations", "health_history", "restart_evidence", "provider_evidence", "failure_matrix"],
+      "required": ["observer_id", "expected_unit_count", "expected_unit_ids_sha256", "assignment_provenance", "signed_results", "delivery_receipts", "raw_observations", "health_history", "restart_evidence", "provider_evidence", "runtime_qualification"],
       "properties": {
         "observer_id": { "$ref": "#/$defs/identifier" },
         "expected_unit_count": { "type": "integer", "minimum": 1 },
         "expected_unit_ids_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
         "assignment_provenance": { "$ref": "#/$defs/referenceList" },
         "signed_results": { "$ref": "#/$defs/referenceList" },
+        "delivery_receipts": { "$ref": "#/$defs/referenceList" },
         "raw_observations": { "$ref": "#/$defs/referenceList" },
         "health_history": { "$ref": "#/$defs/referenceList" },
         "restart_evidence": { "$ref": "#/$defs/referenceList" },
         "provider_evidence": { "$ref": "#/$defs/referenceList" },
-        "failure_matrix": { "$ref": "#/$defs/referenceList" }
+        "runtime_qualification": { "$ref": "#/$defs/referenceList" }
       }
     }
   }
