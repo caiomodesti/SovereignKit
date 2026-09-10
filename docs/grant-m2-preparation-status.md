@@ -61,6 +61,14 @@ Notification delivery remains `NOT_PROVEN`, the destination is not configured,
 and an offline responder is not assigned. No test notification is sent by the
 preparation gate.
 
+The executable rehearsal contract is prepared at
+`deploy/grant-pilot/m2-rehearsal-plan.json`. It fixes a one-hour run with two
+30-minute cycles and 12 expected units across all accepted observers and frozen
+routes. It requires external backup-location evidence, a real notification
+delivery receipt, complete unit accounting and post-run readiness. Its status
+is `PLANNED_NOT_AUTHORIZED`; it neither contributes to the grant KPI nor starts
+Milestone 2.
+
 Preparation verification:
 
 ```powershell
