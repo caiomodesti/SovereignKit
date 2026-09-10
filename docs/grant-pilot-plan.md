@@ -100,6 +100,9 @@ Milestone 1 may be `IMPLEMENTED_NOT_VALIDATED` when software and deployment tool
 Before opening the official window, complete the preparation and evidence
 recovery checks in `grant-soak-and-pilot-continuity.md`. Those checks prepare
 the pilot; they do not start Milestone 2 or replace formal M1 acceptance.
+The fail-closed preparation contract and current blocker inventory are in
+`deploy/grant-pilot/m2-pilot-readiness.json` and
+`grant-m2-preparation-status.md`.
 
 ### Objective
 

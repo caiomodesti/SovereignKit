@@ -1,0 +1,77 @@
+{
+  "schema_version": "GrantM2PilotReadiness@0.1.0",
+  "status": "PREPARED_NOT_AUTHORIZED",
+  "milestone_1": {
+    "accepted": true,
+    "accepted_package": "fixtures/grant-m1/final-acceptance-20260909/evidence-index.json",
+    "evidence_protocol": "GrantM1EvidenceProtocol@0.1.0"
+  },
+  "pilot_contract": {
+    "network": "solana-devnet",
+    "minimum_real_duration_seconds": 1209600,
+    "minimum_qualifying_observations": 3000,
+    "required_observers": 3,
+    "require_every_observer_and_route": true,
+    "allow_retroactive_rule_changes": false,
+    "allow_silent_exclusions": false,
+    "missing_data_behavior": "RETAIN_AND_REPORT",
+    "integrity_failure_behavior": "BLOCK_ACCEPTANCE"
+  },
+  "freeze": {
+    "experiment_definition": "PENDING",
+    "runtime_and_configuration": "PENDING",
+    "observer_registry": "PENDING",
+    "route_registry": "PENDING",
+    "schema_and_policy_versions": "PENDING",
+    "cadence_and_windows": "PENDING",
+    "qualification_and_exclusion_rules": "PENDING",
+    "interruption_policy": "PENDING"
+  },
+  "rehearsal": {
+    "authorization": "NOT_AUTHORIZED",
+    "status": "NOT_RUN",
+    "proposed_duration_seconds": 3600,
+    "separate_from_grant_kpi": true,
+    "pass_criteria": [
+      "all accepted observers execute assignment-bound units",
+      "every frozen route participates",
+      "all qualifying results pass schema and signature verification",
+      "Collector replay is idempotent with no duplicate KPI count",
+      "daily export can be verified and restored from a separate location",
+      "cumulative and per-observer-route counts reconcile to raw records",
+      "one synthetic alert reaches the approved responder destination"
+    ],
+    "evidence_path": null
+  },
+  "operational_controls": {
+    "daily_backup_restore": "NOT_PROVEN",
+    "daily_cumulative_counts": "NOT_PROVEN",
+    "append_only_incident_log": "NOT_PROVEN",
+    "disk_alert": "NOT_PROVEN",
+    "clock_drift_alert": "NOT_PROVEN",
+    "service_readiness_alert": "NOT_PROVEN",
+    "delivery_backlog_alert": "NOT_PROVEN",
+    "rpc_quota_alert": "NOT_PROVEN",
+    "notification_delivery": "NOT_PROVEN",
+    "offline_responder": "NOT_ASSIGNED",
+    "fourteen_day_resource_estimate": "PENDING_REVALIDATION",
+    "cost_approval": "NOT_AUTHORIZED"
+  },
+  "official_window": {
+    "authorization": "NOT_AUTHORIZED",
+    "started": false,
+    "start_timestamp": null,
+    "end_timestamp": null,
+    "qualifying_observations": 0
+  },
+  "blockers": [
+    "freeze_incomplete",
+    "rehearsal_not_authorized_or_run",
+    "backup_restore_not_proven",
+    "counters_and_incident_log_not_proven",
+    "alerts_and_response_not_proven",
+    "resource_and_cost_approval_pending",
+    "official_window_not_authorized"
+  ],
+  "milestone_2_started": false
+}
