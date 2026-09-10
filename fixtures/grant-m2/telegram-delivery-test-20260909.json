@@ -1,0 +1,15 @@
+{
+  "schema_version": "GrantM2NotificationDeliveryEvidence@0.1.0",
+  "destination_label": "telegram-private-operator",
+  "responder_label": "primary-operator",
+  "bot_username": "SovereignKitbot",
+  "message_id": 3,
+  "api_accepted": true,
+  "sent_at": "2026-09-10T01:55:20.000Z",
+  "operator_confirmed_receipt": true,
+  "operator_confirmed_at": "2026-09-10T01:55:51.189Z",
+  "message_scope": "SYNTHETIC_PRE_REHEARSAL_ALERT",
+  "rehearsal_started": false,
+  "milestone_2_started": false,
+  "secrets_retained": false
+}

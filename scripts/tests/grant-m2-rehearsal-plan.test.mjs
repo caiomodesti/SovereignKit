@@ -8,7 +8,7 @@ const artifacts = new Map();
 for (const binding of Object.values(plan.bindings)) artifacts.set(binding.path, await readFile(binding.path, "utf8"));
 
 test("accepts a blocked one-hour twelve-unit rehearsal plan", () => {
-  assert.deepEqual(validateGrantM2RehearsalPlan(structuredClone(plan), artifacts), { status: "PASS", gate: "GRANT_M2_REHEARSAL_PLAN", durationSeconds: 3600, expectedUnits: 12, blockers: 5, rehearsalAuthorized: false, milestone2Started: false });
+  assert.deepEqual(validateGrantM2RehearsalPlan(structuredClone(plan), artifacts), { status: "PASS", gate: "GRANT_M2_REHEARSAL_PLAN", durationSeconds: 3600, expectedUnits: 12, blockers: 3, rehearsalAuthorized: false, milestone2Started: false });
 });
 
 test("rejects binding drift, shortened duration, or missing units", () => {
@@ -30,9 +30,9 @@ test("rejects weaker evidence or acceptance criteria", () => {
   assert.throws(() => validateGrantM2RehearsalPlan(localBackup, artifacts), /pass criteria/u);
 });
 
-test("rejects invented configuration, authorization, or M2 activation", () => {
-  const configured = structuredClone(plan); configured.external_requirements.notification_destination = "configured";
-  assert.throws(() => validateGrantM2RehearsalPlan(configured, artifacts), /invent external readiness/u);
+test("rejects altered configuration, authorization, or M2 activation", () => {
+  const configured = structuredClone(plan); configured.external_requirements.notification_destination = "UNVERIFIED";
+  assert.throws(() => validateGrantM2RehearsalPlan(configured, artifacts), /external readiness record/u);
   const authorized = structuredClone(plan); authorized.authorization.rehearsal_authorized = true;
   assert.throws(() => validateGrantM2RehearsalPlan(authorized, artifacts), /cannot authorize/u);
   const started = structuredClone(plan); started.milestone_2_started = true;

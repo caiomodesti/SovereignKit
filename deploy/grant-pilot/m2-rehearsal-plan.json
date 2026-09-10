@@ -9,7 +9,7 @@
     },
     "alert_policy": {
       "path": "deploy/grant-pilot/m2-alert-policy.json",
-      "sha256": "d031146a45378898fd4fe54327d2b61318d2c2fbc16c3f5caf323ee7c27c20b2"
+      "sha256": "8d69d8ff01a3d43b56f2b18921a7724b47b39bdcac7e821a85a0c392d7ae949f"
     }
   },
   "schedule": {
@@ -54,10 +54,10 @@
     "unresolved_integrity_incidents": 0
   },
   "external_requirements": {
-    "backup_destination": "NOT_CONFIGURED",
-    "notification_destination": "NOT_CONFIGURED",
-    "offline_responder": "NOT_ASSIGNED",
-    "resource_and_quota_approval": "PENDING"
+    "backup_destination": "AWS_OBSERVER_HOST_APPROVED_NOT_CONFIGURED",
+    "notification_destination": "TELEGRAM_PRIVATE_OPERATOR_CONFIGURED_AND_TESTED",
+    "offline_responder": "PRIMARY_OPERATOR_ASSIGNED",
+    "resource_and_quota_approval": "ZERO_INCREMENTAL_SPEND_APPROVED_QUOTA_PENDING"
   },
   "authorization": {
     "rehearsal_authorized": false,
@@ -72,8 +72,6 @@
   },
   "blockers": [
     "backup_destination_not_configured",
-    "notification_destination_not_configured",
-    "offline_responder_not_assigned",
     "resource_and_quota_approval_pending",
     "rehearsal_not_authorized"
   ],

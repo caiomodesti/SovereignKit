@@ -1,6 +1,6 @@
 {
   "schema_version": "GrantM2AlertPolicy@0.1.0",
-  "status": "FROZEN_IMPLEMENTED_NOT_PROVEN",
+  "status": "FROZEN_CHANNEL_DELIVERY_PROVEN",
   "sample_interval_seconds": 60,
   "thresholds": {
     "disk_free_bytes": {
@@ -27,10 +27,12 @@
     }
   },
   "delivery": {
-    "destination": "NOT_CONFIGURED",
-    "offline_responder": "NOT_ASSIGNED",
-    "synthetic_delivery_test": "NOT_RUN",
-    "notification_delivery_proven": false
+    "destination": "telegram-private-operator",
+    "offline_responder": "primary-operator",
+    "synthetic_delivery_test": "DELIVERED_AND_OPERATOR_CONFIRMED",
+    "notification_delivery_proven": true,
+    "evidence_path": "fixtures/grant-m2/telegram-delivery-test-20260909.json",
+    "evidence_sha256": "82c6f7fed1d0103698b1528375496459c382bd1529437ce96ee9174e66c439dc"
   },
   "actions": {
     "automatic_window_reset": false,

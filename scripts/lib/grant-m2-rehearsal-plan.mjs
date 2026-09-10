@@ -3,8 +3,6 @@ import { createHash } from "node:crypto";
 export const GRANT_M2_REHEARSAL_PLAN_VERSION = "GrantM2RehearsalPlan@0.1.0";
 const EXPECTED_BLOCKERS = [
   "backup_destination_not_configured",
-  "notification_destination_not_configured",
-  "offline_responder_not_assigned",
   "resource_and_quota_approval_pending",
   "rehearsal_not_authorized",
 ];
@@ -21,7 +19,7 @@ export function validateGrantM2RehearsalPlan(plan, artifacts) {
   if (!Array.isArray(plan.required_evidence) || plan.required_evidence.length !== 15 || new Set(plan.required_evidence).size !== 15) throw new Error("M2 rehearsal evidence inventory is incomplete");
   const criteria = plan.pass_criteria ?? {};
   if (criteria.elapsed_seconds_at_least !== 3600 || criteria.all_expected_units_accounted_for !== true || criteria.duplicate_kpi_units !== 0 || criteria.unexplained_collector_results !== 0 || criteria.signature_or_schema_failures !== 0 || criteria.raw_to_derived_mismatches !== 0 || criteria.backup_restore_byte_identical !== true || criteria.backup_location_separate !== true || criteria.notification_delivery_verified !== true || criteria.unresolved_integrity_incidents !== 0) throw new Error("M2 rehearsal pass criteria are weakened");
-  if (JSON.stringify(plan.external_requirements) !== JSON.stringify({ backup_destination: "NOT_CONFIGURED", notification_destination: "NOT_CONFIGURED", offline_responder: "NOT_ASSIGNED", resource_and_quota_approval: "PENDING" })) throw new Error("M2 rehearsal cannot invent external readiness");
+  if (JSON.stringify(plan.external_requirements) !== JSON.stringify({ backup_destination: "AWS_OBSERVER_HOST_APPROVED_NOT_CONFIGURED", notification_destination: "TELEGRAM_PRIVATE_OPERATOR_CONFIGURED_AND_TESTED", offline_responder: "PRIMARY_OPERATOR_ASSIGNED", resource_and_quota_approval: "ZERO_INCREMENTAL_SPEND_APPROVED_QUOTA_PENDING" })) throw new Error("M2 rehearsal external readiness record is invalid");
   if (plan.authorization?.rehearsal_authorized !== false || plan.authorization?.authorized_at !== null || plan.authorization?.authorized_by !== null || Object.values(plan.claims ?? {}).some(Boolean) || JSON.stringify(plan.blockers) !== JSON.stringify(EXPECTED_BLOCKERS) || plan.milestone_2_started !== false) throw new Error("M2 rehearsal plan cannot authorize execution or start M2");
-  return { status: "PASS", gate: "GRANT_M2_REHEARSAL_PLAN", durationSeconds: 3600, expectedUnits: 12, blockers: 5, rehearsalAuthorized: false, milestone2Started: false };
+  return { status: "PASS", gate: "GRANT_M2_REHEARSAL_PLAN", durationSeconds: 3600, expectedUnits: 12, blockers: 3, rehearsalAuthorized: false, milestone2Started: false };
 }

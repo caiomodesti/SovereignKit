@@ -57,10 +57,10 @@
     "service_readiness_alert": "IMPLEMENTED_NOT_PROVEN",
     "delivery_backlog_alert": "IMPLEMENTED_NOT_PROVEN",
     "rpc_quota_alert": "IMPLEMENTED_NOT_PROVEN",
-    "notification_delivery": "NOT_PROVEN",
-    "offline_responder": "NOT_ASSIGNED",
+    "notification_delivery": "SYNTHETIC_DELIVERY_PROVEN",
+    "offline_responder": "PRIMARY_OPERATOR_ASSIGNED",
     "fourteen_day_resource_estimate": "PENDING_REVALIDATION",
-    "cost_approval": "NOT_AUTHORIZED"
+    "cost_approval": "ZERO_INCREMENTAL_SPEND_ONLY"
   },
   "official_window": {
     "authorization": "NOT_AUTHORIZED",
