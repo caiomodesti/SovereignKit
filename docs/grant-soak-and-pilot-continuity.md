@@ -1,16 +1,18 @@
 # Soak closure and pilot continuity
 
-Status: operational decision recorded; pre-pilot controls below still require
-implementation evidence before M2 starts. Documentation alone is not a pass.
+Status: M1 accepted; M2 precommitment frozen but rehearsal and operational
+controls still require evidence before M2 starts. Documentation alone is not a
+pass.
 
 ## Current execution and scope
 
-- A: common runtime qualified; retain its closed evidence.
-- B: common runtime soak started `2026-09-08T02:13:58.332Z`. Earliest 24-hour
-  boundary is `2026-09-09T02:13:58.332Z` (September 8, 23:13:58, Sao Paulo).
-- C: preserve its qualified runtime and existing evidence. Audit compatibility
-  with aggregate M1 requirements after B closes; no automatic update or rerun.
-- M2 remains gated on formal M1 acceptance.
+- A, B and C are accepted under the retained M1 aggregate package; preserve
+  their closed qualification evidence and reviewed runtime compatibility.
+- The M2 experiment, observer/runtime set, routes, cadence, versions,
+  qualification rules and interruption policy are frozen in
+  `deploy/grant-pilot/m2-pilot-precommitment.json`.
+- M2 remains gated on rehearsal, backup/restore, counts/incidents,
+  alert/response, resource approval and explicit official-window authorization.
 
 ## Preserve an active or closed run
 

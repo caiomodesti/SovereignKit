@@ -1,0 +1,30 @@
+{
+  "schema_version": "GrantM2RouteCandidateFailures@0.1.0",
+  "captured_at": "2026-09-10T00:59:33.806Z",
+  "network": "solana-devnet",
+  "credential_material_persisted": false,
+  "candidates": [
+    {
+      "route_id": "ankr-solana-devnet",
+      "provider_label": "Ankr",
+      "status": "REJECTED",
+      "failure_stage": "getHealth",
+      "failure_class": "RPC_ERROR"
+    },
+    {
+      "route_id": "extrnode-solana-devnet",
+      "provider_label": "ExtrNode",
+      "status": "REJECTED",
+      "failure_stage": "getHealth",
+      "failure_class": "REQUEST_FAILED"
+    },
+    {
+      "route_id": "onfinality-solana-devnet",
+      "provider_label": "OnFinality",
+      "status": "REJECTED",
+      "failure_stage": "getGenesisHash",
+      "failure_class": "HTTP_429"
+    }
+  ],
+  "admitted_route_effect": "NONE"
+}

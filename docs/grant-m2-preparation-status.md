@@ -1,11 +1,14 @@
 # Grant Milestone 2 preparation status
 
-Status: `PREPARED_NOT_AUTHORIZED`
+Status: `PRECOMMITMENT_FROZEN_NOT_AUTHORIZED`
 
 Milestone 1 is accepted and the Collector administrative binding is
-reconciled. Milestone 2 has not started. The canonical pre-pilot contract is
-`deploy/grant-pilot/m2-pilot-readiness.json`; its validator deliberately passes
-only when the preparation remains blocked and all missing evidence is visible.
+reconciled. Milestone 2 has not started. The experiment, observer/runtime set,
+two-route set, cadence, protocol versions, qualification rules and interruption
+policy are frozen in `deploy/grant-pilot/m2-pilot-precommitment.json`. The
+canonical readiness contract is `deploy/grant-pilot/m2-pilot-readiness.json`;
+its validator deliberately passes only when the remaining evidence and
+authorization blockers stay visible.
 
 ## Frozen acceptance floor
 
@@ -17,6 +20,14 @@ only when the preparation remains blocked and all missing evidence is visible.
 - No retroactive rule changes, silent exclusions or duplicate KPI counting.
 - Any unresolved evidence-integrity failure blocks acceptance.
 
+The frozen set uses Alchemy and Solana Public Devnet routes, three accepted
+observers and `MATCHED_CONTROL` only. A 30-minute cadence produces 672 planned
+cycles and 4,032 units over 14 days, 1,032 above the grant minimum. Comparative
+classification is disabled: this pilot does not silently extend the controlled
+`PROGRAM_X` equivalence claim. Failed Ankr, ExtrNode and OnFinality candidate
+preflights are retained in
+`fixtures/grant-m2/route-candidate-preflight-failures-20260909.json`.
+
 ## Proposed rehearsal
 
 The proposed rehearsal is 3,600 seconds and is separate from grant KPI
@@ -27,15 +38,13 @@ synthetic alert to an approved responder destination.
 
 ## Current blockers
 
-1. Freeze the experiment, deployments, identities, routes, versions, cadence,
-   qualification rules and interruption policy.
-2. Obtain explicit authorization and run the bounded rehearsal.
-3. Prove daily backup/restore to a separate location.
-4. Prove cumulative/per-route counts and the append-only incident log.
-5. Configure and test operational alerts and assign an offline responder.
-6. Revalidate the 14-day resource estimate and obtain any required cost
+1. Obtain explicit authorization and run the bounded rehearsal.
+2. Prove daily backup/restore to a separate location.
+3. Prove cumulative/per-route counts and the append-only incident log.
+4. Configure and test operational alerts and assign an offline responder.
+5. Revalidate the 14-day resource estimate and obtain any required cost
    approval.
-7. Obtain explicit authorization for the official window.
+6. Obtain explicit authorization for the official window.
 
 Preparation verification:
 
