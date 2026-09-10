@@ -428,8 +428,24 @@ the corrected E4 evidence follows in the next section.
   and provider checks, mixed-runtime compatibility review, the shared
   eight-case failure matrix, and delivery-receipt binding.
 - Status advances to `ACCEPTED` for Grant Milestone 1. Milestone 2 has not
-  started. Direct administrative access to the active Collector log must be
-  rebound because the current DNS address differs from the retained SSH target;
-  this is tracked as an operational follow-up before M2. A subsequent public
-  replay of all three signed results returned HTTP 200 `DUPLICATE` and a durable
-  count of at least three for every response.
+  started. At acceptance time, direct administrative access to the active
+  Collector log still required rebinding because the current DNS address
+  differed from the retained SSH target. A public replay of all three signed
+  results returned HTTP 200 `DUPLICATE` and a durable count of at least three
+  for every response; the follow-up was subsequently closed below.
+
+## 2026-09-09 — Collector administrative binding reconciled
+
+- The authenticated Oracle control plane identified the running
+  `sovereignkit-collector-gru-e4-canary` instance in `sa-saopaulo-1`; its
+  assigned public address matched the current Collector DNS result.
+- The current ED25519 host key was captured only after that control-plane
+  binding. Strict host-key checking reached the expected guest hostname with
+  the existing dedicated operator key.
+- `sovereignkit-collector.service` was active and enabled, Caddy was active,
+  and the durable accepted log contained 21 records. Each of the three final M1
+  result IDs appeared exactly once.
+- The sanitized read-only reconciliation is
+  `fixtures/grant-m1/collector-admin-reconciliation-20260909.json`. This closes
+  the operational SSH-binding follow-up; it does not alter M1 evidence or start
+  Milestone 2.

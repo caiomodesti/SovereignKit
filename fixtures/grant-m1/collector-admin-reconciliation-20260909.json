@@ -1,0 +1,41 @@
+{
+  "schema": "GrantM1CollectorAdminReconciliation@0.1.0",
+  "checked_at": "2026-09-10T00:38:54.085Z",
+  "scope": "read-only operational reconciliation after Milestone 1 acceptance",
+  "cloud_control_plane": {
+    "provider": "Oracle Cloud Infrastructure",
+    "region": "sa-saopaulo-1",
+    "instance_name": "sovereignkit-collector-gru-e4-canary",
+    "lifecycle_state": "RUNNING",
+    "dns_address_matches_instance_public_address": true,
+    "raw_network_addresses_retained": false,
+    "raw_instance_identifier_retained": false
+  },
+  "ssh_binding": {
+    "strict_host_key_checking": true,
+    "host_key_algorithm": "ssh-ed25519",
+    "host_key_fingerprint_sha256": "SHA256:cGfaXy9kD3WVm/2Fs8xWfm8YEtkA5hvmS+yUBTOl5zE",
+    "remote_hostname": "sovereignkit-collector-gru-e4-canary"
+  },
+  "services": {
+    "sovereignkit-collector.service": {
+      "active": true,
+      "enabled": true
+    },
+    "caddy.service": {
+      "active": true
+    }
+  },
+  "durable_log": {
+    "path": "/var/lib/sovereignkit/evidence/accepted.jsonl",
+    "record_count": 21,
+    "sha256": "169c2be9f760137e680e86392f52bbf9d3be1b6239836706ac45d730d7b0b319",
+    "final_result_occurrences": {
+      "9bb8a8aa-6cc5-44b1-a2f0-924e0dfd484c": 1,
+      "4668f1c9-d6dd-4b4f-b6ff-c6420d7471b2": 1,
+      "d9ec6c62-ff97-4dbe-9631-7862ec433fe7": 1
+    }
+  },
+  "outcome": "PASS",
+  "milestone_2_started": false
+}
