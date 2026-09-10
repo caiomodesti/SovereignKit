@@ -13,7 +13,7 @@
     },
     "backup_destination_evidence": {
       "path": "fixtures/grant-m2/aws-backup-destination-20260909.json",
-      "sha256": "f1ac35c34caf0c967cff56a4e6f5326a457c5ad273e66c114bde4399f3ff47a8"
+      "sha256": "1edca504d05f4d3375cada07bc8b2f554ccb457e6303b172f4631d4f340c5fe9"
     }
   },
   "schedule": {
@@ -58,7 +58,7 @@
     "unresolved_integrity_incidents": 0
   },
   "external_requirements": {
-    "backup_destination": "AWS_OBSERVER_HOST_CONFIGURED_TRANSFER_NOT_TESTED",
+    "backup_destination": "AWS_OBSERVER_HOST_PREFLIGHT_BACKUP_RESTORE_PROVEN",
     "notification_destination": "TELEGRAM_PRIVATE_OPERATOR_CONFIGURED_AND_TESTED",
     "offline_responder": "PRIMARY_OPERATOR_ASSIGNED",
     "resource_and_quota_approval": "ZERO_INCREMENTAL_SPEND_APPROVED_QUOTA_PENDING"
@@ -75,7 +75,6 @@
     "proves_notification_delivery_before_execution": false
   },
   "blockers": [
-    "backup_transfer_and_restore_not_proven",
     "resource_and_quota_approval_pending",
     "rehearsal_not_authorized"
   ],

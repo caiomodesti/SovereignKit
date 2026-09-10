@@ -39,7 +39,7 @@ synthetic alert to an approved responder destination.
 ## Current blockers
 
 1. Obtain explicit authorization and run the bounded rehearsal.
-2. Transfer and restore an export through the configured AWS destination.
+2. Repeat the proven backup/restore flow with the rehearsal export.
 3. Prove cumulative/per-route counts and the append-only incident log.
 4. Deploy the alert evaluator and Telegram delivery adapter on the live hosts.
 5. Revalidate the 14-day resource estimate and obtain any required cost
@@ -55,9 +55,12 @@ retains external evidence.
 
 The restricted AWS destination now exists with service-identity-only access.
 At capture its available storage was above the frozen alert floor and the
-existing Observer remained active and enabled. This proves destination configuration,
-not export transfer, byte-identical restore, retention, or rehearsal readiness.
-The sanitized host evidence is hash-bound from the rehearsal plan.
+existing Observer remained active and enabled. A bounded Collector snapshot was
+then transferred from Oracle, retained on AWS and restored byte-for-byte with
+matching SHA-256, 55,872 bytes and 21 complete JSONL records. Temporary staging
+copies were removed. This preflight proves the mechanism and separate location;
+the rehearsal must repeat it against its own export. The sanitized evidence is
+hash-bound from the rehearsal plan.
 
 The frozen alert thresholds and deterministic evaluator are in
 `deploy/grant-pilot/m2-alert-policy.json` and

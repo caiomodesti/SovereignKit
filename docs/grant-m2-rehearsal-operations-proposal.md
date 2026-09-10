@@ -1,6 +1,6 @@
 # M2 rehearsal operational decisions
 
-Status: ACCEPTED_DESTINATIONS_CONFIGURED; transfer and rehearsal not authorized.
+Status: PREFLIGHT_DESTINATIONS_PROVEN; rehearsal not authorized.
 
 This proposal supplements `deploy/grant-pilot/m2-rehearsal-plan.json`.
 The rehearsal remains one hour, two cycles and twelve units. The official
@@ -12,8 +12,10 @@ Use the existing AWS observer host as the approved destination for a separate
 copy of the Oracle Collector export and the three observers' raw evidence.
 Suggested destination: `/var/lib/sovereignkit/backups/m2-rehearsal/<run-id>/`.
 The destination is created and verified with access restricted to the service
-identity and storage above the frozen alert floor. Reusing the host avoids
-proposing another VM; storage and transfer quotas still need account verification.
+identity and storage above the frozen alert floor. A bounded Oracle Collector
+snapshot was transferred, retained and restored with identical length and
+SHA-256. Reusing the host avoids proposing another VM; account quotas still
+need verification.
 
 Before configuration, verify destination identity, available space, restricted
 access and resource headroom for the existing observer. Capture complete JSONL
@@ -63,7 +65,7 @@ and measure the snapshot strategy before asserting storage sufficiency.
 
 ## Decisions needed to configure the rehearsal
 
-- Transfer and byte-restore a bounded export through the AWS destination.
+- Repeat the proven transfer and restore flow for the rehearsal export.
 - Deploy the Telegram delivery adapter with the alert evaluator on live hosts.
 - Verify actual account quotas under the approved zero-incremental-spend ceiling.
 

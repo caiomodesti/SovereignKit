@@ -4,7 +4,7 @@ export const GRANT_M2_PILOT_READINESS_VERSION = "GrantM2PilotReadiness@0.2.0";
 
 const EXPECTED_BLOCKERS = [
   "rehearsal_not_authorized_or_run",
-  "backup_restore_not_proven",
+  "rehearsal_backup_restore_not_proven",
   "counters_and_incident_log_not_proven",
   "alerts_and_response_not_proven",
   "resource_and_cost_approval_pending",
@@ -60,7 +60,7 @@ export function validateGrantM2PilotReadiness(plan, precommitmentContent) {
 
   const controls = plan.operational_controls ?? {};
   const expectedControls = {
-    daily_backup_restore: "IMPLEMENTED_NOT_PROVEN",
+    daily_backup_restore: "PREFLIGHT_PROVEN_REHEARSAL_PENDING",
     daily_cumulative_counts: "IMPLEMENTED_NOT_PROVEN",
     append_only_incident_log: "IMPLEMENTED_NOT_PROVEN",
     disk_alert: "IMPLEMENTED_NOT_PROVEN",

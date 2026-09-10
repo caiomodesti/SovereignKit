@@ -8,7 +8,7 @@ const artifacts = new Map();
 for (const binding of Object.values(plan.bindings)) artifacts.set(binding.path, await readFile(binding.path, "utf8"));
 
 test("accepts a blocked one-hour twelve-unit rehearsal plan", () => {
-  assert.deepEqual(validateGrantM2RehearsalPlan(structuredClone(plan), artifacts), { status: "PASS", gate: "GRANT_M2_REHEARSAL_PLAN", durationSeconds: 3600, expectedUnits: 12, blockers: 3, rehearsalAuthorized: false, milestone2Started: false });
+  assert.deepEqual(validateGrantM2RehearsalPlan(structuredClone(plan), artifacts), { status: "PASS", gate: "GRANT_M2_REHEARSAL_PLAN", durationSeconds: 3600, expectedUnits: 12, blockers: 2, rehearsalAuthorized: false, milestone2Started: false });
 });
 
 test("rejects binding drift, shortened duration, or missing units", () => {
