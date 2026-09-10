@@ -1,0 +1,122 @@
+{
+  "schema_version": "GrantM2PilotPrecommitment@0.1.0",
+  "status": "FROZEN_NOT_AUTHORIZED",
+  "experiment": {
+    "experiment_id": "sovereignkit-grant-m2-public-pilot",
+    "experiment_version": "1",
+    "phase": "public_pilot",
+    "network": "solana-devnet",
+    "genesis_hash": "EtWTRABZaYq6iMfeYKouRu166VU2xqa1wcaWoxPkrZBG"
+  },
+  "m1_observer_registry": {
+    "path": "fixtures/grant-m1/final-acceptance-20260909/observer-registry.json",
+    "sha256": "0d42add8c68adb1984e4feb2bf86612f1f0208f1c90c80178f71399a2f390891"
+  },
+  "observers": [
+    {
+      "observer_id": "observer-aws-a",
+      "runtime_commit": "f4c70ea10198e5313eec0467f6a7b9222ff9e8f3"
+    },
+    {
+      "observer_id": "observer-google-e2-micro",
+      "runtime_commit": "f4c70ea10198e5313eec0467f6a7b9222ff9e8f3"
+    },
+    {
+      "observer_id": "observer-oracle-a1",
+      "runtime_commit": "49557b234b7e359dcd77ca198639b6e0a936dee2"
+    }
+  ],
+  "routes": [
+    {
+      "route_id": "alchemy-solana-devnet",
+      "provider_label": "Alchemy",
+      "logical_endpoint_origin": "https://solana-devnet.g.alchemy.com",
+      "preflight_path": "fixtures/grant-m2/route-preflight-alchemy-20260909.json",
+      "preflight_sha256": "d5713c90823bccf394f922b2ba220c55ac8125a7ec5c9166ba73a73892b17e78"
+    },
+    {
+      "route_id": "solana-public-devnet",
+      "provider_label": "Solana Foundation Public RPC",
+      "logical_endpoint_origin": "https://api.devnet.solana.com",
+      "preflight_path": "fixtures/grant-m2/route-preflight-solana-public-20260909.json",
+      "preflight_sha256": "f644b26c59440e8cf1d2f3f2804fd212a989e6e7190e97dd07ca55a419e6e748"
+    }
+  ],
+  "route_candidate_failures": {
+    "path": "fixtures/grant-m2/route-candidate-preflight-failures-20260909.json",
+    "sha256": "f1571260c46d29b55c3b70acfbef301c621933c89f6138ae7565bed723dbe493",
+    "expected_rejected_candidates": 3
+  },
+  "transaction_classes": [
+    "MATCHED_CONTROL"
+  ],
+  "comparative_classification_enabled": false,
+  "cadence": {
+    "cycle_seconds": 1800,
+    "maximum_start_jitter_seconds": 120,
+    "planned_cycles": 672,
+    "units_per_cycle": 6,
+    "planned_units": 4032,
+    "minimum_qualifying_units": 3000,
+    "real_window_seconds": 1209600,
+    "backfill_missing_cycles": false
+  },
+  "observation": {
+    "poll_interval_ms": 5000,
+    "observation_deadline_ms": 120000,
+    "reader_request_timeout_ms": 10000,
+    "quorum_rule_version": "ObservationQuorum@0.1.0",
+    "raw_poll_schema_version": "RawObservationPoll@0.2.0",
+    "assignment_schema_version": "ObservationAssignment@0.1.0",
+    "job_schema_version": "ObservationJob@0.1.0",
+    "probe_result_schema_version": "0.1.0",
+    "evidence_protocol_version": "GrantM1EvidenceProtocol@0.1.0"
+  },
+  "qualification": {
+    "primary_unit": "experiment x observer x route x transaction_class x probe_index",
+    "terminal_states": [
+      "FINALIZED",
+      "CONFIRMED",
+      "OBSERVED_EXECUTION_FAILED",
+      "EXPIRED",
+      "OBSERVATION_INCONCLUSIVE"
+    ],
+    "require_frozen_unit_membership": true,
+    "require_valid_assignment_signature": true,
+    "require_valid_observer_signature": true,
+    "require_schema_validation": true,
+    "require_raw_to_derived_recomputation": true,
+    "require_collector_acceptance": true,
+    "count_duplicate_delivery": false,
+    "count_retry_as_new_unit": false,
+    "count_missing_assignment": false,
+    "count_structurally_invalid_unit": false,
+    "retain_all_missing_rejected_invalid_and_excluded": true
+  },
+  "interruption_policy": {
+    "automatic_window_reset": false,
+    "silent_backfill": false,
+    "route_terminal_failure_counts_when_assignment_was_executed": true,
+    "collector_or_export_outage_may_recover_without_reset_only_when_observer_raw_evidence_is_intact": true,
+    "observer_or_scheduler_outage_above_consecutive_cycles": 2,
+    "observer_or_scheduler_outage_above_seconds": 3600,
+    "continuity_breach_blocks_current_window_acceptance": true,
+    "clock_integrity_failure_blocks_affected_units": true,
+    "unresolved_evidence_integrity_failure_blocks_acceptance": true,
+    "manual_decision_required_for_replacement_window": true,
+    "preserve_original_window_and_incident_evidence": true
+  },
+  "official_window": {
+    "authorization": "NOT_AUTHORIZED",
+    "started": false,
+    "start_timestamp": null,
+    "end_timestamp": null
+  },
+  "claims": {
+    "rpc_routes_are_independent_observers": false,
+    "reader_quorum_proves_independent_validators": false,
+    "pilot_is_universal_solana_accessibility_index": false,
+    "pilot_ranks_provider_intent_or_censorship": false
+  },
+  "milestone_2_started": false
+}

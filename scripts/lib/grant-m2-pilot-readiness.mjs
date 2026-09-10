@@ -1,7 +1,8 @@
-export const GRANT_M2_PILOT_READINESS_VERSION = "GrantM2PilotReadiness@0.1.0";
+import { createHash } from "node:crypto";
+
+export const GRANT_M2_PILOT_READINESS_VERSION = "GrantM2PilotReadiness@0.2.0";
 
 const EXPECTED_BLOCKERS = [
-  "freeze_incomplete",
   "rehearsal_not_authorized_or_run",
   "backup_restore_not_proven",
   "counters_and_incident_log_not_proven",
@@ -20,10 +21,10 @@ const REQUIRED_REHEARSAL_CRITERIA = [
   "one synthetic alert reaches the approved responder destination",
 ];
 
-export function validateGrantM2PilotReadiness(plan) {
+export function validateGrantM2PilotReadiness(plan, precommitmentContent) {
   if (plan === null || typeof plan !== "object") throw new Error("M2 readiness plan must be an object");
   if (plan.schema_version !== GRANT_M2_PILOT_READINESS_VERSION) throw new Error("M2 readiness plan version is invalid");
-  if (plan.status !== "PREPARED_NOT_AUTHORIZED") throw new Error("M2 preparation must remain explicitly unauthorized");
+  if (plan.status !== "PRECOMMITMENT_FROZEN_NOT_AUTHORIZED") throw new Error("M2 preparation must remain explicitly unauthorized");
   if (plan.milestone_1?.accepted !== true || !String(plan.milestone_1?.accepted_package ?? "").startsWith("fixtures/grant-m1/final-acceptance-")) {
     throw new Error("M2 preparation requires a retained accepted M1 package");
   }
@@ -42,8 +43,12 @@ export function validateGrantM2PilotReadiness(plan) {
   }
 
   const freezeStatuses = Object.values(plan.freeze ?? {});
-  if (freezeStatuses.length !== 8 || freezeStatuses.some(status => status !== "PENDING")) {
-    throw new Error("canonical M2 preparation must expose every incomplete freeze item");
+  if (freezeStatuses.length !== 8 || freezeStatuses.some(status => status !== "FROZEN") ||
+      plan.freeze_evidence?.path !== "deploy/grant-pilot/m2-pilot-precommitment.json" ||
+      !/^[a-f0-9]{64}$/u.test(plan.freeze_evidence?.sha256 ?? "") ||
+      typeof precommitmentContent !== "string" ||
+      createHash("sha256").update(precommitmentContent).digest("hex") !== plan.freeze_evidence.sha256) {
+    throw new Error("M2 preparation must bind every frozen item to the precommitment");
   }
 
   const rehearsal = plan.rehearsal ?? {};
