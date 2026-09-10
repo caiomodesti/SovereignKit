@@ -46,6 +46,13 @@ synthetic alert to an approved responder destination.
    approval.
 6. Obtain explicit authorization for the official window.
 
+Backup integrity, daily count reconciliation and append-only incident-log
+validation are implemented in `scripts/lib/grant-m2-operational-controls.mjs`.
+Their status is `IMPLEMENTED_NOT_PROVEN`: local byte equality does not prove a
+separate backup location, and synthetic ledgers/incidents do not prove the live
+deployment. Those controls move to proven only after the authorized rehearsal
+retains external evidence.
+
 Preparation verification:
 
 ```powershell
