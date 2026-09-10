@@ -5,6 +5,7 @@ import { readFile } from "node:fs/promises";
 import { evaluateGrantM2Alerts, validateGrantM2AlertPolicy } from "../lib/grant-m2-alert-policy.mjs";
 
 const policy = JSON.parse(await readFile("deploy/grant-pilot/m2-alert-policy.json", "utf8"));
+const artifacts = new Map([[policy.delivery.evidence_path, await readFile(policy.delivery.evidence_path, "utf8")]]);
 const healthy = {
   sampled_at: "2026-09-10T01:30:00.000Z",
   disk_free_bytes: 10 * 1024 ** 3,
@@ -18,8 +19,8 @@ const healthy = {
   consecutive_http_429: 0
 };
 
-test("validates a frozen policy without claiming delivery", () => {
-  assert.deepEqual(validateGrantM2AlertPolicy(structuredClone(policy)), { status: "PASS", gate: "GRANT_M2_ALERT_POLICY", deliveryProven: false, responderAssigned: false, milestone2Started: false });
+test("validates a frozen policy with hash-bound confirmed delivery", () => {
+  assert.deepEqual(validateGrantM2AlertPolicy(structuredClone(policy), artifacts), { status: "PASS", gate: "GRANT_M2_ALERT_POLICY", deliveryProven: true, responderAssigned: true, milestone2Started: false });
 });
 
 test("emits no alert for a healthy sample", () => {
@@ -51,13 +52,13 @@ test("evaluates warning and critical boundaries deterministically", () => {
   assert.equal(criticalResult.alerts.length, 5);
 });
 
-test("rejects relaxed thresholds or invented notification proof", () => {
+test("rejects relaxed thresholds or invalid delivery evidence", () => {
   const relaxed = structuredClone(policy);
   relaxed.thresholds.clock_absolute_offset_ms.critical_above = 60000;
-  assert.throws(() => validateGrantM2AlertPolicy(relaxed), /thresholds/u);
-  const invented = structuredClone(policy);
-  invented.delivery.notification_delivery_proven = true;
-  assert.throws(() => validateGrantM2AlertPolicy(invented), /must not invent/u);
+  assert.throws(() => validateGrantM2AlertPolicy(relaxed, artifacts), /thresholds/u);
+  const tampered = new Map(artifacts);
+  tampered.set(policy.delivery.evidence_path, `${tampered.get(policy.delivery.evidence_path)} `);
+  assert.throws(() => validateGrantM2AlertPolicy(structuredClone(policy), tampered), /evidence hash/u);
 });
 
 test("rejects automatic reset, deletion, or pilot activation", () => {

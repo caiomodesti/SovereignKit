@@ -41,7 +41,7 @@ synthetic alert to an approved responder destination.
 1. Obtain explicit authorization and run the bounded rehearsal.
 2. Prove daily backup/restore to a separate location.
 3. Prove cumulative/per-route counts and the append-only incident log.
-4. Configure and test operational alerts and assign an offline responder.
+4. Deploy the alert evaluator and Telegram delivery adapter on the live hosts.
 5. Revalidate the 14-day resource estimate and obtain any required cost
    approval.
 6. Obtain explicit authorization for the official window.
@@ -57,9 +57,12 @@ The frozen alert thresholds and deterministic evaluator are in
 `deploy/grant-pilot/m2-alert-policy.json` and
 `scripts/lib/grant-m2-alert-policy.mjs`. Disk, clock, service/readiness,
 delivery backlog and RPC quota detection are `IMPLEMENTED_NOT_PROVEN`.
-Notification delivery remains `NOT_PROVEN`, the destination is not configured,
-and an offline responder is not assigned. No test notification is sent by the
-preparation gate.
+The private Telegram destination is configured, the primary operator is
+assigned, and a synthetic message was accepted by Telegram and confirmed by
+the operator. Sanitized evidence is hash-bound from the alert policy at
+`fixtures/grant-m2/telegram-delivery-test-20260909.json`; the token and chat
+identifier remain in the ignored `.secrets` directory. Live host alert
+evaluation and automatic delivery remain `IMPLEMENTED_NOT_PROVEN`.
 
 The executable rehearsal contract is prepared at
 `deploy/grant-pilot/m2-rehearsal-plan.json`. It fixes a one-hour run with two
