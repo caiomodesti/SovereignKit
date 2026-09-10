@@ -1,0 +1,81 @@
+{
+  "schema_version": "GrantM2RehearsalPlan@0.1.0",
+  "status": "PLANNED_NOT_AUTHORIZED",
+  "scope": "PRE_M2_REHEARSAL_ONLY",
+  "bindings": {
+    "pilot_precommitment": {
+      "path": "deploy/grant-pilot/m2-pilot-precommitment.json",
+      "sha256": "fa7efd7551b3c6c612820e6d02a7b165f510f4f40c284d19b26e0c76cb2f1114"
+    },
+    "alert_policy": {
+      "path": "deploy/grant-pilot/m2-alert-policy.json",
+      "sha256": "d031146a45378898fd4fe54327d2b61318d2c2fbc16c3f5caf323ee7c27c20b2"
+    }
+  },
+  "schedule": {
+    "duration_seconds": 3600,
+    "cycle_seconds": 1800,
+    "cycle_indexes": [0, 1],
+    "observers": 3,
+    "routes": 2,
+    "transaction_classes": 1,
+    "expected_units_per_cycle": 6,
+    "expected_units": 12,
+    "start_timestamp": null,
+    "end_timestamp": null
+  },
+  "required_evidence": [
+    "signed_rehearsal_manifest",
+    "pre_start_host_readiness_for_three_observers",
+    "pre_start_route_health_for_two_routes",
+    "pre_start_collector_count_and_hash",
+    "signed_assignments_for_all_twelve_units",
+    "raw_observation_jsonl_for_all_executed_units",
+    "signed_results_and_collector_receipts",
+    "cycle_ledger_with_missing_rejected_invalid_units",
+    "byte_identical_export_restore_manifest",
+    "separate_backup_location_evidence",
+    "daily_summary_reconciled_to_collector",
+    "append_only_incident_log_including_zero_incident_record",
+    "synthetic_critical_alert_evaluation",
+    "real_notification_delivery_receipt",
+    "post_rehearsal_host_route_collector_readiness"
+  ],
+  "pass_criteria": {
+    "elapsed_seconds_at_least": 3600,
+    "all_expected_units_accounted_for": true,
+    "duplicate_kpi_units": 0,
+    "unexplained_collector_results": 0,
+    "signature_or_schema_failures": 0,
+    "raw_to_derived_mismatches": 0,
+    "backup_restore_byte_identical": true,
+    "backup_location_separate": true,
+    "notification_delivery_verified": true,
+    "unresolved_integrity_incidents": 0
+  },
+  "external_requirements": {
+    "backup_destination": "NOT_CONFIGURED",
+    "notification_destination": "NOT_CONFIGURED",
+    "offline_responder": "NOT_ASSIGNED",
+    "resource_and_quota_approval": "PENDING"
+  },
+  "authorization": {
+    "rehearsal_authorized": false,
+    "authorized_at": null,
+    "authorized_by": null
+  },
+  "claims": {
+    "counts_toward_grant_kpi": false,
+    "starts_milestone_2": false,
+    "proves_fourteen_day_continuity": false,
+    "proves_notification_delivery_before_execution": false
+  },
+  "blockers": [
+    "backup_destination_not_configured",
+    "notification_destination_not_configured",
+    "offline_responder_not_assigned",
+    "resource_and_quota_approval_pending",
+    "rehearsal_not_authorized"
+  ],
+  "milestone_2_started": false
+}
