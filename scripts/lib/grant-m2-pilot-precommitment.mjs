@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto";
 
-export const GRANT_M2_PILOT_PRECOMMITMENT_VERSION = "GrantM2PilotPrecommitment@0.1.0";
+export const GRANT_M2_PILOT_PRECOMMITMENT_VERSION = "GrantM2PilotPrecommitment@0.2.0";
 
 const EXPECTED_TERMINAL_STATES = [
   "FINALIZED",
@@ -15,7 +15,8 @@ export function validateGrantM2PilotPrecommitment(plan, artifactContents) {
   if (plan.schema_version !== GRANT_M2_PILOT_PRECOMMITMENT_VERSION || plan.status !== "FROZEN_NOT_AUTHORIZED") {
     throw new Error("M2 precommitment version or status is invalid");
   }
-  if (plan.experiment?.network !== "solana-devnet" || plan.experiment?.genesis_hash !== "EtWTRABZaYq6iMfeYKouRu166VU2xqa1wcaWoxPkrZBG") {
+  if (plan.experiment?.network !== "solana-devnet" || plan.experiment?.genesis_hash !== "EtWTRABZaYq6iMfeYKouRu166VU2xqa1wcaWoxPkrZBG" ||
+      plan.experiment?.phase !== "public_pilot" || plan.experiment?.result_unit_phase !== "healthy") {
     throw new Error("M2 experiment must remain pinned to Solana Devnet");
   }
 
@@ -67,6 +68,30 @@ export function validateGrantM2PilotPrecommitment(plan, artifactContents) {
       failureEvidence.admitted_route_effect !== "NONE" || failureEvidence.candidates?.length !== 3 ||
       failureEvidence.candidates.some(candidate => candidate.status !== "REJECTED")) {
     throw new Error("M2 rejected route-candidate evidence is incomplete");
+  }
+
+  const readerRef = plan.reader_deployment ?? {};
+  const readerContent = artifactContents?.get(readerRef.path);
+  if (typeof readerContent !== "string" || sha256(readerContent) !== readerRef.sha256) throw new Error("M2 reader deployment evidence hash mismatch");
+  const readerEvidence = JSON.parse(readerContent);
+  if (readerEvidence.schema_version !== "GrantM2ReaderDeploymentEvidence@0.1.0" ||
+      readerEvidence.status !== "INSTALLED_THREE_HOSTS_RPC_PREFLIGHT_PASSED" || readerEvidence.observers?.length !== 3 ||
+      readerEvidence.observers.some(item => item.status !== "INSTALLED_HASH_VERIFIED" || item.rpc_methods_passed !== 12 || item.backup_retained !== true || item.service_active !== true) ||
+      readerEvidence.installed_registry_sha256 !== readerRef.registry_sha256 || readerRef.logical_readers !== 3 || readerRef.quorum !== 2 ||
+      readerRef.shared_public_upstream !== true || readerRef.independent_reader_infrastructure_proven !== false ||
+      readerEvidence.shared_public_upstream !== true || readerEvidence.independent_reader_infrastructure_proven !== false ||
+      readerEvidence.remote_rpc_preflight_proven !== true || readerEvidence.offsets_activated !== false ||
+      readerEvidence.rehearsal_started !== false || readerEvidence.milestone_2_started !== false) {
+    throw new Error("M2 reader deployment evidence is incomplete or overclaims independence");
+  }
+  const quotaRef = plan.resource_quota_estimate ?? {};
+  const quotaContent = artifactContents?.get(quotaRef.path);
+  if (typeof quotaContent !== "string" || sha256(quotaContent) !== quotaRef.sha256) throw new Error("M2 resource quota estimate hash mismatch");
+  const quotaEvidence = JSON.parse(quotaContent);
+  if (quotaEvidence.schema_version !== "GrantM2ResourceQuotaEstimate@0.1.0" || quotaEvidence.status !== "ESTIMATED_NOT_APPROVED" ||
+      quotaEvidence.deterministic_cycle_offsets?.length !== 6 || quotaRef.deterministic_offsets_bound !== true || quotaRef.quota_approval !== "PENDING" ||
+      quotaEvidence.decision?.authorizes_rehearsal !== false || quotaEvidence.decision?.authorizes_official_window !== false || quotaEvidence.milestone_2_started !== false) {
+    throw new Error("M2 resource quota estimate boundary is invalid");
   }
 
   if (JSON.stringify(plan.transaction_classes) !== JSON.stringify(["MATCHED_CONTROL"]) || plan.comparative_classification_enabled !== false) {
@@ -132,6 +157,8 @@ export function validateGrantM2PilotPrecommitment(plan, artifactContents) {
     plannedUnits: cadence.planned_units,
     targetMarginUnits: cadence.planned_units - cadence.minimum_qualifying_units,
     rejectedRouteCandidates: failureEvidence.candidates.length,
+    readerDeploymentBound: true,
+    quotaApproval: "PENDING",
     milestone2Started: false,
   };
 }

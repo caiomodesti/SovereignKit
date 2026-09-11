@@ -1,10 +1,11 @@
 {
-  "schema_version": "GrantM2PilotPrecommitment@0.1.0",
+  "schema_version": "GrantM2PilotPrecommitment@0.2.0",
   "status": "FROZEN_NOT_AUTHORIZED",
   "experiment": {
     "experiment_id": "sovereignkit-grant-m2-public-pilot",
     "experiment_version": "1",
     "phase": "public_pilot",
+    "result_unit_phase": "healthy",
     "network": "solana-devnet",
     "genesis_hash": "EtWTRABZaYq6iMfeYKouRu166VU2xqa1wcaWoxPkrZBG"
   },
@@ -46,6 +47,21 @@
     "path": "fixtures/grant-m2/route-candidate-preflight-failures-20260909.json",
     "sha256": "f1571260c46d29b55c3b70acfbef301c621933c89f6138ae7565bed723dbe493",
     "expected_rejected_candidates": 3
+  },
+  "reader_deployment": {
+    "path": "fixtures/grant-m2/reader-deployment-20260910.json",
+    "sha256": "8aa830f045cee884b9fd48915fb7e783c903713e892fdfcead2e45d51f157c7e",
+    "registry_sha256": "78ac9aaeb88bfca779383ba3183215fa5e3c103d80b7c4d836c1ada0ac5f7147",
+    "logical_readers": 3,
+    "quorum": 2,
+    "shared_public_upstream": true,
+    "independent_reader_infrastructure_proven": false
+  },
+  "resource_quota_estimate": {
+    "path": "deploy/grant-pilot/m2-resource-quota-estimate.json",
+    "sha256": "90e9ce9fadd9848dab3d21fabb800aac1ed27d2035ba8771900f0c38a24991a0",
+    "deterministic_offsets_bound": true,
+    "quota_approval": "PENDING"
   },
   "transaction_classes": [
     "MATCHED_CONTROL"

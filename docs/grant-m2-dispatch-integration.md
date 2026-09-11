@@ -1,0 +1,59 @@
+# Rehearsal dispatch integration (local component checkpoint)
+
+The prepared-dispatch module binds an existing submission job to one scheduler
+slot and signs it using the existing ObservationAssignment implementation. The
+worker verifier checks the signature before an injected transport is called.
+Local tests use ephemeral authority keys, synthetic submissions and synthetic
+readers. They do not load operational private keys or call Devnet.
+
+The outbox reserves a slot on disk before delivery. Reopening the same slot,
+including after an ambiguous transport failure, returns
+`RECONCILIATION_REQUIRED`. It cannot silently resend. Receipts must identify
+the same assignment ID and payload hash; they prove only transport acknowledgement,
+not Collector acceptance or grant qualification. An interrupted reservation is
+retained for investigation. These tests cover process restart, not power loss.
+
+Dispatch requires an explicit rehearsal approval matching the schedule hash and
+time interval. This library input is supplied by its caller; it is not a signed
+operator-approval system. No production CLI, approval loader, SSH adapter, signed
+transaction builder or wall-clock loop is installed. Caller-provided submission
+metadata still needs real submission evidence and reconciliation. Do not use a
+synthetic receipt as evidence of a real submission.
+
+The RPC gate serializes reservations at 20 CU per supported call, at most three
+reservations in any rolling second. Persistence completes before the operation
+starts. Calls with failed/ambiguous outcomes are never refunded. Restore checks
+the owner and configured total limit. Persistence failure stops further calls.
+The persistence adapter must durably store the exact state; tests use an in-memory
+adapter. Each owner must have one exclusive gate and all its calls must use it.
+It is not safe to create separate gates for each worker or each reader.
+
+Four exclusive owners limited to 60 CU/s each would allocate at most 240 CU/s
+to this application. This remains conditional until every submission, poll and
+health check is routed through the gate; unrelated account traffic also counts.
+In-flight reservations remain occupied until one second after completion. Slow
+persistence or transport therefore cannot release reservations before delayed
+calls start. Restored in-flight reservations require reconciliation; they never
+expire automatically.
+The total limit per owner is capped at 2 million CU in this component, not an
+approval to consume that amount. Monthly reset and multi-process persistence
+still need integration and account quota revalidation. Unknown RPC methods are
+rejected rather than assigned an invented cost.
+
+## Unresolved live-contract issues
+
+- Precommitment v0.2 now distinguishes experiment phase `public_pilot` from the
+  schema-valid result `unit.phase` value `healthy`. The isolated rehearsal uses
+  an explicitly separate experiment ID and this frozen mapping.
+- The dry-run slot-selection tolerance is one second. The local dispatch adapter
+  proposes a separate ten-second deadline to finish preparation and delivery after
+  slot selection. These timing choices require a single reviewed live manifest.
+- Existing qualified workers do not use the new budget gate. Integration changes
+  their runtime and must be versioned and validated before an authorized rehearsal.
+- Missing signing/delivery outcomes, observer sequence allocation, durable shared
+  quota storage and transaction submission remain live integration work.
+
+The tests reuse the actual worker with synthetic readers and also cover absent
+approval, signature alteration, late dispatch, concurrent dispatch, receipt
+mismatch, ambiguous delivery, quota restoration and persistence failure. None
+of these tests starts a real rehearsal or Milestone 2.

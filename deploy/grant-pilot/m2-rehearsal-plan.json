@@ -1,11 +1,11 @@
 {
-  "schema_version": "GrantM2RehearsalPlan@0.1.0",
+  "schema_version": "GrantM2RehearsalPlan@0.2.0",
   "status": "PLANNED_NOT_AUTHORIZED",
   "scope": "PRE_M2_REHEARSAL_ONLY",
   "bindings": {
     "pilot_precommitment": {
       "path": "deploy/grant-pilot/m2-pilot-precommitment.json",
-      "sha256": "fa7efd7551b3c6c612820e6d02a7b165f510f4f40c284d19b26e0c76cb2f1114"
+      "sha256": "9f83782ebc8ff031adfa643fb991826930946773c2f3d5d8c0a7e5a71902eaff"
     },
     "alert_policy": {
       "path": "deploy/grant-pilot/m2-alert-policy.json",
@@ -14,6 +14,14 @@
     "backup_destination_evidence": {
       "path": "fixtures/grant-m2/aws-backup-destination-20260909.json",
       "sha256": "1edca504d05f4d3375cada07bc8b2f554ccb457e6303b172f4631d4f340c5fe9"
+    },
+    "reader_deployment_evidence": {
+      "path": "fixtures/grant-m2/reader-deployment-20260910.json",
+      "sha256": "8aa830f045cee884b9fd48915fb7e783c903713e892fdfcead2e45d51f157c7e"
+    },
+    "resource_quota_estimate": {
+      "path": "deploy/grant-pilot/m2-resource-quota-estimate.json",
+      "sha256": "90e9ce9fadd9848dab3d21fabb800aac1ed27d2035ba8771900f0c38a24991a0"
     }
   },
   "schedule": {
@@ -25,6 +33,7 @@
     "transaction_classes": 1,
     "expected_units_per_cycle": 6,
     "expected_units": 12,
+    "result_unit_phase": "healthy",
     "start_timestamp": null,
     "end_timestamp": null
   },

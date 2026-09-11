@@ -10,6 +10,35 @@ canonical readiness contract is `deploy/grant-pilot/m2-pilot-readiness.json`;
 its validator deliberately passes only when the remaining evidence and
 authorization blockers stay visible.
 
+## Reader deployment checkpoint (2026-09-10)
+
+Local scheduler preparation now exists in `scripts/lib/grant-m2-scheduler.mjs`.
+It tests the proposed offsets with a persistent, exclusive dry-run journal,
+explicit missing slots and restart checks. It has no live dispatch adapter or
+timer. See `docs/grant-m2-scheduler-dry-run.md` for the scope and reproduction.
+
+The local signed-dispatch and RPC-budget components are now tested against the
+existing observation worker with synthetic readers. Their scope and remaining
+live integration issues are in `docs/grant-m2-dispatch-integration.md`.
+Precommitment v0.2 explicitly maps the experiment phase `public_pilot` to the
+schema-valid result unit phase `healthy`, and hash-binds the three-host reader
+deployment plus the pending quota estimate. Deployed workers do not yet share
+the quota gate, so the rehearsal runtime is not ready.
+
+The approved reader replacement is installed on AWS, Oracle and Google.
+All three registry hashes match; previous registries are retained as private
+on-host backups and services remained active. Evidence is recorded separately
+in `fixtures/grant-m2/reader-deployment-20260910.json`. The original proposal
+JSON remains a historical proposal, not a current deployment record. Credentials
+were reused inside each host rather than transferred from the workstation.
+Two logical readers share the Solana Public upstream; the quorum is not evidence
+of independent upstream witnesses. No M1 evidence was replaced.
+
+Offsets remain proposed, not installed or activated in a scheduler. Their
+throughput estimate still needs runtime enforcement and measurement including
+health checks and scheduling jitter. Rehearsal, quota and official-window gates
+remain pending; a method-availability check is not signed ledger evidence.
+
 ## Frozen acceptance floor
 
 - Solana Devnet only.
@@ -61,7 +90,7 @@ returns HTTP 429 for the essential signature-status method. The recommended
 zero-cost replacement uses a second distinct logical Solana Public reader
 client. The two public clients share one upstream and therefore have correlated
 failure; they are not two independent witnesses. No observer configuration has
-been changed.
+been changed at the proposal capture; see the later deployment checkpoint above.
 
 Backup integrity, daily count reconciliation and append-only incident-log
 validation are implemented in `scripts/lib/grant-m2-operational-controls.mjs`.

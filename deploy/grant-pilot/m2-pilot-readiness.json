@@ -1,5 +1,5 @@
 {
-  "schema_version": "GrantM2PilotReadiness@0.2.0",
+  "schema_version": "GrantM2PilotReadiness@0.3.0",
   "status": "PRECOMMITMENT_FROZEN_NOT_AUTHORIZED",
   "milestone_1": {
     "accepted": true,
@@ -29,7 +29,7 @@
   },
   "freeze_evidence": {
     "path": "deploy/grant-pilot/m2-pilot-precommitment.json",
-    "sha256": "fa7efd7551b3c6c612820e6d02a7b165f510f4f40c284d19b26e0c76cb2f1114",
+    "sha256": "9f83782ebc8ff031adfa643fb991826930946773c2f3d5d8c0a7e5a71902eaff",
     "verification_command": "corepack pnpm verify:grant:m2:preparation"
   },
   "rehearsal": {

@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 
-import { validateGrantM2ReaderTopologyProposal, validateGrantM2ResourceQuotaEstimate } from "../lib/grant-m2-reader-quota-proposal.mjs";
+import { createGrantM2ReaderRegistry, validateGrantM2ReaderTopologyProposal, validateGrantM2ResourceQuotaEstimate } from "../lib/grant-m2-reader-quota-proposal.mjs";
 
 const topology = JSON.parse(await readFile("deploy/grant-pilot/m2-reader-topology-proposal.json", "utf8"));
 const quota = JSON.parse(await readFile("deploy/grant-pilot/m2-resource-quota-estimate.json", "utf8"));
@@ -47,4 +47,33 @@ test("rejects quota arithmetic drift and a missing throughput margin", () => {
   const burst = structuredClone(quota);
   burst.burst_bounds.alchemy_max_compute_units_per_second = 300;
   assert.throws(() => validateGrantM2ResourceQuotaEstimate(burst), /burst bound/u);
+});
+
+test("builds the approved logical reader registry while retaining correlated-upstream disclosure", () => {
+  const registry = createGrantM2ReaderRegistry([
+    "https://api.devnet.solana.com",
+    "https://solana-devnet.g.alchemy.com/v2/private-value",
+    "https://api.devnet.solana.com",
+  ]);
+  assert.deepEqual(registry.readers.map(reader => reader.readerId), [
+    "grant-m2-reader-public-a",
+    "grant-m2-reader-alchemy",
+    "grant-m2-reader-public-b",
+  ]);
+  assert.equal(registry.independence, "LOGICAL_REDUNDANCY_WITH_CORRELATED_PUBLIC_UPSTREAM");
+  assert.match(registry.limitation, /not independent witnesses/u);
+});
+
+test("rejects an unexpected provider, order, protocol, or reader count", () => {
+  assert.throws(() => createGrantM2ReaderRegistry(["https://api.devnet.solana.com"]), /exactly three/u);
+  assert.throws(() => createGrantM2ReaderRegistry([
+    "http://api.devnet.solana.com",
+    "https://solana-devnet.g.alchemy.com/v2/private-value",
+    "http://api.devnet.solana.com",
+  ]), /HTTPS/u);
+  assert.throws(() => createGrantM2ReaderRegistry([
+    "https://api.devnet.solana.com",
+    "https://example.invalid",
+    "https://api.devnet.solana.com",
+  ]), /origin/u);
 });

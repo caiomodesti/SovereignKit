@@ -8,4 +8,6 @@ const contents = new Map();
 contents.set(plan.m1_observer_registry.path, await readFile(plan.m1_observer_registry.path, "utf8"));
 for (const route of plan.routes ?? []) contents.set(route.preflight_path, await readFile(route.preflight_path, "utf8"));
 contents.set(plan.route_candidate_failures.path, await readFile(plan.route_candidate_failures.path, "utf8"));
+contents.set(plan.reader_deployment.path, await readFile(plan.reader_deployment.path, "utf8"));
+contents.set(plan.resource_quota_estimate.path, await readFile(plan.resource_quota_estimate.path, "utf8"));
 console.log(JSON.stringify(validateGrantM2PilotPrecommitment(plan, contents)));
