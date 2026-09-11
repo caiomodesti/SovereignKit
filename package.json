@@ -19,6 +19,8 @@
     "stage:grant:m1:observer": "node scripts/stage-grant-m1-observer-runtime.mjs",
     "stage:grant:m2:rehearsal-runtime": "corepack pnpm build && node scripts/stage-grant-m2-rehearsal-runtime.mjs",
     "verify:grant:m2:rehearsal-runtime": "node scripts/verify-grant-m2-rehearsal-runtime.mjs",
+    "stage:grant:m2:host-runtime": "corepack pnpm build && node scripts/stage-grant-m2-rehearsal-runtime.mjs --host-preparation",
+    "verify:grant:m2:host-runtime": "node scripts/verify-grant-m2-rehearsal-runtime.mjs --host-preparation",
     "check": "node node_modules/typescript/bin/tsc -p packages/telemetry/tsconfig.json --noEmit && node node_modules/typescript/bin/tsc -p packages/probes/tsconfig.json --noEmit && node node_modules/typescript/bin/tsc -p packages/collector/tsconfig.json --noEmit && node node_modules/typescript/bin/tsc -p packages/sdk/tsconfig.json --noEmit && node node_modules/typescript/bin/tsc -p packages/hostile-proxy/tsconfig.json --noEmit && node node_modules/typescript/bin/tsc -p packages/analysis/tsconfig.json --noEmit && node node_modules/typescript/bin/tsc -p apps/dashboard/tsconfig.json --noEmit && node node_modules/typescript/bin/tsc -p apps/video/tsconfig.json --noEmit",
     "test": "node node_modules/vitest/vitest.mjs run packages/telemetry/src packages/probes/src packages/collector/src packages/sdk/src packages/hostile-proxy/src packages/analysis/src apps/dashboard/src",
     "test:coverage": "node node_modules/vitest/vitest.mjs run --coverage packages/telemetry/src packages/probes/src packages/collector/src packages/sdk/src packages/hostile-proxy/src packages/analysis/src apps/dashboard/src",

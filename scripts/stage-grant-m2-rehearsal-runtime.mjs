@@ -6,7 +6,10 @@ import { fileURLToPath } from 'node:url';
 
 const repositoryRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const artifactsRoot = resolve(repositoryRoot, 'artifacts');
-const outputRoot = resolve(repositoryRoot, process.argv[2] ?? 'artifacts/grant-m2-rehearsal-runtime');
+const hostPreparation = process.argv[2] === '--host-preparation';
+const outputArgument = hostPreparation ? process.argv[3] : process.argv[2];
+if (process.argv.length > (hostPreparation ? 4 : 3)) throw Error('usage: stage-grant-m2-rehearsal-runtime [--host-preparation] [output-below-artifacts]');
+const outputRoot = resolve(repositoryRoot, outputArgument ?? (hostPreparation ? 'artifacts/grant-m2-host-runtime' : 'artifacts/grant-m2-rehearsal-runtime'));
 const trackedChanges = execFileSync('git', ['status', '--porcelain', '--untracked-files=no'], { cwd: repositoryRoot, encoding: 'utf8' }).trim();
 if (trackedChanges.length > 0) throw Error('M2 runtime staging requires a clean tracked Git tree');
 if (outputRoot !== artifactsRoot && !outputRoot.startsWith(`${artifactsRoot}${sep}`)) throw Error('M2 runtime output must remain inside artifacts');
@@ -29,6 +32,7 @@ const copies = [
   ['scripts/lib/grant-m2-rpc-budget-journal.mjs', 'scripts/lib/grant-m2-rpc-budget-journal.mjs'],
   ['scripts/lib/grant-m2-rpc-budget.mjs', 'scripts/lib/grant-m2-rpc-budget.mjs'],
 ];
+if (hostPreparation) copies.push(['deploy/grant-pilot/systemd/sovereignkit-m2-observation-worker@.service', 'deploy/systemd/sovereignkit-m2-observation-worker@.service']);
 
 await rm(outputRoot, { recursive: true, force: true });
 await mkdir(outputRoot, { recursive: true });
@@ -54,12 +58,14 @@ await walk(outputRoot, files);
 files.sort((left, right) => left.localeCompare(right));
 const manifest = {
   schema_version: 'GrantM2RehearsalRuntimeManifest@0.1.0',
-  status: 'STAGED_INERT_NOT_AUTHORIZED',
+  status: hostPreparation ? 'STAGED_HOST_PREPARATION_NOT_ACTIVATED' : 'STAGED_INERT_NOT_AUTHORIZED',
   source_commit: execFileSync('git', ['rev-parse', 'HEAD'], { cwd: repositoryRoot, encoding: 'utf8' }).trim(),
   node_version: '22.17.0',
   dependency_install: 'npm ci --omit=dev --ignore-scripts --no-audit --no-fund',
   contains_credentials: false,
-  contains_activation_unit: false,
+  contains_activation_unit: hostPreparation,
+  host_preparation_package: hostPreparation,
+  activation_performed: false,
   authorizes_rehearsal: false,
   milestone_2_started: false,
   files: await Promise.all(files.map(async path => ({ path: relative(outputRoot, path).split(sep).join('/'), sha256: createHash('sha256').update(await readFile(path)).digest('hex') }))),
