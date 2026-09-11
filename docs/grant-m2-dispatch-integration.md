@@ -61,8 +61,17 @@ Unknown RPC methods are rejected rather than assigned an invented cost.
 - Observer sequences are now reserved before signing in an append-only,
   per-observer exclusive journal. A repeated slot or abandoned lock requires
   reconciliation and cannot allocate a replacement sequence. This is locally
-  tested but not deployed. Missing signing/delivery outcome reconciliation and
-  transaction submission remain live integration work.
+  tested but not deployed. Each rehearsal slot now also has a write-once state
+  journal. It records a prepared transaction before submission, records a
+  successful RPC acknowledgement before assignment signing, and permanently
+  marks ambiguous outcomes for reconciliation instead of retrying.
+
+- The Devnet submission helper uses a unique slot-bound Memo transaction,
+  confirmed blockhash and preflight, `skipPreflight=false`, and `maxRetries=0`.
+  Preparation and submission are separate calls so signed bytes can be durably
+  recorded before the network side effect. The slot runner binds the resulting
+  provenance to the frozen schedule and the observer sequence. It is locally
+  tested; the production CLI and SSH transport adapter remain unfinished.
 
 The tests reuse the actual worker with synthetic readers and also cover absent
 approval, signature alteration, late dispatch, concurrent dispatch, receipt
@@ -72,9 +81,11 @@ of these tests starts a real rehearsal or Milestone 2.
 The observer-side write-once inbox is implemented separately in
 `scripts/lib/grant-m2-assignment-inbox.mjs`. It validates the coordinator
 signature and target observer before claiming an assignment directory, then
-syncs the immutable entry and signed receipt. Concurrent or repeated delivery,
+syncs both the prepared-dispatch envelope and the worker-facing assignment,
+followed by the signed receipt. Concurrent or repeated delivery,
 and any directory left after interruption, require reconciliation. The CLI is
-prepared locally; no SSH adapter, systemd unit or host deployment exists yet.
+prepared locally. A hardened, assignment-bound and quota-bound systemd unit is
+also staged in source, but no SSH adapter or host deployment exists yet.
 
 `scripts/stage-grant-m2-rehearsal-runtime.mjs` creates an ignored, inert runtime
 under `artifacts/` from a clean tracked commit. Its manifest hashes the closed
