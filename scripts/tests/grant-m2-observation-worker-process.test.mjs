@@ -59,7 +59,8 @@ test('runs the M2 worker against local RPC and journals only Alchemy calls', asy
     writeFile(paths.authorities, JSON.stringify([{ issuerId: signer.issuerId, keyId: signer.keyId, publicKeySpkiBase64: signer.publicKeySpkiBase64, validFrom: issuedAt }])),
     writeFile(paths.readers, JSON.stringify({ schemaVersion: 'ObservationReaderRegistry@0.1.0', readers: ['public-a', 'alchemy', 'public-b'].map(label => ({ readerId: `grant-m2-reader-${label}`, endpoint })) })),
   ]);
-  const { stdout } = await run(process.execPath, ['scripts/run-grant-m2-observation-worker.mjs', paths.assignment, paths.authorities, paths.readers, paths.output, paths.raw, paths.quota, observerId, '100'], { cwd: process.cwd(), windowsHide: true });
+  const workerScript = process.env.GRANT_M2_WORKER_SCRIPT ?? 'scripts/run-grant-m2-observation-worker.mjs';
+  const { stdout } = await run(process.execPath, [workerScript, paths.assignment, paths.authorities, paths.readers, paths.output, paths.raw, paths.quota, observerId, '100'], { cwd: process.cwd(), windowsHide: true });
   assert.equal(JSON.parse(stdout).event, 'M2_OBSERVATION_JOB_COMPLETED');
   assert.equal(JSON.parse(await readFile(paths.output, 'utf8')).terminal_state, 'FINALIZED');
   assert.equal(methods.filter(method => method === 'getSignatureStatuses').length, 3);
@@ -68,4 +69,3 @@ test('runs the M2 worker against local RPC and journals only Alchemy calls', asy
   assert.equal(quotaRecords.length, 4);
   assert.equal(quotaRecords.at(-1).state.spent, 40);
 });
-

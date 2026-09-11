@@ -81,3 +81,7 @@ under `artifacts/` from a clean tracked commit. Its manifest hashes the closed
 file set and explicitly records that credentials, activation units, rehearsal
 authorization and M2 activation are absent. Staging does not install dependencies,
 copy secrets, contact a host or start a service.
+
+The isolated-package smoke test uses `GRANT_M2_WORKER_SCRIPT` to execute the
+staged worker against a loopback JSON-RPC server. This proves lockfile install,
+module resolution, worker execution and quota journaling without Devnet access.
