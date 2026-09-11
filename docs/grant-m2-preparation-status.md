@@ -17,6 +17,13 @@ It tests the proposed offsets with a persistent, exclusive dry-run journal,
 explicit missing slots and restart checks. It has no live dispatch adapter or
 timer. See `docs/grant-m2-scheduler-dry-run.md` for the scope and reproduction.
 
+The local signed-dispatch and RPC-budget components are now tested against the
+existing observation worker with synthetic readers. Their scope and remaining
+live integration issues are in `docs/grant-m2-dispatch-integration.md`. In
+particular, the frozen `public_pilot` phase does not match the result schema's
+unit-phase enum, and deployed workers do not yet share a quota gate. These
+issues must be resolved before claiming the rehearsal runtime is ready.
+
 The approved reader replacement is installed on AWS, Oracle and Google.
 All three registry hashes match; previous registries are retained as private
 on-host backups and services remained active. Evidence is recorded separately
