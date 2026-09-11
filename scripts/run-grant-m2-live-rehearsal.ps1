@@ -5,9 +5,11 @@ param(
   [string]$ReceiptAuthoritiesPath = '.secrets\grant-m2-receipt-authorities.json',
   [string]$FeePayerPath = '.secrets\sprint-10-devnet-fee-payer.json',
   [string]$AssignmentAuthorityPath = '.secrets\grant-m1-assignment-authority-private.json',
+  [string]$AssignmentAuthorityPublicPath = '.secrets\grant-m2-assignment-authority-public.json',
   [string]$AlchemyEndpointPath = '.secrets\alchemy-devnet-endpoint.txt',
   [string]$PublicEndpointPath = '.secrets\solana-public-devnet-endpoint.txt',
-  [string]$TelegramPath = '.secrets\grant-m2-telegram.json'
+  [string]$TelegramPath = '.secrets\grant-m2-telegram.json',
+  [ValidateRange(0,11)][int]$PriorRehearsalTransactions = 0
 )
 
 $ErrorActionPreference = 'Stop'
@@ -15,6 +17,13 @@ $RunPath = (Resolve-Path $RunPath).Path
 $RunDirectory = [IO.Path]::GetFullPath($RunDirectory)
 $observerKeys = Get-Content $ObserverKeysPath -Raw | ConvertFrom-Json -AsHashtable
 $receiptAuthorities = Get-Content $ReceiptAuthoritiesPath -Raw | ConvertFrom-Json -AsHashtable
+$assignmentAuthorityPrivate = Get-Content $AssignmentAuthorityPath -Raw | ConvertFrom-Json
+$assignmentAuthorityPublic = Get-Content $AssignmentAuthorityPublicPath -Raw | ConvertFrom-Json
+if ($assignmentAuthorityPrivate.issuerId -ne $assignmentAuthorityPublic.issuerId -or
+    $assignmentAuthorityPrivate.keyId -ne $assignmentAuthorityPublic.keyId -or
+    $assignmentAuthorityPrivate.publicKeySpkiBase64 -ne $assignmentAuthorityPublic.publicKeySpkiBase64) {
+  throw 'Public assignment authority does not match the local signing key'
+}
 $run = Get-Content $RunPath -Raw | ConvertFrom-Json -DateKind String
 $aws = Get-Content '.secrets\aws-observer-a-connection.json' -Raw | ConvertFrom-Json
 $awsKey = (Resolve-Path $aws.key_path).Path
@@ -30,6 +39,8 @@ $privateKeyPaths = @{
 
 New-Item -ItemType Directory -Path $RunDirectory -Force | Out-Null
 $logPath = Join-Path $RunDirectory 'orchestrator.jsonl'
+$newTransactionLimit = 12 - $PriorRehearsalTransactions
+$slotsToRun = @($run.schedule.slots | Select-Object -First $newTransactionLimit)
 
 function Write-Event([hashtable]$Event) {
   $Event.recorded_at = Get-UtcCanonical
@@ -103,16 +114,17 @@ function Complete-PendingSlot([pscustomobject]$Pending, [DateTimeOffset]$Deadlin
   $complete = $completeOutput | Select-Object -Last 1 | ConvertFrom-Json
   $script:completedSlots += 1
   Write-Event @{ event='SLOT_WORKER_COMPLETED'; slot_id=$Pending.SlotId; observer_id=$Pending.ObserverId; terminal_state=$complete.terminal_state; completed_slots=$script:completedSlots; qualifying_units=0 }
-  Send-Telegram ("SovereignKit M2 rehearsal: slot " + $script:completedSlots + "/12 concluído em " + $Pending.ObserverId + " (" + $complete.terminal_state + ").")
+  $totalTransactions = $PriorRehearsalTransactions + $script:completedSlots
+  Send-Telegram ("SovereignKit M2 rehearsal: novo slot " + $script:completedSlots + "/" + $newTransactionLimit + " concluído em " + $Pending.ObserverId + " (" + $complete.terminal_state + "); total enviado: " + $totalTransactions + "/12.")
 }
 
-Write-Event @{ event='REHEARSAL_ORCHESTRATOR_STARTED'; run_id=$run.run_id; expected_slots=$run.schedule.slots.Count; official_window_started=$false }
-Send-Telegram ("SovereignKit M2: rehearsal autorizado preparado. Início: " + $run.schedule.start_at + ". Limite: 12 transações Devnet; janela oficial de 14 dias NÃO iniciada.")
+Write-Event @{ event='REHEARSAL_ORCHESTRATOR_STARTED'; run_id=$run.run_id; expected_new_transactions=$newTransactionLimit; prior_rehearsal_transactions=$PriorRehearsalTransactions; maximum_total_transactions=12; official_window_started=$false }
+Send-Telegram ("SovereignKit M2: continuação autorizada preparada. Início: " + $run.schedule.start_at + ". Limite novo: " + $newTransactionLimit + "; total máximo incluindo anteriores: 12; janela oficial de 14 dias NÃO iniciada.")
 
 try {
   $script:completedSlots = 0
   $pendingByObserver = @{}
-  foreach ($slot in $run.schedule.slots) {
+  foreach ($slot in $slotsToRun) {
     $due = [DateTimeOffset]::Parse($slot.due_at)
     if ($pendingByObserver.ContainsKey($slot.observer_id)) {
       $previous = $pendingByObserver[$slot.observer_id]
@@ -139,9 +151,11 @@ try {
     Write-Event @{ event='SLOT_SUBMISSION_ACKNOWLEDGED'; slot_id=$slot.slot_id; observer_id=$slot.observer_id; route_id=$slot.route_id; signature=$slotResult.signature; assignment_id=$slotResult.assignmentId; qualifying_units=0 }
 
     $remoteEntry = '/tmp/sovereignkit-m2-' + $slotResult.assignmentId + '.json'
+    $remoteAuthority = '/tmp/sovereignkit-m2-authority-' + $slotResult.assignmentId + '.json'
     Send-HostFile $slot.observer_id $entryPath $remoteEntry
+    Send-HostFile $slot.observer_id $AssignmentAuthorityPublicPath $remoteAuthority
     $receivedAt = Get-UtcCanonical
-    $receiveCommand = "sudo -u sovereignkit node /opt/sovereignkit-m2-rehearsal/scripts/receive-grant-m2-assignment.mjs '$remoteEntry' /etc/sovereignkit/assignment-authorities.json '$($privateKeyPaths[$slot.observer_id])' /var/lib/sovereignkit/m2/inbox '$receivedAt'"
+    $receiveCommand = "sudo -u sovereignkit node /opt/sovereignkit-m2-rehearsal/scripts/receive-grant-m2-assignment.mjs '$remoteEntry' '$remoteAuthority' '$($privateKeyPaths[$slot.observer_id])' /var/lib/sovereignkit/m2/inbox '$receivedAt'"
     $receiveOutput = Invoke-Host $slot.observer_id $receiveCommand
     $received = $receiveOutput | Select-Object -Last 1 | ConvertFrom-Json
     if ($received.status -ne 'RECEIVED') { throw "Assignment receipt failed: $($slot.slot_id)" }
@@ -178,8 +192,9 @@ try {
     $remaining = ($runEnd - [DateTimeOffset]::UtcNow).TotalMilliseconds
     Start-Sleep -Milliseconds ([int][Math]::Max(100.0, [Math]::Min(1000.0, $remaining)))
   }
-  Write-Event @{ event='REHEARSAL_SLOTS_COMPLETED'; completed_slots=12; elapsed_seconds=3600; qualifying_units=0; official_window_started=$false }
-  Send-Telegram 'SovereignKit M2: 12/12 slots do rehearsal executados. Validação, reconciliação e backup ainda pendentes; janela oficial de 14 dias NÃO iniciada.'
+  $totalTransactions = $PriorRehearsalTransactions + $script:completedSlots
+  Write-Event @{ event='REHEARSAL_SLOTS_COMPLETED'; completed_new_slots=$script:completedSlots; prior_rehearsal_transactions=$PriorRehearsalTransactions; total_rehearsal_transactions=$totalTransactions; maximum_total_transactions=12; elapsed_seconds=3600; qualifying_units=0; official_window_started=$false }
+  Send-Telegram ("SovereignKit M2: continuação concluída com " + $script:completedSlots + " novos slots; total do rehearsal " + $totalTransactions + "/12. Validação, reconciliação e backup ainda pendentes; janela oficial de 14 dias NÃO iniciada.")
 } catch {
   Write-Event @{ event='REHEARSAL_STOPPED_FAIL_CLOSED'; error_class=$_.Exception.GetType().Name; message=$_.Exception.Message; official_window_started=$false }
   Send-Telegram ("SovereignKit M2: rehearsal interrompido em modo fail-closed. Motivo: " + $_.Exception.Message + ". Não haverá retry automático; janela de 14 dias não iniciada.")
