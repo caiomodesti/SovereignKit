@@ -5,10 +5,12 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { randomUUID,createHash } from 'node:crypto';
 import { generateAssignmentAuthorityKeyPair } from '../../packages/collector/dist/observation-assignment.js';
+import { generateObserverKeyPair } from '../../packages/probes/dist/signing.js';
 import { executeObservationAssignment } from '../../packages/collector/dist/observation-worker.js';
 import { createRehearsalSchedule } from '../lib/grant-m2-scheduler.mjs';
 import { prepareRehearsalDispatch,prepareSequencedRehearsalDispatch,dispatchPrepared,scheduleHash } from '../lib/grant-m2-dispatch.mjs';
 import { createRpcBudget } from '../lib/grant-m2-rpc-budget.mjs';
+import { signAssignmentReceipt } from '../lib/grant-m2-assignment-receipt.mjs';
 const quota=JSON.parse(await readFile('deploy/grant-pilot/m2-resource-quota-estimate.json','utf8'));
 const hash=v=>createHash('sha256').update(v).digest('hex');
 function fixture() {
@@ -19,24 +21,26 @@ function fixture() {
   const job={schemaVersion:'ObservationJob@0.1.0',resultId:randomUUID(),observerId:slot.observer_id,observerKeyId:'test-key',observerSequence:0,unit,experimentDefinitionHash:scheduleHash(schedule),signature:'2'.repeat(88),
     submission:{attempt_id:hash(`${unit.unit_id}:attempt-1`),attempt_number:1,outcome:'RPC_ACKNOWLEDGED',blockhash:'1'.repeat(32),blockhash_context_slot:1,last_valid_block_height:100,serialized_size_bytes:215,created_at:at,submitted_at:at,response_at:at},pollIntervalMs:5000,observationDeadlineMs:120000,readerRequestTimeoutMs:10000};
   const signer=generateAssignmentAuthorityKeyPair('test-issuer','test-key');
+  const receiptSigner=generateObserverKeyPair(slot.observer_id,'test-key');
   const authority={issuerId:signer.issuerId,keyId:signer.keyId,publicKeySpkiBase64:signer.publicKeySpkiBase64,validFrom:at};
+  const receiptAuthority={observerId:receiptSigner.observerId,keyId:receiptSigner.keyId,publicKeySpkiBase64:receiptSigner.publicKeySpkiBase64,validFrom:at};
   const approval={authorized:true,scope:'PRE_M2_REHEARSAL_ONLY',schedule_sha256:scheduleHash(schedule),not_before:at,not_after:'2026-09-10T01:00:00.000Z'};
   const args={schedule,slotId:slot.slot_id,job,signer,issuedAt:at,expiresAt:'2026-09-10T00:03:00.000Z',assignmentId:randomUUID()};
-  return {args,schedule,entry:prepareRehearsalDispatch(args),authority,approval,nowAt:at};
+  return {args,schedule,entry:prepareRehearsalDispatch(args),authority,receiptAuthority,receiptSigner,approval,nowAt:at};
 }
 const dir=()=>mkdtemp(join(tmpdir(),'sk-m2-dispatch-'));
-const receipt=entry=>({status:'RECEIVED',assignment_id:entry.assignment.assignmentId,payload_hash:entry.assignment.payloadHash});
+const receipt=(entry,f)=>signAssignmentReceipt({entry,receivedAt:f.nowAt},f.receiptSigner);
 
 test('signed assignment reaches injected transport once across restart; receipt is not a KPI',async()=>{
   const f=fixture(),directory=await dir();let calls=0;
-  const deliver=async entry=>{calls++;return receipt(entry);};
+  const deliver=async entry=>{calls++;return receipt(entry,f);};
   const result=await dispatchPrepared({...f,directory,deliver});
   assert.equal(result.status,'TRANSPORT_RECEIPT_RECORDED');assert.equal(result.qualifying_units,0);
   assert.equal((await dispatchPrepared({...f,directory,deliver})).status,'RECONCILIATION_REQUIRED');
   assert.equal(calls,1);
 });
 test('absent approval or a tampered signature prevents transport',async()=>{
-  const f=fixture(),directory=await dir();let calls=0;const deliver=async e=>{calls++;return receipt(e);};
+  const f=fixture(),directory=await dir();let calls=0;const deliver=async e=>{calls++;return receipt(e,f);};
   await assert.rejects(dispatchPrepared({...f,directory,deliver,approval:{authorized:false}}),/not authorized/);
   f.entry.assignment.job.observerSequence++;
   await assert.rejects(dispatchPrepared({...f,directory,deliver}),/payload hash/);
@@ -48,7 +52,7 @@ test('wrong observer, unsupported phase and stale slot are rejected',async()=>{
   assert.throws(()=>prepareRehearsalDispatch({...f.args,job:wrong}),/bind rehearsal/);
   wrong.unit.phase='healthy';wrong.observerId='different';
   assert.throws(()=>prepareRehearsalDispatch({...f.args,job:wrong}),/observer identity/);
-  await assert.rejects(dispatchPrepared({...f,directory:await dir(),nowAt:'2026-09-10T00:00:10.001Z',deliver:receipt}),/expired/);
+  await assert.rejects(dispatchPrepared({...f,directory:await dir(),nowAt:'2026-09-10T00:00:10.001Z',deliver:async e=>receipt(e,f)}),/expired/);
 });
 test('timeout after possible delivery retains reservation and never retries',async()=>{
   const f=fixture(),directory=await dir();let calls=0;
@@ -95,7 +99,7 @@ test('prepared assignment is consumed by the existing worker with synthetic read
   }));
   const result=await dispatchPrepared({...f,directory,deliver:async entry=>{
     observed=await executeObservationAssignment({assignment:entry.assignment,authority:f.authority,readers,rawLogPath:join(directory,'synthetic-raw.jsonl'),now:()=>new Date(f.nowAt)});
-    return receipt(entry);
+    return receipt(entry,f);
   }});
   assert.equal(result.status,'TRANSPORT_RECEIPT_RECORDED');
   assert.equal(observed.terminal_state,'FINALIZED');
@@ -105,7 +109,7 @@ test('prepared assignment is consumed by the existing worker with synthetic read
 
 test('concurrent dispatch attempts invoke transport only once',async()=>{
   const f=fixture(),directory=await dir();let calls=0;
-  const deliver=async entry=>{calls++;return receipt(entry);};
+  const deliver=async entry=>{calls++;return receipt(entry,f);};
   const results=await Promise.all([1,2].map(()=>dispatchPrepared({...f,directory,deliver})));
   assert.equal(calls,1);assert.equal(results.filter(r=>r.status==='RECONCILIATION_REQUIRED').length,1);
 });

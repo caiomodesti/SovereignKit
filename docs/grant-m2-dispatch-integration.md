@@ -8,10 +8,13 @@ readers. They do not load operational private keys or call Devnet.
 
 The outbox reserves a slot on disk before delivery. Reopening the same slot,
 including after an ambiguous transport failure, returns
-`RECONCILIATION_REQUIRED`. It cannot silently resend. Receipts must identify
-the same assignment ID and payload hash; they prove only transport acknowledgement,
-not Collector acceptance or grant qualification. An interrupted reservation is
-retained for investigation. These tests cover process restart, not power loss.
+`RECONCILIATION_REQUIRED`. It cannot silently resend. Receipts must identify the
+same assignment ID and payload hash and now require an Ed25519 signature from the
+assigned observer key. The coordinator verifies observer identity, key identity,
+timestamp, hash and signature before recording transport acknowledgement. A
+receipt still does not prove Collector acceptance or grant qualification. An
+interrupted reservation is retained for investigation. These tests cover process
+restart, not power loss.
 
 Dispatch requires an explicit rehearsal approval matching the schedule hash and
 time interval. This library input is supplied by its caller; it is not a signed
