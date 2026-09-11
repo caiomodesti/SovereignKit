@@ -49,4 +49,3 @@ export function verifyAssignmentReceipt(receipt, entry, authority, nowAt) {
     throw Error('Receipt signature is invalid');
   }
 }
-

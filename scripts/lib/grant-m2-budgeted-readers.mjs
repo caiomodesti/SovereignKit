@@ -35,4 +35,3 @@ function unwrap(result) {
   if (!result.allowed) throw Error(`RPC budget blocked: ${result.reason}`);
   return result.value;
 }
-

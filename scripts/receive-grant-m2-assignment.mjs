@@ -16,4 +16,3 @@ const result = await receiveAssignmentWriteOnce({ directory: resolve(inboxText),
 process.stdout.write(`${JSON.stringify(result)}\n`);
 
 async function readJson(path) { return JSON.parse(await readFile(path, 'utf8')); }
-

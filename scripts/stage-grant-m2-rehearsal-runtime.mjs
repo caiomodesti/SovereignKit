@@ -13,8 +13,12 @@ if (outputRoot !== artifactsRoot && !outputRoot.startsWith(`${artifactsRoot}${se
 
 const copies = [
   ['packages/collector/dist', 'packages/collector/dist'],
+  ['packages/probes/dist', 'packages/probes/dist'],
+  ['deploy/grant-pilot/probes-observer-runtime-package.json', 'packages/probes/package.json'],
   ['packages/probes/dist', 'vendor/probes/dist'],
   ['deploy/grant-pilot/probes-observer-runtime-package.json', 'vendor/probes/package.json'],
+  ['packages/telemetry/dist', 'packages/telemetry/dist'],
+  ['deploy/grant-pilot/telemetry-observer-runtime-package.json', 'packages/telemetry/package.json'],
   ['packages/telemetry/dist', 'vendor/telemetry/dist'],
   ['deploy/grant-pilot/telemetry-observer-runtime-package.json', 'vendor/telemetry/package.json'],
   ['scripts/run-grant-m2-observation-worker.mjs', 'scripts/run-grant-m2-observation-worker.mjs'],
@@ -71,4 +75,3 @@ async function walk(directory, target) {
     else throw Error(`unsupported runtime artifact entry ${path}`);
   }
 }
-
