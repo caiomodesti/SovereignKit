@@ -28,6 +28,9 @@ test("rejects weaker evidence or acceptance criteria", () => {
   assert.throws(() => validateGrantM2RehearsalPlan(duplicates, artifacts), /pass criteria/u);
   const localBackup = structuredClone(plan); localBackup.pass_criteria.backup_location_separate = false;
   assert.throws(() => validateGrantM2RehearsalPlan(localBackup, artifacts), /pass criteria/u);
+  const independent = new Map(artifacts);
+  independent.set(plan.bindings.reader_deployment_evidence.path, `${independent.get(plan.bindings.reader_deployment_evidence.path)} `);
+  assert.throws(() => validateGrantM2RehearsalPlan(structuredClone(plan), independent), /binding hash/u);
 });
 
 test("rejects altered configuration, authorization, or M2 activation", () => {

@@ -9,6 +9,8 @@ const contents = new Map();
 contents.set(canonical.m1_observer_registry.path, await readFile(canonical.m1_observer_registry.path, "utf8"));
 for (const route of canonical.routes) contents.set(route.preflight_path, await readFile(route.preflight_path, "utf8"));
 contents.set(canonical.route_candidate_failures.path, await readFile(canonical.route_candidate_failures.path, "utf8"));
+contents.set(canonical.reader_deployment.path, await readFile(canonical.reader_deployment.path, "utf8"));
+contents.set(canonical.resource_quota_estimate.path, await readFile(canonical.resource_quota_estimate.path, "utf8"));
 
 test("accepts the frozen two-route precommitment without starting M2", () => {
   const result = validateGrantM2PilotPrecommitment(structuredClone(canonical), contents);
@@ -21,8 +23,22 @@ test("accepts the frozen two-route precommitment without starting M2", () => {
     plannedUnits: 4032,
     targetMarginUnits: 1032,
     rejectedRouteCandidates: 3,
+    readerDeploymentBound: true,
+    quotaApproval: "PENDING",
     milestone2Started: false,
   });
+});
+
+test("rejects result phase ambiguity, reader deployment drift, or hidden reader independence", () => {
+  const phase = structuredClone(canonical);
+  phase.experiment.result_unit_phase = "public_pilot";
+  assert.throws(() => validateGrantM2PilotPrecommitment(phase, contents), /Solana Devnet/u);
+  const deployment = new Map(contents);
+  deployment.set(canonical.reader_deployment.path, `${deployment.get(canonical.reader_deployment.path)} `);
+  assert.throws(() => validateGrantM2PilotPrecommitment(structuredClone(canonical), deployment), /deployment evidence hash/u);
+  const independent = structuredClone(canonical);
+  independent.reader_deployment.independent_reader_infrastructure_proven = true;
+  assert.throws(() => validateGrantM2PilotPrecommitment(independent, contents), /overclaims independence/u);
 });
 
 test("rejects observer identity or runtime drift from accepted M1", () => {

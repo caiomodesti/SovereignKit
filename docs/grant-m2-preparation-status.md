@@ -19,10 +19,11 @@ timer. See `docs/grant-m2-scheduler-dry-run.md` for the scope and reproduction.
 
 The local signed-dispatch and RPC-budget components are now tested against the
 existing observation worker with synthetic readers. Their scope and remaining
-live integration issues are in `docs/grant-m2-dispatch-integration.md`. In
-particular, the frozen `public_pilot` phase does not match the result schema's
-unit-phase enum, and deployed workers do not yet share a quota gate. These
-issues must be resolved before claiming the rehearsal runtime is ready.
+live integration issues are in `docs/grant-m2-dispatch-integration.md`.
+Precommitment v0.2 explicitly maps the experiment phase `public_pilot` to the
+schema-valid result unit phase `healthy`, and hash-binds the three-host reader
+deployment plus the pending quota estimate. Deployed workers do not yet share
+the quota gate, so the rehearsal runtime is not ready.
 
 The approved reader replacement is installed on AWS, Oracle and Google.
 All three registry hashes match; previous registries are retained as private

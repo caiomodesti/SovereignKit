@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto";
 
-export const GRANT_M2_PILOT_READINESS_VERSION = "GrantM2PilotReadiness@0.2.0";
+export const GRANT_M2_PILOT_READINESS_VERSION = "GrantM2PilotReadiness@0.3.0";
 
 const EXPECTED_BLOCKERS = [
   "rehearsal_not_authorized_or_run",

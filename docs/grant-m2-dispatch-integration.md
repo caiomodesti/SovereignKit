@@ -42,10 +42,9 @@ rejected rather than assigned an invented cost.
 
 ## Unresolved live-contract issues
 
-- `public_pilot` in the frozen precommitment is not a permitted result `unit.phase`:
-  the schema currently accepts healthy, degraded, asymmetric or insufficient_data.
-  The isolated rehearsal adapter uses an explicitly separate experiment ID and
-  `healthy` phase. This does not modify or resolve the official pilot contract.
+- Precommitment v0.2 now distinguishes experiment phase `public_pilot` from the
+  schema-valid result `unit.phase` value `healthy`. The isolated rehearsal uses
+  an explicitly separate experiment ID and this frozen mapping.
 - The dry-run slot-selection tolerance is one second. The local dispatch adapter
   proposes a separate ten-second deadline to finish preparation and delivery after
   slot selection. These timing choices require a single reviewed live manifest.

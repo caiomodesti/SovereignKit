@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto";
 
-export const GRANT_M2_REHEARSAL_PLAN_VERSION = "GrantM2RehearsalPlan@0.1.0";
+export const GRANT_M2_REHEARSAL_PLAN_VERSION = "GrantM2RehearsalPlan@0.2.0";
 const EXPECTED_BLOCKERS = [
   "resource_and_quota_approval_pending",
   "rehearsal_not_authorized",
@@ -11,7 +11,9 @@ export function validateGrantM2RehearsalPlan(plan, artifacts) {
   if (plan.bindings?.pilot_precommitment?.path !== "deploy/grant-pilot/m2-pilot-precommitment.json" ||
       plan.bindings?.alert_policy?.path !== "deploy/grant-pilot/m2-alert-policy.json" ||
       plan.bindings?.backup_destination_evidence?.path !== "fixtures/grant-m2/aws-backup-destination-20260909.json" ||
-      Object.keys(plan.bindings ?? {}).length !== 3) throw new Error("M2 rehearsal binding inventory is invalid");
+      plan.bindings?.reader_deployment_evidence?.path !== "fixtures/grant-m2/reader-deployment-20260910.json" ||
+      plan.bindings?.resource_quota_estimate?.path !== "deploy/grant-pilot/m2-resource-quota-estimate.json" ||
+      Object.keys(plan.bindings ?? {}).length !== 5) throw new Error("M2 rehearsal binding inventory is invalid");
   for (const binding of Object.values(plan.bindings ?? {})) {
     const content = artifacts?.get(binding.path);
     if (typeof content !== "string" || createHash("sha256").update(content).digest("hex") !== binding.sha256) throw new Error("M2 rehearsal binding hash mismatch");
@@ -31,9 +33,20 @@ export function validateGrantM2RehearsalPlan(plan, artifacts) {
       backupEvidence.rehearsal_started !== false || backupEvidence.milestone_2_started !== false) {
     throw new Error("M2 backup destination evidence is incomplete or overclaims readiness");
   }
+  const readerEvidence = JSON.parse(artifacts.get(plan.bindings.reader_deployment_evidence.path));
+  if (readerEvidence.status !== "INSTALLED_THREE_HOSTS_RPC_PREFLIGHT_PASSED" || readerEvidence.observers?.length !== 3 ||
+      readerEvidence.observers.some(item => item.status !== "INSTALLED_HASH_VERIFIED" || item.rpc_methods_passed !== 12 || item.backup_retained !== true || item.service_active !== true) ||
+      readerEvidence.shared_public_upstream !== true || readerEvidence.independent_reader_infrastructure_proven !== false ||
+      readerEvidence.remote_rpc_preflight_proven !== true || readerEvidence.offsets_activated !== false ||
+      readerEvidence.rehearsal_started !== false || readerEvidence.milestone_2_started !== false) throw new Error("M2 reader deployment evidence is invalid");
+  const quotaEvidence = JSON.parse(artifacts.get(plan.bindings.resource_quota_estimate.path));
+  if (quotaEvidence.status !== "ESTIMATED_NOT_APPROVED" || quotaEvidence.deterministic_cycle_offsets?.length !== 6 ||
+      quotaEvidence.decision?.authorizes_rehearsal !== false || quotaEvidence.decision?.authorizes_official_window !== false || quotaEvidence.milestone_2_started !== false) {
+    throw new Error("M2 quota estimate must remain pending approval");
+  }
   const schedule = plan.schedule ?? {};
   const computed = schedule.cycle_indexes?.length * schedule.observers * schedule.routes * schedule.transaction_classes;
-  if (schedule.duration_seconds !== 3600 || schedule.cycle_seconds !== 1800 || JSON.stringify(schedule.cycle_indexes) !== "[0,1]" || schedule.observers !== 3 || schedule.routes !== 2 || schedule.transaction_classes !== 1 || schedule.expected_units_per_cycle !== 6 || schedule.expected_units !== computed || computed !== 12 || schedule.start_timestamp !== null || schedule.end_timestamp !== null) throw new Error("M2 rehearsal schedule or arithmetic is invalid");
+  if (schedule.duration_seconds !== 3600 || schedule.cycle_seconds !== 1800 || JSON.stringify(schedule.cycle_indexes) !== "[0,1]" || schedule.observers !== 3 || schedule.routes !== 2 || schedule.transaction_classes !== 1 || schedule.expected_units_per_cycle !== 6 || schedule.expected_units !== computed || computed !== 12 || schedule.result_unit_phase !== "healthy" || schedule.start_timestamp !== null || schedule.end_timestamp !== null) throw new Error("M2 rehearsal schedule or arithmetic is invalid");
   if (!Array.isArray(plan.required_evidence) || plan.required_evidence.length !== 15 || new Set(plan.required_evidence).size !== 15) throw new Error("M2 rehearsal evidence inventory is incomplete");
   const criteria = plan.pass_criteria ?? {};
   if (criteria.elapsed_seconds_at_least !== 3600 || criteria.all_expected_units_accounted_for !== true || criteria.duplicate_kpi_units !== 0 || criteria.unexplained_collector_results !== 0 || criteria.signature_or_schema_failures !== 0 || criteria.raw_to_derived_mismatches !== 0 || criteria.backup_restore_byte_identical !== true || criteria.backup_location_separate !== true || criteria.notification_delivery_verified !== true || criteria.unresolved_integrity_incidents !== 0) throw new Error("M2 rehearsal pass criteria are weakened");
