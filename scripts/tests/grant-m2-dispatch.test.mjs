@@ -120,3 +120,20 @@ test('slow in-flight calls retain rate reservations instead of allowing a delaye
   at=10999;assert.equal((await gate.call('getHealth',async()=>{})).reason,'RATE_LIMIT');
   at=11000;assert.equal((await gate.call('getHealth',async()=>{})).allowed,true);
 });
+
+test('waits for capacity without repeating the RPC operation',async()=>{
+  let at=1000,calls=0,waits=0;
+  const gate=createRpcBudget({owner:'observer-google-e2-micro',totalLimit:200,now:()=>at,persist:async()=>{}});
+  for(let index=0;index<3;index++) await gate.call('getHealth',async()=>++calls);
+  const result=await gate.callWhenAvailable('getBlockHeight',async()=>++calls,{sleep:async milliseconds=>{waits++;at+=milliseconds;}});
+  assert.equal(result.allowed,true);assert.equal(calls,4);assert.equal(waits,1);assert.equal(at,2000);
+});
+
+test('aborts a capacity wait before any delayed RPC starts',async()=>{
+  const gate=createRpcBudget({owner:'observer-oracle-a1',totalLimit:200,now:()=>1000,persist:async()=>{}});
+  for(let index=0;index<3;index++) await gate.call('getHealth',async()=>{});
+  const controller=new AbortController();let delayedCalls=0;
+  const waiting=gate.callWhenAvailable('getBlockHeight',async()=>++delayedCalls,{abortSignal:controller.signal,sleep:(_milliseconds,signal)=>new Promise((resolve,reject)=>signal.addEventListener('abort',()=>reject(signal.reason),{once:true}))});
+  controller.abort(new DOMException('deadline','AbortError'));
+  await assert.rejects(waiting,/deadline/u);assert.equal(delayedCalls,0);
+});
