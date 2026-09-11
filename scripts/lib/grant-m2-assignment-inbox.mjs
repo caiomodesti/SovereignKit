@@ -34,9 +34,9 @@ export async function receiveAssignmentWriteOnce({ directory, entry, assignmentA
 
   // Once the claim directory exists it is never removed automatically. Any
   // interruption becomes visible and requires an operator decision.
-  await writeOnce(join(assignmentDirectory, 'assignment.json'), entry);
+  await writeOnce(join(assignmentDirectory, 'prepared-dispatch.json'), entry);
+  await writeOnce(join(assignmentDirectory, 'assignment.json'), entry.assignment);
   const receipt = signAssignmentReceipt({ entry, receivedAt }, observerKey);
   await writeOnce(join(assignmentDirectory, 'receipt.json'), receipt);
   return { status: 'RECEIVED', receipt };
 }
-

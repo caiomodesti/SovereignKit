@@ -37,9 +37,11 @@ test('stores one assignment and a verifiable signed receipt', async t => {
   const result = await receiveAssignmentWriteOnce({ directory, ...f });
   assert.equal(result.status, 'RECEIVED');
   verifyAssignmentReceipt(result.receipt, f.entry, f.receiptAuthority, f.receivedAt);
+  const prepared = JSON.parse(await readFile(join(directory, f.entry.assignment.assignmentId, 'prepared-dispatch.json'), 'utf8'));
   const stored = JSON.parse(await readFile(join(directory, f.entry.assignment.assignmentId, 'assignment.json'), 'utf8'));
   const receipt = JSON.parse(await readFile(join(directory, f.entry.assignment.assignmentId, 'receipt.json'), 'utf8'));
-  assert.deepEqual(stored, f.entry);
+  assert.deepEqual(prepared, f.entry);
+  assert.deepEqual(stored, f.entry.assignment);
   assert.deepEqual(receipt, result.receipt);
 });
 
@@ -60,4 +62,3 @@ test('rejects invalid authority or wrong observer before claiming an inbox direc
   const wrongKey = generateObserverKeyPair('observer-google-e2-micro', 'observer-key');
   await assert.rejects(receiveAssignmentWriteOnce({ directory, ...f, observerKey: wrongKey }), /does not target/u);
 });
-
