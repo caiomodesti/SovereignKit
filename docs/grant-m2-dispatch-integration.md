@@ -68,3 +68,10 @@ The tests reuse the actual worker with synthetic readers and also cover absent
 approval, signature alteration, late dispatch, concurrent dispatch, receipt
 mismatch, ambiguous delivery, quota restoration and persistence failure. None
 of these tests starts a real rehearsal or Milestone 2.
+
+The observer-side write-once inbox is implemented separately in
+`scripts/lib/grant-m2-assignment-inbox.mjs`. It validates the coordinator
+signature and target observer before claiming an assignment directory, then
+syncs the immutable entry and signed receipt. Concurrent or repeated delivery,
+and any directory left after interruption, require reconciliation. The CLI is
+prepared locally; no SSH adapter, systemd unit or host deployment exists yet.
