@@ -18,10 +18,12 @@ restart, not power loss.
 
 Dispatch requires an explicit rehearsal approval matching the schedule hash and
 time interval. This library input is supplied by its caller; it is not a signed
-operator-approval system. No production CLI, approval loader, SSH adapter, signed
-transaction builder or wall-clock loop is installed. Caller-provided submission
-metadata still needs real submission evidence and reconciliation. Do not use a
-synthetic receipt as evidence of a real submission.
+operator-approval system. The live-run loader now binds the operator's exact
+authorization text, schedule hash, source commit, validity interval and three
+captured observer sequence bases. The production slot CLI and wall-clock loop
+are implemented locally but remain undeployed. Real submission metadata still
+needs live evidence and reconciliation. Do not use a synthetic receipt as
+evidence of a real submission.
 
 The RPC gate serializes reservations at 20 CU per supported call, at most three
 reservations in any rolling second. Persistence completes before the operation
@@ -71,7 +73,8 @@ Unknown RPC methods are rejected rather than assigned an invented cost.
   Preparation and submission are separate calls so signed bytes can be durably
   recorded before the network side effect. The slot runner binds the resulting
   provenance to the frozen schedule and the observer sequence. It is locally
-  tested; the production CLI and SSH transport adapter remain unfinished.
+  tested. The production slot CLI and three-host transport adapter are now
+  implemented and locally tested; they remain undeployed and unused on Devnet.
 
 The tests reuse the actual worker with synthetic readers and also cover absent
 approval, signature alteration, late dispatch, concurrent dispatch, receipt
@@ -85,7 +88,14 @@ syncs both the prepared-dispatch envelope and the worker-facing assignment,
 followed by the signed receipt. Concurrent or repeated delivery,
 and any directory left after interruption, require reconciliation. The CLI is
 prepared locally. A hardened, assignment-bound and quota-bound systemd unit is
-also staged in source, but no SSH adapter or host deployment exists yet.
+also staged in source. The no-overwrite host installer and SSH/gcloud adapters
+exist locally, but no host deployment has occurred at this checkpoint.
+
+The orchestrator waits for every fixed offset and for the complete 3,600-second
+interval. It records host-signed receipts, worker completion and raw evidence.
+Any uncertain submission, delivery or worker outcome stops the run without an
+automatic retry. Installation leaves the worker template unstarted. None of
+these controls starts Milestone 2 or the official fourteen-day window.
 
 `scripts/stage-grant-m2-rehearsal-runtime.mjs` creates an ignored, inert runtime
 under `artifacts/` from a clean tracked commit. Its manifest hashes the closed

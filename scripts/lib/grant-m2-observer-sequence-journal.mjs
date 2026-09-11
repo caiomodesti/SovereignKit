@@ -6,7 +6,7 @@ const OBSERVERS = ['observer-aws-a', 'observer-google-e2-micro', 'observer-oracl
 const isHash = value => typeof value === 'string' && /^[a-f0-9]{64}$/u.test(value);
 const isUuid = value => typeof value === 'string' && /^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/iu.test(value);
 
-function parseJournal(text, observerId) {
+function parseJournal(text, observerId, initialSequence) {
   if (text === '') return [];
   if (!text.endsWith('\n')) throw Error('Observer sequence journal has a partial trailing record');
   const records = [];
@@ -15,7 +15,7 @@ function parseJournal(text, observerId) {
   for (const [index, line] of text.trimEnd().split('\n').entries()) {
     let record;
     try { record = JSON.parse(line); } catch { throw Error('Observer sequence journal contains invalid JSON'); }
-    if (record?.schema_version !== VERSION || record.observer_id !== observerId || record.observer_sequence !== index ||
+    if (record?.schema_version !== VERSION || record.observer_id !== observerId || record.observer_sequence !== initialSequence + index ||
         !isHash(record.slot_id) || !isHash(record.unit_id) || !isUuid(record.assignment_id) ||
         slots.has(record.slot_id) || assignments.has(record.assignment_id)) {
       throw Error('Observer sequence journal record is invalid');
@@ -25,8 +25,9 @@ function parseJournal(text, observerId) {
   return records;
 }
 
-export async function openExclusiveObserverSequenceJournal({ directory, observerId }) {
-  if (typeof directory !== 'string' || directory.length === 0 || !OBSERVERS.includes(observerId)) throw Error('Invalid observer sequence journal configuration');
+export async function openExclusiveObserverSequenceJournal({ directory, observerId, initialSequence = 0 }) {
+  if (typeof directory !== 'string' || directory.length === 0 || !OBSERVERS.includes(observerId) ||
+      !Number.isSafeInteger(initialSequence) || initialSequence < 0) throw Error('Invalid observer sequence journal configuration');
   await mkdir(directory, { recursive: true, mode: 0o700 });
   const lockPath = join(directory, `${observerId}.lock`);
   try { await mkdir(lockPath, { mode: 0o700 }); }
@@ -38,7 +39,7 @@ export async function openExclusiveObserverSequenceJournal({ directory, observer
   let handle;
   try {
     handle = await open(journalPath, 'a+', 0o600);
-    const records = parseJournal(await readFile(journalPath, 'utf8'), observerId);
+    const records = parseJournal(await readFile(journalPath, 'utf8'), observerId, initialSequence);
     let closed = false;
     return {
       async reserve({ slotId, unitId, assignmentId, reservedAt }) {
@@ -49,7 +50,7 @@ export async function openExclusiveObserverSequenceJournal({ directory, observer
         }
         const prior = records.find(record => record.slot_id === slotId);
         if (prior !== undefined) return { status: 'RECONCILIATION_REQUIRED', record: structuredClone(prior) };
-        const record = { schema_version: VERSION, observer_id: observerId, observer_sequence: records.length, slot_id: slotId, unit_id: unitId, assignment_id: assignmentId, reserved_at: reservedAt };
+        const record = { schema_version: VERSION, observer_id: observerId, observer_sequence: initialSequence + records.length, slot_id: slotId, unit_id: unitId, assignment_id: assignmentId, reserved_at: reservedAt };
         await handle.appendFile(`${JSON.stringify(record)}\n`, 'utf8');
         await handle.sync();
         records.push(record);
@@ -70,4 +71,3 @@ export async function openExclusiveObserverSequenceJournal({ directory, observer
     throw error;
   }
 }
-

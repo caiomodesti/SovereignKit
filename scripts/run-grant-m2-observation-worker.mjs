@@ -7,10 +7,10 @@ import { openExclusiveRpcBudgetJournal } from './lib/grant-m2-rpc-budget-journal
 import { createGrantM2BudgetedReaders } from './lib/grant-m2-budgeted-readers.mjs';
 
 const args = process.argv.slice(2);
-if (args.length !== 8) {
-  throw Error('usage: run-grant-m2-observation-worker <assignment> <authorities> <readers> <unsigned-output> <raw-log> <quota-directory> <owner> <total-limit>');
+if (args.length < 8 || args.length > 9) {
+  throw Error('usage: run-grant-m2-observation-worker <assignment> <authorities> <readers> <unsigned-output> <raw-log> <quota-directory> <owner> <total-limit> [completion-output]');
 }
-const [assignmentText, authoritiesText, readersText, unsignedText, rawText, quotaDirectoryText, owner, totalLimitText] = args;
+const [assignmentText, authoritiesText, readersText, unsignedText, rawText, quotaDirectoryText, owner, totalLimitText, completionText] = args;
 const [assignment, authorities, registry] = await Promise.all([
   readJson(resolve(assignmentText)), readJson(resolve(authoritiesText)), readJson(resolve(readersText)),
 ]);
@@ -33,7 +33,15 @@ try {
   try { await output.writeFile(`${JSON.stringify(unsigned)}\n`, 'utf8'); await output.sync(); }
   finally { await output.close(); }
   await journal.close();
-  process.stdout.write(`${JSON.stringify({ event: 'M2_OBSERVATION_JOB_COMPLETED', resultId: unsigned.result_id, terminalState: unsigned.terminal_state, qualifyingUnits: 0 })}\n`);
+  const completion = { event: 'M2_OBSERVATION_JOB_COMPLETED', resultId: unsigned.result_id, terminalState: unsigned.terminal_state, qualifyingUnits: 0 };
+  if (completionText !== undefined) {
+    const completionOutput = resolve(completionText);
+    await mkdir(dirname(completionOutput), { recursive: true });
+    const completionHandle = await open(completionOutput, 'wx', 0o600);
+    try { await completionHandle.writeFile(`${JSON.stringify(completion)}\n`, 'utf8'); await completionHandle.sync(); }
+    finally { await completionHandle.close(); }
+  }
+  process.stdout.write(`${JSON.stringify(completion)}\n`);
 } catch (error) {
   if (budget.requiresReconciliation()) await journal.abandon();
   else await journal.close();
@@ -41,4 +49,3 @@ try {
 }
 
 async function readJson(path) { return JSON.parse(await readFile(path, 'utf8')); }
-

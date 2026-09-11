@@ -38,3 +38,16 @@ test('serializes access and fails closed on partial history', async t => {
   await assert.rejects(openExclusiveObserverSequenceJournal({ directory, observerId: 'observer-oracle-a1' }), /already locked/u);
 });
 
+test('continues from an explicitly captured live sequence base', async t => {
+  const directory = await mkdtemp(join(tmpdir(), 'grant-m2-sequence-base-'));
+  t.after(async () => { await rm(directory, { recursive: true, force: true }); });
+  const journal = await openExclusiveObserverSequenceJournal({ directory, observerId: 'observer-aws-a', initialSequence: 41 });
+  const first = await journal.reserve({ slotId: 'a'.repeat(64), unitId: 'b'.repeat(64), assignmentId: '00000000-0000-4000-8000-000000000001', reservedAt: '2026-09-11T12:00:00.000Z' });
+  assert.equal(first.record.observer_sequence, 41);
+  await journal.close();
+  const reopened = await openExclusiveObserverSequenceJournal({ directory, observerId: 'observer-aws-a', initialSequence: 41 });
+  const second = await reopened.reserve({ slotId: 'c'.repeat(64), unitId: 'd'.repeat(64), assignmentId: '00000000-0000-4000-8000-000000000002', reservedAt: '2026-09-11T12:00:01.000Z' });
+  assert.equal(second.record.observer_sequence, 42);
+  await reopened.close();
+  await assert.rejects(openExclusiveObserverSequenceJournal({ directory, observerId: 'observer-aws-a', initialSequence: 42 }), /record is invalid/u);
+});

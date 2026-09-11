@@ -32,7 +32,12 @@ const copies = [
   ['scripts/lib/grant-m2-rpc-budget-journal.mjs', 'scripts/lib/grant-m2-rpc-budget-journal.mjs'],
   ['scripts/lib/grant-m2-rpc-budget.mjs', 'scripts/lib/grant-m2-rpc-budget.mjs'],
 ];
-if (hostPreparation) copies.push(['deploy/grant-pilot/systemd/sovereignkit-m2-observation-worker@.service', 'deploy/systemd/sovereignkit-m2-observation-worker@.service']);
+if (hostPreparation) {
+  copies.push(
+    ['deploy/grant-pilot/systemd/sovereignkit-m2-observation-worker@.service', 'deploy/systemd/sovereignkit-m2-observation-worker@.service'],
+    ['scripts/install-grant-m2-host-runtime.sh', 'scripts/install-grant-m2-host-runtime.sh'],
+  );
+}
 
 await rm(outputRoot, { recursive: true, force: true });
 await mkdir(outputRoot, { recursive: true });

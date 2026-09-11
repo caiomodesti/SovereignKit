@@ -52,7 +52,7 @@ test('runs the M2 worker against local RPC and journals only Alchemy calls', asy
   const assignment = signObservationAssignment({ schemaVersion: 'ObservationAssignment@0.1.0', assignmentId: randomUUID(), issuerId: signer.issuerId, issuerKeyId: signer.keyId, issuedAt, expiresAt, job }, signer);
   const paths = {
     assignment: join(directory, 'assignment.json'), authorities: join(directory, 'authorities.json'), readers: join(directory, 'readers.json'),
-    output: join(directory, 'result.json'), raw: join(directory, 'raw.jsonl'), quota: join(directory, 'quota'),
+    output: join(directory, 'result.json'), raw: join(directory, 'raw.jsonl'), quota: join(directory, 'quota'), completion: join(directory, 'completion.json'),
   };
   await Promise.all([
     writeFile(paths.assignment, JSON.stringify(assignment)),
@@ -60,8 +60,9 @@ test('runs the M2 worker against local RPC and journals only Alchemy calls', asy
     writeFile(paths.readers, JSON.stringify({ schemaVersion: 'ObservationReaderRegistry@0.1.0', readers: ['public-a', 'alchemy', 'public-b'].map(label => ({ readerId: `grant-m2-reader-${label}`, endpoint })) })),
   ]);
   const workerScript = process.env.GRANT_M2_WORKER_SCRIPT ?? 'scripts/run-grant-m2-observation-worker.mjs';
-  const { stdout } = await run(process.execPath, [workerScript, paths.assignment, paths.authorities, paths.readers, paths.output, paths.raw, paths.quota, observerId, '100'], { cwd: process.cwd(), windowsHide: true });
+  const { stdout } = await run(process.execPath, [workerScript, paths.assignment, paths.authorities, paths.readers, paths.output, paths.raw, paths.quota, observerId, '100', paths.completion], { cwd: process.cwd(), windowsHide: true });
   assert.equal(JSON.parse(stdout).event, 'M2_OBSERVATION_JOB_COMPLETED');
+  assert.equal(JSON.parse(await readFile(paths.completion, 'utf8')).event, 'M2_OBSERVATION_JOB_COMPLETED');
   assert.equal(JSON.parse(await readFile(paths.output, 'utf8')).terminal_state, 'FINALIZED');
   assert.equal(methods.filter(method => method === 'getSignatureStatuses').length, 3);
   assert.equal(methods.filter(method => method === 'getBlockHeight').length, 3);

@@ -1,6 +1,8 @@
 import { mkdir, open, readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 
+import { verifyAssignmentReceipt } from './grant-m2-assignment-receipt.mjs';
+
 const VERSION = 'GrantM2RehearsalSlotJournal@0.1.0';
 const ORDER = ['TRANSACTION_PREPARED', 'SUBMISSION_ACKNOWLEDGED', 'ASSIGNMENT_PREPARED', 'TRANSPORT_RECEIPT_RECORDED', 'WORKER_COMPLETED'];
 const HASH = /^[a-f0-9]{64}$/u;
@@ -55,3 +57,31 @@ export async function reserveM2RehearsalSlot({ directory, scheduleHash, slotId, 
   };
 }
 
+export async function completeM2RehearsalSlot({ directory, slotId, entry, receipt, receiptAuthority, transportRecordedAt, workerEvidence, workerRecordedAt }) {
+  if (!HASH.test(slotId ?? '') || entry?.slot_id !== slotId || entry.assignment?.job?.observerId !== receiptAuthority?.observerId) throw Error('Invalid M2 slot completion request');
+  for (const value of [transportRecordedAt, workerRecordedAt]) if (new Date(value).toISOString() !== value) throw Error('Invalid M2 slot completion timestamp');
+  if (Date.parse(workerRecordedAt) < Date.parse(transportRecordedAt)) throw Error('M2 worker completion predates transport receipt');
+  const slotDirectory = join(directory, slotId);
+  const [reservation, transaction, acknowledgement, prepared] = await Promise.all([
+    '00-reservation.json', '01-transaction-prepared.json', '02-submission-acknowledged.json', '03-assignment-prepared.json',
+  ].map(async name => JSON.parse(await readFile(join(slotDirectory, name), 'utf8'))));
+  if (reservation.state !== 'RESERVED' || reservation.slot_id !== slotId || reservation.observer_id !== entry.assignment.job.observerId || reservation.schedule_sha256 !== entry.schedule_sha256 ||
+      transaction.state !== 'TRANSACTION_PREPARED' || transaction.slot_id !== slotId ||
+      acknowledgement.state !== 'SUBMISSION_ACKNOWLEDGED' || acknowledgement.slot_id !== slotId || acknowledgement.evidence?.signature !== entry.assignment.job.signature ||
+      prepared.state !== 'ASSIGNMENT_PREPARED' || prepared.slot_id !== slotId || JSON.stringify(prepared.evidence?.entry) !== JSON.stringify(entry)) {
+    throw Error('M2 slot completion does not bind prepared evidence');
+  }
+  verifyAssignmentReceipt(receipt, entry, receiptAuthority, transportRecordedAt);
+  if (workerEvidence?.event !== 'M2_OBSERVATION_JOB_COMPLETED' || workerEvidence.resultId !== entry.assignment.job.resultId ||
+      !['FINALIZED', 'EXPIRED', 'OBSERVATION_INCONCLUSIVE'].includes(workerEvidence.terminalState) || workerEvidence.qualifyingUnits !== 0) {
+    throw Error('M2 worker completion evidence is invalid');
+  }
+  try {
+    await writeOnce(join(slotDirectory, '04-transport-receipt-recorded.json'), { schema_version: VERSION, state: 'TRANSPORT_RECEIPT_RECORDED', slot_id: slotId, recorded_at: transportRecordedAt, evidence: { receipt } });
+    await writeOnce(join(slotDirectory, '05-worker-completed.json'), { schema_version: VERSION, state: 'WORKER_COMPLETED', slot_id: slotId, recorded_at: workerRecordedAt, evidence: workerEvidence });
+  } catch (error) {
+    if (error?.code === 'EEXIST') return { status: 'RECONCILIATION_REQUIRED', slot_id: slotId };
+    throw error;
+  }
+  return { status: 'WORKER_COMPLETED', slot_id: slotId, terminal_state: workerEvidence.terminalState, qualifying_units: 0 };
+}

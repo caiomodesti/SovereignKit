@@ -22,7 +22,8 @@ for (const entry of manifest.files) {
   if (/secret|private-key|\.env/iu.test(entry.path)) throw Error(`forbidden credential path in M2 runtime: ${entry.path}`);
 }
 const units = actualPaths.filter(path => /systemd|\.service$/iu.test(path));
-if ((!hostPreparation && units.length > 0) || (hostPreparation && (units.length !== 1 || units[0] !== 'deploy/systemd/sovereignkit-m2-observation-worker@.service'))) throw Error('M2 staged runtime activation-unit inventory is invalid');
+if ((!hostPreparation && units.length > 0) || (hostPreparation && (units.length !== 1 || units[0] !== 'deploy/systemd/sovereignkit-m2-observation-worker@.service')) ||
+    hostPreparation !== actualPaths.includes('scripts/install-grant-m2-host-runtime.sh')) throw Error('M2 staged runtime activation-unit inventory is invalid');
 process.stdout.write(`${JSON.stringify({ status: 'PASS', gate: hostPreparation ? 'GRANT_M2_HOST_PREPARATION_RUNTIME' : 'GRANT_M2_REHEARSAL_RUNTIME', files: actualPaths.length, sourceCommit: manifest.source_commit, containsActivationUnit: hostPreparation, activationPerformed: false, rehearsalAuthorized: false, milestone2Started: false })}\n`);
 
 async function walk(directory, target) {

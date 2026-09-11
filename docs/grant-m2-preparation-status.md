@@ -60,14 +60,17 @@ preflights are retained in
 ## Proposed rehearsal
 
 The proposed rehearsal is 3,600 seconds and is separate from grant KPI
-evidence. It is not authorized and has not run. Its fixed pass criteria cover
-all observers and routes, signature/schema verification, idempotent replay,
+evidence. Exact operator authorization was received on 2026-09-11, but no host
+installation or Devnet submission had occurred at this code checkpoint. Its
+fixed pass criteria cover all observers and routes, signature/schema
+verification, idempotent replay,
 backup/restore, raw-to-derived count reconciliation and actual delivery of one
 synthetic alert to an approved responder destination.
 
 ## Current blockers
 
-1. Obtain explicit authorization and run the bounded rehearsal.
+1. Materialize the received authorization in a commit-bound live-run manifest
+   and run the bounded rehearsal.
 2. Repeat the proven backup/restore flow with the rehearsal export.
 3. Prove cumulative/per-route counts and the append-only incident log.
 4. Deploy the alert evaluator and Telegram delivery adapter on the live hosts.
@@ -125,7 +128,9 @@ The executable rehearsal contract is prepared at
 routes. It requires external backup-location evidence, a real notification
 delivery receipt, complete unit accounting and post-run readiness. Its status
 is `PLANNED_NOT_AUTHORIZED`; it neither contributes to the grant KPI nor starts
-Milestone 2.
+Milestone 2. This frozen planning artifact remains unchanged; the separate
+write-once live-run manifest records the received authorization and exact
+execution interval.
 
 Preparation verification:
 
