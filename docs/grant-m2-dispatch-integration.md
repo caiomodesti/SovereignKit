@@ -36,9 +36,12 @@ persistence or transport therefore cannot release reservations before delayed
 calls start. Restored in-flight reservations require reconciliation; they never
 expire automatically.
 The total limit per owner is capped at 2 million CU in this component, not an
-approval to consume that amount. Monthly reset and multi-process persistence
-still need integration and account quota revalidation. Unknown RPC methods are
-rejected rather than assigned an invented cost.
+approval to consume that amount. Monthly reset still needs integration and
+account quota revalidation. The local append-only journal in
+`scripts/lib/grant-m2-rpc-budget-journal.mjs` provides one exclusive per-owner
+process lock, syncs every state transition and fails closed on a partial record
+or stale lock. It is tested locally but is not installed on the observer hosts.
+Unknown RPC methods are rejected rather than assigned an invented cost.
 
 ## Unresolved live-contract issues
 
