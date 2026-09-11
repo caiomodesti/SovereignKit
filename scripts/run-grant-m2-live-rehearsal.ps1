@@ -15,7 +15,7 @@ $RunPath = (Resolve-Path $RunPath).Path
 $RunDirectory = [IO.Path]::GetFullPath($RunDirectory)
 $observerKeys = Get-Content $ObserverKeysPath -Raw | ConvertFrom-Json -AsHashtable
 $receiptAuthorities = Get-Content $ReceiptAuthoritiesPath -Raw | ConvertFrom-Json -AsHashtable
-$run = Get-Content $RunPath -Raw | ConvertFrom-Json
+$run = Get-Content $RunPath -Raw | ConvertFrom-Json -DateKind String
 $aws = Get-Content '.secrets\aws-observer-a-connection.json' -Raw | ConvertFrom-Json
 $awsKey = (Resolve-Path $aws.key_path).Path
 $awsKnownHosts = (Resolve-Path '.secrets\aws-observer-a-known_hosts').Path
@@ -126,7 +126,7 @@ try {
     }
     while ([DateTimeOffset]::UtcNow -lt $due) {
       $remaining = ($due - [DateTimeOffset]::UtcNow).TotalMilliseconds
-      Start-Sleep -Milliseconds ([Math]::Max(50, [Math]::Min(1000, [int]$remaining)))
+      Start-Sleep -Milliseconds ([int][Math]::Max(50.0, [Math]::Min(1000.0, $remaining)))
     }
     $nowAt = Get-UtcCanonical
     if (([DateTimeOffset]::UtcNow - $due).TotalSeconds -gt 8) { throw "Slot missed before submission: $($slot.slot_id)" }
@@ -176,7 +176,7 @@ try {
   }
   while ([DateTimeOffset]::UtcNow -lt $runEnd) {
     $remaining = ($runEnd - [DateTimeOffset]::UtcNow).TotalMilliseconds
-    Start-Sleep -Milliseconds ([Math]::Max(100, [Math]::Min(1000, [int]$remaining)))
+    Start-Sleep -Milliseconds ([int][Math]::Max(100.0, [Math]::Min(1000.0, $remaining)))
   }
   Write-Event @{ event='REHEARSAL_SLOTS_COMPLETED'; completed_slots=12; elapsed_seconds=3600; qualifying_units=0; official_window_started=$false }
   Send-Telegram 'SovereignKit M2: 12/12 slots do rehearsal executados. Validação, reconciliação e backup ainda pendentes; janela oficial de 14 dias NÃO iniciada.'

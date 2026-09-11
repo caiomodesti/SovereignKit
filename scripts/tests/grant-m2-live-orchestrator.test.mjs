@@ -10,6 +10,8 @@ test('live rehearsal orchestrator is bounded, fail-closed and does not start the
   assert.match(script, /qualifying_units=0/u);
   assert.match(script, /elapsed_seconds=3600/u);
   assert.match(script, /yyyy-MM-ddTHH:mm:ss\.fffZ/u);
+  assert.match(script, /ConvertFrom-Json -DateKind String/u);
+  assert.doesNotMatch(script, /\[int\]\$remaining/u);
   assert.match(script, /official_window_started=\$false/u);
   assert.match(script, /systemctl start --no-block/u);
   assert.match(script, /Complete-PendingSlot/u);
