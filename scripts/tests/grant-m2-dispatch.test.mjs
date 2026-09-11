@@ -7,7 +7,7 @@ import { randomUUID,createHash } from 'node:crypto';
 import { generateAssignmentAuthorityKeyPair } from '../../packages/collector/dist/observation-assignment.js';
 import { executeObservationAssignment } from '../../packages/collector/dist/observation-worker.js';
 import { createRehearsalSchedule } from '../lib/grant-m2-scheduler.mjs';
-import { prepareRehearsalDispatch,dispatchPrepared,scheduleHash } from '../lib/grant-m2-dispatch.mjs';
+import { prepareRehearsalDispatch,prepareSequencedRehearsalDispatch,dispatchPrepared,scheduleHash } from '../lib/grant-m2-dispatch.mjs';
 import { createRpcBudget } from '../lib/grant-m2-rpc-budget.mjs';
 const quota=JSON.parse(await readFile('deploy/grant-pilot/m2-resource-quota-estimate.json','utf8'));
 const hash=v=>createHash('sha256').update(v).digest('hex');
@@ -136,4 +136,16 @@ test('aborts a capacity wait before any delayed RPC starts',async()=>{
   const waiting=gate.callWhenAvailable('getBlockHeight',async()=>++delayedCalls,{abortSignal:controller.signal,sleep:(_milliseconds,signal)=>new Promise((resolve,reject)=>signal.addEventListener('abort',()=>reject(signal.reason),{once:true}))});
   controller.abort(new DOMException('deadline','AbortError'));
   await assert.rejects(waiting,/deadline/u);assert.equal(delayedCalls,0);
+});
+
+test('persists observer sequence before signing and refuses repeat preparation',async()=>{
+  const f=fixture(),reservations=[];
+  const sequenceJournal={reserve:async input=>{
+    if(reservations.some(item=>item.slotId===input.slotId)) return {status:'RECONCILIATION_REQUIRED'};
+    reservations.push(input);return {status:'RESERVED',record:{observer_sequence:7}};
+  }};
+  const prepared=await prepareSequencedRehearsalDispatch({...f.args,job:{...f.args.job,observerSequence:999},sequenceJournal});
+  assert.equal(prepared.status,'PREPARED');assert.equal(prepared.entry.assignment.job.observerSequence,7);
+  assert.equal(reservations[0].assignmentId,f.args.assignmentId);
+  assert.equal((await prepareSequencedRehearsalDispatch({...f.args,sequenceJournal})).status,'RECONCILIATION_REQUIRED');
 });

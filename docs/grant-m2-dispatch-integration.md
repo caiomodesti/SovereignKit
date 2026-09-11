@@ -55,8 +55,11 @@ Unknown RPC methods are rejected rather than assigned an invented cost.
   `scripts/run-grant-m2-observation-worker.mjs` now wraps only the Alchemy reader
   with the shared per-host gate and durable journal. It is locally tested but is
   not staged or installed on any observer host.
-- Missing signing/delivery outcomes, observer sequence allocation, durable shared
-  quota storage and transaction submission remain live integration work.
+- Observer sequences are now reserved before signing in an append-only,
+  per-observer exclusive journal. A repeated slot or abandoned lock requires
+  reconciliation and cannot allocate a replacement sequence. This is locally
+  tested but not deployed. Missing signing/delivery outcome reconciliation and
+  transaction submission remain live integration work.
 
 The tests reuse the actual worker with synthetic readers and also cover absent
 approval, signature alteration, late dispatch, concurrent dispatch, receipt

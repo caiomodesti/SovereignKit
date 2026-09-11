@@ -40,6 +40,16 @@ export function prepareRehearsalDispatch({schedule,slotId,job,signer,issuedAt,ex
   return {schema_version:'GrantM2PreparedDispatch@0.1.0',schedule_sha256:scheduleHash(schedule),slot_id:slotId,assignment};
 }
 
+export async function prepareSequencedRehearsalDispatch({sequenceJournal,...input}) {
+  if(typeof sequenceJournal?.reserve!=='function') throw Error('Sequence journal required');
+  const slot=input.schedule.slots.find(item=>item.slot_id===input.slotId);
+  if(slot===undefined||input.job?.observerId!==slot.observer_id) throw Error('Job does not bind rehearsal slot');
+  const reservation=await sequenceJournal.reserve({slotId:input.slotId,unitId:input.job.unit?.unit_id,assignmentId:input.assignmentId,reservedAt:input.issuedAt});
+  if(reservation.status!=='RESERVED') return {status:'RECONCILIATION_REQUIRED',slot_id:input.slotId};
+  const job={...input.job,observerSequence:reservation.record.observer_sequence};
+  return {status:'PREPARED',entry:prepareRehearsalDispatch({...input,job})};
+}
+
 async function writeOnce(path,value) {
   const handle=await open(path,'wx',0o600);
   try {await handle.writeFile(JSON.stringify(value)+'\n');await handle.sync();}
