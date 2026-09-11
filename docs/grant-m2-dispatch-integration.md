@@ -75,3 +75,9 @@ signature and target observer before claiming an assignment directory, then
 syncs the immutable entry and signed receipt. Concurrent or repeated delivery,
 and any directory left after interruption, require reconciliation. The CLI is
 prepared locally; no SSH adapter, systemd unit or host deployment exists yet.
+
+`scripts/stage-grant-m2-rehearsal-runtime.mjs` creates an ignored, inert runtime
+under `artifacts/` from a clean tracked commit. Its manifest hashes the closed
+file set and explicitly records that credentials, activation units, rehearsal
+authorization and M2 activation are absent. Staging does not install dependencies,
+copy secrets, contact a host or start a service.
