@@ -18,3 +18,10 @@ test('live rehearsal orchestrator is bounded, fail-closed and does not start the
   assert.match(script, /Worker completion deadline exceeded before another transaction/u);
   assert.doesNotMatch(script, /requestAirdrop|--retries|Start-Job/u);
 });
+
+test('live slot CLI resolves Solana Kit from the probes workspace package', async () => {
+  const script = await readFile('scripts/run-grant-m2-rehearsal-slot.mjs', 'utf8');
+  assert.match(script, /createRequire\(new URL\('\.\.\/packages\/probes\/package\.json'/u);
+  assert.match(script, /requireFromProbes\('@solana\/kit'\)/u);
+  assert.doesNotMatch(script, /from '@solana\/kit'/u);
+});

@@ -1,5 +1,5 @@
-import { createKeyPairSignerFromBytes } from '@solana/kit';
 import { mkdir, open, readFile } from 'node:fs/promises';
+import { createRequire } from 'node:module';
 import { dirname, join, resolve } from 'node:path';
 
 import { importAssignmentAuthorityPrivateKey } from '../packages/collector/dist/observation-assignment.js';
@@ -9,6 +9,9 @@ import { openExclusiveObserverSequenceJournal } from './lib/grant-m2-observer-se
 import { createRpcBudget } from './lib/grant-m2-rpc-budget.mjs';
 import { openExclusiveRpcBudgetJournal } from './lib/grant-m2-rpc-budget-journal.mjs';
 import { prepareAndSubmitM2RehearsalSlot } from './lib/grant-m2-slot-runner.mjs';
+
+const requireFromProbes = createRequire(new URL('../packages/probes/package.json', import.meta.url));
+const { createKeyPairSignerFromBytes } = requireFromProbes('@solana/kit');
 
 const COORDINATOR_QUOTA_LIMIT = 1_000;
 const args = parseArgs(process.argv.slice(2));
