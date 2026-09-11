@@ -60,6 +60,12 @@ export async function openExclusiveRpcBudgetJournal({ directory, owner, totalLim
         await handle.close();
         await rmdir(lockPath);
       },
+      async abandon() {
+        if (closed) return;
+        closed = true;
+        await handle.close();
+        // Keep the lock as a visible reconciliation requirement.
+      },
     };
   } catch (error) {
     if (handle !== undefined) await handle.close().catch(() => {});

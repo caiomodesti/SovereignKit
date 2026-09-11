@@ -51,8 +51,10 @@ Unknown RPC methods are rejected rather than assigned an invented cost.
 - The dry-run slot-selection tolerance is one second. The local dispatch adapter
   proposes a separate ten-second deadline to finish preparation and delivery after
   slot selection. These timing choices require a single reviewed live manifest.
-- Existing qualified workers do not use the new budget gate. Integration changes
-  their runtime and must be versioned and validated before an authorized rehearsal.
+- The existing qualified M1 worker remains unchanged. The separate M2 entrypoint
+  `scripts/run-grant-m2-observation-worker.mjs` now wraps only the Alchemy reader
+  with the shared per-host gate and durable journal. It is locally tested but is
+  not staged or installed on any observer host.
 - Missing signing/delivery outcomes, observer sequence allocation, durable shared
   quota storage and transaction submission remain live integration work.
 

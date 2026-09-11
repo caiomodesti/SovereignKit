@@ -54,6 +54,7 @@ export function createRpcBudget({owner,totalLimit,restored,persist,now}) {
   }
   return {
     call,
+    requiresReconciliation:()=>poisoned,
     async callWhenAvailable(method,operation,{abortSignal,sleep=abortableSleep}={}) {
       if(typeof sleep!=='function') throw Error('Invalid budget wait function');
       while(true) {
