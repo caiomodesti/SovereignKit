@@ -4,7 +4,7 @@ import { generateKeyPairSigner } from '@solana/kit';
 import { describe, expect, test } from 'vitest';
 
 import { deriveUnitId } from './units.js';
-import { submitM2RehearsalProbe } from './m2-rehearsal-submission.js';
+import { prepareM2RehearsalProbe, submitPreparedM2RehearsalProbe } from './m2-rehearsal-submission.js';
 
 describe('M2 rehearsal submission', () => {
   test('submits one unique probe with no RPC retry and exact provenance', async () => {
@@ -32,13 +32,16 @@ describe('M2 rehearsal submission', () => {
       const calls: string[] = [];
       const expectedTimes = ['2026-09-11T12:00:00.000Z', '2026-09-11T12:00:00.010Z', '2026-09-11T12:00:00.020Z'];
       const times = [...expectedTimes];
-      const result = await submitM2RehearsalProbe({
+      const input = {
         endpoint: `http://127.0.0.1:${address.port}`,
         unit,
         feePayer: await generateKeyPairSigner(),
         callRpc: async (method, operation) => { calls.push(method); return operation(); },
         now: () => new Date(times.shift() ?? 'invalid'),
-      }, { allowLoopbackHttp: true });
+      };
+      const prepared = await prepareM2RehearsalProbe(input, { allowLoopbackHttp: true });
+      expect(calls).toEqual(['getLatestBlockhash']);
+      const result = await submitPreparedM2RehearsalProbe(prepared, input.callRpc, input.now);
       expect(calls).toEqual(['getLatestBlockhash', 'sendTransaction']);
       expect(requests.map(value => value.method)).toEqual(['getLatestBlockhash', 'sendTransaction']);
       expect(requests[1]?.params[1]).toMatchObject({ encoding: 'base64', maxRetries: 0, preflightCommitment: 'confirmed', skipPreflight: false });
@@ -78,12 +81,14 @@ describe('M2 rehearsal submission', () => {
         observerId: 'observer-aws-a', routeId: 'alchemy-solana-devnet', transactionClass: 'MATCHED_CONTROL' as const, probeIndex: 0,
       };
       const unit = { ...identity, unitId: deriveUnitId(identity) };
-      await expect(submitM2RehearsalProbe({
+      const input = {
         endpoint: `http://127.0.0.1:${bound.port}`,
         unit,
         feePayer: await generateKeyPairSigner(),
         callRpc: async (_method, operation) => operation(),
-      }, { allowLoopbackHttp: true })).rejects.toThrow();
+      };
+      const prepared = await prepareM2RehearsalProbe(input, { allowLoopbackHttp: true });
+      await expect(submitPreparedM2RehearsalProbe(prepared, input.callRpc)).rejects.toThrow();
       expect(sends).toBe(1);
     } finally {
       await new Promise<void>((resolve, reject) => server.close(error => error === undefined ? resolve() : reject(error)));
