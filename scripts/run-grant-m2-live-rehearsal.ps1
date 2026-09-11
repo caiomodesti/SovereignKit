@@ -77,13 +77,53 @@ function Receive-HostFile([string]$ObserverId, [string]$RemotePath, [string]$Loc
   [IO.File]::WriteAllBytes($LocalPath, [Convert]::FromBase64String($encoded.Trim()))
 }
 
+function Get-HostServiceState([string]$ObserverId, [string]$ServiceName) {
+  return (Invoke-Host $ObserverId ("sudo systemctl show --property=ActiveState --value '" + $ServiceName + "'")).Trim()
+}
+
+function Test-HostFile([string]$ObserverId, [string]$RemotePath) {
+  $status = Invoke-Host $ObserverId ("if sudo test -f '" + $RemotePath + "'; then echo PRESENT; else echo MISSING; fi")
+  return $status.Trim() -eq 'PRESENT'
+}
+
+function Complete-PendingSlot([pscustomobject]$Pending, [DateTimeOffset]$Deadline) {
+  $completionRemotePath = '/var/lib/sovereignkit/evidence/m2/completed/' + $Pending.AssignmentId + '.json'
+  while (-not (Test-HostFile $Pending.ObserverId $completionRemotePath)) {
+    if ([DateTimeOffset]::UtcNow -ge $Deadline) {
+      throw "Worker completion deadline exceeded before another transaction: $($Pending.SlotId)"
+    }
+    Start-Sleep -Milliseconds 1000
+  }
+
+  $workerRecordedAt = Get-UtcCanonical
+  Receive-HostFile $Pending.ObserverId $completionRemotePath $Pending.CompletionPath
+  Receive-HostFile $Pending.ObserverId ('/var/lib/sovereignkit/evidence/m2/raw/' + $Pending.AssignmentId + '.jsonl') $Pending.RawPath
+  $completeOutput = & node scripts\complete-grant-m2-rehearsal-slot.mjs --slot-journal-directory (Join-Path $RunDirectory 'slots') --slot-id $Pending.SlotId --entry $Pending.EntryPath --receipt $Pending.ReceiptPath --receipt-authority $Pending.AuthorityPath --worker-evidence $Pending.CompletionPath --transport-recorded-at $Pending.TransportRecordedAt --worker-recorded-at $workerRecordedAt
+  if ($LASTEXITCODE -ne 0) { throw "Slot completion failed: $($Pending.SlotId)" }
+  $complete = $completeOutput | Select-Object -Last 1 | ConvertFrom-Json
+  $script:completedSlots += 1
+  Write-Event @{ event='SLOT_WORKER_COMPLETED'; slot_id=$Pending.SlotId; observer_id=$Pending.ObserverId; terminal_state=$complete.terminal_state; completed_slots=$script:completedSlots; qualifying_units=0 }
+  Send-Telegram ("SovereignKit M2 rehearsal: slot " + $script:completedSlots + "/12 concluído em " + $Pending.ObserverId + " (" + $complete.terminal_state + ").")
+}
+
 Write-Event @{ event='REHEARSAL_ORCHESTRATOR_STARTED'; run_id=$run.run_id; expected_slots=$run.schedule.slots.Count; official_window_started=$false }
 Send-Telegram ("SovereignKit M2: rehearsal autorizado preparado. Início: " + $run.schedule.start_at + ". Limite: 12 transações Devnet; janela oficial de 14 dias NÃO iniciada.")
 
 try {
-  $completedSlots = 0
+  $script:completedSlots = 0
+  $pendingByObserver = @{}
   foreach ($slot in $run.schedule.slots) {
     $due = [DateTimeOffset]::Parse($slot.due_at)
+    if ($pendingByObserver.ContainsKey($slot.observer_id)) {
+      $previous = $pendingByObserver[$slot.observer_id]
+      $serviceState = Get-HostServiceState $previous.ObserverId $previous.ServiceName
+      if ($serviceState -in @('active', 'activating', 'deactivating', 'reloading')) {
+        Complete-PendingSlot $previous $due
+      } else {
+        Complete-PendingSlot $previous ([DateTimeOffset]::UtcNow)
+      }
+      $pendingByObserver.Remove($slot.observer_id)
+    }
     while ([DateTimeOffset]::UtcNow -lt $due) {
       $remaining = ($due - [DateTimeOffset]::UtcNow).TotalMilliseconds
       Start-Sleep -Milliseconds ([Math]::Max(50, [Math]::Min(1000, [int]$remaining)))
@@ -107,25 +147,33 @@ try {
     if ($received.status -ne 'RECEIVED') { throw "Assignment receipt failed: $($slot.slot_id)" }
     $transportRecordedAt = Get-UtcCanonical
     $serviceName = 'sovereignkit-m2-observation-worker@' + $slotResult.assignmentId + '.service'
-    Invoke-Host $slot.observer_id ("sudo systemctl start '" + $serviceName + "'") | Out-Null
-    $workerRecordedAt = Get-UtcCanonical
+    Invoke-Host $slot.observer_id ("sudo systemctl start --no-block '" + $serviceName + "'") | Out-Null
     $remoteBase = '/var/lib/sovereignkit/m2/inbox/' + $slotResult.assignmentId
     $receiptPath = Join-Path $slotDirectory 'receipt.json'
     $completionPath = Join-Path $slotDirectory 'completion.json'
     $rawPath = Join-Path $slotDirectory 'raw.jsonl'
     Receive-HostFile $slot.observer_id ($remoteBase + '/receipt.json') $receiptPath
-    Receive-HostFile $slot.observer_id ('/var/lib/sovereignkit/evidence/m2/completed/' + $slotResult.assignmentId + '.json') $completionPath
-    Receive-HostFile $slot.observer_id ('/var/lib/sovereignkit/evidence/m2/raw/' + $slotResult.assignmentId + '.jsonl') $rawPath
     $authorityPath = Join-Path $slotDirectory 'receipt-authority.json'
     [IO.File]::WriteAllText($authorityPath, (($receiptAuthorities[$slot.observer_id] | ConvertTo-Json -Depth 10) + "`n"), [Text.UTF8Encoding]::new($false))
-    $completeOutput = & node scripts\complete-grant-m2-rehearsal-slot.mjs --slot-journal-directory (Join-Path $RunDirectory 'slots') --slot-id $slot.slot_id --entry $entryPath --receipt $receiptPath --receipt-authority $authorityPath --worker-evidence $completionPath --transport-recorded-at $transportRecordedAt --worker-recorded-at $workerRecordedAt
-    if ($LASTEXITCODE -ne 0) { throw "Slot completion failed: $($slot.slot_id)" }
-    $complete = $completeOutput | Select-Object -Last 1 | ConvertFrom-Json
-    $completedSlots += 1
-    Write-Event @{ event='SLOT_WORKER_COMPLETED'; slot_id=$slot.slot_id; observer_id=$slot.observer_id; terminal_state=$complete.terminal_state; completed_slots=$completedSlots; qualifying_units=0 }
-    Send-Telegram ("SovereignKit M2 rehearsal: slot " + $completedSlots + "/12 concluído em " + $slot.observer_id + " (" + $complete.terminal_state + ").")
+    $pendingByObserver[$slot.observer_id] = [pscustomobject]@{
+      SlotId = $slot.slot_id
+      ObserverId = $slot.observer_id
+      AssignmentId = $slotResult.assignmentId
+      ServiceName = $serviceName
+      EntryPath = $entryPath
+      ReceiptPath = $receiptPath
+      AuthorityPath = $authorityPath
+      CompletionPath = $completionPath
+      RawPath = $rawPath
+      TransportRecordedAt = $transportRecordedAt
+    }
+    Write-Event @{ event='SLOT_RECEIVED_WORKER_STARTED'; slot_id=$slot.slot_id; observer_id=$slot.observer_id; service_name=$serviceName; qualifying_units=0 }
+    Send-Telegram ("SovereignKit M2 rehearsal: slot " + $slot.slot_id + " recebido por " + $slot.observer_id + "; worker iniciado sem bloquear o próximo horário.")
   }
   $runEnd = [DateTimeOffset]::Parse($run.schedule.end_at)
+  foreach ($pending in @($pendingByObserver.Values)) {
+    Complete-PendingSlot $pending $runEnd
+  }
   while ([DateTimeOffset]::UtcNow -lt $runEnd) {
     $remaining = ($runEnd - [DateTimeOffset]::UtcNow).TotalMilliseconds
     Start-Sleep -Milliseconds ([Math]::Max(100, [Math]::Min(1000, [int]$remaining)))

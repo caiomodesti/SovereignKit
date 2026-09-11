@@ -11,5 +11,8 @@ test('live rehearsal orchestrator is bounded, fail-closed and does not start the
   assert.match(script, /elapsed_seconds=3600/u);
   assert.match(script, /yyyy-MM-ddTHH:mm:ss\.fffZ/u);
   assert.match(script, /official_window_started=\$false/u);
+  assert.match(script, /systemctl start --no-block/u);
+  assert.match(script, /Complete-PendingSlot/u);
+  assert.match(script, /Worker completion deadline exceeded before another transaction/u);
   assert.doesNotMatch(script, /requestAirdrop|--retries|Start-Job/u);
 });
