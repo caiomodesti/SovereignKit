@@ -152,6 +152,13 @@ remaining. All monitor
 timers remain disabled and no observation worker was started. Sanitized
 evidence is in
 `fixtures/grant-m2/live-monitor-deployment-20260912.json`.
+The credential installation, three-host synthetic alert/recovery check and
+timer activation are packaged in `scripts/deploy-grant-m2-live-monitor.ps1`.
+The script validates the local configuration without printing it, installs it
+with root/service-group ownership, emits only sanitized evidence and refuses to
+activate a timer until alert and recovery delivery pass on every host. It has
+not been executed because copying the existing bot credential to the observers
+requires a separate explicit authorization.
 
 A separate current-state checkpoint now binds the completed rehearsal, resource
 revalidation, frozen precommitment and three-host monitor preflight without
