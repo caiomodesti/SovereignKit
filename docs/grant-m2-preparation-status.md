@@ -151,6 +151,16 @@ current public address and both provider web sessions require reauthentication.
 Sanitized partial evidence is in
 `fixtures/grant-m2/live-monitor-deployment-20260912.json`.
 
+A separate current-state checkpoint now binds the completed rehearsal, resource
+revalidation, frozen precommitment and partial monitor deployment without
+rewriting the historical canonical readiness contract. It records six proven
+controls and retains seven explicit start gates, including both stale SSH
+allowlists, three-host monitor proof, operator alert receipt, immediate
+pre-start refresh and separate official-window authorization. See
+`fixtures/grant-m2/prestart-readiness-20260912.json`. Its validator rejects
+altered hashes, relabeling the acknowledged-but-unobserved rehearsal
+transaction, hiding a remaining gate or claiming that Milestone 2 started.
+
 The executable rehearsal contract is prepared at
 `deploy/grant-pilot/m2-rehearsal-plan.json`. It fixes a one-hour run with two
 30-minute cycles and 12 expected units across all accepted observers and frozen
