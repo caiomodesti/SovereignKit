@@ -50,6 +50,9 @@ trap rollback EXIT
 tar -xzf "$archive" -C "$staging_root" --strip-components=1
 manifest_commit=$(node -e 'const fs=require("fs");const m=JSON.parse(fs.readFileSync(process.argv[1]));if(m.status!=="STAGED_HOST_PREPARATION_NOT_ACTIVATED"||m.activation_performed!==false||m.authorizes_rehearsal!==false||m.milestone_2_started!==false)process.exit(2);process.stdout.write(m.source_commit)' "$staging_root/runtime-manifest.json")
 [[ $manifest_commit == "$source_commit" ]] || { echo 'runtime source commit mismatch' >&2; exit 65; }
+[[ -d $install_root/node_modules ]] || { echo 'existing runtime dependencies are missing; reconciliation required' >&2; exit 73; }
+cmp --silent "$install_root/package-lock.json" "$staging_root/package-lock.json" || { echo 'runtime dependency lock changed; clean dependency installation required' >&2; exit 73; }
+cp -a -- "$install_root/node_modules" "$staging_root/node_modules"
 chown -R root:root "$staging_root"
 find "$staging_root" -type d -exec chmod 0755 {} +
 find "$staging_root" -type f -exec chmod 0644 {} +

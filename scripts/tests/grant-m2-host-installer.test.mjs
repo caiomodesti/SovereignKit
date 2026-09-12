@@ -18,6 +18,8 @@ test('M2 host upgrader is atomic, preserves a versioned backup and never activat
   assert.match(script, /M2 worker instance exists before upgrade/u);
   assert.match(script, /backup-\$previous_commit/u);
   assert.match(script, /trap rollback EXIT/u);
+  assert.match(script, /cmp --silent .*package-lock\.json/u);
+  assert.match(script, /cp -a -- .*node_modules/u);
   assert.match(script, /UPGRADED_NOT_ACTIVATED/u);
   assert.match(script, /workerInstances.*0/u);
   assert.doesNotMatch(script, /systemctl (?:enable|start)|privateKeyPkcs8Base64|bot_token/u);
