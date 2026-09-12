@@ -21,6 +21,15 @@ test('live rehearsal orchestrator is bounded, fail-closed and does not start the
   assert.doesNotMatch(script, /requestAirdrop|--retries|Start-Job/u);
 });
 
+test('Google slot-critical transport uses direct PuTTY tools with a pinned host key', async () => {
+  const script = await readFile('scripts/run-grant-m2-live-rehearsal.ps1', 'utf8');
+  assert.match(script, /GoogleConnectionPath/u);
+  assert.match(script, /\$googlePlink -batch -hostkey \$google\.host_key/u);
+  assert.match(script, /\$googlePscp -batch -q -hostkey \$google\.host_key/u);
+  assert.match(script, /\^ssh-ed25519 255 SHA256:/u);
+  assert.doesNotMatch(script, /gcloud\.cmd/u);
+});
+
 test('live slot CLI resolves Solana Kit from the probes workspace package', async () => {
   const script = await readFile('scripts/run-grant-m2-rehearsal-slot.mjs', 'utf8');
   assert.match(script, /createRequire\(new URL\('\.\.\/packages\/probes\/package\.json'/u);

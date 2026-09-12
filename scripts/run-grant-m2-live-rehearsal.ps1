@@ -9,6 +9,7 @@ param(
   [string]$AlchemyEndpointPath = '.secrets\alchemy-devnet-endpoint.txt',
   [string]$PublicEndpointPath = '.secrets\solana-public-devnet-endpoint.txt',
   [string]$TelegramPath = '.secrets\grant-m2-telegram.json',
+  [string]$GoogleConnectionPath = '.secrets\google-observer-b-connection.json',
   [ValidateRange(0,11)][int]$PriorRehearsalTransactions = 0
 )
 
@@ -28,6 +29,18 @@ $run = Get-Content $RunPath -Raw | ConvertFrom-Json -DateKind String
 $aws = Get-Content '.secrets\aws-observer-a-connection.json' -Raw | ConvertFrom-Json
 $awsKey = (Resolve-Path $aws.key_path).Path
 $awsKnownHosts = (Resolve-Path '.secrets\aws-observer-a-known_hosts').Path
+$google = Get-Content $GoogleConnectionPath -Raw | ConvertFrom-Json
+if ([string]::IsNullOrWhiteSpace($google.username) -or
+    [string]::IsNullOrWhiteSpace($google.host) -or
+    $google.host -notmatch '^[A-Za-z0-9.-]+$' -or
+    [string]::IsNullOrWhiteSpace($google.host_key) -or
+    $google.host_key -notmatch '^ssh-ed25519 255 SHA256:[A-Za-z0-9+/]+={0,2}$') {
+  throw 'Google observer connection configuration is invalid'
+}
+$googleKey = (Resolve-Path $google.key_path).Path
+$googlePlink = (Resolve-Path $google.plink_path).Path
+$googlePscp = (Resolve-Path $google.pscp_path).Path
+$googleTarget = $google.username + '@' + $google.host
 $oracleKey = (Resolve-Path '.secrets\grant-m1-observer-c-oracle-ed25519').Path
 $oracleKnownHosts = (Resolve-Path '.secrets\grant-m1-observer-c-known_hosts').Path
 $oracleHost = ((Get-Content $oracleKnownHosts -TotalCount 1) -split '[ ,]')[0]
@@ -65,7 +78,7 @@ function Invoke-Host([string]$ObserverId, [string]$Command) {
   } elseif ($ObserverId -eq 'observer-oracle-a1') {
     $output = & ssh -i $oracleKey -o BatchMode=yes -o StrictHostKeyChecking=yes -o UserKnownHostsFile=$oracleKnownHosts ('opc@' + $oracleHost) $Command
   } elseif ($ObserverId -eq 'observer-google-e2-micro') {
-    $output = & gcloud.cmd compute ssh sovereignkit-observer-b --zone us-central1-a --quiet --command $Command
+    $output = & $googlePlink -batch -hostkey $google.host_key -i $googleKey $googleTarget $Command
   } else { throw "Unknown observer $ObserverId" }
   if ($LASTEXITCODE -ne 0) { throw "Remote command failed for $ObserverId" }
   return ($output -join "`n")
@@ -78,7 +91,7 @@ function Send-HostFile([string]$ObserverId, [string]$LocalPath, [string]$RemoteP
   } elseif ($ObserverId -eq 'observer-oracle-a1') {
     & scp -i $oracleKey -o BatchMode=yes -o StrictHostKeyChecking=yes -o UserKnownHostsFile=$oracleKnownHosts $LocalPath ('opc@' + $oracleHost + ':' + $RemotePath)
   } elseif ($ObserverId -eq 'observer-google-e2-micro') {
-    & gcloud.cmd compute scp $LocalPath ('sovereignkit-observer-b:' + $RemotePath) --zone us-central1-a --quiet
+    & $googlePscp -batch -q -hostkey $google.host_key -i $googleKey $LocalPath ($googleTarget + ':' + $RemotePath)
   } else { throw "Unknown observer $ObserverId" }
   if ($LASTEXITCODE -ne 0) { throw "Remote copy failed for $ObserverId" }
 }
