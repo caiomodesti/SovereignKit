@@ -5,6 +5,8 @@ export function parseMemAvailableBytes(text) {
 }
 
 export function parseClockOffsetMs(text) {
+  const chrony = /^System time\s*:\s*(\d+(?:\.\d+)?)\s+seconds\s+(?:fast|slow)\s+of\s+NTP\s+time$/imu.exec(text);
+  if (chrony !== null) return Number(chrony[1]) * 1000;
   const normalized = text.includes('Offset:') ? text.match(/^\s*Offset:\s+([^\r\n]+)$/mu)?.[1] ?? '' : text.trim();
   const match = /^([+-]?)(\d+(?:\.\d+)?)\s*(us|ms|s)$/u.exec(normalized);
   if (match === null) throw Error('clock offset is unavailable');

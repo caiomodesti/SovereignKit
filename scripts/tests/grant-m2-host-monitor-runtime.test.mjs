@@ -8,6 +8,8 @@ test('parses Linux memory and systemd clock offset without sign confusion', () =
   assert.equal(parseClockOffsetMs('-750us\n'), 0.75);
   assert.equal(parseClockOffsetMs('+1.25ms\n'), 1.25);
   assert.equal(parseClockOffsetMs('Server: metadata\n       Offset: +35us\n        Delay: 831us\n'), 0.035);
+  assert.ok(Math.abs(parseClockOffsetMs('Reference ID : A9FEA97B\nSystem time : 0.000003266 seconds fast of NTP time\nLast offset : +0.000000853 seconds\n') - 0.003266) < Number.EPSILON);
+  assert.ok(Math.abs(parseClockOffsetMs('System time : 0.000000034 seconds slow of NTP time\n') - 0.000034) < Number.EPSILON);
 });
 
 test('recomputes quota from complete durable journal tails', () => {

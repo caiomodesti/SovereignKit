@@ -51,7 +51,7 @@ async function collectSample(id, at, prior) {
     statFilesystem('/var/lib/sovereignkit'),
     command('systemctl', ['show', '--property=ActiveState', '--value', 'sovereignkit-observer.service']),
     command('timedatectl', ['show', '--property=NTPSynchronized', '--value']),
-    command('timedatectl', ['timesync-status']),
+    collectClockOffset(),
     listAssignments('/var/lib/sovereignkit/m2/inbox'),
     listCompletions('/var/lib/sovereignkit/evidence/m2/completed'),
     readQuotaJournals('/var/lib/sovereignkit/m2/quota'),
@@ -67,6 +67,13 @@ async function collectSample(id, at, prior) {
 }
 
 async function command(file, args) { const { stdout } = await execFile(file, args, { encoding: 'utf8', timeout: 10000 }); return stdout; }
+async function collectClockOffset() {
+  try { return await command('timedatectl', ['timesync-status']); }
+  catch (systemdError) {
+    try { return await command('chronyc', ['tracking']); }
+    catch (chronyError) { throw new AggregateError([systemdError, chronyError], 'clock offset is unavailable from systemd-timesyncd and Chrony'); }
+  }
+}
 async function statFilesystem(path) { const value = await import('node:fs/promises').then(module => module.statfs(path, { bigint: true })); return Number(value.bavail * value.bsize); }
 async function listAssignments(path) { return Promise.all((await readdir(path, { withFileTypes: true })).filter(entry => entry.isDirectory()).map(async entry => ({ id: entry.name, mtimeMs: Math.floor((await stat(join(path, entry.name))).mtimeMs) }))); }
 async function listCompletions(path) { return (await readdir(path, { withFileTypes: true })).filter(entry => entry.isFile() && entry.name.endsWith('.json')).map(entry => entry.name.slice(0, -5)); }
