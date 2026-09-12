@@ -1,0 +1,45 @@
+{
+  "schema_version": "GrantM2RehearsalExecutionEvidence@0.1.0",
+  "captured_at": "2026-09-12T03:47:58.700Z",
+  "run_id": "m2-rehearsal-continuation-20260912t013157z",
+  "source_commit": "65bd7e0d7c9dc5adafe37fa10f412c02a0f71f2c",
+  "status": "EXECUTION_COMPLETED_POSTRUN_GATES_PENDING",
+  "scheduled_start_at": "2026-09-12T01:34:57.504Z",
+  "scheduled_end_at": "2026-09-12T02:34:57.504Z",
+  "elapsed_seconds": 3600,
+  "prior_rehearsal_transactions": 3,
+  "new_transactions": 9,
+  "total_rehearsal_transactions": 12,
+  "unique_new_signatures": 9,
+  "new_finalized_results": 9,
+  "failed_closed_events": 0,
+  "qualifying_grant_units": 0,
+  "official_window_started": false,
+  "worker_instances_after_run": 0,
+  "telegram_transport_failures_recorded": 0,
+  "operator_receipt_reconfirmed_after_run": false,
+  "local_orchestrator_evidence": {
+    "sanitized_path_label": "ignored-live-6-orchestrator-jsonl",
+    "byte_length": 9349,
+    "sha256": "7d752d4878e0509034ac129ad39d7528c7c7db8081d0a7d7726c2b3b7ddb65ca"
+  },
+  "oracle_to_aws_backup_restore": {
+    "source_provider": "Oracle",
+    "destination_provider": "AWS",
+    "destination_role": "observer-aws-a-private-backup",
+    "archive_sha256": "965c597b1171a8f7afe38c6c69c7303228a9edef03c26fa27fc3fbef3655121d",
+    "file_count": 15,
+    "byte_identical_transfer": true,
+    "restore_extraction_verified": true,
+    "destination_copy_retained": true,
+    "temporary_restore_removed": true,
+    "temporary_relays_removed": true
+  },
+  "remaining_acceptance_gates": [
+    "raw_to_derived_reconciliation",
+    "append_only_incident_and_counter_validation",
+    "live_alert_evaluation_and_operator_receipt_confirmation",
+    "fourteen_day_resource_and_quota_revalidation",
+    "separate_explicit_official_window_authorization"
+  ]
+}
