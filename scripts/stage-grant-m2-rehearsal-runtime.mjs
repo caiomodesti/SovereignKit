@@ -10,8 +10,6 @@ const hostPreparation = process.argv[2] === '--host-preparation';
 const outputArgument = hostPreparation ? process.argv[3] : process.argv[2];
 if (process.argv.length > (hostPreparation ? 4 : 3)) throw Error('usage: stage-grant-m2-rehearsal-runtime [--host-preparation] [output-below-artifacts]');
 const outputRoot = resolve(repositoryRoot, outputArgument ?? (hostPreparation ? 'artifacts/grant-m2-host-runtime' : 'artifacts/grant-m2-rehearsal-runtime'));
-const trackedChanges = execFileSync('git', ['status', '--porcelain', '--untracked-files=no'], { cwd: repositoryRoot, encoding: 'utf8' }).trim();
-if (trackedChanges.length > 0) throw Error('M2 runtime staging requires a clean tracked Git tree');
 if (outputRoot !== artifactsRoot && !outputRoot.startsWith(`${artifactsRoot}${sep}`)) throw Error('M2 runtime output must remain inside artifacts');
 
 const copies = [
@@ -46,6 +44,9 @@ if (hostPreparation) {
     ['scripts/upgrade-grant-m2-host-runtime.sh', 'scripts/upgrade-grant-m2-host-runtime.sh'],
   );
 }
+const runtimeSources = [...new Set(copies.map(([source]) => source))];
+const runtimeChanges = execFileSync('git', ['status', '--porcelain', '--untracked-files=no', '--', ...runtimeSources], { cwd: repositoryRoot, encoding: 'utf8' }).trim();
+if (runtimeChanges.length > 0) throw Error('M2 runtime staging requires every packaged source to match HEAD');
 
 await rm(outputRoot, { recursive: true, force: true });
 await mkdir(outputRoot, { recursive: true });
