@@ -9,6 +9,8 @@ test('M2 host installer is no-overwrite, no-secret and no-activation', async () 
   assert.match(script, /GRANT_M2_TOTAL_LIMIT=10000/u);
   assert.match(script, /workerInstances.*0/u);
   assert.doesNotMatch(script, /systemctl (?:enable|start)|privateKeyPkcs8Base64|bot_token/u);
+  assert.match(script, /sovereignkit-m2-live-monitor\.timer/u);
+  assert.match(script, /activated unexpectedly during install/u);
   assert.match(script, /systemctl is-active --quiet sovereignkit-observer\.service/u);
   assert.match(script, /import\("\.\/packages\/probes\/dist\/m2-rehearsal-submission\.js"\)/u);
 });
@@ -23,4 +25,6 @@ test('M2 host upgrader is atomic, preserves a versioned backup and never activat
   assert.match(script, /UPGRADED_NOT_ACTIVATED/u);
   assert.match(script, /workerInstances.*0/u);
   assert.doesNotMatch(script, /systemctl (?:enable|start)|privateKeyPkcs8Base64|bot_token/u);
+  assert.match(script, /activated unexpectedly during upgrade/u);
+  assert.match(script, /evidence\/m2\/alerts/u);
 });

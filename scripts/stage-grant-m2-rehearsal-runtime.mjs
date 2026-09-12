@@ -31,10 +31,17 @@ const copies = [
   ['scripts/lib/grant-m2-budgeted-readers.mjs', 'scripts/lib/grant-m2-budgeted-readers.mjs'],
   ['scripts/lib/grant-m2-rpc-budget-journal.mjs', 'scripts/lib/grant-m2-rpc-budget-journal.mjs'],
   ['scripts/lib/grant-m2-rpc-budget.mjs', 'scripts/lib/grant-m2-rpc-budget.mjs'],
+  ['scripts/lib/grant-m2-host-monitor-runtime.mjs', 'scripts/lib/grant-m2-host-monitor-runtime.mjs'],
+  ['scripts/lib/grant-m2-live-monitor.mjs', 'scripts/lib/grant-m2-live-monitor.mjs'],
+  ['scripts/run-grant-m2-live-monitor.mjs', 'scripts/run-grant-m2-live-monitor.mjs'],
+  ['deploy/grant-pilot/m2-alert-policy.json', 'deploy/m2-alert-policy.json'],
+  ['deploy/grant-pilot/m2-live-monitor-policy.json', 'deploy/m2-live-monitor-policy.json'],
 ];
 if (hostPreparation) {
   copies.push(
     ['deploy/grant-pilot/systemd/sovereignkit-m2-observation-worker@.service', 'deploy/systemd/sovereignkit-m2-observation-worker@.service'],
+    ['deploy/grant-pilot/systemd/sovereignkit-m2-live-monitor.service', 'deploy/systemd/sovereignkit-m2-live-monitor.service'],
+    ['deploy/grant-pilot/systemd/sovereignkit-m2-live-monitor.timer', 'deploy/systemd/sovereignkit-m2-live-monitor.timer'],
     ['scripts/install-grant-m2-host-runtime.sh', 'scripts/install-grant-m2-host-runtime.sh'],
     ['scripts/upgrade-grant-m2-host-runtime.sh', 'scripts/upgrade-grant-m2-host-runtime.sh'],
   );

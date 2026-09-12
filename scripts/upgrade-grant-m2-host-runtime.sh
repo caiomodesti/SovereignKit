@@ -12,6 +12,8 @@ source_commit=$3
 observer_id=$4
 install_root=/opt/sovereignkit-m2-rehearsal
 unit_target=/etc/systemd/system/sovereignkit-m2-observation-worker@.service
+monitor_service_target=/etc/systemd/system/sovereignkit-m2-live-monitor.service
+monitor_timer_target=/etc/systemd/system/sovereignkit-m2-live-monitor.timer
 env_target=/etc/sovereignkit/m2-rehearsal.env
 
 [[ $expected_sha =~ ^[a-f0-9]{64}$ ]] || { echo 'invalid archive hash' >&2; exit 65; }
@@ -40,6 +42,8 @@ rollback() {
     rm -rf -- "$install_root"
     mv -- "$backup_root" "$install_root"
     install -m 0644 -o root -g root "$install_root/deploy/systemd/sovereignkit-m2-observation-worker@.service" "$unit_target"
+    if [[ -f $install_root/deploy/systemd/sovereignkit-m2-live-monitor.service ]]; then install -m 0644 -o root -g root "$install_root/deploy/systemd/sovereignkit-m2-live-monitor.service" "$monitor_service_target"; else rm -f -- "$monitor_service_target"; fi
+    if [[ -f $install_root/deploy/systemd/sovereignkit-m2-live-monitor.timer ]]; then install -m 0644 -o root -g root "$install_root/deploy/systemd/sovereignkit-m2-live-monitor.timer" "$monitor_timer_target"; else rm -f -- "$monitor_timer_target"; fi
     systemctl daemon-reload
   fi
   if [[ -d $staging_root ]]; then rm -rf -- "$staging_root"; fi
@@ -61,10 +65,17 @@ find "$staging_root" -type f -exec chmod 0644 {} +
 mv -- "$install_root" "$backup_root"
 mv -- "$staging_root" "$install_root"
 swapped=true
+install -d -m 0700 -o sovereignkit -g sovereignkit /var/lib/sovereignkit/evidence/m2/alerts
 install -m 0644 -o root -g root "$install_root/deploy/systemd/sovereignkit-m2-observation-worker@.service" "$unit_target"
+install -m 0644 -o root -g root "$install_root/deploy/systemd/sovereignkit-m2-live-monitor.service" "$monitor_service_target"
+install -m 0644 -o root -g root "$install_root/deploy/systemd/sovereignkit-m2-live-monitor.timer" "$monitor_timer_target"
 systemctl daemon-reload
 if systemctl list-units --all --plain --no-legend 'sovereignkit-m2-observation-worker@*.service' | grep -q .; then
   echo 'unexpected M2 worker instance exists after upgrade' >&2
+  exit 69
+fi
+if systemctl is-enabled --quiet sovereignkit-m2-live-monitor.timer || systemctl is-active --quiet sovereignkit-m2-live-monitor.timer; then
+  echo 'M2 live monitor timer activated unexpectedly during upgrade' >&2
   exit 69
 fi
 swapped=false

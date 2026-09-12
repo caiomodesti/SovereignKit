@@ -131,6 +131,16 @@ the operator. Sanitized evidence is hash-bound from the alert policy at
 identifier remain in the ignored `.secrets` directory. Live host alert
 evaluation and automatic delivery remain `IMPLEMENTED_NOT_PROVEN`.
 
+The pre-start host monitor is now packaged separately at
+`deploy/grant-pilot/m2-live-monitor-policy.json`. It samples every minute,
+adds explicit 512 MiB warning and 384 MiB critical floors for available
+memory, retains the frozen disk and clock thresholds, tracks observer service,
+NTP synchronization, delivery backlog and each host's durable RPC budget, and
+writes an append-only journal. Telegram notifications are emitted on alert
+state changes, bounded reminders and recovery. A failed Telegram call remains
+pending and is retried on the next sample. The package contains no credential
+and its installer leaves the timer disabled until a live preflight succeeds.
+
 The executable rehearsal contract is prepared at
 `deploy/grant-pilot/m2-rehearsal-plan.json`. It fixes a one-hour run with two
 30-minute cycles and 12 expected units across all accepted observers and frozen
