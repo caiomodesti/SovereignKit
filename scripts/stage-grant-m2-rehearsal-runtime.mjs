@@ -42,6 +42,7 @@ if (hostPreparation) {
     ['deploy/grant-pilot/systemd/sovereignkit-m2-live-monitor.timer', 'deploy/systemd/sovereignkit-m2-live-monitor.timer'],
     ['scripts/install-grant-m2-host-runtime.sh', 'scripts/install-grant-m2-host-runtime.sh'],
     ['scripts/upgrade-grant-m2-host-runtime.sh', 'scripts/upgrade-grant-m2-host-runtime.sh'],
+    ['scripts/activate-grant-m2-live-monitor.sh', 'scripts/activate-grant-m2-live-monitor.sh'],
   );
 }
 const runtimeSources = [...new Set(copies.map(([source]) => source))];

@@ -28,3 +28,13 @@ test('M2 host upgrader is atomic, preserves a versioned backup and never activat
   assert.match(script, /activated unexpectedly during upgrade/u);
   assert.match(script, /evidence\/m2\/alerts/u);
 });
+
+test('live monitor activation proves one sample and cannot activate an observation worker', async () => {
+  const script = await readFile('scripts/activate-grant-m2-live-monitor.sh', 'utf8');
+  assert.match(script, /systemctl start "\$service"/u);
+  assert.match(script, /systemctl enable --now "\$timer"/u);
+  assert.match(script, /workerInstances.*0/u);
+  assert.match(script, /officialWindowStarted.*false/u);
+  assert.match(script, /installed runtime commit mismatch/u);
+  assert.doesNotMatch(script, /observation-worker@.*start|bot_token|privateKeyPkcs8Base64/u);
+});
