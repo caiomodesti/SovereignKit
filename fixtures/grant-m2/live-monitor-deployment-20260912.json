@@ -1,0 +1,48 @@
+{
+  "schema_version": "GrantM2LiveMonitorDeploymentEvidence@0.1.0",
+  "captured_at": "2026-09-12T14:23:02.347Z",
+  "status": "PARTIAL_GOOGLE_PREFLIGHT_PASS_OTHER_HOSTS_ACCESS_BLOCKED",
+  "source_commit": "42414c09d9999577b3c3649e462552bb4aa40c50",
+  "runtime_archive_sha256": "8f26eec454b32b067b7fe89c55879d4f28886b2160acc0ff8cf52caf3d737cb1",
+  "runtime_archive_bytes": 164751,
+  "runtime_manifest_files": 308,
+  "hosts": {
+    "observer-google-e2-micro": {
+      "runtime_status": "UPGRADED_NOT_ACTIVATED",
+      "sample_status": "PASS",
+      "sample_sequence": 1,
+      "memory_available_bytes": 572055552,
+      "disk_free_bytes": 27459588096,
+      "clock_absolute_offset_ms": 0.035,
+      "service_active": true,
+      "ntp_synchronized": true,
+      "delivery_backlog_count": 0,
+      "local_rpc_quota_remaining_percent": 98.4,
+      "highest_severity": "NONE",
+      "timer_enabled": false,
+      "timer_active": false,
+      "telegram_configuration_installed": false
+    },
+    "observer-aws-a": {
+      "runtime_status": "PREVIOUS_RUNTIME_RETAINED",
+      "sample_status": "BLOCKED_BY_STALE_SSH_ALLOWLIST",
+      "timer_enabled": false,
+      "telegram_configuration_installed": false
+    },
+    "observer-oracle-a1": {
+      "runtime_status": "PREVIOUS_RUNTIME_RETAINED",
+      "sample_status": "BLOCKED_BY_STALE_SSH_ALLOWLIST",
+      "timer_enabled": false,
+      "telegram_configuration_installed": false
+    }
+  },
+  "remaining_gates": [
+    "explicit_authorization_to_install_existing_telegram_bot_credentials_on_the_three_observer_hosts",
+    "aws_and_oracle_console_reauthentication_and_ssh_allowlist_refresh",
+    "three_host_synthetic_alert_delivery_and_recovery_test",
+    "three_host_timer_activation_and_consecutive_sample_verification"
+  ],
+  "worker_instances_started": 0,
+  "authorizes_official_window": false,
+  "official_window_started": false
+}

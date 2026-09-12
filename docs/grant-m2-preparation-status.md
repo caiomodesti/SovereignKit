@@ -141,6 +141,16 @@ state changes, bounded reminders and recovery. A failed Telegram call remains
 pending and is retried on the next sample. The package contains no credential
 and its installer leaves the timer disabled until a live preflight succeeds.
 
+The Google observer was upgraded atomically to source commit `42414c0` and
+completed one real, secret-free preflight sample. It reported 572,055,552 bytes
+of available memory, 27,459,588,096 bytes of free disk, 0.035 ms clock offset,
+healthy service and NTP state, zero delivery backlog and 98.4% local RPC budget
+remaining. The timer is still disabled. AWS and Oracle retained the previous
+runtime because their SSH `/32` allowlists no longer match the operator's
+current public address and both provider web sessions require reauthentication.
+Sanitized partial evidence is in
+`fixtures/grant-m2/live-monitor-deployment-20260912.json`.
+
 The executable rehearsal contract is prepared at
 `deploy/grant-pilot/m2-rehearsal-plan.json`. It fixes a one-hour run with two
 30-minute cycles and 12 expected units across all accepted observers and frozen
