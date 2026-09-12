@@ -1,7 +1,7 @@
 {
   "schema_version": "GrantM2PrestartReadiness@0.1.0",
-  "captured_at": "2026-09-12T23:23:21.039Z",
-  "status": "BLOCKED_PENDING_OPERATOR_CONFIRMATION_AND_PRESTART_AUTHORIZATION",
+  "captured_at": "2026-09-12T23:34:54.498Z",
+  "status": "BLOCKED_PENDING_PR_MERGE_PRESTART_REFRESH_AND_EXPLICIT_AUTHORIZATION",
   "evidence": {
     "precommitment": {
       "path": "deploy/grant-pilot/m2-pilot-precommitment.json",
@@ -21,7 +21,7 @@
     },
     "live_monitor_activation": {
       "path": "fixtures/grant-m2/live-monitor-activation-20260912.json",
-      "sha256": "79c1f9c6deed6fd131ab90ede47adb7dfcceafd4b0c7464bb8c28f0f7916da97"
+      "sha256": "530cbfbf8f14b77745db46022d4b238e0bc2ea61ecaacbe1c34e928272b44fc7"
     }
   },
   "rehearsal_accounting": {
@@ -44,10 +44,11 @@
     "three_host_two_consecutive_secret_free_samples": true,
     "three_host_telegram_credentials_restricted": true,
     "three_host_synthetic_alert_and_recovery_delivery_accepted": true,
-    "three_host_monitor_timers_and_scheduled_samples": true
+    "three_host_monitor_timers_and_scheduled_samples": true,
+    "operator_confirmed_six_notification_receipts": true
   },
   "remaining_gates": [
-    "operator_alert_receipt_confirmation",
+    "private_pr_78_merge_authorization_and_merge",
     "immediate_prestart_quota_and_capacity_refresh",
     "separate_explicit_official_window_authorization"
   ],

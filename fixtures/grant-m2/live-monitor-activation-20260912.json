@@ -66,7 +66,10 @@
   },
   "synthetic_alerts_delivered": 3,
   "synthetic_recoveries_delivered": 3,
-  "operator_receipt_confirmation_pending": true,
+  "operator_receipt_confirmation_pending": false,
+  "operator_receipt_confirmed": true,
+  "operator_confirmed_message_count": 6,
+  "operator_receipt_confirmed_at": "2026-09-12T23:34:54.498Z",
   "worker_instances_started": 0,
   "authorizes_official_window": false,
   "official_window_started": false

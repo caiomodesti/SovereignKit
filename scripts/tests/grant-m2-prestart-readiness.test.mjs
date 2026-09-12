@@ -14,7 +14,7 @@ test("accepts the current blocked M2 pre-start evidence without starting the win
     status: "PASS",
     gate: "GRANT_M2_CURRENT_PRESTART_READINESS",
     readiness: "BLOCKED",
-    provenControls: 13,
+    provenControls: 14,
     remainingGates: 3,
     rehearsalTransactions: 12,
     qualifyingGrantUnits: 0,

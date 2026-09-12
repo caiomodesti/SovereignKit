@@ -11,7 +11,7 @@ const EXPECTED_PATHS = {
 };
 
 const EXPECTED_GATES = [
-  "operator_alert_receipt_confirmation",
+  "private_pr_78_merge_authorization_and_merge",
   "immediate_prestart_quota_and_capacity_refresh",
   "separate_explicit_official_window_authorization",
 ];
@@ -36,7 +36,7 @@ function parseBoundArtifact(snapshot, artifacts, key) {
 
 export function validateGrantM2PrestartReadiness(snapshot, artifacts) {
   if (snapshot?.schema_version !== GRANT_M2_PRESTART_READINESS_VERSION ||
-      snapshot.status !== "BLOCKED_PENDING_OPERATOR_CONFIRMATION_AND_PRESTART_AUTHORIZATION") {
+      snapshot.status !== "BLOCKED_PENDING_PR_MERGE_PRESTART_REFRESH_AND_EXPLICIT_AUTHORIZATION") {
     throw new Error("M2 pre-start snapshot status or version is invalid");
   }
 
@@ -127,14 +127,17 @@ export function validateGrantM2PrestartReadiness(snapshot, artifacts) {
         host.latest_local_rpc_quota_remaining_percent <= 0) ||
       activation.synthetic_alerts_delivered !== 3 ||
       activation.synthetic_recoveries_delivered !== 3 ||
-      activation.operator_receipt_confirmation_pending !== true ||
+      activation.operator_receipt_confirmation_pending !== false ||
+      activation.operator_receipt_confirmed !== true ||
+      activation.operator_confirmed_message_count !== 6 ||
+      new Date(activation.operator_receipt_confirmed_at).toISOString() !== activation.operator_receipt_confirmed_at ||
       activation.worker_instances_started !== 0 ||
       activation.authorizes_official_window !== false ||
       activation.official_window_started !== false) {
     throw new Error("M2 live-monitor activation evidence is overstated or inconsistent");
   }
 
-  if (Object.values(snapshot.proven_controls ?? {}).length !== 13 ||
+  if (Object.values(snapshot.proven_controls ?? {}).length !== 14 ||
       Object.values(snapshot.proven_controls ?? {}).some(value => value !== true) ||
       JSON.stringify(snapshot.remaining_gates) !== JSON.stringify(EXPECTED_GATES)) {
     throw new Error("M2 pre-start controls or remaining gates are incomplete");
@@ -150,7 +153,7 @@ export function validateGrantM2PrestartReadiness(snapshot, artifacts) {
     status: "PASS",
     gate: "GRANT_M2_CURRENT_PRESTART_READINESS",
     readiness: "BLOCKED",
-    provenControls: 13,
+    provenControls: 14,
     remainingGates: EXPECTED_GATES.length,
     rehearsalTransactions: 12,
     qualifyingGrantUnits: 0,

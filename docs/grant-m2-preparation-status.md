@@ -162,14 +162,15 @@ alerts and three recoveries were accepted by Telegram. The credentials are
 evidence. Each timer then completed two scheduled healthy samples, remained
 active and started no observation worker. Activation evidence is in
 `fixtures/grant-m2/live-monitor-activation-20260912.json`.
+The operator subsequently confirmed receipt of all six messages.
 
 A separate current-state checkpoint now binds the completed rehearsal, resource
 revalidation, frozen precommitment and three-host monitor preflight without
-rewriting the historical canonical readiness contract. It records thirteen proven
+rewriting the historical canonical readiness contract. It records fourteen proven
 controls, including the refreshed SSH allowlists, common runtime deployment and
 three-host secret-free preflight, alert delivery and scheduled monitor samples.
-It retains three explicit start gates: operator alert receipt, immediate
-pre-start refresh and separate official-window authorization. See
+It retains three explicit start gates: authorization and merge of private PR
+#78, immediate pre-start refresh and separate official-window authorization. See
 `fixtures/grant-m2/prestart-readiness-20260912.json`. Its validator rejects
 altered hashes, relabeling the acknowledged-but-unobserved rehearsal
 transaction, hiding a remaining gate or claiming that Milestone 2 started.
