@@ -1,6 +1,6 @@
 # M2 rehearsal execution checkpoint — 2026-09-12
 
-Status: EXECUTION COMPLETED; POST-RUN ACCEPTANCE GATES PENDING.
+Status: EXECUTION AND RAW RECONCILIATION COMPLETED; OTHER GATES PENDING.
 
 The authorized pre-M2 rehearsal completed its real one-hour interval with the
 exact aggregate ceiling of 12 Solana Devnet transactions. The final
@@ -8,6 +8,21 @@ continuation contributed nine unique transactions; all nine produced
 assignment-bound `FINALIZED` worker evidence. The run recorded no fail-closed
 event, left no worker instances loaded, contributed zero grant KPI units and
 did not start the official fourteen-day window.
+
+The raw-to-derived verifier recomputed all nine terminal outcomes from 15 raw
+three-reader polls. It found nine unique units and signatures, equal observer
+distribution, both frozen routes represented, and zero provenance or terminal
+mismatches. This check is now a repeatable command rather than a manual count.
+
+Across all controlled attempts, 12 unique Devnet submissions were acknowledged.
+Eleven have complete `FINALIZED` worker evidence. The first acknowledged
+transaction has no worker completion because its run failed closed during AWS
+transport; it is retained as acknowledged-but-unobserved, never relabeled as a
+finalized result. The write-once ledger validates exactly 12 unique signatures,
+11 finalized results, one acknowledged-but-unobserved result and zero grant
+units. Five chronological incidents are now preserved in the
+append-only rehearsal incident log. Four are resolved; Telegram operator
+receipt reconfirmation remains open.
 
 The Google transport was changed from repeated `gcloud compute ssh/scp`
 startup to direct non-interactive PuTTY transport with a pinned Ed25519 host
@@ -24,10 +39,9 @@ restore and relay copies were removed.
 
 This checkpoint does not claim rehearsal acceptance or permission to start the
 official window. Before a non-repeatable fourteen-day run is proposed, complete
-raw-to-derived reconciliation, append-only counter and incident validation,
-live alert evaluation with operator receipt confirmation, and current
-resource/quota revalidation. Starting the official window remains a separate
-explicit operator gate.
+live alert evaluation with operator receipt confirmation and current
+resource/quota revalidation.
+Starting the official window remains a separate explicit operator gate.
 
 Sanitized machine-readable evidence is in
 `fixtures/grant-m2/rehearsal-execution-20260912.json`. The ignored local

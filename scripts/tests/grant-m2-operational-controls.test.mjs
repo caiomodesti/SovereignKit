@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { createBackupManifest, createDailySummary, validateIncidentLog } from "../lib/grant-m2-operational-controls.mjs";
+import { createBackupManifest, createDailySummary, validateIncidentLog, validateRehearsalTransactionLedger } from "../lib/grant-m2-operational-controls.mjs";
 
 const collectorText = [
   JSON.stringify({ collector_sequence: 0, result: { result_id: "result-a" } }),
@@ -57,4 +57,11 @@ test("validates an append-only incident sequence and rejects weakened records", 
   assert.equal(validateIncidentLog(incident).records, 1);
   const weakened = incident.replace('"raw_evidence_preserved":true', '"raw_evidence_preserved":false');
   assert.throws(() => validateIncidentLog(weakened), /weakens preservation rules/u);
+});
+
+test("requires exact rehearsal accounting without relabeling an unobserved transaction", () => {
+  const rows = Array.from({ length: 12 }, (_, sequence) => ({ schema_version: "GrantM2RehearsalTransactionLedger@0.1.0", sequence, submitted_at: `2026-09-12T01:${String(sequence).padStart(2, "0")}:00.000Z`, source_run: "live-test", slot_id: sequence.toString(16).padStart(64, "0"), assignment_id: `assignment-${sequence}`, signature: `signature-${sequence}`, observer_id: ["observer-aws-a", "observer-google-e2-micro", "observer-oracle-a1"][sequence % 3], route_id: sequence % 2 ? "solana-public-devnet" : "alchemy-solana-devnet", terminal_status: sequence === 0 ? "ACKNOWLEDGED_UNOBSERVED" : "FINALIZED", qualifying_units: 0, official_window_started: false }));
+  const text = `${rows.map(row => JSON.stringify(row)).join("\n")}\n`;
+  assert.equal(validateRehearsalTransactionLedger(text).finalized, 11);
+  assert.throws(() => validateRehearsalTransactionLedger(text.replace("ACKNOWLEDGED_UNOBSERVED", "FINALIZED")), /terminal accounting/u);
 });

@@ -3,6 +3,7 @@ import { createHash } from "node:crypto";
 export const GRANT_M2_BACKUP_MANIFEST_VERSION = "GrantM2BackupManifest@0.1.0";
 export const GRANT_M2_DAILY_SUMMARY_VERSION = "GrantM2DailySummary@0.1.0";
 export const GRANT_M2_INCIDENT_LOG_VERSION = "GrantM2IncidentLog@0.1.0";
+export const GRANT_M2_REHEARSAL_LEDGER_VERSION = "GrantM2RehearsalTransactionLedger@0.1.0";
 
 export function createBackupManifest({ sourceBytes, backupBytes, capturedAt, sourceLabel, destinationLabel }) {
   canonicalTime(capturedAt);
@@ -100,6 +101,28 @@ export function validateIncidentLog(text) {
     }
   }
   return { status: "PASS", gate: "GRANT_M2_INCIDENT_LOG", records: records.length, sha256: sha256(Buffer.from(text)) };
+}
+
+export function validateRehearsalTransactionLedger(text) {
+  const records = parseJsonl(Buffer.from(text), "rehearsal transaction ledger");
+  if (records.length !== 12) throw new Error("rehearsal ledger must contain exactly 12 submitted transactions");
+  const signatures = new Set(); const slots = new Set();
+  for (let index = 0; index < records.length; index += 1) {
+    const record = records[index];
+    canonicalTime(record.submitted_at);
+    if (record.schema_version !== GRANT_M2_REHEARSAL_LEDGER_VERSION || record.sequence !== index ||
+        !safeLabel(record.source_run) || !/^[a-f0-9]{64}$/u.test(record.slot_id) || typeof record.assignment_id !== "string" ||
+        typeof record.signature !== "string" || signatures.has(record.signature) || slots.has(record.slot_id) ||
+        !["observer-aws-a", "observer-google-e2-micro", "observer-oracle-a1"].includes(record.observer_id) ||
+        !["alchemy-solana-devnet", "solana-public-devnet"].includes(record.route_id) ||
+        !["FINALIZED", "ACKNOWLEDGED_UNOBSERVED"].includes(record.terminal_status) || record.qualifying_units !== 0 ||
+        record.official_window_started !== false) throw new Error("rehearsal ledger record is invalid or duplicated");
+    signatures.add(record.signature); slots.add(record.slot_id);
+  }
+  const finalized = records.filter(record => record.terminal_status === "FINALIZED").length;
+  const unobserved = records.filter(record => record.terminal_status === "ACKNOWLEDGED_UNOBSERVED").length;
+  if (finalized !== 11 || unobserved !== 1) throw new Error("rehearsal ledger terminal accounting is invalid");
+  return { status: "PASS", gate: "GRANT_M2_REHEARSAL_TRANSACTION_LEDGER", records: 12, finalized, acknowledgedUnobserved: unobserved, uniqueSignatures: 12, qualifyingUnits: 0, officialWindowStarted: false, sha256: sha256(Buffer.from(text)) };
 }
 
 function parseJsonl(bytes, label, { allowEmpty = false } = {}) {

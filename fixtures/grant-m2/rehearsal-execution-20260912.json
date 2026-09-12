@@ -3,7 +3,7 @@
   "captured_at": "2026-09-12T03:47:58.700Z",
   "run_id": "m2-rehearsal-continuation-20260912t013157z",
   "source_commit": "65bd7e0d7c9dc5adafe37fa10f412c02a0f71f2c",
-  "status": "EXECUTION_COMPLETED_POSTRUN_GATES_PENDING",
+  "status": "EXECUTION_AND_RAW_RECONCILIATION_COMPLETED_OTHER_GATES_PENDING",
   "scheduled_start_at": "2026-09-12T01:34:57.504Z",
   "scheduled_end_at": "2026-09-12T02:34:57.504Z",
   "elapsed_seconds": 3600,
@@ -12,7 +12,34 @@
   "total_rehearsal_transactions": 12,
   "unique_new_signatures": 9,
   "new_finalized_results": 9,
+  "raw_to_derived_reconciliation": {
+    "status": "PASS",
+    "raw_polls_recomputed": 15,
+    "observers_reconciled": 3,
+    "routes_reconciled": 2,
+    "unique_units": 9,
+    "unique_signatures": 9,
+    "terminal_mismatches": 0,
+    "provenance_mismatches": 0
+  },
   "failed_closed_events": 0,
+  "aggregate_transaction_accounting": {
+    "status": "PASS",
+    "path": "fixtures/grant-m2/rehearsal-transactions-20260912.jsonl",
+    "sha256": "99089dae31ed630e3c5089580b0f0cb4d7f75d06b93edf48263bc8e387893cff",
+    "submitted_transactions": 12,
+    "worker_finalized_transactions": 11,
+    "acknowledged_without_worker_completion": 1,
+    "duplicate_signatures_observed": 0
+  },
+  "incident_log": {
+    "status": "PASS_WITH_ONE_OPEN_INCIDENT",
+    "path": "fixtures/grant-m2/rehearsal-incidents-20260912.jsonl",
+    "sha256": "1991d381a52c9ab98c86bd6bfe33af6a1e10c8bff08ad9c55d99996e550f675b",
+    "records": 5,
+    "open_records": 1,
+    "automatic_window_resets": 0
+  },
   "qualifying_grant_units": 0,
   "official_window_started": false,
   "worker_instances_after_run": 0,
@@ -36,8 +63,6 @@
     "temporary_relays_removed": true
   },
   "remaining_acceptance_gates": [
-    "raw_to_derived_reconciliation",
-    "append_only_incident_and_counter_validation",
     "live_alert_evaluation_and_operator_receipt_confirmation",
     "fourteen_day_resource_and_quota_revalidation",
     "separate_explicit_official_window_authorization"
