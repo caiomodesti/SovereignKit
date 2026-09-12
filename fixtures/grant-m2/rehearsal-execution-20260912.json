@@ -62,9 +62,13 @@
     "temporary_restore_removed": true,
     "temporary_relays_removed": true
   },
+  "resource_revalidation": {
+    "status": "PASS",
+    "path": "fixtures/grant-m2/resource-revalidation-20260912.json"
+  },
   "remaining_acceptance_gates": [
     "live_alert_evaluation_and_operator_receipt_confirmation",
-    "fourteen_day_resource_and_quota_revalidation",
+    "immediate_prestart_resource_and_quota_refresh",
     "separate_explicit_official_window_authorization"
   ]
 }

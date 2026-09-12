@@ -1,6 +1,7 @@
 # M2 rehearsal execution checkpoint — 2026-09-12
 
-Status: EXECUTION AND RAW RECONCILIATION COMPLETED; OTHER GATES PENDING.
+Status: EXECUTION, RAW RECONCILIATION, BACKUP/RESTORE AND RESOURCE
+REVALIDATION COMPLETED; LIVE ALERT GATE PENDING.
 
 The authorized pre-M2 rehearsal completed its real one-hour interval with the
 exact aggregate ceiling of 12 Solana Devnet transactions. The final
@@ -37,11 +38,19 @@ The AWS copy matched that hash, all 15 files extracted in the temporary restore
 test, the retained destination copy remained in place, and the temporary
 restore and relay copies were removed.
 
+Authenticated Alchemy usage was then read as 3,730 of 30,000,000 monthly CUs,
+leaving 29,996,270 CUs. After the frozen 5,854,464-CU upper bound, the computed
+headroom is 24,141,806 CUs. Host disk, clock and service checks passed; the
+smallest observed memory headroom was 577,804 KiB on Google. The Devnet fee
+payer would retain 70,735,000 lamports after the projected 4,032 transaction
+fees. These calculations are recomputed by
+`npm run verify:grant:m2:resource-revalidation` and must be refreshed
+immediately before an official start.
+
 This checkpoint does not claim rehearsal acceptance or permission to start the
 official window. Before a non-repeatable fourteen-day run is proposed, complete
-live alert evaluation with operator receipt confirmation and current
-resource/quota revalidation.
-Starting the official window remains a separate explicit operator gate.
+live alert evaluation and operator receipt confirmation. Starting the official
+window remains a separate explicit operator gate.
 
 Sanitized machine-readable evidence is in
 `fixtures/grant-m2/rehearsal-execution-20260912.json`. The ignored local

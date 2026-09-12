@@ -57,35 +57,44 @@ classification is disabled: this pilot does not silently extend the controlled
 preflights are retained in
 `fixtures/grant-m2/route-candidate-preflight-failures-20260909.json`.
 
-## Proposed rehearsal
+## Rehearsal checkpoint (2026-09-12)
 
-The proposed rehearsal is 3,600 seconds and is separate from grant KPI
-evidence. Exact operator authorization was received on 2026-09-11, but no host
-installation or Devnet submission had occurred at this code checkpoint. Its
-fixed pass criteria cover all observers and routes, signature/schema
-verification, idempotent replay,
-backup/restore, raw-to-derived count reconciliation and actual delivery of one
-synthetic alert to an approved responder destination.
+The authorized rehearsal ran for exactly 3,600 seconds and remained separate
+from grant KPI evidence. Across all controlled attempts it used the full ceiling
+of 12 unique Solana Devnet submissions: 11 have complete worker `FINALIZED`
+evidence and one acknowledged submission remains explicitly unobserved after a
+fail-closed transport incident. The final nine-unit continuation covered all
+three observers and both routes, and its 15 raw polls reconcile to the nine
+derived results. The rehearsal contributed zero grant units and did not start
+Milestone 2. Sanitized evidence is in
+`fixtures/grant-m2/rehearsal-execution-20260912.json`.
 
 ## Current blockers
 
-1. Materialize the received authorization in a commit-bound live-run manifest
-   and run the bounded rehearsal.
-2. Repeat the proven backup/restore flow with the rehearsal export.
-3. Prove cumulative/per-route counts and the append-only incident log.
-4. Deploy the alert evaluator and Telegram delivery adapter on the live hosts.
-5. Revalidate the 14-day resource estimate and obtain any required cost
-   approval.
-6. Obtain explicit authorization for the official window.
+1. Deploy and prove the live alert sampler and Telegram delivery path, including
+   the constrained Google memory headroom.
+2. Obtain operator confirmation that the post-rehearsal Telegram message was
+   actually received.
+3. Refresh host capacity and authenticated Alchemy quota immediately before the
+   proposed start.
+4. Obtain separate explicit authorization for the official window.
 
-The quota revalidation now has a conservative reviewable estimate at
+The original quota estimate remains frozen at
 `deploy/grant-pilot/m2-resource-quota-estimate.json`. It budgets all 4,032
 units at the maximum 25 reader polls, three per-observer minute health checks,
 Alchemy submission/blockhash calls and a 10% contingency. The resulting
-5,854,464 CU estimate plus current usage remains below the observed 30,000,000
-CU account ceiling. Fixed 20-second unit offsets keep the computed Alchemy
+5,854,464 CU upper estimate remains below the observed 30,000,000 CU account
+ceiling. Fixed 20-second unit offsets keep the computed Alchemy
 burst at 240 CU/s below the observed 300 CU/s ceiling. This is an estimate and
 does not approve quota, spending, the rehearsal or the official window.
+
+The post-rehearsal authenticated capture at
+`fixtures/grant-m2/resource-revalidation-20260912.json` records 3,730 CUs used,
+29,996,270 remaining, and 24,141,806 remaining after the complete frozen upper
+bound. It also recomputes host capacity, projected evidence storage and Devnet
+fee-payer headroom. That evidence passes a deterministic validator, but still
+requires an immediate pre-start refresh because provider quota and host
+resources are time-sensitive.
 
 The remaining configuration decision is recorded without deployment at
 `deploy/grant-pilot/m2-reader-topology-proposal.json`. OnFinality currently
@@ -95,12 +104,12 @@ client. The two public clients share one upstream and therefore have correlated
 failure; they are not two independent witnesses. No observer configuration has
 been changed at the proposal capture; see the later deployment checkpoint above.
 
-Backup integrity, daily count reconciliation and append-only incident-log
+Backup integrity, rehearsal transaction accounting and append-only incident-log
 validation are implemented in `scripts/lib/grant-m2-operational-controls.mjs`.
-Their status is `IMPLEMENTED_NOT_PROVEN`: local byte equality does not prove a
-separate backup location, and synthetic ledgers/incidents do not prove the live
-deployment. Those controls move to proven only after the authorized rehearsal
-retains external evidence.
+The rehearsal repeated the backup/restore flow against Oracle evidence retained
+privately on AWS and reconciled all 12 submitted transaction identities without
+rewriting the acknowledged-but-unobserved transaction. Daily official-window
+summaries remain unstarted because the official window has not begun.
 
 The restricted AWS destination now exists with service-identity-only access.
 At capture its available storage was above the frozen alert floor and the

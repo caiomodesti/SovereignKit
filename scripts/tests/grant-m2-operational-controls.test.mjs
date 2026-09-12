@@ -1,7 +1,8 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
 
-import { createBackupManifest, createDailySummary, validateIncidentLog, validateRehearsalTransactionLedger } from "../lib/grant-m2-operational-controls.mjs";
+import { createBackupManifest, createDailySummary, validateIncidentLog, validateRehearsalTransactionLedger, validateResourceRevalidation } from "../lib/grant-m2-operational-controls.mjs";
 
 const collectorText = [
   JSON.stringify({ collector_sequence: 0, result: { result_id: "result-a" } }),
@@ -64,4 +65,21 @@ test("requires exact rehearsal accounting without relabeling an unobserved trans
   const text = `${rows.map(row => JSON.stringify(row)).join("\n")}\n`;
   assert.equal(validateRehearsalTransactionLedger(text).finalized, 11);
   assert.throws(() => validateRehearsalTransactionLedger(text.replace("ACKNOWLEDGED_UNOBSERVED", "FINALIZED")), /terminal accounting/u);
+});
+
+test("recomputes authenticated quota, host floors and Devnet fee capacity", async () => {
+  const record = JSON.parse(await readFile("fixtures/grant-m2/resource-revalidation-20260912.json", "utf8"));
+  const result = validateResourceRevalidation(record);
+  assert.equal(result.alchemyRemainingComputeUnits, 29_996_270);
+  assert.equal(result.remainingAfterFrozenUpperComputeUnits, 24_141_806);
+  assert.equal(result.minimumHostMemoryAvailableKb, 577_804);
+  assert.equal(result.projectedRemainingLamports, 70_735_000);
+  assert.equal(result.officialWindowStarted, false);
+
+  const drift = structuredClone(record);
+  drift.alchemy_account_quota.remaining_compute_units += 1;
+  assert.throws(() => validateResourceRevalidation(drift), /quota evidence/u);
+  const weakHost = structuredClone(record);
+  weakHost.hosts["observer-google-e2-micro"].memory_available_kb = 524_287;
+  assert.throws(() => validateResourceRevalidation(weakHost), /resource floor/u);
 });
