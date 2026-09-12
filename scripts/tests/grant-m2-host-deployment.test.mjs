@@ -8,5 +8,7 @@ test('host deployment verifies one package and preserves the no-activation bound
   assert.match(script, /observer-aws-a','observer-google-e2-micro','observer-oracle-a1/u);
   assert.match(script, /INSTALLED_THREE_HOSTS_NOT_ACTIVATED/u);
   assert.match(script, /workerInstances=0/u);
+  assert.match(script, /UpgradeExisting/u);
+  assert.match(script, /UPGRADED_THREE_HOSTS_NOT_ACTIVATED/u);
   assert.doesNotMatch(script, /systemctl (?:start|enable)|--retries/u);
 });

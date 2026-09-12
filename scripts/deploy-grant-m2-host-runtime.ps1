@@ -2,7 +2,8 @@ param(
   [Parameter(Mandatory=$true)][string]$ArchivePath,
   [Parameter(Mandatory=$true)][string]$ArchiveSha256,
   [Parameter(Mandatory=$true)][string]$SourceCommit,
-  [Parameter(Mandatory=$true)][string]$EvidenceDirectory
+  [Parameter(Mandatory=$true)][string]$EvidenceDirectory,
+  [switch]$UpgradeExisting
 )
 
 $ErrorActionPreference = 'Stop'
@@ -12,7 +13,7 @@ $EvidenceDirectory = [IO.Path]::GetFullPath($EvidenceDirectory)
 New-Item -ItemType Directory -Path $EvidenceDirectory -Force | Out-Null
 $actual = (Get-FileHash $ArchivePath -Algorithm SHA256).Hash.ToLowerInvariant()
 if ($actual -ne $ArchiveSha256) { throw 'Local host-runtime archive hash mismatch' }
-$installer = (Resolve-Path 'scripts\install-grant-m2-host-runtime.sh').Path
+$installer = if ($UpgradeExisting) { (Resolve-Path 'scripts\upgrade-grant-m2-host-runtime.sh').Path } else { (Resolve-Path 'scripts\install-grant-m2-host-runtime.sh').Path }
 $aws = Get-Content '.secrets\aws-observer-a-connection.json' -Raw | ConvertFrom-Json
 $awsKey = (Resolve-Path $aws.key_path).Path
 $awsKnownHosts = (Resolve-Path '.secrets\aws-observer-a-known_hosts').Path
@@ -20,7 +21,7 @@ $oracleKey = (Resolve-Path '.secrets\grant-m1-observer-c-oracle-ed25519').Path
 $oracleKnownHosts = (Resolve-Path '.secrets\grant-m1-observer-c-known_hosts').Path
 $oracleHost = ((Get-Content $oracleKnownHosts -TotalCount 1) -split '[ ,]')[0]
 $remoteArchive = '/tmp/sovereignkit-m2-host-runtime-' + $SourceCommit + '.tar.gz'
-$remoteInstaller = '/tmp/install-grant-m2-host-runtime-' + $SourceCommit + '.sh'
+$remoteInstaller = '/tmp/' + $(if ($UpgradeExisting) { 'upgrade' } else { 'install' }) + '-grant-m2-host-runtime-' + $SourceCommit + '.sh'
 
 function Send-Files([string]$ObserverId) {
   if ($ObserverId -eq 'observer-aws-a') {
@@ -50,7 +51,8 @@ function Install-Host([string]$ObserverId) {
   }
   if ($LASTEXITCODE -ne 0) { throw "Host installation failed for $ObserverId; reconciliation required" }
   $record = $output | Select-Object -Last 1 | ConvertFrom-Json
-  if ($record.status -ne 'INSTALLED_NOT_ACTIVATED' -or $record.observerId -ne $ObserverId -or $record.sourceCommit -ne $SourceCommit -or $record.archiveSha256 -ne $ArchiveSha256 -or $record.workerInstances -ne 0) { throw "Host installation evidence is invalid for $ObserverId" }
+  $expectedStatus = if ($UpgradeExisting) { 'UPGRADED_NOT_ACTIVATED' } else { 'INSTALLED_NOT_ACTIVATED' }
+  if ($record.status -ne $expectedStatus -or $record.observerId -ne $ObserverId -or $record.sourceCommit -ne $SourceCommit -or $record.archiveSha256 -ne $ArchiveSha256 -or $record.workerInstances -ne 0) { throw "Host installation evidence is invalid for $ObserverId" }
   [IO.File]::WriteAllText((Join-Path $EvidenceDirectory ($ObserverId + '.json')), (($record | ConvertTo-Json -Depth 10) + "`n"), [Text.UTF8Encoding]::new($false))
 }
 
@@ -58,4 +60,5 @@ foreach ($observer in @('observer-aws-a','observer-google-e2-micro','observer-or
   Send-Files $observer
   Install-Host $observer
 }
-[pscustomobject]@{ status='INSTALLED_THREE_HOSTS_NOT_ACTIVATED'; sourceCommit=$SourceCommit; archiveSha256=$ArchiveSha256; observers=3; workerInstances=0 } | ConvertTo-Json -Compress
+$finalStatus = if ($UpgradeExisting) { 'UPGRADED_THREE_HOSTS_NOT_ACTIVATED' } else { 'INSTALLED_THREE_HOSTS_NOT_ACTIVATED' }
+[pscustomobject]@{ status=$finalStatus; sourceCommit=$SourceCommit; archiveSha256=$ArchiveSha256; observers=3; workerInstances=0 } | ConvertTo-Json -Compress

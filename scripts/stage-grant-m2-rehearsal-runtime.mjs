@@ -36,6 +36,7 @@ if (hostPreparation) {
   copies.push(
     ['deploy/grant-pilot/systemd/sovereignkit-m2-observation-worker@.service', 'deploy/systemd/sovereignkit-m2-observation-worker@.service'],
     ['scripts/install-grant-m2-host-runtime.sh', 'scripts/install-grant-m2-host-runtime.sh'],
+    ['scripts/upgrade-grant-m2-host-runtime.sh', 'scripts/upgrade-grant-m2-host-runtime.sh'],
   );
 }
 
