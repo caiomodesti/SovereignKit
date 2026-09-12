@@ -7,11 +7,10 @@ const EXPECTED_PATHS = {
   rehearsal: "fixtures/grant-m2/rehearsal-execution-20260912.json",
   resource_revalidation: "fixtures/grant-m2/resource-revalidation-20260912.json",
   live_monitor_deployment: "fixtures/grant-m2/live-monitor-deployment-20260912.json",
+  live_monitor_activation: "fixtures/grant-m2/live-monitor-activation-20260912.json",
 };
 
 const EXPECTED_GATES = [
-  "explicit_authorization_to_install_existing_telegram_credentials_on_observer_hosts",
-  "three_host_live_monitor_timer_activation_and_scheduled_samples",
   "operator_alert_receipt_confirmation",
   "immediate_prestart_quota_and_capacity_refresh",
   "separate_explicit_official_window_authorization",
@@ -37,7 +36,7 @@ function parseBoundArtifact(snapshot, artifacts, key) {
 
 export function validateGrantM2PrestartReadiness(snapshot, artifacts) {
   if (snapshot?.schema_version !== GRANT_M2_PRESTART_READINESS_VERSION ||
-      snapshot.status !== "BLOCKED_PENDING_MONITOR_ACTIVATION_AND_EXPLICIT_AUTHORIZATION") {
+      snapshot.status !== "BLOCKED_PENDING_OPERATOR_CONFIRMATION_AND_PRESTART_AUTHORIZATION") {
     throw new Error("M2 pre-start snapshot status or version is invalid");
   }
 
@@ -45,6 +44,7 @@ export function validateGrantM2PrestartReadiness(snapshot, artifacts) {
   const rehearsal = parseBoundArtifact(snapshot, artifacts, "rehearsal");
   const resources = parseBoundArtifact(snapshot, artifacts, "resource_revalidation");
   const monitor = parseBoundArtifact(snapshot, artifacts, "live_monitor_deployment");
+  const activation = parseBoundArtifact(snapshot, artifacts, "live_monitor_activation");
 
   if (precommitment.official_window?.started !== false || precommitment.milestone_2_started !== false) {
     throw new Error("M2 precommitment must remain outside the official window");
@@ -100,13 +100,47 @@ export function validateGrantM2PrestartReadiness(snapshot, artifacts) {
     throw new Error("M2 live-monitor deployment state is overstated or inconsistent");
   }
 
-  if (Object.values(snapshot.proven_controls ?? {}).length !== 10 ||
+  const activatedHosts = [
+    activation.hosts?.["observer-aws-a"],
+    activation.hosts?.["observer-google-e2-micro"],
+    activation.hosts?.["observer-oracle-a1"],
+  ];
+  const credential = activation.credential_installation ?? {};
+  if (activation.schema_version !== "GrantM2LiveMonitorActivationAggregate@0.1.0" ||
+      activation.status !== "THREE_HOST_LIVE_MONITOR_ACTIVE" ||
+      activation.source_commit !== monitor.source_commit ||
+      credential.hosts !== 3 || credential.mode !== "0640" ||
+      credential.owner !== "root" || credential.group !== "sovereignkit" ||
+      credential.readable_by_service_identity !== true ||
+      credential.credential_content_in_evidence !== false ||
+      activatedHosts.some(host => host?.synthetic_alert_delivery_accepted !== true ||
+        host?.synthetic_recovery_delivery_accepted !== true ||
+        !Array.isArray(host?.scheduled_sample_sequences) ||
+        host.scheduled_sample_sequences.length !== 2 ||
+        host.scheduled_sample_sequences[0] !== host.activation_sample_sequence + 1 ||
+        host.scheduled_sample_sequences[1] !== host.activation_sample_sequence + 2 ||
+        host?.timer_enabled !== true || host?.timer_active !== true ||
+        host?.service_result !== "success" || host?.latest_highest_severity !== "NONE" ||
+        host?.latest_service_active !== true || host?.latest_ntp_synchronized !== true ||
+        host?.latest_delivery_backlog_count !== 0 ||
+        typeof host?.latest_local_rpc_quota_remaining_percent !== "number" ||
+        host.latest_local_rpc_quota_remaining_percent <= 0) ||
+      activation.synthetic_alerts_delivered !== 3 ||
+      activation.synthetic_recoveries_delivered !== 3 ||
+      activation.operator_receipt_confirmation_pending !== true ||
+      activation.worker_instances_started !== 0 ||
+      activation.authorizes_official_window !== false ||
+      activation.official_window_started !== false) {
+    throw new Error("M2 live-monitor activation evidence is overstated or inconsistent");
+  }
+
+  if (Object.values(snapshot.proven_controls ?? {}).length !== 13 ||
       Object.values(snapshot.proven_controls ?? {}).some(value => value !== true) ||
       JSON.stringify(snapshot.remaining_gates) !== JSON.stringify(EXPECTED_GATES)) {
     throw new Error("M2 pre-start controls or remaining gates are incomplete");
   }
 
-  if (snapshot.notification_credentials_transferred_to_hosts !== false ||
+  if (snapshot.notification_credentials_transferred_to_hosts !== true ||
       snapshot.worker_instances_started !== 0 || snapshot.authorizes_official_window !== false ||
       snapshot.official_window_started !== false || snapshot.milestone_2_started !== false) {
     throw new Error("M2 pre-start snapshot crosses an unauthorized boundary");
@@ -116,7 +150,7 @@ export function validateGrantM2PrestartReadiness(snapshot, artifacts) {
     status: "PASS",
     gate: "GRANT_M2_CURRENT_PRESTART_READINESS",
     readiness: "BLOCKED",
-    provenControls: 10,
+    provenControls: 13,
     remainingGates: EXPECTED_GATES.length,
     rehearsalTransactions: 12,
     qualifyingGrantUnits: 0,

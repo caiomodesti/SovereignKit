@@ -14,8 +14,8 @@ test("accepts the current blocked M2 pre-start evidence without starting the win
     status: "PASS",
     gate: "GRANT_M2_CURRENT_PRESTART_READINESS",
     readiness: "BLOCKED",
-    provenControls: 10,
-    remainingGates: 5,
+    provenControls: 13,
+    remainingGates: 3,
     rehearsalTransactions: 12,
     qualifyingGrantUnits: 0,
     officialWindowStarted: false,
@@ -43,6 +43,17 @@ test("rejects semantic drift even when the changed artifact is rehashed", () => 
   changedSnapshot.evidence.live_monitor_deployment.sha256 = createHash("sha256").update(changedContent).digest("hex");
   const changedArtifacts = { ...artifacts, [changedSnapshot.evidence.live_monitor_deployment.path]: changedContent };
   assert.throws(() => validateGrantM2PrestartReadiness(changedSnapshot, changedArtifacts), /overstated or inconsistent/u);
+});
+
+test("rejects fabricated timer or notification activation evidence", () => {
+  const changedSnapshot = structuredClone(snapshot);
+  const path = changedSnapshot.evidence.live_monitor_activation.path;
+  const changedActivation = JSON.parse(artifacts[path]);
+  changedActivation.hosts["observer-aws-a"].timer_active = false;
+  const changedContent = `${JSON.stringify(changedActivation, null, 2)}\n`;
+  changedSnapshot.evidence.live_monitor_activation.sha256 = createHash("sha256").update(changedContent).digest("hex");
+  const changedArtifacts = { ...artifacts, [path]: changedContent };
+  assert.throws(() => validateGrantM2PrestartReadiness(changedSnapshot, changedArtifacts), /activation evidence is overstated or inconsistent/u);
 });
 
 test("rejects removing a gate or crossing the official-window boundary", () => {

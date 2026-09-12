@@ -148,26 +148,28 @@ reporting. The monitor was corrected to fail over explicitly to Chrony, covered
 by tests, repackaged and redeployed. AWS, Google and Oracle then each completed
 a pair of consecutive real, secret-free samples with healthy service and NTP
 state, zero delivery backlog, no alert and at least 96.8% local RPC budget
-remaining. All monitor
-timers remain disabled and no observation worker was started. Sanitized
+remaining. No observation worker was started. Sanitized
 evidence is in
 `fixtures/grant-m2/live-monitor-deployment-20260912.json`.
 The credential installation, three-host synthetic alert/recovery check and
-timer activation are packaged in `scripts/deploy-grant-m2-live-monitor.ps1`.
+timer activation were executed through `scripts/deploy-grant-m2-live-monitor.ps1`
+after the operator's explicit authorization.
 The script validates the local configuration without printing it, installs it
 with root/service-group ownership, emits only sanitized evidence and refuses to
-activate a timer until alert and recovery delivery pass on every host. It has
-not been executed because copying the existing bot credential to the observers
-requires a separate explicit authorization.
+activate a timer until alert and recovery delivery pass on every host. Three
+alerts and three recoveries were accepted by Telegram. The credentials are
+`0640`, owned by `root:sovereignkit`, and are not present in sanitized
+evidence. Each timer then completed two scheduled healthy samples, remained
+active and started no observation worker. Activation evidence is in
+`fixtures/grant-m2/live-monitor-activation-20260912.json`.
 
 A separate current-state checkpoint now binds the completed rehearsal, resource
 revalidation, frozen precommitment and three-host monitor preflight without
-rewriting the historical canonical readiness contract. It records ten proven
+rewriting the historical canonical readiness contract. It records thirteen proven
 controls, including the refreshed SSH allowlists, common runtime deployment and
-three-host secret-free preflight and consecutive manual samples. It retains five explicit start gates:
-authorization to install the existing Telegram credentials on the hosts,
-three-host timer activation with scheduled samples, operator alert receipt,
-immediate pre-start refresh and separate official-window authorization. See
+three-host secret-free preflight, alert delivery and scheduled monitor samples.
+It retains three explicit start gates: operator alert receipt, immediate
+pre-start refresh and separate official-window authorization. See
 `fixtures/grant-m2/prestart-readiness-20260912.json`. Its validator rejects
 altered hashes, relabeling the acknowledged-but-unobserved rehearsal
 transaction, hiding a remaining gate or claiming that Milestone 2 started.

@@ -1,7 +1,7 @@
 {
   "schema_version": "GrantM2PrestartReadiness@0.1.0",
-  "captured_at": "2026-09-12T23:09:51.193Z",
-  "status": "BLOCKED_PENDING_MONITOR_ACTIVATION_AND_EXPLICIT_AUTHORIZATION",
+  "captured_at": "2026-09-12T23:23:21.039Z",
+  "status": "BLOCKED_PENDING_OPERATOR_CONFIRMATION_AND_PRESTART_AUTHORIZATION",
   "evidence": {
     "precommitment": {
       "path": "deploy/grant-pilot/m2-pilot-precommitment.json",
@@ -18,6 +18,10 @@
     "live_monitor_deployment": {
       "path": "fixtures/grant-m2/live-monitor-deployment-20260912.json",
       "sha256": "74ac1d1859201c30f02ff1c7c79dacbc304a7f5b67927626fae333c7baf575db"
+    },
+    "live_monitor_activation": {
+      "path": "fixtures/grant-m2/live-monitor-activation-20260912.json",
+      "sha256": "79c1f9c6deed6fd131ab90ede47adb7dfcceafd4b0c7464bb8c28f0f7916da97"
     }
   },
   "rehearsal_accounting": {
@@ -37,16 +41,17 @@
     "aws_and_oracle_ssh_allowlists_refreshed": true,
     "three_host_runtime_upgrade": true,
     "three_host_secret_free_monitor_preflight": true,
-    "three_host_two_consecutive_secret_free_samples": true
+    "three_host_two_consecutive_secret_free_samples": true,
+    "three_host_telegram_credentials_restricted": true,
+    "three_host_synthetic_alert_and_recovery_delivery_accepted": true,
+    "three_host_monitor_timers_and_scheduled_samples": true
   },
   "remaining_gates": [
-    "explicit_authorization_to_install_existing_telegram_credentials_on_observer_hosts",
-    "three_host_live_monitor_timer_activation_and_scheduled_samples",
     "operator_alert_receipt_confirmation",
     "immediate_prestart_quota_and_capacity_refresh",
     "separate_explicit_official_window_authorization"
   ],
-  "notification_credentials_transferred_to_hosts": false,
+  "notification_credentials_transferred_to_hosts": true,
   "worker_instances_started": 0,
   "authorizes_official_window": false,
   "official_window_started": false,
