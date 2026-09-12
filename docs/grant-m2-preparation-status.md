@@ -141,22 +141,26 @@ state changes, bounded reminders and recovery. A failed Telegram call remains
 pending and is retried on the next sample. The package contains no credential
 and its installer leaves the timer disabled until a live preflight succeeds.
 
-The Google observer was upgraded atomically to source commit `42414c0` and
-completed one real, secret-free preflight sample. It reported 572,055,552 bytes
-of available memory, 27,459,588,096 bytes of free disk, 0.035 ms clock offset,
-healthy service and NTP state, zero delivery backlog and 98.4% local RPC budget
-remaining. The timer is still disabled. AWS and Oracle retained the previous
-runtime because their SSH `/32` allowlists no longer match the operator's
-current public address and both provider web sessions require reauthentication.
-Sanitized partial evidence is in
+All three observers were upgraded atomically to source commit `9a77fce` with
+versioned rollback copies retained. The first three-host preflight exposed that
+AWS and Oracle use Chrony rather than systemd-timesyncd for clock offset
+reporting. The monitor was corrected to fail over explicitly to Chrony, covered
+by tests, repackaged and redeployed. AWS, Google and Oracle then each completed
+a pair of consecutive real, secret-free samples with healthy service and NTP
+state, zero delivery backlog, no alert and at least 96.8% local RPC budget
+remaining. All monitor
+timers remain disabled and no observation worker was started. Sanitized
+evidence is in
 `fixtures/grant-m2/live-monitor-deployment-20260912.json`.
 
 A separate current-state checkpoint now binds the completed rehearsal, resource
-revalidation, frozen precommitment and partial monitor deployment without
-rewriting the historical canonical readiness contract. It records six proven
-controls and retains seven explicit start gates, including both stale SSH
-allowlists, three-host monitor proof, operator alert receipt, immediate
-pre-start refresh and separate official-window authorization. See
+revalidation, frozen precommitment and three-host monitor preflight without
+rewriting the historical canonical readiness contract. It records ten proven
+controls, including the refreshed SSH allowlists, common runtime deployment and
+three-host secret-free preflight and consecutive manual samples. It retains five explicit start gates:
+authorization to install the existing Telegram credentials on the hosts,
+three-host timer activation with scheduled samples, operator alert receipt,
+immediate pre-start refresh and separate official-window authorization. See
 `fixtures/grant-m2/prestart-readiness-20260912.json`. Its validator rejects
 altered hashes, relabeling the acknowledged-but-unobserved rehearsal
 transaction, hiding a remaining gate or claiming that Milestone 2 started.

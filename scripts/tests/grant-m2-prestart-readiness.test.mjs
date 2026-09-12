@@ -14,8 +14,8 @@ test("accepts the current blocked M2 pre-start evidence without starting the win
     status: "PASS",
     gate: "GRANT_M2_CURRENT_PRESTART_READINESS",
     readiness: "BLOCKED",
-    provenControls: 6,
-    remainingGates: 7,
+    provenControls: 10,
+    remainingGates: 5,
     rehearsalTransactions: 12,
     qualifyingGrantUnits: 0,
     officialWindowStarted: false,
@@ -35,10 +35,10 @@ test("rejects hiding the unobserved rehearsal transaction", () => {
   assert.throws(() => validateGrantM2PrestartReadiness(relabeled, artifacts), /accounting is incomplete or relabeled/u);
 });
 
-test("rejects semantic overstatement even when the changed artifact is rehashed", () => {
+test("rejects semantic drift even when the changed artifact is rehashed", () => {
   const changedSnapshot = structuredClone(snapshot);
   const changedMonitor = JSON.parse(artifacts[changedSnapshot.evidence.live_monitor_deployment.path]);
-  changedMonitor.hosts["observer-aws-a"].sample_status = "PASS";
+  changedMonitor.hosts["observer-aws-a"].highest_severity = "WARNING";
   const changedContent = `${JSON.stringify(changedMonitor, null, 2)}\n`;
   changedSnapshot.evidence.live_monitor_deployment.sha256 = createHash("sha256").update(changedContent).digest("hex");
   const changedArtifacts = { ...artifacts, [changedSnapshot.evidence.live_monitor_deployment.path]: changedContent };

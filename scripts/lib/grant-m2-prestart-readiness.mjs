@@ -10,13 +10,17 @@ const EXPECTED_PATHS = {
 };
 
 const EXPECTED_GATES = [
-  "aws_ssh_allowlist_refresh",
-  "oracle_ssh_allowlist_refresh",
-  "three_host_runtime_upgrade",
-  "three_host_live_monitor_activation_and_consecutive_samples",
+  "explicit_authorization_to_install_existing_telegram_credentials_on_observer_hosts",
+  "three_host_live_monitor_timer_activation_and_scheduled_samples",
   "operator_alert_receipt_confirmation",
   "immediate_prestart_quota_and_capacity_refresh",
   "separate_explicit_official_window_authorization",
+];
+
+const EXPECTED_MONITOR_GATES = [
+  "explicit_authorization_to_install_existing_telegram_bot_credentials_on_the_three_observer_hosts",
+  "three_host_synthetic_alert_delivery_and_recovery_test",
+  "three_host_timer_activation_and_scheduled_sample_verification",
 ];
 
 function parseBoundArtifact(snapshot, artifacts, key) {
@@ -33,7 +37,7 @@ function parseBoundArtifact(snapshot, artifacts, key) {
 
 export function validateGrantM2PrestartReadiness(snapshot, artifacts) {
   if (snapshot?.schema_version !== GRANT_M2_PRESTART_READINESS_VERSION ||
-      snapshot.status !== "BLOCKED_PENDING_LIVE_MONITOR_AND_HOST_ACCESS") {
+      snapshot.status !== "BLOCKED_PENDING_MONITOR_ACTIVATION_AND_EXPLICIT_AUTHORIZATION") {
     throw new Error("M2 pre-start snapshot status or version is invalid");
   }
 
@@ -72,18 +76,31 @@ export function validateGrantM2PrestartReadiness(snapshot, artifacts) {
     throw new Error("M2 resource evidence is invalid or does not preserve the start gate");
   }
 
-  const google = monitor.hosts?.["observer-google-e2-micro"];
-  const aws = monitor.hosts?.["observer-aws-a"];
-  const oracle = monitor.hosts?.["observer-oracle-a1"];
-  if (monitor.status !== "PARTIAL_GOOGLE_PREFLIGHT_PASS_OTHER_HOSTS_ACCESS_BLOCKED" ||
-      google?.sample_status !== "PASS" || google?.timer_enabled !== false ||
-      aws?.sample_status !== "BLOCKED_BY_STALE_SSH_ALLOWLIST" ||
-      oracle?.sample_status !== "BLOCKED_BY_STALE_SSH_ALLOWLIST" ||
+  const hosts = [
+    monitor.hosts?.["observer-aws-a"],
+    monitor.hosts?.["observer-google-e2-micro"],
+    monitor.hosts?.["observer-oracle-a1"],
+  ];
+  if (monitor.status !== "THREE_HOST_PREFLIGHT_PASS_NOT_ACTIVATED" ||
+      !/^[a-f0-9]{40}$/u.test(monitor.source_commit ?? "") ||
+      !/^[a-f0-9]{64}$/u.test(monitor.runtime_archive_sha256 ?? "") ||
+      monitor.runtime_archive_bytes <= 0 || monitor.runtime_manifest_files !== 308 ||
+      hosts.some(host => host?.runtime_status !== "UPGRADED_NOT_ACTIVATED" ||
+        host?.sample_status !== "PASS" || !Number.isSafeInteger(host?.sample_sequence) ||
+        host.sample_sequence < 1 || host?.consecutive_healthy_samples_on_final_runtime !== 2 ||
+        host?.service_active !== true ||
+        host?.ntp_synchronized !== true || host?.delivery_backlog_count !== 0 ||
+        typeof host?.local_rpc_quota_remaining_percent !== "number" ||
+        host.local_rpc_quota_remaining_percent <= 0 ||
+        host?.highest_severity !== "NONE" || host?.timer_enabled !== false ||
+        host?.timer_active !== false || host?.telegram_configuration_installed !== false) ||
+      JSON.stringify(monitor.remaining_gates) !== JSON.stringify(EXPECTED_MONITOR_GATES) ||
+      monitor.worker_instances_started !== 0 || monitor.authorizes_official_window !== false ||
       monitor.official_window_started !== false) {
     throw new Error("M2 live-monitor deployment state is overstated or inconsistent");
   }
 
-  if (Object.values(snapshot.proven_controls ?? {}).length !== 6 ||
+  if (Object.values(snapshot.proven_controls ?? {}).length !== 10 ||
       Object.values(snapshot.proven_controls ?? {}).some(value => value !== true) ||
       JSON.stringify(snapshot.remaining_gates) !== JSON.stringify(EXPECTED_GATES)) {
     throw new Error("M2 pre-start controls or remaining gates are incomplete");
@@ -99,7 +116,7 @@ export function validateGrantM2PrestartReadiness(snapshot, artifacts) {
     status: "PASS",
     gate: "GRANT_M2_CURRENT_PRESTART_READINESS",
     readiness: "BLOCKED",
-    provenControls: 6,
+    provenControls: 10,
     remainingGates: EXPECTED_GATES.length,
     rehearsalTransactions: 12,
     qualifyingGrantUnits: 0,
