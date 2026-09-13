@@ -1,0 +1,51 @@
+{
+  "schema_version": "GrantM2LiveMonitorPolicy@0.1.0",
+  "status": "PRESTART_MONITOR_FROZEN_NOT_ACTIVATED",
+  "sample_interval_seconds": 60,
+  "baseline_alert_policy": {
+    "path": "deploy/grant-pilot/m2-alert-policy.json",
+    "sha256": "8d69d8ff01a3d43b56f2b18921a7724b47b39bdcac7e821a85a0c392d7ae949f"
+  },
+  "thresholds": {
+    "memory_available_bytes": {
+      "warning_below": 536870912,
+      "critical_below": 402653184
+    },
+    "disk_free_bytes": {
+      "warning_below": 5368709120,
+      "critical_below": 2147483648
+    },
+    "clock_absolute_offset_ms": {
+      "warning_above": 1000,
+      "critical_above": 5000
+    },
+    "service_or_ntp": {
+      "critical_after_consecutive_failures": 2
+    },
+    "delivery_backlog": {
+      "warning_count_at_or_above": 12,
+      "critical_count_at_or_above": 18,
+      "critical_oldest_age_seconds_above": 3600
+    },
+    "local_rpc_quota": {
+      "warning_remaining_percent_at_or_below": 20,
+      "critical_remaining_percent_at_or_below": 10
+    }
+  },
+  "notification": {
+    "destination": "telegram-private-operator",
+    "send_on_state_change": true,
+    "send_recovery": true,
+    "critical_reminder_seconds": 3600,
+    "warning_reminder_seconds": 21600,
+    "contains_credentials": false
+  },
+  "actions": {
+    "automatic_window_reset": false,
+    "automatic_evidence_deletion": false,
+    "automatic_threshold_relaxation": false,
+    "manual_response_required": true
+  },
+  "authorizes_official_window": false,
+  "official_window_started": false
+}

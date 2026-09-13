@@ -1,0 +1,60 @@
+{
+  "schema_version": "GrantM2PrestartReadiness@0.1.0",
+  "captured_at": "2026-09-12T23:34:54.498Z",
+  "status": "BLOCKED_PENDING_PR_MERGE_PRESTART_REFRESH_AND_EXPLICIT_AUTHORIZATION",
+  "evidence": {
+    "precommitment": {
+      "path": "deploy/grant-pilot/m2-pilot-precommitment.json",
+      "sha256": "9f83782ebc8ff031adfa643fb991826930946773c2f3d5d8c0a7e5a71902eaff"
+    },
+    "rehearsal": {
+      "path": "fixtures/grant-m2/rehearsal-execution-20260912.json",
+      "sha256": "3ba236dafdc1d3dfeea865cc1fdc66ff9b618b1960fbc96e45fa564aa76d78a1"
+    },
+    "resource_revalidation": {
+      "path": "fixtures/grant-m2/resource-revalidation-20260912.json",
+      "sha256": "875d205603cd3a83399115c61fe1cc5aa39cd9f9860c0611928f09c3e5ea07fa"
+    },
+    "live_monitor_deployment": {
+      "path": "fixtures/grant-m2/live-monitor-deployment-20260912.json",
+      "sha256": "74ac1d1859201c30f02ff1c7c79dacbc304a7f5b67927626fae333c7baf575db"
+    },
+    "live_monitor_activation": {
+      "path": "fixtures/grant-m2/live-monitor-activation-20260912.json",
+      "sha256": "530cbfbf8f14b77745db46022d4b238e0bc2ea61ecaacbe1c34e928272b44fc7"
+    }
+  },
+  "rehearsal_accounting": {
+    "submitted_transactions": 12,
+    "worker_finalized_transactions": 11,
+    "acknowledged_without_worker_completion": 1,
+    "qualifying_grant_units": 0,
+    "additional_rehearsal_transactions_authorized": 0
+  },
+  "proven_controls": {
+    "raw_to_derived_reconciliation": true,
+    "three_observers_and_two_routes": true,
+    "oracle_to_aws_private_backup": true,
+    "byte_identical_restore": true,
+    "resource_upper_bound_below_authenticated_quota": true,
+    "google_secret_free_monitor_preflight": true,
+    "aws_and_oracle_ssh_allowlists_refreshed": true,
+    "three_host_runtime_upgrade": true,
+    "three_host_secret_free_monitor_preflight": true,
+    "three_host_two_consecutive_secret_free_samples": true,
+    "three_host_telegram_credentials_restricted": true,
+    "three_host_synthetic_alert_and_recovery_delivery_accepted": true,
+    "three_host_monitor_timers_and_scheduled_samples": true,
+    "operator_confirmed_six_notification_receipts": true
+  },
+  "remaining_gates": [
+    "private_pr_78_merge_authorization_and_merge",
+    "immediate_prestart_quota_and_capacity_refresh",
+    "separate_explicit_official_window_authorization"
+  ],
+  "notification_credentials_transferred_to_hosts": true,
+  "worker_instances_started": 0,
+  "authorizes_official_window": false,
+  "official_window_started": false,
+  "milestone_2_started": false
+}

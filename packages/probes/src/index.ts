@@ -4,6 +4,7 @@ export * from "./reader-quorum.js";
 export * from "./execution.js";
 export * from "./ingestion.js";
 export * from "./matching.js";
+export * from "./m2-rehearsal-submission.js";
 export * from "./randomization.js";
 export * from "./signing.js";
 export * from "./types.js";

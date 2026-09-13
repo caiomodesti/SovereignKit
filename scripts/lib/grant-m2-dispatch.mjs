@@ -3,6 +3,7 @@ import { mkdir, open } from 'node:fs/promises';
 import { join } from 'node:path';
 import { signObservationAssignment, verifyObservationAssignment } from '../../packages/collector/dist/observation-assignment.js';
 import { validateObservationJob } from '../../packages/collector/dist/observation-worker.js';
+import { verifyAssignmentReceipt } from './grant-m2-assignment-receipt.mjs';
 
 export const scheduleHash = schedule => createHash('sha256').update(JSON.stringify(schedule)).digest('hex');
 const sha = value => createHash('sha256').update(value).digest('hex');
@@ -40,6 +41,16 @@ export function prepareRehearsalDispatch({schedule,slotId,job,signer,issuedAt,ex
   return {schema_version:'GrantM2PreparedDispatch@0.1.0',schedule_sha256:scheduleHash(schedule),slot_id:slotId,assignment};
 }
 
+export async function prepareSequencedRehearsalDispatch({sequenceJournal,...input}) {
+  if(typeof sequenceJournal?.reserve!=='function') throw Error('Sequence journal required');
+  const slot=input.schedule.slots.find(item=>item.slot_id===input.slotId);
+  if(slot===undefined||input.job?.observerId!==slot.observer_id) throw Error('Job does not bind rehearsal slot');
+  const reservation=await sequenceJournal.reserve({slotId:input.slotId,unitId:input.job.unit?.unit_id,assignmentId:input.assignmentId,reservedAt:input.issuedAt});
+  if(reservation.status!=='RESERVED') return {status:'RECONCILIATION_REQUIRED',slot_id:input.slotId};
+  const job={...input.job,observerSequence:reservation.record.observer_sequence};
+  return {status:'PREPARED',entry:prepareRehearsalDispatch({...input,job})};
+}
+
 async function writeOnce(path,value) {
   const handle=await open(path,'wx',0o600);
   try {await handle.writeFile(JSON.stringify(value)+'\n');await handle.sync();}
@@ -48,7 +59,7 @@ async function writeOnce(path,value) {
 
 // No built-in SSH or remote execution: adapter and run approval must be supplied.
 // A reservation survives ambiguous transport outcomes; there is no auto retry.
-export async function dispatchPrepared({directory,schedule,entry,authority,approval,nowAt,deliver}) {
+export async function dispatchPrepared({directory,schedule,entry,authority,receiptAuthority,approval,nowAt,deliver}) {
   const now=time(nowAt);
   if(approval?.authorized!==true||approval.scope!=='PRE_M2_REHEARSAL_ONLY'||approval.schedule_sha256!==scheduleHash(schedule)||
      now<time(approval.not_before)||now>time(approval.not_after)) throw Error('Rehearsal dispatch not authorized');
@@ -65,7 +76,7 @@ export async function dispatchPrepared({directory,schedule,entry,authority,appro
   let receipt;
   try {
     receipt=await deliver(structuredClone(entry));
-    if(receipt?.status!=='RECEIVED'||receipt.assignment_id!==entry.assignment.assignmentId||receipt.payload_hash!==entry.assignment.payloadHash) throw Error('Mismatched receipt');
+    verifyAssignmentReceipt(receipt,entry,receiptAuthority,nowAt);
   } catch {
     await writeOnce(join(attemptDir,'outcome.json'),{status:'DELIVERY_UNCERTAIN',slot_id:entry.slot_id});
     return {status:'DELIVERY_UNCERTAIN',slot_id:entry.slot_id};

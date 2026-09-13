@@ -1,0 +1,26 @@
+[Unit]
+Description=SovereignKit authorized M2 rehearsal observation %i
+After=network-online.target sovereignkit-observer.service
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=sovereignkit
+Group=sovereignkit
+WorkingDirectory=/opt/sovereignkit-m2-rehearsal
+EnvironmentFile=/etc/sovereignkit/m2-rehearsal.env
+ExecStart=/usr/bin/node scripts/run-grant-m2-observation-worker.mjs /var/lib/sovereignkit/m2/inbox/%i/assignment.json /etc/sovereignkit/assignment-authorities.json /etc/sovereignkit/readers.json /var/lib/sovereignkit/spool/m2-%i.json /var/lib/sovereignkit/evidence/m2/raw/%i.jsonl /var/lib/sovereignkit/m2/quota ${GRANT_M2_OBSERVER_ID} ${GRANT_M2_TOTAL_LIMIT} /var/lib/sovereignkit/evidence/m2/completed/%i.json
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+LockPersonality=true
+RestrictSUIDSGID=true
+RestrictRealtime=true
+SystemCallArchitectures=native
+ReadOnlyPaths=/opt/sovereignkit-m2-rehearsal /etc/sovereignkit /var/lib/sovereignkit/m2/inbox
+ReadWritePaths=/var/lib/sovereignkit/spool /var/lib/sovereignkit/evidence/m2 /var/lib/sovereignkit/m2/quota
+UMask=0077

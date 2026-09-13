@@ -1,0 +1,26 @@
+[Unit]
+Description=SovereignKit M2 live host monitor
+After=network-online.target sovereignkit-observer.service
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=sovereignkit
+Group=sovereignkit
+WorkingDirectory=/opt/sovereignkit-m2-rehearsal
+EnvironmentFile=/etc/sovereignkit/m2-rehearsal.env
+ExecStart=/usr/bin/node scripts/run-grant-m2-live-monitor.mjs deploy/m2-live-monitor-policy.json deploy/m2-alert-policy.json ${GRANT_M2_OBSERVER_ID} /var/lib/sovereignkit/evidence/m2/alerts/state.json /var/lib/sovereignkit/evidence/m2/alerts/monitor.jsonl /etc/sovereignkit/secrets/grant-m2-telegram.json
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+LockPersonality=true
+RestrictSUIDSGID=true
+RestrictRealtime=true
+SystemCallArchitectures=native
+ReadOnlyPaths=/opt/sovereignkit-m2-rehearsal /etc/sovereignkit /proc/meminfo /var/lib/sovereignkit/m2 /var/lib/sovereignkit/evidence/m2/completed
+ReadWritePaths=/var/lib/sovereignkit/evidence/m2/alerts
+UMask=0077

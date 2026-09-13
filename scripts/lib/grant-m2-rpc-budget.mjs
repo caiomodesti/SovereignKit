@@ -18,7 +18,13 @@ export function createRpcBudget({owner,totalLimit,restored,persist,now}) {
     state.last_ms=at;
     state.recent=state.recent.filter(r=>r.pending||at-r.at<1000);
     if(state.spent+20>totalLimit) return {allowed:false,reason:'TOTAL_QUOTA'};
-    if(state.recent.length>=3) return {allowed:false,reason:'RATE_LIMIT'};
+    if(state.recent.length>=3) {
+      const completed=state.recent.filter(r=>!r.pending);
+      const retryAfter=completed.length===state.recent.length
+        ? Math.max(1,1000-(at-Math.min(...completed.map(r=>r.at))))
+        : 1000;
+      return {allowed:false,reason:'RATE_LIMIT',retry_after_ms:retryAfter};
+    }
     state.spent+=20;state.recent.push({at,cu:20,id:state.spent,pending:true});
     try {await persist(structuredClone(state));} catch {poisoned=true;throw Error('Quota persistence failed');}
     return {allowed:true,reserved_cu:20,id:state.spent};
@@ -26,8 +32,7 @@ export function createRpcBudget({owner,totalLimit,restored,persist,now}) {
   function enqueue(operation) {
     const result=tail.then(operation);tail=result.then(()=>{},()=>{});return result;
   }
-  return {
-    async call(method,operation) {
+  async function call(method,operation) {
       if(!['getHealth','getSignatureStatuses','getBlockHeight','getLatestBlockhash','sendTransaction'].includes(method)||typeof operation!=='function') throw Error('Unbudgeted RPC method');
       const result=await enqueue(reserve);
       if(!result.allowed)return result;
@@ -46,6 +51,35 @@ export function createRpcBudget({owner,totalLimit,restored,persist,now}) {
           try {await persist(structuredClone(state));}catch{poisoned=true;throw Error('Quota persistence failed');}
         });
       }
+  }
+  return {
+    call,
+    requiresReconciliation:()=>poisoned,
+    async callWhenAvailable(method,operation,{abortSignal,sleep=abortableSleep}={}) {
+      if(typeof sleep!=='function') throw Error('Invalid budget wait function');
+      while(true) {
+        throwIfAborted(abortSignal);
+        const result=await call(method,operation);
+        if(result.allowed||result.reason!=='RATE_LIMIT') return result;
+        throwIfAborted(abortSignal);
+        await sleep(result.retry_after_ms,abortSignal);
+      }
     },
   };
+}
+
+function throwIfAborted(signal) {
+  if(!signal?.aborted) return;
+  if(signal.reason instanceof Error) throw signal.reason;
+  const error=Error('RPC budget wait aborted');error.name='AbortError';throw error;
+}
+
+function abortableSleep(milliseconds,signal) {
+  return new Promise((resolve,reject)=>{
+    throwIfAborted(signal);
+    const timer=setTimeout(done,milliseconds);
+    function done(){signal?.removeEventListener('abort',aborted);resolve();}
+    function aborted(){clearTimeout(timer);signal?.removeEventListener('abort',aborted);try{throwIfAborted(signal);}catch(error){reject(error);}}
+    signal?.addEventListener('abort',aborted,{once:true});
+  });
 }
