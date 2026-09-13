@@ -1,6 +1,6 @@
 # Grant Milestone 2 preparation status
 
-Status: `PRECOMMITMENT_FROZEN_NOT_AUTHORIZED`
+Status: `POST_MERGE_PRESTART_REFRESH_PASS_NOT_AUTHORIZED`
 
 Milestone 1 is accepted and the Collector administrative binding is
 reconciled. Milestone 2 has not started. The experiment, observer/runtime set,
@@ -69,15 +69,24 @@ derived results. The rehearsal contributed zero grant units and did not start
 Milestone 2. Sanitized evidence is in
 `fixtures/grant-m2/rehearsal-execution-20260912.json`.
 
-## Current blockers
+## Current blocker
 
-1. Deploy and prove the live alert sampler and Telegram delivery path, including
-   the constrained Google memory headroom.
-2. Obtain operator confirmation that the post-rehearsal Telegram message was
-   actually received.
-3. Refresh host capacity and authenticated Alchemy quota immediately before the
-   proposed start.
-4. Obtain separate explicit authorization for the official window.
+1. Obtain separate explicit authorization for the official window.
+
+Private PR #78 was merged into `main` as commit `371bea1`. A subsequent
+read-only refresh confirmed the authenticated Alchemy quota, finalized Devnet
+fee-payer balance, resource floors, active observers, synchronized clocks,
+active monitor timers, zero delivery backlog, zero worker instances and no live
+alerts across all three hosts. The Google host remains the tightest resource:
+552,000 KiB were available, 27,712 KiB above the 512 MiB warning floor. This is
+accepted only with its already-active one-minute monitor; it is not evidence of
+unbounded headroom.
+
+The sanitized refresh is recorded at
+`fixtures/grant-m2/immediate-prestart-refresh-20260913.json` and hash-bound by
+`fixtures/grant-m2/prestart-readiness-20260913.json`. The refreshed checkpoint
+contains exactly one remaining gate and still records zero official workers,
+zero additional rehearsal transactions and `official_window_started: false`.
 
 The original quota estimate remains frozen at
 `deploy/grant-pilot/m2-resource-quota-estimate.json`. It budgets all 4,032

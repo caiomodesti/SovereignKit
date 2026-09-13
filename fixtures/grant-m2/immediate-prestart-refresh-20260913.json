@@ -1,0 +1,96 @@
+{
+  "schema_version": "GrantM2ImmediatePrestartRefresh@0.1.0",
+  "captured_at": "2026-09-13T23:46:53.749Z",
+  "status": "PASS",
+  "claim_scope": "POST_MERGE_READ_ONLY_PRESTART_REFRESH",
+  "merged_runtime": {
+    "pull_request": 78,
+    "head_commit": "fef88022edde6a53b59ed8f41046838e72140ae4",
+    "merge_commit": "371bea11a6c51baa2168a73598ace29b0cbf4a27",
+    "merged_at": "2026-09-13T00:34:06.000Z",
+    "base_branch": "main"
+  },
+  "alchemy_account_quota": {
+    "captured_via": "authenticated_alchemy_dashboard_usage_page",
+    "period": "current_month_utc",
+    "used_compute_units": 3730,
+    "limit_compute_units": 30000000,
+    "remaining_compute_units": 29996270,
+    "frozen_upper_compute_units_with_contingency": 5854464,
+    "remaining_after_frozen_upper_compute_units": 24141806,
+    "frozen_upper_fits_remaining_quota": true
+  },
+  "fee_payer": {
+    "captured_via": "solana_public_devnet_getBalance_finalized",
+    "context_slot": 497960951,
+    "balance_lamports": 90895000,
+    "planned_units": 4032,
+    "projected_fees_lamports_at_5000_per_unit": 20160000,
+    "projected_remaining_lamports": 70735000
+  },
+  "hosts": {
+    "observer-aws-a": {
+      "cpu_count": 2,
+      "memory_available_kb": 1499748,
+      "disk_available_kb": 28914320,
+      "ntp_synchronized": true,
+      "observer_active": true,
+      "monitor_timer_enabled": true,
+      "monitor_timer_active": true,
+      "worker_instances": 0,
+      "latest_monitor_sequence": 1396,
+      "latest_monitor_sampled_at": "2026-09-13T23:43:46.400Z",
+      "latest_highest_severity": "NONE",
+      "latest_delivery_backlog_count": 0,
+      "latest_local_rpc_quota_remaining_percent": 96.8,
+      "latest_official_window_started": false
+    },
+    "observer-google-e2-micro": {
+      "cpu_count": 2,
+      "memory_available_kb": 552000,
+      "disk_available_kb": 26710788,
+      "ntp_synchronized": true,
+      "observer_active": true,
+      "monitor_timer_enabled": true,
+      "monitor_timer_active": true,
+      "worker_instances": 0,
+      "latest_monitor_sequence": 1400,
+      "latest_monitor_sampled_at": "2026-09-13T23:44:21.302Z",
+      "latest_highest_severity": "NONE",
+      "latest_delivery_backlog_count": 0,
+      "latest_local_rpc_quota_remaining_percent": 98.4,
+      "latest_official_window_started": false
+    },
+    "observer-oracle-a1": {
+      "cpu_count": 1,
+      "memory_available_kb": 4808192,
+      "disk_available_kb": 19508648,
+      "ntp_synchronized": true,
+      "observer_active": true,
+      "monitor_timer_enabled": true,
+      "monitor_timer_active": true,
+      "worker_instances": 0,
+      "latest_monitor_sequence": 1399,
+      "latest_monitor_sampled_at": "2026-09-13T23:43:52.037Z",
+      "latest_highest_severity": "NONE",
+      "latest_delivery_backlog_count": 0,
+      "latest_local_rpc_quota_remaining_percent": 97.6,
+      "latest_official_window_started": false
+    }
+  },
+  "minimum_host_memory_available_kb": 552000,
+  "google_memory_warning_floor_kb": 524288,
+  "google_memory_headroom_above_warning_floor_kb": 27712,
+  "risks": [
+    "google_memory_headroom_remains_the_smallest_and_requires_continuous_monitoring"
+  ],
+  "remaining_gates": [
+    "separate_explicit_official_window_authorization"
+  ],
+  "read_only_refresh": true,
+  "worker_instances_started": 0,
+  "additional_rehearsal_transactions": 0,
+  "authorizes_official_window": false,
+  "official_window_started": false,
+  "milestone_2_started": false
+}
