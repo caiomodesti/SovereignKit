@@ -4,22 +4,34 @@ import { createHash } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import { validateGrantM2PrestartReadiness } from "../lib/grant-m2-prestart-readiness.mjs";
 
-const snapshot = JSON.parse(await readFile("fixtures/grant-m2/prestart-readiness-20260912.json", "utf8"));
+const snapshot = JSON.parse(await readFile("fixtures/grant-m2/prestart-readiness-20260913.json", "utf8"));
 const artifacts = Object.fromEntries(await Promise.all(
   Object.values(snapshot.evidence).map(async binding => [binding.path, await readFile(binding.path, "utf8")]),
 ));
 
-test("accepts the current blocked M2 pre-start evidence without starting the window", () => {
+const historicalSnapshot = JSON.parse(await readFile("fixtures/grant-m2/prestart-readiness-20260912.json", "utf8"));
+const historicalArtifacts = Object.fromEntries(await Promise.all(
+  Object.values(historicalSnapshot.evidence).map(async binding => [binding.path, await readFile(binding.path, "utf8")]),
+));
+
+test("accepts the current post-merge M2 pre-start evidence without starting the window", () => {
   assert.deepEqual(validateGrantM2PrestartReadiness(structuredClone(snapshot), artifacts), {
     status: "PASS",
     gate: "GRANT_M2_CURRENT_PRESTART_READINESS",
     readiness: "BLOCKED",
-    provenControls: 14,
-    remainingGates: 3,
+    provenControls: 15,
+    remainingGates: 1,
     rehearsalTransactions: 12,
     qualifyingGrantUnits: 0,
     officialWindowStarted: false,
   });
+});
+
+test("preserves validation of the historical pre-merge checkpoint", () => {
+  const result = validateGrantM2PrestartReadiness(structuredClone(historicalSnapshot), historicalArtifacts);
+  assert.equal(result.provenControls, 14);
+  assert.equal(result.remainingGates, 3);
+  assert.equal(result.officialWindowStarted, false);
 });
 
 test("rejects an altered or missing evidence binding", () => {
@@ -54,6 +66,17 @@ test("rejects fabricated timer or notification activation evidence", () => {
   changedSnapshot.evidence.live_monitor_activation.sha256 = createHash("sha256").update(changedContent).digest("hex");
   const changedArtifacts = { ...artifacts, [path]: changedContent };
   assert.throws(() => validateGrantM2PrestartReadiness(changedSnapshot, changedArtifacts), /activation evidence is overstated or inconsistent/u);
+});
+
+test("rejects fabricated post-merge quota, capacity or worker evidence", () => {
+  const changedSnapshot = structuredClone(snapshot);
+  const path = changedSnapshot.evidence.immediate_prestart_refresh.path;
+  const changedRefresh = JSON.parse(artifacts[path]);
+  changedRefresh.hosts["observer-google-e2-micro"].worker_instances = 1;
+  const changedContent = `${JSON.stringify(changedRefresh, null, 2)}\n`;
+  changedSnapshot.evidence.immediate_prestart_refresh.sha256 = createHash("sha256").update(changedContent).digest("hex");
+  const changedArtifacts = { ...artifacts, [path]: changedContent };
+  assert.throws(() => validateGrantM2PrestartReadiness(changedSnapshot, changedArtifacts), /capacity or monitor evidence is invalid/u);
 });
 
 test("rejects removing a gate or crossing the official-window boundary", () => {
