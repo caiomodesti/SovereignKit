@@ -14,6 +14,16 @@ export function parseClockOffsetMs(text) {
   return Math.abs(Number(match[2]) * scale);
 }
 
+export function parseObserverReadiness(text, observerId) {
+  let value;
+  try { value = JSON.parse(text); } catch { throw Error('observer readiness is invalid JSON'); }
+  if (value?.status !== 'ready' || value.observerId !== observerId || !Number.isSafeInteger(value.queuedCount) || value.queuedCount < 0 ||
+      !Number.isSafeInteger(value.deliveredCount) || value.deliveredCount < 0 || value.lastError !== undefined) {
+    throw Error('observer readiness is degraded, incomplete or has the wrong identity');
+  }
+  return { ready: true, queuedCount: value.queuedCount, deliveredCount: value.deliveredCount };
+}
+
 export function quotaRemainingPercent(journalTexts) {
   if (!Array.isArray(journalTexts) || journalTexts.length === 0) return 100;
   let spent = 0; let total = 0;

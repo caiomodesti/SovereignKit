@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 
-import { computeBacklog, parseClockOffsetMs, parseMemAvailableBytes, quotaRemainingPercent } from '../lib/grant-m2-host-monitor-runtime.mjs';
+import { computeBacklog, parseClockOffsetMs, parseMemAvailableBytes, parseObserverReadiness, quotaRemainingPercent } from '../lib/grant-m2-host-monitor-runtime.mjs';
 
 test('parses Linux memory and systemd clock offset without sign confusion', () => {
   assert.equal(parseMemAvailableBytes('MemTotal: 1000 kB\nMemAvailable:     577804 kB\n'), 577804 * 1024);
@@ -10,6 +10,12 @@ test('parses Linux memory and systemd clock offset without sign confusion', () =
   assert.equal(parseClockOffsetMs('Server: metadata\n       Offset: +35us\n        Delay: 831us\n'), 0.035);
   assert.ok(Math.abs(parseClockOffsetMs('Reference ID : A9FEA97B\nSystem time : 0.000003266 seconds fast of NTP time\nLast offset : +0.000000853 seconds\n') - 0.003266) < Number.EPSILON);
   assert.ok(Math.abs(parseClockOffsetMs('System time : 0.000000034 seconds slow of NTP time\n') - 0.000034) < Number.EPSILON);
+});
+
+test('requires a ready observer snapshot with matching identity and delivery counters', () => {
+  assert.deepEqual(parseObserverReadiness(JSON.stringify({ status: 'ready', observerId: 'observer-aws-a', queuedCount: 1, deliveredCount: 10 }), 'observer-aws-a'), { ready: true, queuedCount: 1, deliveredCount: 10 });
+  assert.throws(() => parseObserverReadiness(JSON.stringify({ status: 'ready', observerId: 'observer-oracle-a1', queuedCount: 0, deliveredCount: 10 }), 'observer-aws-a'), /identity/u);
+  assert.throws(() => parseObserverReadiness(JSON.stringify({ status: 'degraded', observerId: 'observer-aws-a', queuedCount: 1, deliveredCount: 10, lastError: 'transport' }), 'observer-aws-a'), /degraded/u);
 });
 
 test('recomputes quota from complete durable journal tails', () => {
