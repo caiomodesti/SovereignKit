@@ -32,6 +32,7 @@ chmod 0600 "$env_target"
 chown root:root "$env_target"
 install -m 0644 -o root -g root "$unit_source" "$unit_target"
 systemctl daemon-reload
-systemctl is-enabled --quiet sovereignkit-m2-official-observation-worker@.service && { echo 'official worker template was enabled unexpectedly' >&2; exit 69; }
+worker_enablement=$(systemctl is-enabled sovereignkit-m2-official-observation-worker@.service 2>/dev/null || true)
+[[ $worker_enablement == static || $worker_enablement == disabled ]] || { echo 'official worker template has an unsafe enablement state' >&2; exit 69; }
 systemctl list-units --all --plain --no-legend 'sovereignkit-m2-official-observation-worker@*.service' | grep -q . && { echo 'official worker instance was activated unexpectedly' >&2; exit 69; }
 printf '{"status":"OFFICIAL_CONTROLS_INSTALLED_NOT_ACTIVATED","observerId":"%s","sourceCommit":"%s","quotaLimit":1500000,"workerInstances":0,"officialWindowStarted":false}\n' "$observer_id" "$source_commit"
