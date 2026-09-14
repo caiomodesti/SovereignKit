@@ -2,11 +2,12 @@ import { createHash } from "node:crypto";
 
 import { GRANT_M2_FROZEN_PRECOMMITMENT_SHA256 } from "./grant-m2-official-schedule.mjs";
 
-export const GRANT_M2_OFFICIAL_PREFLIGHT_VERSION = "GrantM2OfficialPreflight@0.1.0";
+export const GRANT_M2_OFFICIAL_PREFLIGHT_VERSION = "GrantM2OfficialPreflight@0.2.0";
 const OBSERVERS = ["observer-aws-a", "observer-google-e2-micro", "observer-oracle-a1"];
 const MINIMUM_DISK_BYTES = 5 * 1024 ** 3;
 const MINIMUM_MEMORY_BYTES = 512 * 1024 ** 2;
 const MAXIMUM_CLOCK_OFFSET_MS = 1_000;
+const MAXIMUM_TRANSPORT_PROBE_AGE_MS = 900_000;
 
 export function validateGrantM2OfficialPreflight(value, expectedSourceCommit) {
   if (value?.schema_version !== GRANT_M2_OFFICIAL_PREFLIGHT_VERSION || value.status !== "PASS_NOT_STARTED" ||
@@ -29,6 +30,7 @@ export function validateGrantM2OfficialPreflight(value, expectedSourceCommit) {
       resources.devnet_fee_payer_balance_verified !== true || resources.devnet_fee_payer_balance_sufficient !== true) {
     throw new Error("M2 official free-quota or Devnet fee-payer preflight failed");
   }
+  validateTransportProbe(value.transport_probe, value.captured_at, expectedSourceCommit);
   validateSequences(value.observer_initial_sequences);
   if (!Array.isArray(value.observers) || value.observers.length !== OBSERVERS.length ||
       new Set(value.observers.map(observer => observer?.observer_id)).size !== OBSERVERS.length) throw new Error("M2 official observer preflight set is invalid");
@@ -36,7 +38,8 @@ export function validateGrantM2OfficialPreflight(value, expectedSourceCommit) {
     const observer = value.observers.find(candidate => candidate.observer_id === observerId);
     if (observer?.m2_runtime_commit !== expectedSourceCommit || observer.service_active !== true || observer.ready !== true ||
         observer.reported_observer_id !== observerId || observer.delivery_queue_count !== 0 || observer.monitor_timer_active !== true ||
-        observer.official_controls_installed !== true || observer.official_worker_instances !== 0 || observer.official_quota_journal_empty !== true ||
+        observer.official_controls_installed !== true ||
+        observer.official_worker_instances !== 0 || observer.official_quota_journal_empty !== true ||
         observer.clock_synchronized !== true || !bounded(observer.clock_absolute_offset_ms, MAXIMUM_CLOCK_OFFSET_MS) ||
         !Number.isSafeInteger(observer.memory_available_bytes) || observer.memory_available_bytes < MINIMUM_MEMORY_BYTES ||
         !Number.isSafeInteger(observer.disk_free_bytes) || observer.disk_free_bytes < MINIMUM_DISK_BYTES) {
@@ -52,6 +55,26 @@ export function validateGrantM2OfficialPreflight(value, expectedSourceCommit) {
     sha256: createHash("sha256").update(JSON.stringify(value)).digest("hex"),
     officialWindowStarted: false,
   };
+}
+
+function validateTransportProbe(value, preflightCapturedAt, expectedSourceCommit) {
+  const probeCaptured = Date.parse(value?.captured_at);
+  const preflightCaptured = Date.parse(preflightCapturedAt);
+  if (value?.status !== "PASS" || !/^transport-probe-[a-z0-9-]+$/u.test(value.probe_id ?? "") ||
+      !canonicalTimestamp(value.captured_at) || value.source_commit !== expectedSourceCommit ||
+      value.transactions_submitted !== 0 || value.workers_started !== 0 || value.official_window_started !== false ||
+      probeCaptured > preflightCaptured || preflightCaptured - probeCaptured > MAXIMUM_TRANSPORT_PROBE_AGE_MS ||
+      !Array.isArray(value.observers) || value.observers.length !== OBSERVERS.length ||
+      new Set(value.observers.map(observer => observer?.observer_id)).size !== OBSERVERS.length) {
+    throw new Error("M2 official transport probe preflight failed");
+  }
+  for (const observerId of OBSERVERS) {
+    const observer = value.observers.find(candidate => candidate.observer_id === observerId);
+    if (observer?.status !== "PASS" || !/^[a-f0-9]{64}$/u.test(observer.receipt_sha256 ?? "") ||
+        observer.transaction_submitted !== false || observer.worker_started !== false) {
+      throw new Error(`M2 official transport probe preflight failed for ${observerId}`);
+    }
+  }
 }
 
 function validateSequences(value) {

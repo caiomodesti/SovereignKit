@@ -19,7 +19,9 @@ for (const entry of manifest.files) {
 }
 const required = [
   "deploy/systemd/sovereignkit-m2-official-coordinator.service", "scripts/install-grant-m2-official-coordinator.sh",
-  "scripts/run-grant-m2-official-coordinator.mjs", "scripts/run-grant-m2-official-slot.mjs", "scripts/complete-grant-m2-official-slot.mjs",
+  "scripts/run-grant-m2-official-coordinator.mjs", "scripts/run-grant-m2-official-transport-probe.mjs",
+  "scripts/run-grant-m2-official-slot.mjs", "scripts/complete-grant-m2-official-slot.mjs",
+  "scripts/lib/grant-m2-official-preflight.mjs", "scripts/lib/grant-m2-assignment-receipt.mjs",
 ];
 if (required.some(path => !actualPaths.includes(path)) || actualPaths.filter(path => path.endsWith(".service")).length !== 1) throw new Error("M2 official coordinator activation inventory is invalid");
 process.stdout.write(`${JSON.stringify({ status: "PASS", gate: "GRANT_M2_OFFICIAL_COORDINATOR_RUNTIME", files: actualPaths.length, sourceCommit: manifest.source_commit, coordinatorConfigIncluded: false, activationPerformed: false, officialWindowStarted: false })}\n`);

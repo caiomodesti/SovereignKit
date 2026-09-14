@@ -1,0 +1,48 @@
+{
+  "schema_version": "GrantM2OfficialWindowInterruption@0.1.0",
+  "status": "STOPPED_ACCEPTANCE_BLOCKING_CONTINUITY_BREACH",
+  "run_id": "m2-official-20260914t163100000z",
+  "source_commit": "b453d9445489d6753a84546709641ab20895c486",
+  "window_started_at": "2026-09-14T16:31:00.057Z",
+  "service_stopped_at_after": "2026-09-14T21:19:56.995Z",
+  "planned_units": 4032,
+  "accounted_units_at_detection": 60,
+  "counts": {
+    "QUALIFYING": 0,
+    "REJECTED": 0,
+    "MISSING": 60,
+    "INVALID": 0
+  },
+  "distribution": {
+    "missing_per_observer": 20,
+    "missing_alchemy_route": 30,
+    "missing_public_route": 30
+  },
+  "root_cause": {
+    "class": "TRANSPORT_FILE_OWNERSHIP",
+    "observed_error_class": "M2_SSH_COMMAND_FAILED",
+    "assignment_readable_by_sovereignkit": false,
+    "authority_readable_by_sovereignkit": false,
+    "affected_observers": 3
+  },
+  "controls": {
+    "service_active_after_stop": false,
+    "service_enabled_after_stop": false,
+    "official_workers_active_after_stop": 0,
+    "automatic_backfill_performed": false,
+    "automatic_window_reset_performed": false,
+    "original_evidence_preserved": true,
+    "replacement_window_requires_explicit_authorization": true
+  },
+  "evidence_archive": {
+    "local_path": "artifacts/grant-m2-invalid-run-20260914.tar.gz",
+    "bytes": 300575,
+    "sha256": "edbcd715d55e4e305c7ded658c5885ff27990326c8374cd908d0322a2224be3b"
+  },
+  "incident_log_path": "fixtures/grant-m2/official-incidents-20260914.jsonl",
+  "claim_boundaries": {
+    "this_window_is_acceptance_eligible": false,
+    "milestone_2_is_complete": false,
+    "a_replacement_window_has_started": false
+  }
+}
