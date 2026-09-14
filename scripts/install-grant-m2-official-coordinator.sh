@@ -18,7 +18,7 @@ state_root=/var/lib/sovereignkit/m2/official
   echo 'official coordinator controls already exist; reconciliation required' >&2
   exit 73
 }
-manifest_commit=$(node -e 'const fs=require("fs");const m=JSON.parse(fs.readFileSync(process.argv[1]));if(m.source_commit!==process.argv[2])process.exit(2);process.stdout.write(m.source_commit)' "$install_root/runtime-manifest.json" "$source_commit")
+manifest_commit=$(/usr/local/bin/node -e 'const fs=require("fs");const m=JSON.parse(fs.readFileSync(process.argv[1]));if(m.source_commit!==process.argv[2])process.exit(2);process.stdout.write(m.source_commit)' "$install_root/runtime-manifest.json" "$source_commit")
 [[ $manifest_commit == "$source_commit" ]] || { echo 'official coordinator source commit mismatch' >&2; exit 65; }
 systemctl is-active --quiet sovereignkit-collector.service || { echo 'Collector service is not active' >&2; exit 69; }
 command -v flock >/dev/null && command -v ssh >/dev/null && command -v scp >/dev/null || { echo 'required coordinator transport command is missing' >&2; exit 69; }
