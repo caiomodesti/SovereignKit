@@ -27,6 +27,7 @@ The service is intentionally split into two gates:
 ## Runtime paths
 
 - Code: `/opt/sovereignkit-m2-coordinator`
+- Node runtime: `/usr/local/bin/node` (the pinned Node 22.17.0 installation used by the Oracle Collector host)
 - Configuration: `/etc/sovereignkit/m2-official-coordinator.json`
 - Mutable state: `/var/lib/sovereignkit/m2/official`
 - Single-writer lock: `/run/sovereignkit-m2-coordinator/coordinator.lock`

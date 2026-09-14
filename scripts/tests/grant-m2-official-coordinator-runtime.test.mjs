@@ -68,6 +68,7 @@ test("systemd coordinator restarts durably and enforces one flock writer without
   const runtime = await readFile("scripts/run-grant-m2-official-coordinator.mjs", "utf8");
   const helpers = await readFile("scripts/lib/grant-m2-official-coordinator-runtime.mjs", "utf8");
   assert.match(unit, /Restart=on-failure/u); assert.match(unit, /\/usr\/bin\/flock --nonblock/u); assert.match(unit, /WantedBy=multi-user\.target/u);
+  assert.match(unit, /\/usr\/local\/bin\/node scripts\/run-grant-m2-official-coordinator\.mjs/u);
   assert.doesNotMatch(installer, /systemctl (?:enable|start) sovereignkit-m2-official-coordinator/u);
   assert.ok(runtime.indexOf("transportReserved") < runtime.indexOf("transportAssignment(observer"));
   assert.ok(runtime.indexOf("workerStartReserved") < runtime.indexOf("systemctl\", \"start"));
