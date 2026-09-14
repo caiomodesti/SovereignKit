@@ -40,3 +40,5 @@ jobs:
         run: node scripts/verify-grant-m1-devnet-evidence-bundle.mjs fixtures/grant-m1/observer-google-b-devnet-20260904
       - name: Verify M2 preparation contracts and dry-run scheduler
         run: pnpm verify:grant:m2:preparation
+      - name: Verify fail-closed M2 official runtime
+        run: pnpm verify:grant:m2:official-runtime
