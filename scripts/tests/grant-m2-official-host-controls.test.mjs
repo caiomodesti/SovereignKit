@@ -14,6 +14,8 @@ test("official host controls install fail-closed without activating a worker", a
   const script = await readFile("scripts/install-grant-m2-official-host-controls.sh", "utf8");
   assert.match(script, /GRANT_M2_OFFICIAL_TOTAL_LIMIT=1500000/u);
   assert.match(script, /official host controls already exist; reconciliation required/u);
+  assert.match(script, /worker_enablement.*static.*disabled/su);
+  assert.doesNotMatch(script, /is-enabled --quiet sovereignkit-m2-official-observation-worker/u);
   assert.match(script, /OFFICIAL_CONTROLS_INSTALLED_NOT_ACTIVATED/u);
   assert.match(script, /officialWindowStarted.*false/u);
   assert.doesNotMatch(script, /systemctl start|systemctl enable/u);
