@@ -1,0 +1,35 @@
+[Unit]
+Description=SovereignKit M2 official fourteen-day coordinator
+After=network-online.target sovereignkit-collector.service
+Wants=network-online.target
+Requires=sovereignkit-collector.service
+StartLimitIntervalSec=300
+StartLimitBurst=6
+
+[Service]
+Type=simple
+User=sovereignkit
+Group=sovereignkit
+WorkingDirectory=/opt/sovereignkit-m2-coordinator
+ExecStart=/usr/bin/flock --nonblock --conflict-exit-code=75 /run/sovereignkit-m2-coordinator/coordinator.lock /usr/bin/node scripts/run-grant-m2-official-coordinator.mjs --config /etc/sovereignkit/m2-official-coordinator.json
+Restart=on-failure
+RestartSec=10
+RuntimeDirectory=sovereignkit-m2-coordinator
+RuntimeDirectoryMode=0700
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+LockPersonality=true
+RestrictSUIDSGID=true
+RestrictRealtime=true
+SystemCallArchitectures=native
+ReadOnlyPaths=/opt/sovereignkit-m2-coordinator /etc/sovereignkit
+ReadWritePaths=/var/lib/sovereignkit/m2/official
+UMask=0077
+
+[Install]
+WantedBy=multi-user.target

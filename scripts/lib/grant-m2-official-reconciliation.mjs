@@ -25,6 +25,7 @@ export function reconcileGrantM2OfficialSlot({
   unsignedResultText,
   rawText,
   deliveryReceiptText,
+  collectorRecordText,
   observerAllowlistEntry,
   assignmentAuthorityEntry,
   probeResultSchema,
@@ -42,6 +43,7 @@ export function reconcileGrantM2OfficialSlot({
   const unsigned = parseCanonicalJsonFile(unsignedResultText, "unsigned ProbeResult");
   const delivery = parseCanonicalJsonFile(deliveryReceiptText, "delivery receipt");
   const signed = { ...unsigned, payload_hash: delivery.payload_hash, observer_signature: delivery.observer_signature };
+  const collectorRecord = parseCanonicalJsonFile(collectorRecordText, "Collector accepted record");
   const schemaResult = new ProbeResultSchemaValidator(probeResultSchema).validate(signed);
   if (!schemaResult.valid) throw new Error(`M2 official signed result schema validation failed: ${schemaResult.errors.join("; ")}`);
   validateResultBindings(signed, assignment, slot, run);
@@ -51,6 +53,7 @@ export function reconcileGrantM2OfficialSlot({
   validateObserverIdentity(signed, observerAllowlistEntry, delivery, recordedAt);
   if (!verifyProbeResult(signed, observerAllowlistEntry)) throw new Error("M2 official observer signature or payload hash is invalid");
   validateDelivery(delivery, signed);
+  validateCollectorRecord(collectorRecord, signed, recordedAt);
   recomputeRawToDerived({ rawText, assignment, signed });
 
   return {
@@ -71,12 +74,24 @@ export function reconcileGrantM2OfficialSlot({
       raw_sha256: sha256(rawText),
       signed_result_sha256: sha256(`${JSON.stringify(signed)}\n`),
       delivery_receipt_sha256: sha256(deliveryReceiptText),
+      collector_record_sha256: sha256(collectorRecordText),
       collector_status: delivery.collector_status,
       raw_to_derived_recomputed: true,
       observer_signature_verified: true,
       collector_receipt_bound: true,
     },
   };
+}
+
+function validateCollectorRecord(record, signed, recordedAt) {
+  const collectedAt = Date.parse(record?.collected_at);
+  const observedAt = Date.parse(signed.observer_wall_time);
+  const reconciledAt = Date.parse(canonicalTimestamp(recordedAt));
+  if (!Number.isSafeInteger(record?.collector_sequence) || record.collector_sequence < 0 || !Number.isFinite(collectedAt) ||
+      new Date(collectedAt).toISOString() !== record.collected_at || collectedAt < observedAt || collectedAt > reconciledAt ||
+      canonicalJson(record.result) !== canonicalJson(signed)) {
+    throw new Error("M2 official Collector durable record is not exactly bound to the signed result");
+  }
 }
 
 function validatePreparedEntry(entry, run, slot) {

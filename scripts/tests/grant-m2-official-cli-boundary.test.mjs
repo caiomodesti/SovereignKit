@@ -18,6 +18,8 @@ test("official completion CLI requires semantic reconciliation before journal ac
   const append = source.indexOf("appendGrantM2OfficialEvent({");
   assert.ok(reconcile >= 0 && persist > reconcile && append > persist);
   assert.match(source, /selectGrantM2OfficialDeliveryReceipt/u);
+  assert.match(source, /selectGrantM2OfficialCollectorRecord/u);
+  assert.match(source, /required\("collector-log"\)/u);
 });
 
 test("official start CLI can only create the frozen journal start event", async () => {

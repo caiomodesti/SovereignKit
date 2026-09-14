@@ -17,7 +17,20 @@ export function selectGrantM2OfficialDeliveryReceipt(deliveryLogText, resultId) 
   return `${JSON.stringify(matches[0])}\n`;
 }
 
-export async function persistGrantM2OfficialSlotEvidence({ directory, entry, completion, unsignedResultText, rawText, signedResult, deliveryReceiptText }) {
+export function selectGrantM2OfficialCollectorRecord(collectorLogText, resultId) {
+  if (typeof collectorLogText !== "string" || collectorLogText.length === 0 || !collectorLogText.endsWith("\n") ||
+      typeof resultId !== "string" || resultId.length === 0) throw new Error("M2 official Collector log or result ID is invalid");
+  const matches = [];
+  for (const [index, line] of collectorLogText.trimEnd().split("\n").entries()) {
+    let record;
+    try { record = JSON.parse(line); } catch { throw new Error(`M2 official Collector log has invalid JSON at record ${index}`); }
+    if (record?.result?.result_id === resultId) matches.push(record);
+  }
+  if (matches.length !== 1) throw new Error("M2 official Collector accepted record is missing or ambiguous");
+  return `${JSON.stringify(matches[0])}\n`;
+}
+
+export async function persistGrantM2OfficialSlotEvidence({ directory, entry, completion, unsignedResultText, rawText, signedResult, deliveryReceiptText, collectorRecordText }) {
   const slotId = entry?.slot_id;
   if (typeof directory !== "string" || directory.length === 0 || !/^[a-f0-9]{64}$/u.test(slotId ?? "") ||
       completion?.resultId !== signedResult?.result_id) throw new Error("M2 official evidence persistence input is invalid");
@@ -30,6 +43,7 @@ export async function persistGrantM2OfficialSlotEvidence({ directory, entry, com
     "raw-observations.jsonl": completeJsonl(rawText, "raw observations"),
     "signed-result.json": `${JSON.stringify(signedResult)}\n`,
     "delivery-receipt.json": canonicalFile(deliveryReceiptText, "delivery receipt"),
+    "collector-accepted-record.json": canonicalFile(collectorRecordText, "Collector accepted record"),
   };
   for (const [name, contents] of Object.entries(files)) await writeImmutable(join(slotDirectory, name), contents);
   const manifest = {

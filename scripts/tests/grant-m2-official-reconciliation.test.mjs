@@ -47,8 +47,9 @@ async function fixture() {
   };
   const signed = signProbeResult(unsigned, observer);
   const delivery = { delivery_sequence: 7, delivered_at: new Date(Date.parse(observedAt) + 1_000).toISOString(), result_id: signed.result_id, idempotency_key: signed.idempotency_key, payload_hash: signed.payload_hash, observer_signature: signed.observer_signature, collector_status: "ACCEPTED", collector_origin: "https://collector.sovereignkit.org" };
+  const collectorRecord = { collector_sequence: 12, collected_at: new Date(Date.parse(observedAt) + 1_500).toISOString(), result: signed };
   return {
-    entry, unsigned, signed, delivery,
+    entry, unsigned, signed, delivery, collectorRecord,
     completion: { event: "M2_OBSERVATION_JOB_COMPLETED", resultId: signed.result_id, terminalState: "FINALIZED", qualifyingUnits: 0 },
     rawText: `${JSON.stringify({ schema_version: "RawObservationPoll@0.2.0", assignment_id: entry.assignment.assignmentId, assignment_payload_hash: entry.assignment.payloadHash, poll_index: 0, observed_at: observedAt, observer_id: observer.observerId, signature: signed.signature, claims })}\n`,
     observerEntry: { observerId: observer.observerId, keyId: observer.keyId, publicKeySpkiBase64: observer.publicKeySpkiBase64, validFrom: "2026-09-01T00:00:00.000Z", validUntil: "2026-10-01T00:00:00.000Z" },
@@ -61,8 +62,9 @@ function reconcile(value, changes = {}) {
     run, quota, slotId: run.schedule.slots[0].slot_id, entry: value.entry, completion: value.completion,
     unsignedResultText: `${JSON.stringify(value.unsigned)}\n`, rawText: value.rawText,
     deliveryReceiptText: `${JSON.stringify(value.delivery)}\n`, observerAllowlistEntry: value.observerEntry,
+    collectorRecordText: `${JSON.stringify(value.collectorRecord)}\n`,
     assignmentAuthorityEntry: value.authorityEntry, probeResultSchema: schema,
-    recordedAt: new Date(Date.parse(run.schedule.start_at) + 2_000).toISOString(), ...changes,
+    recordedAt: new Date(Date.parse(run.schedule.start_at) + 3_000).toISOString(), ...changes,
   });
 }
 
@@ -73,6 +75,12 @@ test("qualifies an original Collector acceptance only after full semantic reconc
   assert.equal(result.terminal_event.qualifying_units, 1);
   assert.equal(result.terminal_event.observation_terminal_state, "FINALIZED");
   assert.equal(result.signed_result.payload_hash, value.signed.payload_hash);
+});
+
+test("rejects a Collector durable record that is absent or differs from the signed result", async () => {
+  const value = await fixture();
+  value.collectorRecord.result = { ...value.collectorRecord.result, terminal_state: "CONFIRMED" };
+  assert.throws(() => reconcile(value), /Collector durable record/u);
 });
 
 test("rejects duplicate delivery, tampered signature and frozen unit drift", async () => {

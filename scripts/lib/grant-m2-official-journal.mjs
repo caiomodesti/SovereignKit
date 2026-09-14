@@ -98,7 +98,7 @@ function validateEvent(record, previous, run) {
       if (record.qualifying_units !== 1 || typeof record.result_id !== "string" || typeof record.signature !== "string" ||
           !OBSERVATION_TERMINAL_STATES.has(record.observation_terminal_state) ||
           !/^[a-f0-9]{64}$/u.test(record.raw_sha256 ?? "") || !/^[a-f0-9]{64}$/u.test(record.signed_result_sha256 ?? "") ||
-          !/^[a-f0-9]{64}$/u.test(record.delivery_receipt_sha256 ?? "") ||
+          !/^[a-f0-9]{64}$/u.test(record.delivery_receipt_sha256 ?? "") || !/^[a-f0-9]{64}$/u.test(record.collector_record_sha256 ?? "") ||
           record.collector_status !== "ACCEPTED" || record.raw_to_derived_recomputed !== true ||
           record.observer_signature_verified !== true || record.collector_receipt_bound !== true) {
         throw new Error("M2 qualifying slot lacks complete semantic evidence");
