@@ -74,10 +74,24 @@ export function decideGrantM2LiveMonitorNotification(policy, previous, current) 
 }
 
 export function formatGrantM2LiveMonitorMessage(evaluation, kind) {
-  if (kind === 'RECOVERY') return `SovereignKit M2: RECUPERADO em ${evaluation.observer_id}. Monitoramento normal em ${evaluation.sampled_at}.`;
-  const signals = evaluation.alerts.map(alert => `${alert.signal}=${alert.severity}`).join(', ');
-  return `SovereignKit M2: ${kind} ${evaluation.highest_severity} em ${evaluation.observer_id}: ${signals}. Ação manual necessária. Janela oficial não é reiniciada automaticamente.`;
+  if (kind === 'RECOVERY') {
+    return `SovereignKit M2: RECUPERADO em ${evaluation.observer_id}. Monitoramento normal em ${evaluation.sampled_at}.\n\nEm resumo: o problema anterior foi resolvido e este observer voltou ao estado normal. Nenhuma ação sua é necessária agora.`;
+  }
+  const signals = evaluation.alerts.map(alert => `${alert.signal}=${alert.severity} (valor=${alert.value}; limite=${alert.threshold})`).join(', ');
+  const summary = evaluation.alerts.map(alert => SIMPLE_SIGNAL_SUMMARIES[alert.signal] ?? `foi detectado um problema em ${alert.signal}`).join('; ');
+  return `SovereignKit M2: ${kind} ${evaluation.highest_severity} em ${evaluation.observer_id}: ${signals}.\n\nEm resumo: ${summary}. O sistema preservou as evidências e não reiniciará a janela automaticamente. Ação manual pode ser necessária.`;
 }
+
+const SIMPLE_SIGNAL_SUMMARIES = {
+  MEMORY_AVAILABLE: 'o servidor está com pouca memória disponível',
+  DISK_FREE: 'o servidor está com pouco espaço livre em disco',
+  CLOCK_DRIFT: 'o relógio do servidor está fora da tolerância segura',
+  OBSERVER_SERVICE: 'o serviço do observer não está ativo',
+  OBSERVER_READINESS: 'o processo está ligado, mas o observer não está pronto para operar corretamente',
+  NTP_SYNC: 'o relógio do servidor perdeu a sincronização pela internet',
+  DELIVERY_BACKLOG: 'existem evidências acumuladas aguardando entrega ao Collector',
+  LOCAL_RPC_QUOTA: 'a quota gratuita de chamadas RPC está ficando baixa',
+};
 
 function validateSample(sample) {
   if (sample === null || typeof sample !== 'object' || new Date(sample.sampled_at).toISOString() !== sample.sampled_at || !OBSERVERS.includes(sample.observer_id)) throw Error('M2 live monitor sample identity is invalid');

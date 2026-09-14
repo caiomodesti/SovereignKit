@@ -19,7 +19,8 @@ test('detects Google memory headroom and critical service failures', () => {
   assert.deepEqual(warning.alerts.map(alert => alert.signal), ['MEMORY_AVAILABLE']);
   const critical = evaluateGrantM2LiveMonitor(policy, { ...healthy, service_active: false, consecutive_service_or_ntp_failures: 2 });
   assert.equal(critical.highest_severity, 'CRITICAL');
-  assert.match(formatGrantM2LiveMonitorMessage(critical, 'ALERT'), /Ação manual necessária/u);
+  assert.match(formatGrantM2LiveMonitorMessage(critical, 'ALERT'), /Em resumo: o serviço do observer não está ativo/u);
+  assert.match(formatGrantM2LiveMonitorMessage(critical, 'ALERT'), /valor=2; limite=2/u);
   const unready = evaluateGrantM2LiveMonitor(policy, { ...healthy, observer_ready: false, consecutive_service_or_ntp_failures: 2 });
   assert.deepEqual(unready.alerts.map(alert => alert.signal), ['OBSERVER_READINESS']);
 });
@@ -34,5 +35,6 @@ test('sends transitions, bounded reminders and recovery only', () => {
   assert.deepEqual(decideGrantM2LiveMonitorNotification(policy, previous, later), { send: true, kind: 'REMINDER' });
   const recovered = evaluateGrantM2LiveMonitor(policy, { ...healthy, sampled_at: '2026-09-12T04:12:00.000Z' });
   assert.deepEqual(decideGrantM2LiveMonitorNotification(policy, previous, recovered), { send: true, kind: 'RECOVERY' });
+  assert.match(formatGrantM2LiveMonitorMessage(recovered, 'RECOVERY'), /Nenhuma ação sua é necessária agora/u);
   assert.deepEqual(decideGrantM2LiveMonitorNotification(policy, { ...previous, notification_pending: true }, soon), { send: true, kind: 'ALERT' });
 });
