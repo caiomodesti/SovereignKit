@@ -1,0 +1,36 @@
+{
+  "schema_version": "GrantM2OfficialTransportProbe@0.1.0",
+  "status": "PASS",
+  "probe_id": "transport-probe-20260914t215938529z-4fc596a1-c900-48af-a6a0-ce80bd80d2c7",
+  "captured_at": "2026-09-14T21:59:57.631Z",
+  "source_commit": "2cbb5bac687879c7825facef9cf8a12ab48aa668",
+  "observers": [
+    {
+      "observer_id": "observer-aws-a",
+      "status": "PASS",
+      "assignment_id": "7d13d668-c95a-4cd0-b1a1-3ac0742a5d72",
+      "receipt_sha256": "756b96eb3e974ce658ed2f63d4f0c0cd207375afd11a9da043b7e9f17635c575",
+      "transaction_submitted": false,
+      "worker_started": false
+    },
+    {
+      "observer_id": "observer-google-e2-micro",
+      "status": "PASS",
+      "assignment_id": "a6eab729-d312-4b1b-aa06-1f0dc01957bd",
+      "receipt_sha256": "cb53e86af3192a00c3a139c854635b988432a78a8e36fda51e660cdc45faeb10",
+      "transaction_submitted": false,
+      "worker_started": false
+    },
+    {
+      "observer_id": "observer-oracle-a1",
+      "status": "PASS",
+      "assignment_id": "8127b5fa-167a-42d4-87ad-91de2517f45c",
+      "receipt_sha256": "c5b77c0d88dad3838ff3283cb304df06973f7816bb5f79aea919cc5a31a37866",
+      "transaction_submitted": false,
+      "worker_started": false
+    }
+  ],
+  "transactions_submitted": 0,
+  "workers_started": 0,
+  "official_window_started": false
+}

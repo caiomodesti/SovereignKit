@@ -50,3 +50,18 @@ Before any replacement window, all three observers must pass the same complete
 transport path with a synthetic signed assignment, 0 Devnet transactions and 0
 workers. The immediate preflight schema now requires that transport-probe gate.
 A replacement 14-day window still requires a separate explicit authorization.
+
+## Correction verification
+
+Commit `2cbb5bac687879c7825facef9cf8a12ab48aa668` was installed as an
+inactive parallel coordinator runtime. At `2026-09-14T21:59:57.631Z`, the
+complete corrected transport path returned signed receipts from AWS, Google
+Cloud and Oracle Cloud. The probe submitted 0 transactions, started 0 workers
+and did not start an official window.
+
+The interrupted run remained at 487 files and its deterministic aggregate
+SHA-256 remained
+`6927da1cd611080dddf80feaee1973f4c58c339880f10ff9edccf12b3b02ec73`
+before and after the probe. This proves the corrected transport path only; it
+does not make the interrupted window eligible, pass a new immediate preflight,
+or authorize a replacement window.
