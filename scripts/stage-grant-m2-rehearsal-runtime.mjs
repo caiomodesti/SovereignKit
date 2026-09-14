@@ -38,9 +38,11 @@ const copies = [
 if (hostPreparation) {
   copies.push(
     ['deploy/grant-pilot/systemd/sovereignkit-m2-observation-worker@.service', 'deploy/systemd/sovereignkit-m2-observation-worker@.service'],
+    ['deploy/grant-pilot/systemd/sovereignkit-m2-official-observation-worker@.service', 'deploy/systemd/sovereignkit-m2-official-observation-worker@.service'],
     ['deploy/grant-pilot/systemd/sovereignkit-m2-live-monitor.service', 'deploy/systemd/sovereignkit-m2-live-monitor.service'],
     ['deploy/grant-pilot/systemd/sovereignkit-m2-live-monitor.timer', 'deploy/systemd/sovereignkit-m2-live-monitor.timer'],
     ['scripts/install-grant-m2-host-runtime.sh', 'scripts/install-grant-m2-host-runtime.sh'],
+    ['scripts/install-grant-m2-official-host-controls.sh', 'scripts/install-grant-m2-official-host-controls.sh'],
     ['scripts/upgrade-grant-m2-host-runtime.sh', 'scripts/upgrade-grant-m2-host-runtime.sh'],
     ['scripts/activate-grant-m2-live-monitor.sh', 'scripts/activate-grant-m2-live-monitor.sh'],
   );

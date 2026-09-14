@@ -41,8 +41,9 @@ export function evaluateGrantM2LiveMonitor(policy, sample) {
   else if (sample.disk_free_bytes < t.disk_free_bytes.warning_below) add('DISK_FREE', 'WARNING', sample.disk_free_bytes, t.disk_free_bytes.warning_below);
   if (sample.clock_absolute_offset_ms > t.clock_absolute_offset_ms.critical_above) add('CLOCK_DRIFT', 'CRITICAL', sample.clock_absolute_offset_ms, t.clock_absolute_offset_ms.critical_above);
   else if (sample.clock_absolute_offset_ms > t.clock_absolute_offset_ms.warning_above) add('CLOCK_DRIFT', 'WARNING', sample.clock_absolute_offset_ms, t.clock_absolute_offset_ms.warning_above);
-  if ((!sample.service_active || !sample.ntp_synchronized) && sample.consecutive_service_or_ntp_failures >= t.service_or_ntp.critical_after_consecutive_failures) {
-    add(sample.service_active ? 'NTP_SYNC' : 'OBSERVER_SERVICE', 'CRITICAL', sample.consecutive_service_or_ntp_failures, t.service_or_ntp.critical_after_consecutive_failures);
+  if ((!sample.service_active || !sample.observer_ready || !sample.ntp_synchronized) && sample.consecutive_service_or_ntp_failures >= t.service_or_ntp.critical_after_consecutive_failures) {
+    const signal = !sample.service_active ? 'OBSERVER_SERVICE' : !sample.observer_ready ? 'OBSERVER_READINESS' : 'NTP_SYNC';
+    add(signal, 'CRITICAL', sample.consecutive_service_or_ntp_failures, t.service_or_ntp.critical_after_consecutive_failures);
   }
   if (sample.delivery_backlog_count >= t.delivery_backlog.critical_count_at_or_above || sample.oldest_delivery_age_seconds > t.delivery_backlog.critical_oldest_age_seconds_above) {
     add('DELIVERY_BACKLOG', 'CRITICAL', sample.delivery_backlog_count, t.delivery_backlog.critical_count_at_or_above);
@@ -83,5 +84,6 @@ function validateSample(sample) {
   for (const field of ['memory_available_bytes', 'disk_free_bytes', 'clock_absolute_offset_ms', 'consecutive_service_or_ntp_failures', 'delivery_backlog_count', 'oldest_delivery_age_seconds', 'local_rpc_quota_remaining_percent']) {
     if (typeof sample[field] !== 'number' || !Number.isFinite(sample[field]) || sample[field] < 0) throw Error(`M2 live monitor sample ${field} is invalid`);
   }
-  if (sample.local_rpc_quota_remaining_percent > 100 || typeof sample.service_active !== 'boolean' || typeof sample.ntp_synchronized !== 'boolean') throw Error('M2 live monitor sample range is invalid');
+  if (sample.local_rpc_quota_remaining_percent > 100 || typeof sample.service_active !== 'boolean' || typeof sample.observer_ready !== 'boolean' ||
+      !Number.isSafeInteger(sample.observer_delivered_count) || sample.observer_delivered_count < 0 || typeof sample.ntp_synchronized !== 'boolean') throw Error('M2 live monitor sample range is invalid');
 }

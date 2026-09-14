@@ -3,7 +3,7 @@ import { mkdir, open, readFile, readdir, rename, stat } from 'node:fs/promises';
 import { dirname, join, resolve } from 'node:path';
 import { promisify } from 'node:util';
 
-import { computeBacklog, parseClockOffsetMs, parseMemAvailableBytes, quotaRemainingPercent } from './lib/grant-m2-host-monitor-runtime.mjs';
+import { computeBacklog, parseClockOffsetMs, parseMemAvailableBytes, parseObserverReadiness, quotaRemainingPercent } from './lib/grant-m2-host-monitor-runtime.mjs';
 import { decideGrantM2LiveMonitorNotification, evaluateGrantM2LiveMonitor, formatGrantM2LiveMonitorMessage, validateGrantM2LiveMonitorPolicy } from './lib/grant-m2-live-monitor.mjs';
 
 const execFile = promisify(execFileCallback);
@@ -46,10 +46,11 @@ if (evaluation.notification_pending === true) throw Error('Telegram alert delive
 
 async function collectSample(id, at, prior) {
   const nowMs = Date.parse(at);
-  const [meminfo, disk, active, ntp, offset, assignments, completions, quotaTexts] = await Promise.all([
+  const [meminfo, disk, active, readinessText, ntp, offset, assignments, completions, quotaTexts] = await Promise.all([
     readFile('/proc/meminfo', 'utf8'),
     statFilesystem('/var/lib/sovereignkit'),
     command('systemctl', ['show', '--property=ActiveState', '--value', 'sovereignkit-observer.service']),
+    readObserverReadiness(id),
     command('timedatectl', ['show', '--property=NTPSynchronized', '--value']),
     collectClockOffset(),
     listAssignments('/var/lib/sovereignkit/m2/inbox'),
@@ -57,16 +58,27 @@ async function collectSample(id, at, prior) {
     readQuotaJournals('/var/lib/sovereignkit/m2/quota'),
   ]);
   const serviceActive = active.trim() === 'active'; const ntpSynchronized = ntp.trim() === 'yes';
+  let readiness = { ready: false, queuedCount: 0, deliveredCount: 0 };
+  try { readiness = parseObserverReadiness(readinessText, id); } catch { readiness = { ready: false, queuedCount: 0, deliveredCount: 0 }; }
   const previousFailures = prior?.evaluation?.sample?.consecutive_service_or_ntp_failures ?? prior?.sample?.consecutive_service_or_ntp_failures ?? 0;
   const backlog = computeBacklog(assignments, completions, nowMs);
   return { sampled_at: at, observer_id: id, memory_available_bytes: parseMemAvailableBytes(meminfo), disk_free_bytes: disk,
-    clock_absolute_offset_ms: parseClockOffsetMs(offset), service_active: serviceActive, ntp_synchronized: ntpSynchronized,
-    consecutive_service_or_ntp_failures: serviceActive && ntpSynchronized ? 0 : previousFailures + 1,
-    delivery_backlog_count: backlog.count, oldest_delivery_age_seconds: backlog.oldestAgeSeconds,
+    clock_absolute_offset_ms: parseClockOffsetMs(offset), service_active: serviceActive, observer_ready: readiness.ready, ntp_synchronized: ntpSynchronized,
+    observer_delivered_count: readiness.deliveredCount,
+    consecutive_service_or_ntp_failures: serviceActive && readiness.ready && ntpSynchronized ? 0 : previousFailures + 1,
+    delivery_backlog_count: Math.max(backlog.count, readiness.queuedCount), oldest_delivery_age_seconds: backlog.oldestAgeSeconds,
     local_rpc_quota_remaining_percent: quotaRemainingPercent(quotaTexts) };
 }
 
 async function command(file, args) { const { stdout } = await execFile(file, args, { encoding: 'utf8', timeout: 10000 }); return stdout; }
+async function readObserverReadiness(observerId) {
+  try {
+    const response = await fetch('http://127.0.0.1:8790/ready', { signal: AbortSignal.timeout(5000) });
+    return await response.text();
+  } catch {
+    return JSON.stringify({ status: 'degraded', observerId, queuedCount: 0, deliveredCount: 0, lastError: 'READINESS_UNAVAILABLE' });
+  }
+}
 async function collectClockOffset() {
   try { return await command('timedatectl', ['timesync-status']); }
   catch (systemdError) {
