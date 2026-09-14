@@ -88,6 +88,7 @@ test("requires full evidence for a qualifying slot", async () => {
     terminal_status: "QUALIFYING", qualifying_units: 1, result_id: "result-1", signature: "1".repeat(88),
     observation_terminal_state: "FINALIZED",
     raw_sha256: "a".repeat(64), signed_result_sha256: "b".repeat(64), delivery_receipt_sha256: "c".repeat(64),
+    collector_record_sha256: "d".repeat(64),
     collector_status: "ACCEPTED", raw_to_derived_recomputed: true, observer_signature_verified: true, collector_receipt_bound: true,
   };
   const state = await appendGrantM2OfficialEvent({ directory: root, run, quota, event: base });

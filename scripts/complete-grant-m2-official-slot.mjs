@@ -3,7 +3,7 @@ import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 
 import { appendGrantM2OfficialEvent, loadGrantM2OfficialJournal } from "./lib/grant-m2-official-journal.mjs";
-import { persistGrantM2OfficialSlotEvidence, selectGrantM2OfficialDeliveryReceipt } from "./lib/grant-m2-official-evidence-store.mjs";
+import { persistGrantM2OfficialSlotEvidence, selectGrantM2OfficialCollectorRecord, selectGrantM2OfficialDeliveryReceipt } from "./lib/grant-m2-official-evidence-store.mjs";
 import { reconcileGrantM2OfficialSlot } from "./lib/grant-m2-official-reconciliation.mjs";
 
 const args = parseArgs(process.argv.slice(2));
@@ -14,6 +14,7 @@ const completion = await readJson(required("completion"));
 const unsignedResultText = await readText(required("unsigned-result"));
 const rawText = await readText(required("raw"));
 const deliveryLogText = await readText(required("delivery-log"));
+const collectorLogText = await readText(required("collector-log"));
 const observerEntries = await readJson(required("observer-allowlist"));
 const authorityEntries = await readJson(required("assignment-authorities"));
 const probeResultSchema = await readJson(required("probe-result-schema"));
@@ -31,13 +32,15 @@ const job = entry?.assignment?.job;
 const observerAllowlistEntry = selectIdentity(observerEntries, "observerId", job?.observerId, "keyId", job?.observerKeyId, "observer allowlist");
 const assignmentAuthorityEntry = selectIdentity(authorityEntries, "issuerId", entry?.assignment?.issuerId, "keyId", entry?.assignment?.issuerKeyId, "assignment authority list");
 const deliveryReceiptText = selectGrantM2OfficialDeliveryReceipt(deliveryLogText, job?.resultId);
+const collectorRecordText = selectGrantM2OfficialCollectorRecord(collectorLogText, job?.resultId);
 const reconciled = reconcileGrantM2OfficialSlot({
-  run, quota, slotId, entry, completion, unsignedResultText, rawText, deliveryReceiptText,
+  run, quota, slotId, entry, completion, unsignedResultText, rawText, deliveryReceiptText, collectorRecordText,
   observerAllowlistEntry, assignmentAuthorityEntry, probeResultSchema, recordedAt,
 });
 const persisted = await persistGrantM2OfficialSlotEvidence({
   directory: evidenceDirectory, entry, completion, unsignedResultText, rawText,
   signedResult: reconciled.signed_result, deliveryReceiptText,
+  collectorRecordText,
 });
 const finalState = await appendGrantM2OfficialEvent({ directory: journalDirectory, run, quota, event: reconciled.terminal_event });
 process.stdout.write(`${JSON.stringify({
