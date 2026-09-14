@@ -11,7 +11,7 @@ Type=simple
 User=sovereignkit
 Group=sovereignkit
 WorkingDirectory=/opt/sovereignkit-m2-coordinator
-ExecStart=/usr/bin/flock --nonblock --conflict-exit-code=75 /run/sovereignkit-m2-coordinator/coordinator.lock /usr/bin/node scripts/run-grant-m2-official-coordinator.mjs --config /etc/sovereignkit/m2-official-coordinator.json
+ExecStart=/usr/bin/flock --nonblock --conflict-exit-code=75 /run/sovereignkit-m2-coordinator/coordinator.lock /usr/local/bin/node scripts/run-grant-m2-official-coordinator.mjs --config /etc/sovereignkit/m2-official-coordinator.json
 Restart=on-failure
 RestartSec=10
 RuntimeDirectory=sovereignkit-m2-coordinator
