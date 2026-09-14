@@ -66,6 +66,8 @@ test("systemd coordinator restarts durably and enforces one flock writer without
   const unit = await readFile("deploy/grant-pilot/systemd/sovereignkit-m2-official-coordinator.service", "utf8");
   const installer = await readFile("scripts/install-grant-m2-official-coordinator.sh", "utf8");
   const runtime = await readFile("scripts/run-grant-m2-official-coordinator.mjs", "utf8");
+  const transportProbe = await readFile("scripts/run-grant-m2-official-transport-probe.mjs", "utf8");
+  const stager = await readFile("scripts/stage-grant-m2-official-coordinator-runtime.mjs", "utf8");
   const helpers = await readFile("scripts/lib/grant-m2-official-coordinator-runtime.mjs", "utf8");
   assert.match(unit, /Restart=on-failure/u); assert.match(unit, /\/usr\/bin\/flock --nonblock/u); assert.match(unit, /WantedBy=multi-user\.target/u);
   assert.match(unit, /\/usr\/local\/bin\/node scripts\/run-grant-m2-official-coordinator\.mjs/u);
@@ -73,6 +75,15 @@ test("systemd coordinator restarts durably and enforces one flock writer without
   assert.doesNotMatch(installer, /manifest_commit=\$\(node -e/u);
   assert.doesNotMatch(installer, /systemctl (?:enable|start) sovereignkit-m2-official-coordinator/u);
   assert.ok(runtime.indexOf("transportReserved") < runtime.indexOf("transportAssignment(observer"));
+  assert.ok(runtime.indexOf('await runScp(observer, paths.entry, remoteEntry)') < runtime.indexOf('"/usr/bin/chown", "sovereignkit:sovereignkit"'));
+  assert.ok(runtime.indexOf('"/usr/bin/chown", "sovereignkit:sovereignkit"') < runtime.indexOf('"/usr/bin/chmod", "0600"'));
+  assert.ok(runtime.indexOf('"/usr/bin/chmod", "0600"') < runtime.indexOf('"/usr/bin/test", "-r", remoteEntry'));
+  assert.ok(runtime.indexOf('"/usr/bin/test", "-r", remoteEntry') < runtime.indexOf('receive-grant-m2-assignment.mjs'));
+  assert.match(transportProbe, /transaction_submitted: false/u);
+  assert.match(transportProbe, /workers_started: 0/u);
+  assert.match(transportProbe, /verifyAssignmentReceipt/u);
+  assert.match(stager, /grant-m2-official-preflight\.mjs/u);
+  assert.match(stager, /run-grant-m2-official-transport-probe\.mjs/u);
   assert.ok(runtime.indexOf("workerStartReserved") < runtime.indexOf("systemctl\", \"start"));
   assert.match(runtime, /createGrantM2OfficialMissingEvent/u); assert.match(helpers, /MISSED_WITHOUT_BACKFILL/u);
 });

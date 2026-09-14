@@ -43,6 +43,14 @@ Telegram is best-effort and cannot stop the coordinator. Messages are sent only 
 
 Before activation, the operator must revalidate the exact source commit on the coordinator and all three observers, Collector TLS/readiness/durable log, zero observer queues, zero official workers, empty official quota journals, NTP and clock offsets, memory and disk, fee-payer balance, and authenticated Alchemy free-quota headroom.
 
+Each observer must also pass a zero-transaction transport probe using the same
+`scp -> chown/chmod -> sovereignkit receiver` path as the official coordinator.
+Checking SSH connectivity alone is insufficient because it does not prove that
+the service identity can read the transported assignment and authority files.
+The immediate preflight must embed the probe evidence, bound to the exact
+runtime commit and captured no more than 15 minutes earlier, including all
+three signed-receipt hashes and explicit zero transaction/worker counters.
+
 The coordinator-specific gate is true only after all of these are demonstrated while the run is still not started:
 
 - the packaged runtime verifies against its manifest;

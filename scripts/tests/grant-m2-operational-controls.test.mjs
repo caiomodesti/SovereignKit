@@ -60,6 +60,15 @@ test("validates an append-only incident sequence and rejects weakened records", 
   assert.throws(() => validateIncidentLog(weakened), /weakens preservation rules/u);
 });
 
+test("retains the official transport incident as acceptance-blocking evidence", async () => {
+  const incident = await readFile("fixtures/grant-m2/official-incidents-20260914.jsonl", "utf8");
+  assert.equal(validateIncidentLog(incident).records, 1);
+  const record = JSON.parse(incident.trim());
+  assert.equal(record.status, "ACCEPTANCE_BLOCKING");
+  assert.equal(record.raw_evidence_preserved, true);
+  assert.equal(record.automatic_window_reset, false);
+});
+
 test("requires exact rehearsal accounting without relabeling an unobserved transaction", () => {
   const rows = Array.from({ length: 12 }, (_, sequence) => ({ schema_version: "GrantM2RehearsalTransactionLedger@0.1.0", sequence, submitted_at: `2026-09-12T01:${String(sequence).padStart(2, "0")}:00.000Z`, source_run: "live-test", slot_id: sequence.toString(16).padStart(64, "0"), assignment_id: `assignment-${sequence}`, signature: `signature-${sequence}`, observer_id: ["observer-aws-a", "observer-google-e2-micro", "observer-oracle-a1"][sequence % 3], route_id: sequence % 2 ? "solana-public-devnet" : "alchemy-solana-devnet", terminal_status: sequence === 0 ? "ACKNOWLEDGED_UNOBSERVED" : "FINALIZED", qualifying_units: 0, official_window_started: false }));
   const text = `${rows.map(row => JSON.stringify(row)).join("\n")}\n`;

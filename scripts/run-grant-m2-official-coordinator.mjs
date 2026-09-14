@@ -196,6 +196,9 @@ async function transportAssignment(observer, entry, paths) {
   const remoteAuthority = `/tmp/sovereignkit-m2-authority-${assignmentId}.json`;
   await runScp(observer, paths.entry, remoteEntry);
   await runScp(observer, config.assignment_authority_public_path, remoteAuthority);
+  await runSsh(observer, ["sudo", "/usr/bin/chown", "sovereignkit:sovereignkit", "--", remoteEntry, remoteAuthority]);
+  await runSsh(observer, ["sudo", "/usr/bin/chmod", "0600", "--", remoteEntry, remoteAuthority]);
+  await runSsh(observer, ["sudo", "-u", "sovereignkit", "/usr/bin/test", "-r", remoteEntry, "-a", "-r", remoteAuthority]);
   const receivedAt = canonicalCoordinatorTimestamp();
   const output = await runSsh(observer, [
     "sudo", "-u", "sovereignkit", "/usr/bin/node", `${observer.runtime_root}/scripts/receive-grant-m2-assignment.mjs`,
