@@ -1,5 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { createHash } from "node:crypto";
 import { readFile } from "node:fs/promises";
 
 import { createBackupManifest, createDailySummary, validateIncidentLog, validateRehearsalTransactionLedger, validateResourceRevalidation } from "../lib/grant-m2-operational-controls.mjs";
@@ -67,6 +68,27 @@ test("retains the official transport incident as acceptance-blocking evidence", 
   assert.equal(record.status, "ACCEPTANCE_BLOCKING");
   assert.equal(record.raw_evidence_preserved, true);
   assert.equal(record.automatic_window_reset, false);
+});
+
+test("records the corrected three-observer transport probe without changing official state", async () => {
+  const probeBytes = await readFile("fixtures/grant-m2/official-transport-probe-20260914.json");
+  const probe = JSON.parse(probeBytes.toString("utf8"));
+  const state = JSON.parse(await readFile("fixtures/grant-m2/official-transport-probe-state-20260914.json", "utf8"));
+  assert.equal(createHash("sha256").update(probeBytes).digest("hex"), state.probe_evidence_sha256);
+  assert.equal(probe.status, "PASS");
+  assert.equal(probe.observers.length, 3);
+  assert.deepEqual(probe.observers.map(observer => observer.observer_id).sort(), ["observer-aws-a", "observer-google-e2-micro", "observer-oracle-a1"]);
+  assert.ok(probe.observers.every(observer => observer.status === "PASS" && observer.transaction_submitted === false && observer.worker_started === false && /^[a-f0-9]{64}$/u.test(observer.receipt_sha256)));
+  assert.equal(probe.transactions_submitted, 0);
+  assert.equal(probe.workers_started, 0);
+  assert.equal(probe.official_window_started, false);
+  assert.equal(state.probe_id, probe.probe_id);
+  assert.equal(state.source_commit, probe.source_commit);
+  assert.equal(state.official_state_files_before, state.official_state_files_after);
+  assert.equal(state.official_state_aggregate_sha256_before, state.official_state_aggregate_sha256_after);
+  assert.equal(state.claim_boundaries.transport_path_proven, true);
+  assert.equal(state.claim_boundaries.immediate_preflight_passed, false);
+  assert.equal(state.claim_boundaries.replacement_window_authorized, false);
 });
 
 test("requires exact rehearsal accounting without relabeling an unobserved transaction", () => {

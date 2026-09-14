@@ -1,0 +1,23 @@
+{
+  "schema_version": "GrantM2OfficialTransportProbeState@0.1.0",
+  "status": "PASS_WITH_OFFICIAL_STATE_UNCHANGED",
+  "probe_id": "transport-probe-20260914t215938529z-4fc596a1-c900-48af-a6a0-ce80bd80d2c7",
+  "source_commit": "2cbb5bac687879c7825facef9cf8a12ab48aa668",
+  "runtime_archive_sha256": "6271afa467b3a517e1083aba9b2423cd09adac411ce067f52246dc5211c15d99",
+  "probe_evidence_sha256": "ba3d68a8055dc42d16f407979faa0fc2063fd7048ce36ca25e71a673a63c9438",
+  "official_state_files_before": 487,
+  "official_state_files_after": 487,
+  "official_state_aggregate_sha256_before": "6927da1cd611080dddf80feaee1973f4c58c339880f10ff9edccf12b3b02ec73",
+  "official_state_aggregate_sha256_after": "6927da1cd611080dddf80feaee1973f4c58c339880f10ff9edccf12b3b02ec73",
+  "coordinator_service_active_after": false,
+  "coordinator_service_enabled_after": false,
+  "official_worker_instances_after": 0,
+  "transactions_submitted": 0,
+  "official_window_started": false,
+  "claim_boundaries": {
+    "transport_path_proven": true,
+    "immediate_preflight_passed": false,
+    "replacement_window_authorized": false,
+    "milestone_2_complete": false
+  }
+}
