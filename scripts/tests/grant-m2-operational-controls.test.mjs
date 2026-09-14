@@ -91,6 +91,30 @@ test("records the corrected three-observer transport probe without changing offi
   assert.equal(state.claim_boundaries.replacement_window_authorized, false);
 });
 
+test("retains post-upgrade backups, monitor recovery and a non-starting transport proof", async () => {
+  const upgrades = JSON.parse(await readFile("fixtures/grant-m2/official-host-upgrades-20260914.json", "utf8"));
+  const probe = JSON.parse(await readFile("fixtures/grant-m2/official-transport-probe-post-upgrade-20260914.json", "utf8"));
+  const state = JSON.parse(await readFile("fixtures/grant-m2/official-post-upgrade-state-20260914.json", "utf8"));
+  const ids = ["observer-aws-a", "observer-google-e2-micro", "observer-oracle-a1"];
+  assert.equal(upgrades.status, "UPGRADED_THREE_HOSTS_MONITORS_REACTIVATED");
+  assert.deepEqual(upgrades.observers.map(observer => observer.observer_id), ids);
+  assert.ok(upgrades.observers.every(observer => observer.backup_root.endsWith(upgrades.previous_source_commit) && observer.qualified_observer_active === true && observer.monitor_timer_active === true && observer.monitor_timer_enabled === true && observer.worker_instances === 0 && /^[a-f0-9]{64}$/u.test(observer.upgrade_evidence_sha256)));
+  assert.equal(probe.status, "PASS");
+  assert.deepEqual(probe.observers.map(observer => observer.observer_id), ids);
+  assert.ok(probe.observers.every(observer => observer.status === "PASS" && observer.transaction_submitted === false && observer.worker_started === false && /^[a-f0-9]{64}$/u.test(observer.receipt_sha256)));
+  assert.equal(probe.transactions_submitted, 0);
+  assert.equal(probe.workers_started, 0);
+  assert.equal(probe.official_window_started, false);
+  assert.equal(state.transport_probe_id, probe.probe_id);
+  assert.equal(state.source_commit, upgrades.source_commit);
+  assert.equal(state.remote_probe_file_copy_verified, false);
+  assert.equal(state.official_state_files_before, state.official_state_files_after);
+  assert.equal(state.official_state_aggregate_sha256_before, state.official_state_aggregate_sha256_after);
+  assert.equal(state.immediate_preflight_passed, false);
+  assert.equal(state.replacement_window_authorized, false);
+  assert.equal(state.milestone_2_complete, false);
+});
+
 test("requires exact rehearsal accounting without relabeling an unobserved transaction", () => {
   const rows = Array.from({ length: 12 }, (_, sequence) => ({ schema_version: "GrantM2RehearsalTransactionLedger@0.1.0", sequence, submitted_at: `2026-09-12T01:${String(sequence).padStart(2, "0")}:00.000Z`, source_run: "live-test", slot_id: sequence.toString(16).padStart(64, "0"), assignment_id: `assignment-${sequence}`, signature: `signature-${sequence}`, observer_id: ["observer-aws-a", "observer-google-e2-micro", "observer-oracle-a1"][sequence % 3], route_id: sequence % 2 ? "solana-public-devnet" : "alchemy-solana-devnet", terminal_status: sequence === 0 ? "ACKNOWLEDGED_UNOBSERVED" : "FINALIZED", qualifying_units: 0, official_window_started: false }));
   const text = `${rows.map(row => JSON.stringify(row)).join("\n")}\n`;

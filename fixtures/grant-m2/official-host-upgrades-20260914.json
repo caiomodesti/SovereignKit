@@ -1,0 +1,38 @@
+{
+  "schema_version": "GrantM2OfficialHostUpgrades@0.1.0",
+  "status": "UPGRADED_THREE_HOSTS_MONITORS_REACTIVATED",
+  "captured_at": "2026-09-14T22:14:00.000Z",
+  "source_commit": "2cbb5bac687879c7825facef9cf8a12ab48aa668",
+  "previous_source_commit": "b453d9445489d6753a84546709641ab20895c486",
+  "runtime_archive_sha256": "00a7ebf56314ffc5cef5db89ad94a5037f50574a1be1254b9704259aaf7bca30",
+  "observers": [
+    {
+      "observer_id": "observer-aws-a",
+      "backup_root": "/opt/sovereignkit-m2-rehearsal.backup-b453d9445489d6753a84546709641ab20895c486",
+      "upgrade_evidence_sha256": "9b073f6dac582b7bd0fe70b1bce82a7f153e18ae42f374e632ad74e61ed4dd1e",
+      "qualified_observer_active": true,
+      "monitor_timer_active": true,
+      "monitor_timer_enabled": true,
+      "worker_instances": 0
+    },
+    {
+      "observer_id": "observer-google-e2-micro",
+      "backup_root": "/opt/sovereignkit-m2-rehearsal.backup-b453d9445489d6753a84546709641ab20895c486",
+      "upgrade_evidence_sha256": "a748023fcba3919a8df0ac8cfd6c5fdb440e291fc68751d7014082700099a558",
+      "qualified_observer_active": true,
+      "monitor_timer_active": true,
+      "monitor_timer_enabled": true,
+      "worker_instances": 0
+    },
+    {
+      "observer_id": "observer-oracle-a1",
+      "backup_root": "/opt/sovereignkit-m2-rehearsal.backup-b453d9445489d6753a84546709641ab20895c486",
+      "upgrade_evidence_sha256": "ff9bed393fdeddd7e46b13df2e6b51a760a06e5497b7ddc2b1e0dbeba7f611e1",
+      "qualified_observer_active": true,
+      "monitor_timer_active": true,
+      "monitor_timer_enabled": true,
+      "worker_instances": 0
+    }
+  ],
+  "official_window_started": false
+}
