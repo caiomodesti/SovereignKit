@@ -1,0 +1,92 @@
+{
+  "schema_version": "GrantM2OfficialReplacementStart@0.1.0",
+  "status": "RUNNING_INITIAL_CYCLES_QUALIFYING",
+  "run_id": "m2-official-replacement-20260915t011700000z",
+  "source_commit": "2cbb5bac687879c7825facef9cf8a12ab48aa668",
+  "replacement_for_run_id": "m2-official-20260914t163100000z",
+  "preflight": {
+    "captured_at": "2026-09-15T01:05:34.800Z",
+    "sha256": "77a7721ccfeccf8de8a50745e0ec1a6a9b4f73083c782c1d9915dbb07c82bcea",
+    "status": "PASS_NOT_STARTED"
+  },
+  "window": {
+    "start_at": "2026-09-15T01:17:00.000Z",
+    "end_at": "2026-09-29T01:17:00.000Z",
+    "started_event_recorded_at": "2026-09-15T01:17:00.041Z",
+    "started_event_sha256": "a0ea5962bd8daf51bd0b03cfa26f44ed89745f1ca1b404cfe9038aaed541b892",
+    "run_record_sha256": "13e635a2d025e6b271ef74d495c4900156c8bf3a6cba6a84a17618c4f259fcd7",
+    "planned_cycles": 672,
+    "planned_units": 4032,
+    "minimum_qualifying_units": 3000,
+    "automatic_backfill": false
+  },
+  "initial_snapshot": {
+    "captured_at": "2026-09-15T02:24:32.279Z",
+    "completed_cycles": 3,
+    "terminal_slots": 18,
+    "counts": {
+      "QUALIFYING": 18,
+      "MISSING": 0,
+      "INVALID": 0,
+      "REJECTED": 0
+    },
+    "distribution": {
+      "qualifying_per_observer": 6,
+      "qualifying_alchemy_route": 9,
+      "qualifying_public_route": 9
+    },
+    "latest_terminal_event_sequence": 18,
+    "latest_terminal_event_sha256": "54e2de025f7ebcb3c856c06f76eae0eebc7eb28dd5cad28dbd5c45dfde71fd68",
+    "raw_to_derived_recomputed": true,
+    "observer_signatures_verified": true,
+    "collector_receipts_bound": true,
+    "collector_service_active": true,
+    "failed_worker_units": 0,
+    "telegram_notification_failure_records": 0
+  },
+  "observers": {
+    "observer-aws-a": {
+      "ready": true,
+      "monitor_active": true,
+      "monitor_enabled": true,
+      "queued_count": 0,
+      "stuck_workers": 0,
+      "memory_available_bytes": 1485828096,
+      "disk_available_bytes": 29520121856
+    },
+    "observer-google-e2-micro": {
+      "ready": true,
+      "monitor_active": true,
+      "monitor_enabled": true,
+      "queued_count": 0,
+      "stuck_workers": 0,
+      "memory_available_bytes": 564654080,
+      "swap_total_bytes": 2147479552,
+      "swap_used_bytes": 0,
+      "disk_available_bytes": 25015455744
+    },
+    "observer-oracle-a1": {
+      "ready": true,
+      "monitor_active": true,
+      "monitor_enabled": true,
+      "queued_count": 0,
+      "stuck_workers": 0,
+      "memory_available_bytes": 4988518400,
+      "disk_available_bytes": 20011524096
+    }
+  },
+  "preserved_interrupted_evidence": {
+    "file_count": 487,
+    "aggregate_sha256": "6927da1cd611080dddf80feaee1973f4c58c339880f10ff9edccf12b3b02ec73",
+    "unchanged_during_replacement_arm": true
+  },
+  "claim_boundaries": {
+    "official_window_started": true,
+    "initial_snapshot_healthy": true,
+    "fourteen_day_window_complete": false,
+    "minimum_qualifying_units_reached": false,
+    "final_reconciliation_complete": false,
+    "milestone_2_complete": false,
+    "future_error_free_operation_guaranteed": false
+  }
+}
