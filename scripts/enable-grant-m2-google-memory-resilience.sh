@@ -4,6 +4,8 @@ set -euo pipefail
 swap_root=/var/lib/sovereignkit/swap
 swap_path=$swap_root/m2-google.swap
 swap_bytes=2147483648
+page_bytes=$(getconf PAGESIZE)
+active_swap_bytes=$((swap_bytes - page_bytes))
 fstab=/etc/fstab
 backup_root=/etc/sovereignkit/backups
 fstab_entry="$swap_path none swap sw 0 0"
@@ -12,9 +14,10 @@ fstab_entry="$swap_path none swap sw 0 0"
 [[ $(systemctl is-active sovereignkit-observer.service 2>/dev/null || true) == active ]] || { echo 'qualified observer is not active' >&2; exit 69; }
 if swapon --show=NAME --noheadings --raw | grep -Fqx "$swap_path"; then
   actual=$(swapon --show=NAME,SIZE --bytes --noheadings --raw | awk -v target="$swap_path" '$1==target {print $2}')
-  [[ $actual -eq $swap_bytes ]] || { echo 'active SovereignKit swap size mismatch' >&2; exit 73; }
+  file_bytes=$(stat -c '%s' "$swap_path")
+  [[ $file_bytes -eq $swap_bytes && $actual -eq $active_swap_bytes ]] || { echo 'active SovereignKit swap size mismatch' >&2; exit 73; }
   grep -Fqx "$fstab_entry" "$fstab" || { echo 'active swap is not persistently bound' >&2; exit 73; }
-  printf '{"status":"ALREADY_ACTIVE_VERIFIED","swap_path":"%s","swap_bytes":%s,"observer_service_active":true,"workers_started":0,"official_window_started":false}\n' "$swap_path" "$swap_bytes"
+  printf '{"status":"ALREADY_ACTIVE_VERIFIED","swap_path":"%s","swap_file_bytes":%s,"active_swap_bytes":%s,"observer_service_active":true,"workers_started":0,"official_window_started":false}\n' "$swap_path" "$swap_bytes" "$actual"
   exit 0
 fi
 [[ -z $(swapon --show=NAME --noheadings --raw) ]] || { echo 'unexpected active swap exists; reconciliation required' >&2; exit 73; }
@@ -36,8 +39,9 @@ grep -Fqx "$fstab_entry" "$fstab" || printf '%s\n' "$fstab_entry" >> "$fstab"
 sync
 
 actual=$(swapon --show=NAME,SIZE --bytes --noheadings --raw | awk -v target="$swap_path" '$1==target {print $2}')
-[[ $actual -eq $swap_bytes ]] || { echo 'swap activation verification failed' >&2; exit 69; }
+file_bytes=$(stat -c '%s' "$swap_path")
+[[ $file_bytes -eq $swap_bytes && $actual -eq $active_swap_bytes ]] || { echo 'swap activation verification failed' >&2; exit 69; }
 grep -Fqx "$fstab_entry" "$fstab"
 [[ $(stat -c '%a:%U:%G' "$swap_path") == 600:root:root ]] || exit 69
 [[ $(systemctl list-units --type=service --state=running --plain --no-legend 'sovereignkit-m2-official-observation-worker@*.service' | wc -l) -eq 0 ]] || exit 69
-printf '{"status":"ACTIVE_PERSISTENT","swap_path":"%s","swap_bytes":%s,"fstab_backup":"%s","observer_service_active":true,"workers_started":0,"official_window_started":false}\n' "$swap_path" "$swap_bytes" "$fstab_backup"
+printf '{"status":"ACTIVE_PERSISTENT","swap_path":"%s","swap_file_bytes":%s,"active_swap_bytes":%s,"fstab_backup":"%s","observer_service_active":true,"workers_started":0,"official_window_started":false}\n' "$swap_path" "$swap_bytes" "$actual" "$fstab_backup"

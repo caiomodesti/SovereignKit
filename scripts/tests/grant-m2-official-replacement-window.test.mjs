@@ -64,6 +64,9 @@ test("arm script isolates replacement state and cannot rewrite interrupted evide
 test("Google memory resilience is bounded, persistent and cannot start an official worker", async () => {
   const script = await readFile("scripts/enable-grant-m2-google-memory-resilience.sh", "utf8");
   assert.match(script, /swap_bytes=2147483648/u);
+  assert.match(script, /page_bytes=\$\(getconf PAGESIZE\)/u);
+  assert.match(script, /active_swap_bytes=\$\(\(swap_bytes - page_bytes\)\)/u);
+  assert.match(script, /file_bytes -eq \$swap_bytes && \$actual -eq \$active_swap_bytes/u);
   assert.match(script, /free_disk -ge 5368709120/u);
   assert.match(script, /fstab_backup/u);
   assert.match(script, /unexpected active swap exists/u);
