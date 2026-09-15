@@ -4,6 +4,7 @@ import { createHash } from "node:crypto";
 import { readFile } from "node:fs/promises";
 
 import { createBackupManifest, createDailySummary, validateIncidentLog, validateRehearsalTransactionLedger, validateResourceRevalidation } from "../lib/grant-m2-operational-controls.mjs";
+import { validateGrantM2OfficialPreflight } from "../lib/grant-m2-official-preflight.mjs";
 
 const collectorText = [
   JSON.stringify({ collector_sequence: 0, result: { result_id: "result-a" } }),
@@ -113,6 +114,28 @@ test("retains post-upgrade backups, monitor recovery and a non-starting transpor
   assert.equal(state.immediate_preflight_passed, false);
   assert.equal(state.replacement_window_authorized, false);
   assert.equal(state.milestone_2_complete, false);
+});
+
+test("retains the coordinator backup and the passed non-starting replacement preflight", async () => {
+  const swap = JSON.parse(await readFile("fixtures/grant-m2/official-coordinator-swap-20260914.json", "utf8"));
+  const probeBytes = await readFile("fixtures/grant-m2/official-transport-probe-preflight-20260915.json");
+  const probe = JSON.parse(probeBytes.toString("utf8"));
+  const preflight = JSON.parse(await readFile("fixtures/grant-m2/official-preflight-20260915.json", "utf8"));
+  const checked = validateGrantM2OfficialPreflight(preflight, swap.source_commit);
+  assert.equal(swap.backup_present, true);
+  assert.equal(swap.runtime_manifest_verified, true);
+  assert.equal(swap.backup_manifest_verified, true);
+  assert.equal(swap.service_active, false);
+  assert.equal(swap.service_enabled, false);
+  assert.equal(swap.official_state_files, 487);
+  assert.equal(probe.probe_id, preflight.transport_probe.probe_id);
+  assert.deepEqual(probe, preflight.transport_probe);
+  assert.equal(createHash("sha256").update(probeBytes).digest("hex"), "5c274fbf084990cd0a7c6a4229f8c2ee69dd237a11da380ae2362fbc85c112da");
+  assert.equal(checked.sha256, "edd031001adea725658e0fe80dae19fcecf2e7b89fe1f347ce0128d37f6df15c");
+  assert.equal(checked.officialWindowStarted, false);
+  assert.equal(preflight.resources.alchemy_remaining_compute_units, 29_995_070);
+  assert.equal(preflight.worker_instances_started, 0);
+  assert.equal(preflight.official_window_started, false);
 });
 
 test("requires exact rehearsal accounting without relabeling an unobserved transaction", () => {

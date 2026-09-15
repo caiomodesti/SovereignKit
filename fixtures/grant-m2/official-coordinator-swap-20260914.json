@@ -1,0 +1,18 @@
+{
+  "schema_version": "GrantM2OfficialCoordinatorSwap@0.1.0",
+  "status": "SWAPPED_STOPPED_DISABLED",
+  "captured_at": "2026-09-15T00:19:10.354Z",
+  "source_commit": "2cbb5bac687879c7825facef9cf8a12ab48aa668",
+  "previous_source_commit": "b453d9445489d6753a84546709641ab20895c486",
+  "runtime_root": "/opt/sovereignkit-m2-coordinator",
+  "backup_root": "/opt/sovereignkit-m2-coordinator.backup-b453d9445489d6753a84546709641ab20895c486",
+  "backup_present": true,
+  "runtime_manifest_verified": true,
+  "backup_manifest_verified": true,
+  "service_active": false,
+  "service_enabled": false,
+  "worker_instances": 0,
+  "official_state_files": 487,
+  "official_state_aggregate_sha256": "6927da1cd611080dddf80feaee1973f4c58c339880f10ff9edccf12b3b02ec73",
+  "official_window_started": false
+}
