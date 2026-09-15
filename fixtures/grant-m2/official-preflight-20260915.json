@@ -1,0 +1,134 @@
+{
+  "schema_version": "GrantM2OfficialPreflight@0.2.0",
+  "status": "PASS_NOT_STARTED",
+  "captured_at": "2026-09-15T00:19:10.354Z",
+  "source_commit": "2cbb5bac687879c7825facef9cf8a12ab48aa668",
+  "precommitment_sha256": "9f83782ebc8ff031adfa643fb991826930946773c2f3d5d8c0a7e5a71902eaff",
+  "network": "solana-devnet",
+  "genesis_hash": "EtWTRABZaYq6iMfeYKouRu166VU2xqa1wcaWoxPkrZBG",
+  "official_window_started": false,
+  "worker_instances_started": 0,
+  "collector": {
+    "origin": "https://collector.sovereignkit.org",
+    "tls_valid": true,
+    "ready": true,
+    "stored_count": 32
+  },
+  "coordinator": {
+    "runtime_ready": true,
+    "durable_restart_enabled": true,
+    "single_writer_lock_available": true,
+    "clock_synchronized": true,
+    "clock_absolute_offset_ms": 0.009139,
+    "disk_free_bytes": 21089112064,
+    "service_active": "inactive",
+    "service_enabled": "disabled",
+    "preserved_state_file_count": 487,
+    "preserved_state_aggregate_sha256": "6927da1cd611080dddf80feaee1973f4c58c339880f10ff9edccf12b3b02ec73"
+  },
+  "resources": {
+    "authenticated_quota_refreshed": true,
+    "authenticated_quota_source": "Alchemy dashboard /usage",
+    "authenticated_quota_captured_at": "2026-09-15T00:18:30.092Z",
+    "alchemy_used_compute_units": 4930,
+    "alchemy_limit_compute_units": 30000000,
+    "zero_incremental_spend_only": true,
+    "frozen_workload_fits_free_quota": true,
+    "alchemy_remaining_compute_units": 29995070,
+    "devnet_fee_payer_balance_verified": true,
+    "devnet_fee_payer_balance_sufficient": true,
+    "devnet_fee_payer_context_slot": 498499900,
+    "devnet_fee_payer_balance_lamports": 90595000
+  },
+  "transport_probe": {
+    "schema_version": "GrantM2OfficialTransportProbe@0.1.0",
+    "status": "PASS",
+    "probe_id": "transport-probe-20260915t001847989z-b7b35382-d107-40b6-9f9c-812af8e2b4d4",
+    "captured_at": "2026-09-15T00:19:06.163Z",
+    "source_commit": "2cbb5bac687879c7825facef9cf8a12ab48aa668",
+    "observers": [
+      {
+        "observer_id": "observer-aws-a",
+        "status": "PASS",
+        "assignment_id": "c518b6bf-95aa-4681-a362-357af3166157",
+        "receipt_sha256": "a138bdcc8dd26172726c2e53d88baa04abeb3e63be1f5e6e3f2c0d18a699dc37",
+        "transaction_submitted": false,
+        "worker_started": false
+      },
+      {
+        "observer_id": "observer-google-e2-micro",
+        "status": "PASS",
+        "assignment_id": "bf4ef7d6-38ae-4ac1-9d5e-499bb889aa80",
+        "receipt_sha256": "fa0f0225240252b0f3d0ac3e1b4b9eec8b60b6844ab5b3e4b2ad52878cb9ba6d",
+        "transaction_submitted": false,
+        "worker_started": false
+      },
+      {
+        "observer_id": "observer-oracle-a1",
+        "status": "PASS",
+        "assignment_id": "5508a849-388b-41b4-b495-f5e6063c1066",
+        "receipt_sha256": "46576b4c632f2e99f1919ca9647f43366b3b0344cb0e6da27fb43cad52bf5a63",
+        "transaction_submitted": false,
+        "worker_started": false
+      }
+    ],
+    "transactions_submitted": 0,
+    "workers_started": 0,
+    "official_window_started": false
+  },
+  "observer_initial_sequences": {
+    "observer-aws-a": 1788828470272,
+    "observer-google-e2-micro": 1788833328218,
+    "observer-oracle-a1": 2026090905
+  },
+  "observers": [
+    {
+      "observer_id": "observer-aws-a",
+      "m2_runtime_commit": "2cbb5bac687879c7825facef9cf8a12ab48aa668",
+      "service_active": true,
+      "ready": true,
+      "reported_observer_id": "observer-aws-a",
+      "delivery_queue_count": 0,
+      "monitor_timer_active": true,
+      "official_controls_installed": true,
+      "official_worker_instances": 0,
+      "official_quota_journal_empty": true,
+      "clock_synchronized": true,
+      "clock_absolute_offset_ms": 0.00091,
+      "memory_available_bytes": 1477591040,
+      "disk_free_bytes": 29537755136
+    },
+    {
+      "observer_id": "observer-google-e2-micro",
+      "m2_runtime_commit": "2cbb5bac687879c7825facef9cf8a12ab48aa668",
+      "service_active": true,
+      "ready": true,
+      "reported_observer_id": "observer-google-e2-micro",
+      "delivery_queue_count": 0,
+      "monitor_timer_active": true,
+      "official_controls_installed": true,
+      "official_worker_instances": 0,
+      "official_quota_journal_empty": true,
+      "clock_synchronized": true,
+      "clock_absolute_offset_ms": 0.037,
+      "memory_available_bytes": 546643968,
+      "disk_free_bytes": 27163848704
+    },
+    {
+      "observer_id": "observer-oracle-a1",
+      "m2_runtime_commit": "2cbb5bac687879c7825facef9cf8a12ab48aa668",
+      "service_active": true,
+      "ready": true,
+      "reported_observer_id": "observer-oracle-a1",
+      "delivery_queue_count": 0,
+      "monitor_timer_active": true,
+      "official_controls_installed": true,
+      "official_worker_instances": 0,
+      "official_quota_journal_empty": true,
+      "clock_synchronized": true,
+      "clock_absolute_offset_ms": 0.003455,
+      "memory_available_bytes": 4920578048,
+      "disk_free_bytes": 20012953600
+    }
+  ]
+}
