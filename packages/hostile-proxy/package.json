@@ -19,6 +19,6 @@
     "test:coverage": "node ../../node_modules/vitest/vitest.mjs run --coverage src"
   },
   "dependencies": {
-    "@solana/kit": "7.0.0"
+    "@solana/kit": "8.3.0"
   }
 }
